@@ -1,0 +1,28 @@
+{
+  "name": "Bookmark",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string",
+      "description": "Optional custom label"
+    }
+  },
+  "required": [
+    "verse_ref"
+  ]
+}

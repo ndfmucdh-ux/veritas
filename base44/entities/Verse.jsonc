@@ -1,0 +1,56 @@
+{
+  "name": "Verse",
+  "type": "object",
+  "properties": {
+    "translation": {
+      "type": "string",
+      "description": "Bible translation code (KJV, NIV, ESV, etc.)"
+    },
+    "book": {
+      "type": "string",
+      "description": "Book name"
+    },
+    "book_num": {
+      "type": "number",
+      "description": "Book number (1-66)"
+    },
+    "chapter": {
+      "type": "number",
+      "description": "Chapter number"
+    },
+    "verse": {
+      "type": "number",
+      "description": "Verse number"
+    },
+    "text": {
+      "type": "string",
+      "description": "Verse text"
+    },
+    "red_letter": {
+      "type": "boolean",
+      "description": "True if spoken by Jesus"
+    },
+    "testament": {
+      "type": "string",
+      "enum": [
+        "OT",
+        "NT"
+      ],
+      "description": "Old or New Testament"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Topics: men, women, youth, kids, marriage, love, faith, etc."
+    }
+  },
+  "required": [
+    "translation",
+    "book",
+    "chapter",
+    "verse",
+    "text"
+  ]
+}

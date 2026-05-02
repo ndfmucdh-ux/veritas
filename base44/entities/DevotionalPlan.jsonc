@@ -1,0 +1,60 @@
+{
+  "name": "DevotionalPlan",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "duration_days": {
+      "type": "number"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "men",
+        "women",
+        "youth",
+        "kids",
+        "marriage",
+        "general",
+        "new_believer"
+      ]
+    },
+    "cover_image": {
+      "type": "string"
+    },
+    "days": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "verses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "devotional": {
+            "type": "string"
+          },
+          "prayer": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "title",
+    "duration_days"
+  ]
+}

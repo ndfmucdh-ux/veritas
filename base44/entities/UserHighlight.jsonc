@@ -1,0 +1,36 @@
+{
+  "name": "UserHighlight",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string",
+      "enum": [
+        "yellow",
+        "cyan",
+        "purple",
+        "green",
+        "red"
+      ],
+      "default": "yellow"
+    }
+  },
+  "required": [
+    "verse_ref",
+    "color"
+  ]
+}

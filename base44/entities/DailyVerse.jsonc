@@ -1,0 +1,42 @@
+{
+  "name": "DailyVerse",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "YYYY-MM-DD"
+    },
+    "verse_ref": {
+      "type": "string"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string",
+      "default": "KJV"
+    },
+    "text": {
+      "type": "string"
+    },
+    "reflection": {
+      "type": "string",
+      "description": "AI-generated reflection"
+    },
+    "theme": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "date",
+    "verse_ref",
+    "text"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "ReadingProgress",
+  "type": "object",
+  "properties": {
+    "plan_id": {
+      "type": "string"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reading_time_seconds": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "book",
+    "chapter"
+  ]
+}

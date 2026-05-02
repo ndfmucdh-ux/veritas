@@ -1,0 +1,53 @@
+{
+  "name": "UserPreferences",
+  "type": "object",
+  "properties": {
+    "default_translation": {
+      "type": "string",
+      "default": "KJV"
+    },
+    "font_size": {
+      "type": "number",
+      "default": 18
+    },
+    "font_family": {
+      "type": "string",
+      "enum": [
+        "inter",
+        "playfair",
+        "cinzel"
+      ],
+      "default": "inter"
+    },
+    "show_verse_numbers": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_red_letter": {
+      "type": "boolean",
+      "default": true
+    },
+    "notifications_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "daily_verse_time": {
+      "type": "string",
+      "default": "06:00"
+    },
+    "language": {
+      "type": "string",
+      "default": "en"
+    },
+    "theme": {
+      "type": "string",
+      "enum": [
+        "dark",
+        "midnight",
+        "sepia"
+      ],
+      "default": "dark"
+    }
+  },
+  "required": []
+}

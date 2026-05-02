@@ -1,0 +1,34 @@
+{
+  "name": "UserNote",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string",
+      "description": "e.g. John 3:16 KJV"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "note_text": {
+      "type": "string",
+      "description": "User's note content"
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "verse_ref",
+    "note_text"
+  ]
+}

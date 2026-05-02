@@ -1,0 +1,51 @@
+{
+  "name": "UserXP",
+  "type": "object",
+  "properties": {
+    "total_xp": {
+      "type": "number",
+      "default": 0
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "Seeker",
+        "Disciple",
+        "Scholar",
+        "Elder"
+      ],
+      "default": "Seeker"
+    },
+    "streak_days": {
+      "type": "number",
+      "default": 0
+    },
+    "longest_streak": {
+      "type": "number",
+      "default": 0
+    },
+    "last_read_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "chapters_read": {
+      "type": "number",
+      "default": 0
+    },
+    "verses_highlighted": {
+      "type": "number",
+      "default": 0
+    },
+    "notes_written": {
+      "type": "number",
+      "default": 0
+    },
+    "badges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": []
+}
