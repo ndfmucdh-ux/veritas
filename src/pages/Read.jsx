@@ -4,8 +4,11 @@ import { Settings, Maximize2, Minimize2, Loader2, ChevronUp } from "lucide-react
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
-import VerseItem from "@/components/reader/VerseItem";
+import VerseRow from "@/components/reader/VerseRow";
+import ChapterHeader from "@/components/reader/ChapterHeader";
 import ChapterNavigator from "@/components/reader/ChapterNavigator";
+import { SkeletonVerse } from "@/components/ui/SkeletonPulse";
+import { pageTransition } from "@/hooks/useAnimations";
 
 export default function Read() {
   const params = new URLSearchParams(window.location.search);
@@ -25,6 +28,8 @@ export default function Read() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const containerRef = useRef(null);
 
+  const bookData = BIBLE_BOOKS.find(b => b.name === book);
+
   useEffect(() => {
     loadChapter();
     loadAnnotations();
@@ -33,281 +38,282 @@ export default function Read() {
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const onScroll = () => setShowScrollTop(el.scrollTop > 400);
-    el.addEventListener("scroll", onScroll);
+    const onScroll = () => setShowScrollTop(el.scrollTop > 500);
+    el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
   const loadChapter = async () => {
     setLoading(true);
     setVerses([]);
+    const key = `${book}:${chapter}`;
+    if (SAMPLE_VERSES[key]) {
+      setVerses(SAMPLE_VERSES[key]);
+      setLoading(false);
+      trackReading();
+      return;
+    }
     try {
-      // Try cached sample data first
-      const key = `${book}:${chapter}`;
-      if (SAMPLE_VERSES[key]) {
-        setVerses(SAMPLE_VERSES[key]);
-        setLoading(false);
-        trackReading();
-        return;
-      }
-
       const res = await base44.functions.invoke("getChapter", { translation, book, chapter });
       if (res.data?.verses?.length > 0) {
         setVerses(res.data.verses);
       } else {
-        // Fallback to bible-api.com directly
-        const bookSlug = book.toLowerCase().replace(/\s+/g, "+");
-        const apiRes = await fetch(`https://bible-api.com/${bookSlug}+${chapter}?translation=kjv`);
-        if (apiRes.ok) {
-          const data = await apiRes.json();
-          setVerses((data.verses || []).map(v => ({
-            verse: v.verse, text: v.text.trim(), red_letter: false
-          })));
-        }
+        await fetchFromApi();
       }
-      trackReading();
-    } catch (e) {
-      const bookSlug = book.toLowerCase().replace(/\s+/g, "+");
-      fetch(`https://bible-api.com/${bookSlug}+${chapter}?translation=kjv`)
-        .then(r => r.json())
-        .then(data => {
-          setVerses((data.verses || []).map(v => ({
-            verse: v.verse, text: v.text.trim(), red_letter: false
-          })));
-        })
-        .catch(() => {});
+    } catch {
+      await fetchFromApi();
     } finally {
       setLoading(false);
+      trackReading();
     }
   };
 
-  const trackReading = async () => {
-    try {
-      await base44.entities.ReadingProgress.create({
-        book, chapter, translation,
-        completed_at: new Date().toISOString()
-      });
-      base44.functions.invoke("updateXP", { action: "READ_CHAPTER", xp_amount: 10 });
-    } catch (e) {}
+  const fetchFromApi = async () => {
+    const slug = book.toLowerCase().replace(/\s+/g, "+");
+    const r = await fetch(`https://bible-api.com/${slug}+${chapter}?translation=kjv`);
+    if (r.ok) {
+      const d = await r.json();
+      setVerses((d.verses || []).map(v => ({ verse: v.verse, text: v.text.trim(), red_letter: false })));
+    }
+  };
+
+  const trackReading = () => {
+    base44.entities.ReadingProgress.create({ book, chapter, translation, completed_at: new Date().toISOString() }).catch(() => {});
+    base44.functions.invoke("updateXP", { action: "READ_CHAPTER", xp_amount: 10 }).catch(() => {});
   };
 
   const loadAnnotations = async () => {
     try {
-      const prefix = `${book} ${chapter}:`;
-      const [hlList, bmList, noteList] = await Promise.all([
+      const [hl, bm, nt] = await Promise.all([
         base44.entities.UserHighlight.filter({ book, chapter }),
         base44.entities.Bookmark.filter({ book, chapter }),
         base44.entities.UserNote.filter({ book, chapter }),
       ]);
-
-      const hlMap = {};
-      hlList?.forEach(h => { hlMap[h.verse] = { color: h.color }; });
-      setHighlights(hlMap);
-
-      const bmMap = {};
-      bmList?.forEach(b => { bmMap[b.verse] = true; });
-      setBookmarks(bmMap);
-
-      const noteMap = {};
-      noteList?.forEach(n => { noteMap[n.verse] = n.note_text; });
-      setNotes(noteMap);
-    } catch (e) {}
+      const hlMap = {}; (hl || []).forEach(h => { hlMap[h.verse] = { color: h.color }; });
+      const bmMap = {}; (bm || []).forEach(b => { bmMap[b.verse] = true; });
+      const ntMap = {}; (nt || []).forEach(n => { ntMap[n.verse] = n.note_text; });
+      setHighlights(hlMap); setBookmarks(bmMap); setNotes(ntMap);
+    } catch {}
   };
 
   const handleVerseUpdate = ({ type, verseNum, data }) => {
-    if (type === "highlight") {
-      setHighlights(prev => ({ ...prev, [verseNum]: data }));
-    } else if (type === "bookmark") {
-      setBookmarks(prev => ({ ...prev, [verseNum]: data }));
-    } else if (type === "note") {
-      setNotes(prev => ({ ...prev, [verseNum]: data }));
-    }
+    if (type === "highlight") setHighlights(p => ({ ...p, [verseNum]: data }));
+    else if (type === "bookmark") setBookmarks(p => ({ ...p, [verseNum]: data }));
+    else if (type === "note") setNotes(p => ({ ...p, [verseNum]: data }));
   };
 
-  const handleNavigate = (newBook, newChapter, newTranslation) => {
+  const handleNavigate = (newBook, newChapter) => {
     setBook(newBook);
     setChapter(newChapter);
-    if (newTranslation) setTranslation(newTranslation);
-    window.history.pushState({}, "", `/read?book=${newBook}&chapter=${newChapter}`);
+    window.history.pushState({}, "", `/read?book=${encodeURIComponent(newBook)}&chapter=${newChapter}`);
     containerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const bookData = BIBLE_BOOKS.find(b => b.name === book);
-
   return (
-    <div className={`flex flex-col ${immersive ? "fixed inset-0 z-50 bg-background" : "md:ml-16 min-h-screen"}`}>
-      {/* Reader Header */}
-      {!immersive && (
-        <div className="sticky top-[57px] md:top-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/50 px-4 py-3 space-y-3">
-          <ChapterNavigator
-            book={book}
-            chapter={chapter}
-            translation={translation}
-            onNavigate={handleNavigate}
-          />
-          <div className="flex items-center gap-2">
-            {/* Translation Selector */}
-            <select
-              value={translation}
-              onChange={e => { setTranslation(e.target.value); loadChapter(); }}
-              className="text-xs bg-muted text-muted-foreground rounded-lg px-2 py-1.5 border-0 focus:outline-none focus:ring-1 focus:ring-cyan"
-            >
-              {TRANSLATIONS.map(t => (
-                <option key={t.code} value={t.code}>{t.code}</option>
-              ))}
-            </select>
-
-            <div className="flex-1" />
-
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setImmersive(!immersive)}
-              className="text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-            </button>
-          </div>
-
-          {/* Settings Panel */}
-          <AnimatePresence>
-            {showSettings && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="glass rounded-xl p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Font Size</span>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => setFontSize(f => Math.max(14, f - 2))} className="w-7 h-7 rounded-lg bg-muted text-sm font-bold">−</button>
-                      <span className="text-sm w-8 text-center">{fontSize}</span>
-                      <button onClick={() => setFontSize(f => Math.min(28, f + 2))} className="w-7 h-7 rounded-lg bg-muted text-sm font-bold">+</button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Font</span>
-                    <div className="flex gap-2">
-                      {[["inter","Sans"], ["playfair","Serif"], ["cinzel","Classic"]].map(([f, l]) => (
-                        <button key={f} onClick={() => setFontFamily(f)}
-                          className={`text-xs px-2 py-1 rounded-lg transition-colors ${fontFamily === f ? "bg-cyan/20 text-cyan" : "bg-muted text-muted-foreground"}`}>
-                          {l}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">Verse Numbers</span>
-                    <button onClick={() => setShowNumbers(!showNumbers)}
-                      className={`w-10 h-6 rounded-full transition-colors relative ${showNumbers ? "bg-cyan" : "bg-muted"}`}>
-                      <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${showNumbers ? "translate-x-5" : "translate-x-1"}`} />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* Immersive header */}
-      {immersive && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border/30">
-          <h2 className="font-cinzel text-lg">{book} {chapter}</h2>
-          <button onClick={() => setImmersive(false)} className="text-muted-foreground hover:text-foreground">
-            <Minimize2 className="w-5 h-5" />
-          </button>
-        </div>
-      )}
-
-      {/* Reading Content */}
+    <motion.div {...pageTransition}
+      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen"}`}
+      style={{ background: immersive ? "#06080f" : undefined }}
+    >
+      {/* Reader top bar */}
       <div
-        ref={containerRef}
-        className="flex-1 overflow-y-auto scrollbar-hide px-4 md:px-8 py-6 max-w-3xl mx-auto w-full"
+        className="sticky z-30 px-4 py-3 space-y-3"
+        style={{
+          top: immersive ? 0 : "57px",
+          background: "rgba(6,10,20,0.9)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}
       >
-        {/* Chapter Title */}
-        <motion.div
-          key={`${book}-${chapter}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mb-8 text-center"
-        >
-          <h1 className="font-cinzel text-3xl font-bold text-foreground">{book}</h1>
-          <p className="text-muted-foreground mt-1">Chapter {chapter}</p>
-          {bookData && (
-            <span className="text-xs text-muted-foreground/50 uppercase tracking-widest">
-              {bookData.testament === "OT" ? "Old Testament" : "New Testament"}
-            </span>
-          )}
-          <div className="w-16 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto mt-4" />
-        </motion.div>
+        <ChapterNavigator book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
 
-        {/* Verses */}
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="w-8 h-8 text-cyan animate-spin" />
-            <p className="text-muted-foreground text-sm font-cinzel">Loading scripture...</p>
-          </div>
-        ) : (
-          <motion.div
-            key={`verses-${book}-${chapter}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-1"
-            style={{ fontSize: `${fontSize}px`, fontFamily: `var(--font-${fontFamily})` }}
+        <div className="flex items-center gap-2">
+          <select
+            value={translation}
+            onChange={e => setTranslation(e.target.value)}
+            className="text-xs font-inter rounded-lg px-2.5 py-1.5 border-0 focus:outline-none focus:ring-1 focus:ring-cyan-400/30"
+            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.55)" }}
           >
-            {verses.map(v => (
-              <VerseItem
-                key={v.verse}
-                verseNum={v.verse}
-                text={v.text}
-                redLetter={v.red_letter}
-                book={book}
-                chapter={chapter}
-                translation={translation}
-                highlight={highlights[v.verse]}
-                isBookmarked={bookmarks[v.verse]}
-                note={notes[v.verse]}
-                showNumbers={showNumbers}
-                onUpdate={handleVerseUpdate}
-              />
-            ))}
-          </motion.div>
-        )}
+            {TRANSLATIONS.map(t => <option key={t.code} value={t.code}>{t.code}</option>)}
+          </select>
 
-        {/* Chapter Nav at Bottom */}
-        {!loading && verses.length > 0 && (
-          <div className="mt-12 mb-4">
-            <ChapterNavigator
-              book={book}
-              chapter={chapter}
-              translation={translation}
-              onNavigate={handleNavigate}
-            />
-          </div>
-        )}
+          <div className="flex-1" />
+
+          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings}><Settings className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={() => setImmersive(v => !v)}>
+            {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </IconBtn>
+        </div>
+
+        {/* Settings panel */}
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="rounded-2xl p-4 space-y-4"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                <SettingRow label="Font Size">
+                  <div className="flex items-center gap-2">
+                    <Stepper onClick={() => setFontSize(f => Math.max(14, f - 2))}>−</Stepper>
+                    <span className="text-sm text-white/70 w-7 text-center font-inter">{fontSize}</span>
+                    <Stepper onClick={() => setFontSize(f => Math.min(28, f + 2))}>+</Stepper>
+                  </div>
+                </SettingRow>
+                <SettingRow label="Font">
+                  <div className="flex gap-2">
+                    {[["inter", "Sans"], ["playfair", "Serif"], ["cinzel", "Classic"]].map(([f, l]) => (
+                      <button key={f} onClick={() => setFontFamily(f)}
+                        className="text-xs px-3 py-1 rounded-lg font-inter transition-all"
+                        style={{
+                          background: fontFamily === f ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
+                          color: fontFamily === f ? "#00f5ff" : "rgba(255,255,255,0.4)",
+                          border: fontFamily === f ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
+                        }}>
+                        {l}
+                      </button>
+                    ))}
+                  </div>
+                </SettingRow>
+                <SettingRow label="Verse Numbers">
+                  <Toggle value={showNumbers} onChange={() => setShowNumbers(v => !v)} />
+                </SettingRow>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Scroll to Top */}
+      {/* Scrollable reading area */}
+      <div ref={containerRef} className="flex-1 overflow-y-auto scrollbar-hide">
+        <div className="px-4 md:px-8 max-w-2xl mx-auto w-full pb-32 pt-2">
+          {/* Chapter header with parallax */}
+          <ChapterHeader
+            book={book}
+            chapter={chapter}
+            testament={bookData?.testament || "OT"}
+            scrollRef={containerRef}
+          />
+
+          {/* Verses */}
+          {loading ? (
+            <div className="space-y-1">
+              {Array.from({ length: 12 }).map((_, i) => <SkeletonVerse key={i} />)}
+            </div>
+          ) : (
+            <motion.div
+              key={`${book}-${chapter}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-0.5"
+            >
+              {verses.map(v => (
+                <VerseRow
+                  key={v.verse}
+                  verseNum={v.verse}
+                  text={v.text}
+                  redLetter={v.red_letter}
+                  book={book}
+                  chapter={chapter}
+                  translation={translation}
+                  highlight={highlights[v.verse]}
+                  isBookmarked={bookmarks[v.verse]}
+                  note={notes[v.verse]}
+                  showNumbers={showNumbers}
+                  fontSize={fontSize}
+                  onUpdate={handleVerseUpdate}
+                />
+              ))}
+            </motion.div>
+          )}
+
+          {/* Bottom nav */}
+          {!loading && verses.length > 0 && (
+            <div className="mt-12">
+              <ChapterNavigator book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Scroll to top */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            exit={{ opacity: 0, scale: 0.7 }}
+            transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={() => containerRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-24 md:bottom-6 right-4 w-10 h-10 glass rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground shadow-lg z-20"
+            className="fixed bottom-24 md:bottom-8 right-4 w-11 h-11 rounded-full flex items-center justify-center z-30"
+            style={{
+              background: "rgba(6,10,20,0.85)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+            }}
           >
-            <ChevronUp className="w-5 h-5" />
+            <ChevronUp className="w-5 h-5 text-white/50" />
           </motion.button>
         )}
       </AnimatePresence>
+    </motion.div>
+  );
+}
+
+// ── Sub-components ──────────────────────────────────────────────
+function IconBtn({ children, onClick, active }) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.9 }}
+      onClick={onClick}
+      className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+      style={{
+        background: active ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)",
+        color: active ? "#00f5ff" : "rgba(255,255,255,0.4)",
+        border: active ? "1px solid rgba(0,245,255,0.2)" : "1px solid transparent",
+      }}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+function Stepper({ children, onClick }) {
+  return (
+    <motion.button whileTap={{ scale: 0.88 }} onClick={onClick}
+      className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold font-inter"
+      style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.6)" }}>
+      {children}
+    </motion.button>
+  );
+}
+
+function SettingRow({ label, children }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{label}</span>
+      {children}
     </div>
+  );
+}
+
+function Toggle({ value, onChange }) {
+  return (
+    <motion.button
+      onClick={onChange}
+      className="w-11 h-6 rounded-full relative flex items-center px-1 transition-colors"
+      style={{ background: value ? "rgba(0,245,255,0.3)" : "rgba(255,255,255,0.08)" }}
+    >
+      <motion.span
+        animate={{ x: value ? 18 : 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 24 }}
+        className="w-4 h-4 rounded-full bg-white shadow-sm"
+      />
+    </motion.button>
   );
 }
