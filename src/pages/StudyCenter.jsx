@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, BookMarked, Zap, Loader2, ChevronRight, Search, ChevronDown } from "lucide-react";
+import { Loader2, ChevronDown, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS } from "@/lib/bibleData";
 
 export default function StudyCenter() {
   const [selectedBook, setSelectedBook] = useState("John");
+  const [selectedChapter, setSelectedChapter] = useState(1);
   const [outline, setOutline] = useState(null);
   const [loading, setLoading] = useState(false);
   const [depth, setDepth] = useState("overview");
-  const [expandedCategory, setExpandedCategory] = useState("NT");
+  const [expandedCategory, setExpandedCategory] = useState("Gospels");
 
   const loadOutline = async (book) => {
     setLoading(true);
@@ -19,7 +20,7 @@ export default function StudyCenter() {
         book,
         depth
       });
-      const outlineData = res.data.outline?.response || res.data.outline;
+      const outlineData = res.data?.outline?.response || res.data?.outline;
       setOutline(outlineData);
     } catch (err) {
       console.error("Error loading outline:", err);
@@ -59,30 +60,30 @@ export default function StudyCenter() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Book selector - Theological organization */}
-        <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4 text-white/40">Biblical Books</p>
+        {/* Book selector - Theological organization with BIG mobile buttons */}
+        <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4 text-white/40">Books of the Bible</p>
           <div className="space-y-3">
             {theologicalGroups.map(group => (
               <div key={group.id}>
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setExpandedCategory(expandedCategory === group.id ? null : group.id)}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-left"
+                  className="w-full flex items-center gap-2 px-3 py-3 md:py-2 rounded-lg transition-all text-left"
                   style={{
                     background: expandedCategory === group.id ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)",
                     borderLeft: expandedCategory === group.id ? "2px solid #00f5ff" : "2px solid transparent"
                   }}
                 >
                   <ChevronDown
-                    className="w-3.5 h-3.5 flex-shrink-0"
+                    className="w-4 h-4 md:w-3.5 md:h-3.5 flex-shrink-0"
                     style={{
                       color: expandedCategory === group.id ? "#00f5ff" : "rgba(255,255,255,0.3)",
                       transform: expandedCategory === group.id ? "rotate(0deg)" : "rotate(-90deg)",
                       transition: "transform 0.2s"
                     }}
                   />
-                  <span className="text-xs font-cinzel text-white flex-1">{group.name}</span>
+                  <span className="text-sm md:text-xs font-cinzel text-white flex-1">{group.name}</span>
                 </motion.button>
 
                 <AnimatePresence>
@@ -93,17 +94,20 @@ export default function StudyCenter() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden mt-2"
                     >
-                      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-1.5 pl-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pl-4 md:pl-6">
                         {group.books.map(book => (
                           <motion.button
                             key={book.name}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => setSelectedBook(book.name)}
-                            className="py-1.5 px-1 rounded-lg text-[10px] font-cinzel transition-all text-center"
+                            onClick={() => {
+                              setSelectedBook(book.name);
+                              setSelectedChapter(1);
+                            }}
+                            className="py-3 md:py-1.5 px-2 rounded-lg text-sm md:text-[10px] font-cinzel transition-all text-center font-semibold"
                             style={{
-                              background: selectedBook === book.name ? "rgba(0,245,255,0.2)" : "rgba(255,255,255,0.05)",
-                              color: selectedBook === book.name ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                              border: selectedBook === book.name ? "1px solid rgba(0,245,255,0.35)" : "1px solid transparent"
+                              background: selectedBook === book.name ? "rgba(0,245,255,0.25)" : "rgba(255,255,255,0.08)",
+                              color: selectedBook === book.name ? "#00f5ff" : "rgba(255,255,255,0.5)",
+                              border: selectedBook === book.name ? "2px solid rgba(0,245,255,0.4)" : "1px solid rgba(255,255,255,0.1)"
                             }}
                           >
                             {book.abbr}
@@ -118,6 +122,30 @@ export default function StudyCenter() {
           </div>
         </div>
 
+        {/* Chapter/Verse selector */}
+        {selectedBook && (
+          <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Chapters</p>
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+              {Array.from({ length: BIBLE_BOOKS.find(b => b.name === selectedBook)?.chapters || 1 }, (_, i) => i + 1).map(ch => (
+                <motion.button
+                  key={ch}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setSelectedChapter(ch)}
+                  className="py-2 px-1 rounded-lg text-xs md:text-[10px] font-cinzel transition-all font-semibold"
+                  style={{
+                    background: selectedChapter === ch ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)",
+                    color: selectedChapter === ch ? "#fbbf24" : "rgba(255,255,255,0.4)",
+                    border: selectedChapter === ch ? "1px solid rgba(251,191,36,0.3)" : "1px solid transparent"
+                  }}
+                >
+                  {ch}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Depth selector */}
         <div className="flex gap-2">
           {depths.map(d => (
@@ -125,7 +153,7 @@ export default function StudyCenter() {
               key={d.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => setDepth(d.id)}
-              className="flex-1 py-3 rounded-xl text-xs font-cinzel transition-all"
+              className="flex-1 py-3 rounded-xl text-xs md:text-sm font-cinzel transition-all font-semibold"
               style={{
                 background: depth === d.id ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
                 color: depth === d.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
@@ -139,9 +167,10 @@ export default function StudyCenter() {
 
         {/* Outline display */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-cyan mb-2" />
-            <p className="text-xs text-white/40">Analyzing {selectedBook}...</p>
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-cyan mb-3" />
+            <p className="text-sm text-white/60">Analyzing {selectedBook} Chapter {selectedChapter}...</p>
+            <p className="text-xs text-white/30 mt-2">This may take a moment</p>
           </div>
         ) : outline ? (
           <motion.div
