@@ -10,7 +10,15 @@ export default function HeroDailyVerse() {
 
   useEffect(() => {
     base44.functions.invoke("getVerseOfTheDay", {})
-      .then(res => setVerse(res.data))
+      .then(res => {
+        const data = res.data?.dailyVerse || res.data;
+        setVerse({
+          verse_ref: data?.verse_ref || data?.ref,
+          text: data?.text,
+          reflection: data?.reflection,
+          theme: data?.theme,
+        });
+      })
       .catch(() => setVerse({
         verse_ref: "John 3:16",
         text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
