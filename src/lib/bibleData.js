@@ -74,23 +74,26 @@ export const OT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "OT");
 export const NT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "NT");
 
 export const TRANSLATIONS = [
-  // CDN-backed via helloao.org (fast, free, reliable)
+  // CDN-backed via bolls.life (fast, 100+ translations)
   { code: "KJV",    name: "King James Version",           lang: "en", source: "cdn" },
-  { code: "BSB",    name: "Berean Standard Bible",        lang: "en", source: "cdn" },
+  { code: "NIV",    name: "New International Version",    lang: "en", source: "cdn" },
+  { code: "ESV",    name: "English Standard Version",     lang: "en", source: "cdn" },
+  { code: "NLT",    name: "New Living Translation",       lang: "en", source: "cdn" },
+  { code: "NKJV",   name: "New King James Version",       lang: "en", source: "cdn" },
+  { code: "NASB",   name: "New American Standard Bible",  lang: "en", source: "cdn" },
+  { code: "AMP",    name: "Amplified Bible",              lang: "en", source: "cdn" },
+  { code: "MSG",    name: "The Message",                  lang: "en", source: "cdn" },
+  { code: "CSB",    name: "Christian Standard Bible",     lang: "en", source: "cdn" },
   { code: "ASV",    name: "American Standard Version",    lang: "en", source: "cdn" },
-  { code: "WEB",    name: "World English Bible",          lang: "en", source: "cdn" },
   { code: "BBE",    name: "Bible in Basic English",       lang: "en", source: "cdn" },
-  // LLM-generated (copyrighted translations)
-  { code: "NIV",    name: "New International Version",    lang: "en", source: "llm" },
-  { code: "ESV",    name: "English Standard Version",     lang: "en", source: "llm" },
-  { code: "NLT",    name: "New Living Translation",       lang: "en", source: "llm" },
-  { code: "NKJV",   name: "New King James Version",       lang: "en", source: "llm" },
-  { code: "NASB",   name: "New American Standard Bible",  lang: "en", source: "llm" },
-  { code: "AMP",    name: "Amplified Bible",              lang: "en", source: "llm" },
-  { code: "MSG",    name: "The Message",                  lang: "en", source: "llm" },
-  { code: "CSB",    name: "Christian Standard Bible",     lang: "en", source: "llm" },
-  // Spanish — CDN-backed
+  { code: "WEB",    name: "World English Bible",          lang: "en", source: "cdn" },
+  // CDN-backed via helloao.org (BSB poetry-aware)
+  { code: "BSB",    name: "Berean Standard Bible",        lang: "en", source: "cdn" },
+  // Spanish — CDN-backed via bolls.life
+  { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", source: "cdn" },
+  { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", source: "cdn" },
   { code: "PDDPT",  name: "Palabra de Dios para Ti",      lang: "es", source: "cdn" },
+  { code: "BTX3",   name: "Biblia Textual",               lang: "es", source: "cdn" },
 ];
 
 export const LEVELS = [
