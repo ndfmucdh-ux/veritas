@@ -21,6 +21,9 @@ import Plans from './pages/Plans';
 import Profile from './pages/Profile';
 import Study from './pages/Study';
 import VerseImageGenerator from './pages/VerseImageGenerator';
+import StudyCenter from './pages/StudyCenter';
+import PrayerJournal from './pages/PrayerJournal';
+import CommunityHub from './pages/CommunityHub';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -60,6 +63,9 @@ const AuthenticatedApp = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/study" element={<Study />} />
         <Route path="/verse-art" element={<VerseImageGenerator />} />
+        <Route path="/study-center" element={<StudyCenter />} />
+        <Route path="/prayer-journal" element={<PrayerJournal />} />
+        <Route path="/community" element={<CommunityHub />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

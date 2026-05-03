@@ -1,0 +1,30 @@
+{
+  "name": "VerseImage",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string"
+    },
+    "style_template": {
+      "type": "string",
+      "enum": [
+        "elegant",
+        "modern",
+        "minimal",
+        "artistic"
+      ],
+      "default": "elegant"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "shared_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "verse_ref",
+    "image_url"
+  ]
+}

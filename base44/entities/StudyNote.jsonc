@@ -1,0 +1,33 @@
+{
+  "name": "StudyNote",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string",
+      "description": "Markdown formatted study content"
+    },
+    "topic": {
+      "type": "string",
+      "enum": [
+        "theology",
+        "personal_reflection",
+        "exegesis"
+      ],
+      "default": "personal_reflection"
+    },
+    "related_verses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of verse references"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

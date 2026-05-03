@@ -1,0 +1,29 @@
+{
+  "name": "BibleAudioProgress",
+  "type": "object",
+  "properties": {
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "timestamp_seconds": {
+      "type": "number",
+      "default": 0
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "translation": {
+      "type": "string",
+      "default": "KJV"
+    }
+  },
+  "required": [
+    "book",
+    "chapter",
+    "translation"
+  ]
+}

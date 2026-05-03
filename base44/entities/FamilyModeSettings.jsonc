@@ -1,0 +1,28 @@
+{
+  "name": "FamilyModeSettings",
+  "type": "object",
+  "properties": {
+    "reading_level": {
+      "type": "string",
+      "enum": [
+        "kids",
+        "youth",
+        "standard"
+      ],
+      "default": "standard"
+    },
+    "content_filter": {
+      "type": "string",
+      "enum": [
+        "simplified",
+        "all"
+      ],
+      "default": "all"
+    },
+    "parental_controls_enabled": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": []
+}

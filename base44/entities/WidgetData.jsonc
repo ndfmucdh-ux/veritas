@@ -1,0 +1,24 @@
+{
+  "name": "WidgetData",
+  "type": "object",
+  "properties": {
+    "verse_of_day": {
+      "type": "string"
+    },
+    "reflection": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string",
+      "enum": [
+        "dark",
+        "light",
+        "auto"
+      ],
+      "default": "dark"
+    }
+  },
+  "required": [
+    "verse_of_day"
+  ]
+}

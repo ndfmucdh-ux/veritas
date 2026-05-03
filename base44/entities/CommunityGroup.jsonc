@@ -1,0 +1,38 @@
+{
+  "name": "CommunityGroup",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "study_group",
+        "prayer_circle",
+        "accountability",
+        "mens_group",
+        "womens_group"
+      ],
+      "default": "study_group"
+    },
+    "member_count": {
+      "type": "number",
+      "default": 1
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "leader_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "category"
+  ]
+}

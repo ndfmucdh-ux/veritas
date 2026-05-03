@@ -1,0 +1,34 @@
+{
+  "name": "PrayerJournal",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string",
+      "description": "e.g. John 3:16 KJV"
+    },
+    "prayer_text": {
+      "type": "string",
+      "description": "User's prayer content"
+    },
+    "mood": {
+      "type": "string",
+      "enum": [
+        "grateful",
+        "confessing",
+        "interceding",
+        "celebrating"
+      ],
+      "default": "grateful"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User-defined tags"
+    }
+  },
+  "required": [
+    "prayer_text"
+  ]
+}
