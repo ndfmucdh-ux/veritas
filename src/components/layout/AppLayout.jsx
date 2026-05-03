@@ -77,7 +77,7 @@ function NavPill({ to, icon: Icon, label, iconOnly = false }) {
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-inter"
         style={{ color: "rgba(255,255,255,0.4)" }}
       >
-        <Icon style={{ width: iconOnly ? 18 : 14, height: iconOnly ? 18 : 14 }} />
+        <Icon style={{ width: iconOnly ? 22 : 16, height: iconOnly ? 22 : 16 }} />
         {!iconOnly && <span className="hidden md:inline">{label}</span>}
       </motion.div>
     </Link>
