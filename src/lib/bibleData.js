@@ -74,8 +74,9 @@ export const OT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "OT");
 export const NT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "NT");
 
 export const TRANSLATIONS = [
-  // CDN-backed (fast, free, reliable)
+  // CDN-backed via helloao.org (fast, free, reliable)
   { code: "KJV",    name: "King James Version",           lang: "en", source: "cdn" },
+  { code: "BSB",    name: "Berean Standard Bible",        lang: "en", source: "cdn" },
   { code: "ASV",    name: "American Standard Version",    lang: "en", source: "cdn" },
   { code: "WEB",    name: "World English Bible",          lang: "en", source: "cdn" },
   { code: "BBE",    name: "Bible in Basic English",       lang: "en", source: "cdn" },
