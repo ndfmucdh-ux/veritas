@@ -5,7 +5,7 @@ import { Star, Target, Zap } from "lucide-react";
 import BottomNav from "./BottomNav.jsx";
 import SideNav from "./SideNav.jsx";
 import FloatingActionButton from "./FloatingActionButton.jsx";
-import VeritasLogo from "@/components/ui/VeritasLogo.jsx";
+import VeritasLogo from "@/components/ui/VeritasLogo";
 
 export default function AppLayout() {
   const location = useLocation();

@@ -6,7 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import AppLayout from '@/components/layout/AppLayout';
-import VeritasLogo from '@/components/ui/VeritasLogo.jsx';
+import VeritasLogo from '@/components/ui/VeritasLogo';
 
 // Page imports
 import Home from './pages/Home';
