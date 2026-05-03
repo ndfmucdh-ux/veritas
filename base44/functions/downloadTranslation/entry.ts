@@ -4,23 +4,24 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 const TRANSLATION_MAP = {
   // English
   KJV:    { name: "King James Version",           lang: "en" },
+  NKJV:   { name: "New King James Version",       lang: "en" },
   NIV:    { name: "New International Version",    lang: "en" },
   ESV:    { name: "English Standard Version",     lang: "en" },
   NLT:    { name: "New Living Translation",       lang: "en" },
-  NKJV:   { name: "New King James Version",       lang: "en" },
   NASB:   { name: "New American Standard Bible",  lang: "en" },
   AMP:    { name: "Amplified Bible",              lang: "en" },
-  MSG:    { name: "The Message",                  lang: "en" },
   CSB:    { name: "Christian Standard Bible",     lang: "en" },
+  MSG:    { name: "The Message",                  lang: "en" },
   ASV:    { name: "American Standard Version",    lang: "en" },
   BBE:    { name: "Bible in Basic English",       lang: "en" },
   WEB:    { name: "World English Bible",          lang: "en" },
   BSB:    { name: "Berean Standard Bible",        lang: "en" },
   // Spanish
-  NVI:    { name: "Nueva Versión Internacional",  lang: "es" },
   RVR1960:{ name: "Reina-Valera 1960",            lang: "es" },
+  NVI:    { name: "Nueva Versión Internacional",  lang: "es" },
   PDDPT:  { name: "Palabra de Dios para Ti",      lang: "es" },
   BTX3:   { name: "Biblia Textual",               lang: "es" },
+  RVA2015:{ name: "Reina Valera Actualizada 2015",lang: "es" },
 };
 
 // Book name → canonical book number (1-66) for getChapter API
