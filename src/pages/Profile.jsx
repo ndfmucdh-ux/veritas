@@ -235,7 +235,7 @@ export default function Profile() {
                 {bookmarks.length === 0
                   ? <EmptyMsg icon="🔖" text="No bookmarks yet" />
                   : bookmarks.slice(0, 6).map(bm => (
-                    <LibraryRow key={bm.id} ref={bm.verse_ref} sub={bm.translation} href={`/read?book=${bm.book}&chapter=${bm.chapter}`} color="#fbbf24" />
+                    <LibraryRow key={bm.id} verseRef={bm.verse_ref} sub={bm.translation} href={`/read?book=${bm.book}&chapter=${bm.chapter}`} color="#fbbf24" />
                   ))
                 }
                 {bookmarks.length > 6 && <SeeAll to="/library" />}
@@ -245,7 +245,7 @@ export default function Profile() {
                 {highlights.length === 0
                   ? <EmptyMsg icon="✨" text="No highlights yet" />
                   : highlights.slice(0, 6).map(hl => (
-                    <LibraryRow key={hl.id} ref={hl.verse_ref} sub={`${hl.color} · ${hl.translation}`} href={`/read?book=${hl.book}&chapter=${hl.chapter}`} color="#00f5ff" />
+                    <LibraryRow key={hl.id} verseRef={hl.verse_ref} sub={`${hl.color} · ${hl.translation}`} href={`/read?book=${hl.book}&chapter=${hl.chapter}`} color="#00f5ff" />
                   ))
                 }
                 {highlights.length > 6 && <SeeAll to="/library" />}
@@ -359,7 +359,7 @@ function Section({ label, icon: Icon, children }) {
   );
 }
 
-function LibraryRow({ ref: verseRef, sub, href, color }) {
+function LibraryRow({ verseRef, sub, href, color }) {
   return (
     <a href={href} className="flex items-center gap-3 py-2.5 border-b transition-colors hover:opacity-80" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
       <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color }} />
