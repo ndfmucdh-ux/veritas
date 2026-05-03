@@ -10,6 +10,7 @@ export default function StudyCenter() {
   const [selectedBook, setSelectedBook] = useState("John");
   const [selectedChapter, setSelectedChapter] = useState(1);
   const [expandedVerses, setExpandedVerses] = useState(new Set());
+  const [verseData, setVerseData] = useState({});
   const [outline, setOutline] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,6 +39,26 @@ export default function StudyCenter() {
       setOutline(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadVerse = async (verseKey) => {
+    if (verseData[verseKey]) return;
+    try {
+      const res = await base44.functions.invoke("getChapter", {
+        book: selectedBook,
+        chapter: selectedChapter,
+        translation: "KJV"
+      });
+      if (res.data?.verses) {
+        const versesMap = {};
+        res.data.verses.forEach(v => {
+          versesMap[`${selectedChapter}:${v.verse}`] = v.text;
+        });
+        setVerseData(prev => ({ ...prev, ...versesMap }));
+      }
+    } catch (err) {
+      console.error("Error loading verse:", err);
     }
   };
 
@@ -180,29 +201,40 @@ export default function StudyCenter() {
         {selectedChapter && !loading && (
           <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(251,191,36,0.04)", border: "1px solid rgba(251,191,36,0.12)" }}>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Chapter Verses</p>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map(verse => (
-                <motion.button
-                  key={verse}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    const newExpanded = new Set(expandedVerses);
-                    if (newExpanded.has(verse)) newExpanded.delete(verse);
-                    else newExpanded.add(verse);
-                    setExpandedVerses(newExpanded);
-                  }}
-                  className="w-full flex items-start gap-2 p-3 rounded-lg transition-all text-left"
-                  style={{
-                    background: expandedVerses.has(verse) ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.04)",
-                    borderLeft: expandedVerses.has(verse) ? "2px solid #fbbf24" : "1px solid rgba(255,255,255,0.1)"
-                  }}
-                >
-                  <span className="text-xs font-cinzel font-semibold text-white/60 mt-1 flex-shrink-0">{verse}</span>
-                  <div className="flex-1 text-left">
-                    <p className="text-xs text-white/70 line-clamp-1">Verse text preview...</p>
-                  </div>
-                </motion.button>
-              ))}
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {Array.from({ length: 15 }, (_, i) => i + 1).map(verse => {
+                const verseKey = `${selectedChapter}:${verse}`;
+                const isExpanded = expandedVerses.has(verse);
+                const text = verseData[verseKey] || "...";
+                return (
+                  <motion.button
+                    key={verse}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      if (isExpanded) {
+                        const newExpanded = new Set(expandedVerses);
+                        newExpanded.delete(verse);
+                        setExpandedVerses(newExpanded);
+                      } else {
+                        loadVerse(verseKey);
+                        const newExpanded = new Set(expandedVerses);
+                        newExpanded.add(verse);
+                        setExpandedVerses(newExpanded);
+                      }
+                    }}
+                    className="w-full flex flex-col gap-2 p-3 rounded-lg transition-all text-left"
+                    style={{
+                      background: isExpanded ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.04)",
+                      borderLeft: isExpanded ? "3px solid #fbbf24" : "1px solid rgba(255,255,255,0.1)"
+                    }}
+                  >
+                    <span className="text-xs font-cinzel font-semibold text-white/70">{selectedBook} {selectedChapter}:{verse}</span>
+                    <p className={`text-xs text-white/60 leading-relaxed ${isExpanded ? "" : "line-clamp-1"}`}>
+                      {text}
+                    </p>
+                  </motion.button>
+                );
+              })}
             </div>
           </div>
         )}
