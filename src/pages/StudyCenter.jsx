@@ -19,7 +19,8 @@ export default function StudyCenter() {
         book,
         depth
       });
-      setOutline(res.data.outline);
+      const outlineData = res.data.outline?.response || res.data.outline;
+      setOutline(outlineData);
     } catch (err) {
       console.error("Error loading outline:", err);
       setOutline(null);
