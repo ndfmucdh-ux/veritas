@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, GraduationCap } from "lucide-react";
+import { Home, BookOpen, Search, BookMarked, Heart, Users } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/read", icon: BookOpen, label: "Read" },
-  { path: "/study", icon: GraduationCap, label: "Study" },
-  { path: "/search", icon: Search, label: "Search" },
-  { path: "/library", icon: BookMarked, label: "Library" },
+  { path: "/study-center", icon: BookMarked, label: "Study" },
+  { path: "/prayer-journal", icon: Heart, label: "Prayer" },
+  { path: "/community", icon: Users, label: "Community" },
 ];
 
 export default function BottomNav() {
