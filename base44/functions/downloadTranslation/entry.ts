@@ -76,6 +76,26 @@ const QUICK_PACK_BOOKS = [
   { name: "Revelation",   chapters: 22 },
 ];
 
+async function fetchChapterWithRetry(base44, translation, book, chapter, maxRetries = 3) {
+  let lastError;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const verseRes = await base44.functions.invoke("getChapter", {
+        translation,
+        book,
+        chapter,
+      });
+      return verseRes?.data?.verses || [];
+    } catch (error) {
+      lastError = error;
+      // Exponential backoff: 500ms, 1.5s, 4s
+      const delay = 500 * Math.pow(3, attempt);
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+  return [];
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -94,18 +114,9 @@ Deno.serve(async (req) => {
 
     for (const book of books) {
       result[book.name] = {};
-      const bookNum = BOOK_NUM[book.name];
-      if (!bookNum) continue;
 
       for (let ch = 1; ch <= book.chapters; ch++) {
-        // Use getChapter backend function to fetch from bolls.life or helloao CDN
-        const verseRes = await base44.functions.invoke("getChapter", {
-          translation: translation.toUpperCase(),
-          book: book.name,
-          chapter: ch,
-        });
-
-        const verses = verseRes?.data?.verses || [];
+        const verses = await fetchChapterWithRetry(base44, translation.toUpperCase(), book.name, ch);
         if (verses.length > 0) {
           result[book.name][ch] = verses.map(v => ({
             verse: v.verse,
@@ -113,8 +124,8 @@ Deno.serve(async (req) => {
           }));
           totalChapters++;
         }
-        // Small delay to respect API
-        await new Promise(r => setTimeout(r, 50));
+        // Stagger requests: 200ms between chapters
+        await new Promise(r => setTimeout(r, 200));
       }
     }
 
