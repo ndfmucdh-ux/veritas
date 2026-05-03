@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronDown, AlertCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { BIBLE_BOOKS } from "@/lib/bibleData";
+import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 
 export default function StudyCenter() {
@@ -126,7 +126,7 @@ export default function StudyCenter() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden mt-2"
                     >
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pl-4 md:pl-6">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 pl-4 md:pl-6">
                         {group.books.map(book => (
                           <motion.button
                             key={book.name}
@@ -134,8 +134,10 @@ export default function StudyCenter() {
                             onClick={() => {
                               setSelectedBook(book.name);
                               setSelectedChapter(1);
+                              setExpandedVerses(new Set());
+                              setVerseData({});
                             }}
-                            className="py-3 md:py-1.5 px-2 rounded-lg text-sm md:text-[10px] font-cinzel transition-all text-center font-semibold"
+                            className="py-4 md:py-3 px-3 rounded-xl text-sm md:text-xs font-cinzel transition-all text-center font-bold"
                             style={{
                               background: selectedBook === book.name ? "rgba(0,245,255,0.25)" : "rgba(255,255,255,0.08)",
                               color: selectedBook === book.name ? "#00f5ff" : "rgba(255,255,255,0.5)",
@@ -154,7 +156,7 @@ export default function StudyCenter() {
           </div>
         </div>
 
-        {/* Chapter/Verse selector */}
+        {/* Chapter selector - only show if book selected */}
         {selectedBook && (
           <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Chapters</p>
@@ -274,7 +276,7 @@ export default function StudyCenter() {
             className="space-y-4 overflow-hidden"
           >
             <div className="rounded-2xl p-4 md:p-6 overflow-hidden" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.15)" }}>
-              <h2 className="font-cinzel text-lg text-white mb-4">{outline.book || selectedBook}</h2>
+              <h2 className="font-cinzel text-lg text-white mb-4">{outline.book || getTranslatedBookName(selectedBook, lang)}</h2>
               
               {outline.themes && Array.isArray(outline.themes) && outline.themes.length > 0 && (
                 <div className="mb-6">
