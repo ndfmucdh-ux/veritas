@@ -140,10 +140,14 @@ const PRESET_PLANS = [
 const LANG_FILTER = ["all", "en", "es"];
 
 export default function Plans() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCat = urlParams.get("cat") || "all";
+
   const [activePlan, setActivePlan] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [progress, setProgress] = useState([]);
   const [langFilter, setLangFilter] = useState("all");
+  const [catFilter, setCatFilter] = useState(urlCat);
   const [genLoading, setGenLoading] = useState(false);
   const [genDevo, setGenDevo] = useState(null);
 
@@ -179,7 +183,10 @@ export default function Plans() {
     }
   };
 
-  const filtered = PRESET_PLANS.filter(p => langFilter === "all" || p.lang === langFilter);
+  const filtered = PRESET_PLANS.filter(p =>
+    (langFilter === "all" || p.lang === langFilter) &&
+    (catFilter === "all" || p.category === catFilter)
+  );
 
   // ── Plan Detail View ───────────────────────────────────────────
   if (activePlan) {
@@ -385,16 +392,40 @@ export default function Plans() {
       </div>
 
       {/* Language filter */}
-      <div className="flex gap-2 px-4 pt-4 pb-2">
+      <div className="flex gap-2 px-4 pt-4 pb-2 overflow-x-auto scrollbar-hide">
         {[["all", "All", "🌍"], ["en", "English", "🇺🇸"], ["es", "Español", "🇲🇽"]].map(([v, l, flag]) => (
           <button key={v} onClick={() => setLangFilter(v)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-inter transition-all"
+            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-inter transition-all"
             style={{
               background: langFilter === v ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
               border: langFilter === v ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
               color: langFilter === v ? "#00f5ff" : "rgba(255,255,255,0.45)",
             }}>
             <span>{flag}</span><span>{l}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Category filter */}
+      <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
+        {[
+          ["all", "All", "📖"],
+          ["men", "Men", "⚔️"],
+          ["women", "Women", "🌸"],
+          ["youth", "Youth", "🔥"],
+          ["kids", "Kids", "⭐"],
+          ["marriage", "Marriage", "💍"],
+          ["new_believer", "New Believer", "🌱"],
+          ["general", "General", "🙏"],
+        ].map(([v, l, emoji]) => (
+          <button key={v} onClick={() => setCatFilter(v)}
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
+            style={{
+              background: catFilter === v ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)",
+              border: catFilter === v ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.07)",
+              color: catFilter === v ? "#fbbf24" : "rgba(255,255,255,0.4)",
+            }}>
+            <span>{emoji}</span><span>{l}</span>
           </button>
         ))}
       </div>
