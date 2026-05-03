@@ -8,6 +8,7 @@ import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
 import VerseRow from "@/components/reader/VerseRow.jsx";
 import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
 import ChapterNavigator from "@/components/reader/ChapterNavigator.jsx";
+import StudyDropdown from "@/components/reader/StudyDropdown.jsx";
 import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
@@ -30,6 +31,7 @@ export default function Read() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showParallel, setShowParallel] = useState(false);
+  const [selectedVerse, setSelectedVerse] = useState(null);
   const containerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
@@ -221,6 +223,28 @@ export default function Read() {
             scrollRef={containerRef}
           />
 
+          {/* Verse selector dropdown */}
+          {!loading && verses.length > 0 && (
+            <div className="mb-6 mt-4">
+              <StudyDropdown
+                label="Jump to Verse"
+                value={selectedVerse}
+                icon="✨"
+                onChange={(verseNum) => {
+                  setSelectedVerse(verseNum);
+                  const verseEl = document.getElementById(`verse-${verseNum}`);
+                  if (verseEl) {
+                    verseEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+                items={verses.map(v => ({
+                  value: v.verse,
+                  label: `${v.verse}. ${v.text.substring(0, 50)}${v.text.length > 50 ? "..." : ""}`
+                }))}
+              />
+            </div>
+          )}
+
           {/* Verses */}
           {loading ? (
             <div className="space-y-1">
@@ -235,21 +259,22 @@ export default function Read() {
               className="space-y-0.5"
             >
               {verses.map(v => (
-                <VerseRow
-                  key={v.verse}
-                  verseNum={v.verse}
-                  text={v.text}
-                  redLetter={v.red_letter}
-                  book={book}
-                  chapter={chapter}
-                  translation={translation}
-                  highlight={highlights[v.verse]}
-                  isBookmarked={bookmarks[v.verse]}
-                  note={notes[v.verse]}
-                  showNumbers={showNumbers}
-                  fontSize={fontSize}
-                  onUpdate={handleVerseUpdate}
-                />
+                <div key={v.verse} id={`verse-${v.verse}`}>
+                  <VerseRow
+                    verseNum={v.verse}
+                    text={v.text}
+                    redLetter={v.red_letter}
+                    book={book}
+                    chapter={chapter}
+                    translation={translation}
+                    highlight={highlights[v.verse]}
+                    isBookmarked={bookmarks[v.verse]}
+                    note={notes[v.verse]}
+                    showNumbers={showNumbers}
+                    fontSize={fontSize}
+                    onUpdate={handleVerseUpdate}
+                  />
+                </div>
               ))}
             </motion.div>
           )}

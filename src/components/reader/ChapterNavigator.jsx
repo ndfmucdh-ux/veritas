@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleData";
+import StudyDropdown from "./StudyDropdown";
 
 export default function ChapterNavigator({ book, chapter, translation, onNavigate, onTranslationChange }) {
   const [showPicker, setShowPicker] = useState(false);
@@ -145,24 +146,19 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               </div>
             )}
 
-            {/* Chapter picker */}
+            {/* Chapter picker - using StudyDropdown */}
             {pickerTab === "chapter" && (
-              <div className="p-3">
-                <p className="text-xs font-cinzel mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>{getTranslatedBookName(selectedBook, transData?.lang || "en")}</p>
-                <div className="grid grid-cols-6 gap-1.5">
-                  {Array.from({ length: selBookData?.chapters || 1 }, (_, i) => i + 1).map(ch => (
-                    <button key={ch}
-                      onClick={() => goTo(selectedBook, ch)}
-                      className="h-9 rounded-xl text-sm font-cinzel font-semibold transition-colors"
-                      style={{
-                        background: selectedBook === book && ch === chapter ? "rgba(0,245,255,0.18)" : "rgba(255,255,255,0.05)",
-                        color: selectedBook === book && ch === chapter ? "#00f5ff" : "rgba(255,255,255,0.6)",
-                        border: selectedBook === book && ch === chapter ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent"
-                      }}>
-                      {ch}
-                    </button>
-                  ))}
-                </div>
+              <div className="p-4">
+                <StudyDropdown
+                  label={getTranslatedBookName(selectedBook, transData?.lang || "en")}
+                  value={selectedBook === book ? chapter : null}
+                  icon="📖"
+                  onChange={(ch) => goTo(selectedBook, ch)}
+                  items={Array.from({ length: selBookData?.chapters || 1 }, (_, i) => i + 1).map(ch => ({
+                    value: ch,
+                    label: `Chapter ${ch}`
+                  }))}
+                />
               </div>
             )}
 
