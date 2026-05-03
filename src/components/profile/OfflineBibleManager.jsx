@@ -188,8 +188,7 @@ function TranslationRow({ translation, status, progressMsg, meta, onDownload, on
         </div>
       ) : (
         <button onClick={onDownload}
-          disabled={isError}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold transition-colors"
           style={{ background: isError ? "rgba(248,113,113,0.1)" : "rgba(0,245,255,0.1)", color: isError ? "#f87171" : "#00f5ff", border: isError ? "1px solid rgba(248,113,113,0.2)" : "1px solid rgba(0,245,255,0.2)" }}>
           <Download className="w-3 h-3" />
           {isError ? "Retry" : "Save"}
