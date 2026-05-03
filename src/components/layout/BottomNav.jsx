@@ -31,7 +31,7 @@ export default function BottomNav() {
             <motion.div animate={{ scale: active ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 22 }}>
               <Icon
                 style={{
-                  width: 26, height: 26,
+                  width: 30, height: 30,
                   color: active ? "#fbbf24" : "rgba(255,255,255,0.35)",
                 }}
               />

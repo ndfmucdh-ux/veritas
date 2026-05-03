@@ -42,7 +42,7 @@ export default function SideNav() {
             >
               <Icon
                 style={{
-                  width: 18, height: 18,
+                  width: 22, height: 22,
                   color: active ? "#fbbf24" : "rgba(255,255,255,0.35)",
                 }}
               />
