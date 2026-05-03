@@ -50,8 +50,9 @@ export default function Read() {
   const loadChapter = async () => {
     setLoading(true);
     setVerses([]);
+    // Only use hardcoded KJV samples when translation is KJV
     const key = `${book}:${chapter}`;
-    if (SAMPLE_VERSES[key]) {
+    if (translation === "KJV" && SAMPLE_VERSES[key]) {
       setVerses(SAMPLE_VERSES[key]);
       setLoading(false);
       trackReading();
@@ -81,6 +82,7 @@ export default function Read() {
   };
 
   const fetchFromApi = async () => {
+    // Only bible-api.com KJV as last resort fallback
     const slug = book.toLowerCase().replace(/\s+/g, "+");
     const r = await fetch(`https://bible-api.com/${slug}+${chapter}?translation=kjv`);
     if (r.ok) {
