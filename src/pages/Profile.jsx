@@ -10,6 +10,7 @@ import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -42,7 +43,7 @@ export default function Profile() {
   const [heroUrl, setHeroUrl] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
-  const [downloadingBible, setDownloadingBible] = useState(false);
+
   const avatarInputRef = useRef(null);
   const heroInputRef = useRef(null);
 
@@ -97,17 +98,7 @@ export default function Profile() {
     setUploadingHero(false);
   };
 
-  const handleDownloadBible = async () => {
-    setDownloadingBible(true);
-    const r = await fetch("https://bible-api.com/john+3?translation=kjv");
-    const data = await r.json();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "bible_kjv_sample.json"; a.click();
-    URL.revokeObjectURL(url);
-    setDownloadingBible(false);
-  };
+
 
   const xp = xpData?.total_xp || 0;
   const level = getLevelForXP(xp);
@@ -400,19 +391,9 @@ export default function Profile() {
               </Section>
 
               <Section label="Data & Privacy" icon={Shield}>
-                <button onClick={handleDownloadBible}
-                  className="w-full flex items-center gap-3 py-3 border-b text-left"
-                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                  <Download className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>Download Bible for Offline</p>
-                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>Save KJV translation locally</p>
-                  </div>
-                  {downloadingBible
-                    ? <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#00f5ff" }} />
-                    : <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.2)" }} />
-                  }
-                </button>
+                <div className="mb-3">
+                  <OfflineBibleManager />
+                </div>
                 <SettingLink icon={Shield} label="Private Notes" sub="All notes are encrypted by default" color="#34d399" tag="On" />
                 <SettingLink icon={StickyNote} label="Export My Data" sub="Download all highlights, notes, bookmarks" color="#a78bfa" />
               </Section>

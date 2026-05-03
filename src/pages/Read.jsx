@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check, Columns } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
+import { getOfflineVerse } from "@/lib/offlineBible";
 import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
 import VerseRow from "@/components/reader/VerseRow.jsx";
 import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
@@ -52,6 +53,14 @@ export default function Read() {
     const key = `${book}:${chapter}`;
     if (SAMPLE_VERSES[key]) {
       setVerses(SAMPLE_VERSES[key]);
+      setLoading(false);
+      trackReading();
+      return;
+    }
+    // Check offline cache first
+    const offline = getOfflineVerse(translation, book, chapter);
+    if (offline) {
+      setVerses(offline);
       setLoading(false);
       trackReading();
       return;
