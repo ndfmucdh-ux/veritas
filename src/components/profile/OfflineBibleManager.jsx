@@ -15,6 +15,7 @@ export default function OfflineBibleManager() {
   const [progress, setProgress] = useState({});       // code → message string
   const [metas, setMetas] = useState({});             // code → meta info
   const [expanded, setExpanded] = useState(false);
+  const [downloadingSet] = useState(new Set());       // track in-flight requests to prevent duplicates
 
   useEffect(() => {
     const initial = {};
@@ -30,27 +31,39 @@ export default function OfflineBibleManager() {
   }, []);
 
   const download = async (code) => {
-    setStatuses(s => ({ ...s, [code]: "downloading" }));
-    setProgress(p => ({ ...p, [code]: "Connecting to server…" }));
+    // Prevent duplicate downloads if one is already in-flight
+    if (downloadingSet.has(code)) return;
+    downloadingSet.add(code);
 
-    const t = DOWNLOADABLE_TRANSLATIONS.find(t => t.code === code);
-    setProgress(p => ({ ...p, [code]: `Downloading ${t.name}…` }));
+    try {
+      setStatuses(s => ({ ...s, [code]: "downloading" }));
+      setProgress(p => ({ ...p, [code]: "Connecting to server…" }));
 
-    const res = await base44.functions.invoke("downloadTranslation", { translation: code, pack: "quick" });
+      const t = DOWNLOADABLE_TRANSLATIONS.find(t => t.code === code);
+      setProgress(p => ({ ...p, [code]: `Downloading ${t.name}…` }));
 
-    if (res.data?.data) {
-      const saved = saveTranslation(code, res.data);
-      if (saved) {
-        setStatuses(s => ({ ...s, [code]: "done" }));
-        setMetas(m => ({ ...m, [code]: getTranslationMeta(code) }));
-        setProgress(p => ({ ...p, [code]: "" }));
+      const res = await base44.functions.invoke("downloadTranslation", { translation: code, pack: "quick" });
+
+      if (res.data?.data) {
+        const saved = saveTranslation(code, res.data);
+        if (saved) {
+          setStatuses(s => ({ ...s, [code]: "done" }));
+          setMetas(m => ({ ...m, [code]: getTranslationMeta(code) }));
+          setProgress(p => ({ ...p, [code]: "" }));
+        } else {
+          setStatuses(s => ({ ...s, [code]: "error" }));
+          setProgress(p => ({ ...p, [code]: "Storage full — free up space and retry." }));
+        }
       } else {
         setStatuses(s => ({ ...s, [code]: "error" }));
-        setProgress(p => ({ ...p, [code]: "Storage full — free up space and retry." }));
+        setProgress(p => ({ ...p, [code]: res.data?.error || "Download failed. Try again." }));
       }
-    } else {
+    } catch (err) {
       setStatuses(s => ({ ...s, [code]: "error" }));
-      setProgress(p => ({ ...p, [code]: res.data?.error || "Download failed. Try again." }));
+      const msg = err?.response?.status === 429 ? "Too many downloads. Please wait and try again." : "Download failed. Try again.";
+      setProgress(p => ({ ...p, [code]: msg }));
+    } finally {
+      downloadingSet.delete(code);
     }
   };
 
@@ -175,10 +188,11 @@ function TranslationRow({ translation, status, progressMsg, meta, onDownload, on
         </div>
       ) : (
         <button onClick={onDownload}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold transition-colors"
-          style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}>
+          disabled={isError}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ background: isError ? "rgba(248,113,113,0.1)" : "rgba(0,245,255,0.1)", color: isError ? "#f87171" : "#00f5ff", border: isError ? "1px solid rgba(248,113,113,0.2)" : "1px solid rgba(0,245,255,0.2)" }}>
           <Download className="w-3 h-3" />
-          Save
+          {isError ? "Retry" : "Save"}
         </button>
       )}
     </div>
