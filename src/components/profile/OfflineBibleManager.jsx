@@ -40,11 +40,17 @@ export default function OfflineBibleManager() {
       setProgress(p => ({ ...p, [code]: "Connecting to server…" }));
 
       const t = DOWNLOADABLE_TRANSLATIONS.find(t => t.code === code);
+      if (!t) {
+        setStatuses(s => ({ ...s, [code]: "error" }));
+        setProgress(p => ({ ...p, [code]: "Translation not found." }));
+        return;
+      }
+
       setProgress(p => ({ ...p, [code]: `Downloading ${t.name}…` }));
 
       const res = await base44.functions.invoke("downloadTranslation", { translation: code, pack: "quick" });
 
-      if (res.data?.data) {
+      if (res?.data?.data) {
         const saved = saveTranslation(code, res.data);
         if (saved) {
           setStatuses(s => ({ ...s, [code]: "done" }));
@@ -56,12 +62,17 @@ export default function OfflineBibleManager() {
         }
       } else {
         setStatuses(s => ({ ...s, [code]: "error" }));
-        setProgress(p => ({ ...p, [code]: res.data?.error || "Download failed. Try again." }));
+        setProgress(p => ({ ...p, [code]: res?.data?.error || "Download failed. Try again." }));
       }
     } catch (err) {
       setStatuses(s => ({ ...s, [code]: "error" }));
-      const msg = err?.response?.status === 429 ? "Too many downloads. Please wait and try again." : "Download failed. Try again.";
-      setProgress(p => ({ ...p, [code]: msg }));
+      if (err?.response?.status === 429) {
+        setProgress(p => ({ ...p, [code]: "Too many downloads. Please wait and try again." }));
+      } else if (err?.message?.includes("QuotaExceededError")) {
+        setProgress(p => ({ ...p, [code]: "Storage full — clear cache and retry." }));
+      } else {
+        setProgress(p => ({ ...p, [code]: "Download failed. Try again." }));
+      }
     } finally {
       downloadingSet.delete(code);
     }
