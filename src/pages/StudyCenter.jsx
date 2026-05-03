@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, BookMarked, Zap, Loader2, ChevronRight, Search } from "lucide-react";
+import { BookOpen, BookMarked, Zap, Loader2, ChevronRight, Search, ChevronDown } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS } from "@/lib/bibleData";
 
@@ -9,10 +9,11 @@ export default function StudyCenter() {
   const [outline, setOutline] = useState(null);
   const [loading, setLoading] = useState(false);
   const [depth, setDepth] = useState("overview");
-  const [notes, setNotes] = useState([]);
+  const [expandedCategory, setExpandedCategory] = useState("NT");
 
   const loadOutline = async (book) => {
     setLoading(true);
+    setOutline(null);
     try {
       const res = await base44.functions.invoke("generateBibleOutline", {
         book,
@@ -20,7 +21,8 @@ export default function StudyCenter() {
       });
       setOutline(res.data.outline);
     } catch (err) {
-      console.error(err);
+      console.error("Error loading outline:", err);
+      setOutline(null);
     } finally {
       setLoading(false);
     }
@@ -28,7 +30,18 @@ export default function StudyCenter() {
 
   useEffect(() => {
     loadOutline(selectedBook);
-  }, [depth]);
+  }, [selectedBook, depth]);
+
+  const theologicalGroups = [
+    { id: "Pentateuch", name: "📖 The Law (Pentateuch)", books: BIBLE_BOOKS.filter(b => [1,2,3,4,5].includes(b.num)) },
+    { id: "Historical", name: "⚔️ Historical Books", books: BIBLE_BOOKS.filter(b => [6,7,8,9,10,11,12,13,14,15,16,17].includes(b.num)) },
+    { id: "Wisdom", name: "💎 Wisdom & Poetry", books: BIBLE_BOOKS.filter(b => [18,19,20,21,22].includes(b.num)) },
+    { id: "Prophetic", name: "🔥 Major Prophets", books: BIBLE_BOOKS.filter(b => [23,24,25,26,27].includes(b.num)) },
+    { id: "MinorProphets", name: "⚡ Minor Prophets", books: BIBLE_BOOKS.filter(b => [28,29,30,31,32,33,34,35,36,37,38,39].includes(b.num)) },
+    { id: "Gospels", name: "✝️ The Gospels", books: BIBLE_BOOKS.filter(b => [40,41,42,43].includes(b.num)) },
+    { id: "Acts", name: "🌍 Acts & Epistles", books: BIBLE_BOOKS.filter(b => [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65].includes(b.num)) },
+    { id: "Revelation", name: "👑 Revelation", books: BIBLE_BOOKS.filter(b => b.num === 66) }
+  ];
 
   const depths = [
     { id: "overview", label: "Overview", icon: "📄" },
@@ -45,27 +58,61 @@ export default function StudyCenter() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Book selector */}
+        {/* Book selector - Theological organization */}
         <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Select Book</p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-            {BIBLE_BOOKS.map(book => (
-              <motion.button
-                key={book.name}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  setSelectedBook(book.name);
-                  loadOutline(book.name);
-                }}
-                className="py-2 px-2 rounded-lg text-xs font-cinzel transition-all text-center"
-                style={{
-                  background: selectedBook === book.name ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                  color: selectedBook === book.name ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                  border: selectedBook === book.name ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
-                }}
-              >
-                {book.abbr}
-              </motion.button>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4 text-white/40">Biblical Books</p>
+          <div className="space-y-3">
+            {theologicalGroups.map(group => (
+              <div key={group.id}>
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setExpandedCategory(expandedCategory === group.id ? null : group.id)}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-left"
+                  style={{
+                    background: expandedCategory === group.id ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)",
+                    borderLeft: expandedCategory === group.id ? "2px solid #00f5ff" : "2px solid transparent"
+                  }}
+                >
+                  <ChevronDown
+                    className="w-3.5 h-3.5 flex-shrink-0"
+                    style={{
+                      color: expandedCategory === group.id ? "#00f5ff" : "rgba(255,255,255,0.3)",
+                      transform: expandedCategory === group.id ? "rotate(0deg)" : "rotate(-90deg)",
+                      transition: "transform 0.2s"
+                    }}
+                  />
+                  <span className="text-xs font-cinzel text-white flex-1">{group.name}</span>
+                </motion.button>
+
+                <AnimatePresence>
+                  {expandedCategory === group.id && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden mt-2"
+                    >
+                      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-1.5 pl-6">
+                        {group.books.map(book => (
+                          <motion.button
+                            key={book.name}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setSelectedBook(book.name)}
+                            className="py-1.5 px-1 rounded-lg text-[10px] font-cinzel transition-all text-center"
+                            style={{
+                              background: selectedBook === book.name ? "rgba(0,245,255,0.2)" : "rgba(255,255,255,0.05)",
+                              color: selectedBook === book.name ? "#00f5ff" : "rgba(255,255,255,0.4)",
+                              border: selectedBook === book.name ? "1px solid rgba(0,245,255,0.35)" : "1px solid transparent"
+                            }}
+                          >
+                            {book.abbr}
+                          </motion.button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             ))}
           </div>
         </div>
@@ -91,8 +138,9 @@ export default function StudyCenter() {
 
         {/* Outline display */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-cyan" />
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin text-cyan mb-2" />
+            <p className="text-xs text-white/40">Analyzing {selectedBook}...</p>
           </div>
         ) : outline ? (
           <motion.div
