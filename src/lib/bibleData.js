@@ -73,6 +73,83 @@ export const BIBLE_BOOKS = [
 export const OT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "OT");
 export const NT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "NT");
 
+// Map English book names to translated names
+const BOOK_NAMES_ES = {
+  "Genesis": "Génesis", "Exodus": "Éxodo", "Leviticus": "Levítico", "Numbers": "Números", "Deuteronomy": "Deuteronomio",
+  "Joshua": "Josué", "Judges": "Jueces", "Ruth": "Rut", "1 Samuel": "1 Samuel", "2 Samuel": "2 Samuel",
+  "1 Kings": "1 Reyes", "2 Kings": "2 Reyes", "1 Chronicles": "1 Crónicas", "2 Chronicles": "2 Crónicas",
+  "Ezra": "Esdras", "Nehemiah": "Nehemías", "Esther": "Ester", "Job": "Job", "Psalms": "Salmos", "Proverbs": "Proverbios",
+  "Ecclesiastes": "Eclesiastés", "Song of Solomon": "Cantares", "Isaiah": "Isaías", "Jeremiah": "Jeremías",
+  "Lamentations": "Lamentaciones", "Ezekiel": "Ezequiel", "Daniel": "Daniel", "Hosea": "Oseas", "Joel": "Joel",
+  "Amos": "Amós", "Obadiah": "Abdías", "Jonah": "Jonás", "Micah": "Miqueas", "Nahum": "Nahúm",
+  "Habakkuk": "Habacuc", "Zephaniah": "Sofonías", "Haggai": "Hageo", "Zechariah": "Zacarías", "Malachi": "Malaquías",
+  "Matthew": "Mateo", "Mark": "Marcos", "Luke": "Lucas", "John": "Juan", "Acts": "Hechos", "Romans": "Romanos",
+  "1 Corinthians": "1 Corintios", "2 Corinthians": "2 Corintios", "Galatians": "Gálatas", "Ephesians": "Efesios",
+  "Philippians": "Filipenses", "Colossians": "Colosenses", "1 Thessalonians": "1 Tesalonicenses", "2 Thessalonians": "2 Tesalonicenses",
+  "1 Timothy": "1 Timoteo", "2 Timothy": "2 Timoteo", "Titus": "Tito", "Philemon": "Filemón", "Hebrews": "Hebreos",
+  "James": "Santiago", "1 Peter": "1 Pedro", "2 Peter": "2 Pedro", "1 John": "1 Juan", "2 John": "2 Juan",
+  "3 John": "3 Juan", "Jude": "Judas", "Revelation": "Apocalipsis",
+};
+
+const BOOK_NAMES_PT = {
+  "Genesis": "Gênesis", "Exodus": "Êxodo", "Leviticus": "Levítico", "Numbers": "Números", "Deuteronomy": "Deuteronômio",
+  "Joshua": "Josué", "Judges": "Juízes", "Ruth": "Rute", "1 Samuel": "1 Samuel", "2 Samuel": "2 Samuel",
+  "1 Kings": "1 Reis", "2 Kings": "2 Reis", "1 Chronicles": "1 Crônicas", "2 Chronicles": "2 Crônicas",
+  "Ezra": "Esdras", "Nehemiah": "Neemias", "Esther": "Ester", "Job": "Jó", "Psalms": "Salmos", "Proverbs": "Provérbios",
+  "Ecclesiastes": "Eclesiastes", "Song of Solomon": "Cântico dos Cânticos", "Isaiah": "Isaías", "Jeremiah": "Jeremias",
+  "Lamentations": "Lamentações", "Ezekiel": "Ezequiel", "Daniel": "Daniel", "Hosea": "Oséias", "Joel": "Joel",
+  "Amos": "Amós", "Obadiah": "Obadias", "Jonah": "Jonas", "Micah": "Miquéias", "Nahum": "Naum",
+  "Habakkuk": "Habacuque", "Zephaniah": "Sofonias", "Haggai": "Ageu", "Zechariah": "Zacarias", "Malachi": "Malaquias",
+  "Matthew": "Mateus", "Mark": "Marcos", "Luke": "Lucas", "John": "João", "Acts": "Atos", "Romans": "Romanos",
+  "1 Corinthians": "1 Coríntios", "2 Corinthians": "2 Coríntios", "Galatians": "Gálatas", "Ephesians": "Efésios",
+  "Philippians": "Filipenses", "Colossians": "Colossenses", "1 Thessalonians": "1 Tessalonicenses", "2 Thessalonians": "2 Tessalonicenses",
+  "1 Timothy": "1 Timóteo", "2 Timothy": "2 Timóteo", "Titus": "Tito", "Philemon": "Filemom", "Hebrews": "Hebreus",
+  "James": "Tiago", "1 Peter": "1 Pedro", "2 Peter": "2 Pedro", "1 John": "1 João", "2 John": "2 João",
+  "3 John": "3 João", "Jude": "Judas", "Revelation": "Apocalipse",
+};
+
+const BOOK_NAMES_FR = {
+  "Genesis": "Genèse", "Exodus": "Exode", "Leviticus": "Lévitique", "Numbers": "Nombres", "Deuteronomy": "Deutéronome",
+  "Joshua": "Josué", "Judges": "Juges", "Ruth": "Ruth", "1 Samuel": "1 Samuel", "2 Samuel": "2 Samuel",
+  "1 Kings": "1 Rois", "2 Kings": "2 Rois", "1 Chronicles": "1 Chroniques", "2 Chronicles": "2 Chroniques",
+  "Ezra": "Esdras", "Nehemiah": "Néhémie", "Esther": "Esther", "Job": "Job", "Psalms": "Psaumes", "Proverbs": "Proverbes",
+  "Ecclesiastes": "Ecclésiaste", "Song of Solomon": "Cantique des Cantiques", "Isaiah": "Ésaïe", "Jeremiah": "Jérémie",
+  "Lamentations": "Lamentations", "Ezekiel": "Ézéchiel", "Daniel": "Daniel", "Hosea": "Osée", "Joel": "Joël",
+  "Amos": "Amos", "Obadiah": "Abdias", "Jonah": "Jonas", "Micah": "Michée", "Nahum": "Nahum",
+  "Habakkuk": "Habacuc", "Zephaniah": "Sophonie", "Haggai": "Aggée", "Zechariah": "Zacharie", "Malachi": "Malachie",
+  "Matthew": "Matthieu", "Mark": "Marc", "Luke": "Luc", "John": "Jean", "Acts": "Actes", "Romans": "Romains",
+  "1 Corinthians": "1 Corinthiens", "2 Corinthians": "2 Corinthiens", "Galatians": "Galates", "Ephesians": "Éphésiens",
+  "Philippians": "Philippiens", "Colossians": "Colossiens", "1 Thessalonians": "1 Thessaloniciens", "2 Thessalonians": "2 Thessaloniciens",
+  "1 Timothy": "1 Timothée", "2 Timothy": "2 Timothée", "Titus": "Tite", "Philemon": "Philémon", "Hebrews": "Hébreux",
+  "James": "Jacques", "1 Peter": "1 Pierre", "2 Peter": "2 Pierre", "1 John": "1 Jean", "2 John": "2 Jean",
+  "3 John": "3 Jean", "Jude": "Jude", "Revelation": "Apocalypse",
+};
+
+const BOOK_NAMES_IT = {
+  "Genesis": "Genesi", "Exodus": "Esodo", "Leviticus": "Levitico", "Numbers": "Numeri", "Deuteronomy": "Deuteronomio",
+  "Joshua": "Giosuè", "Judges": "Giudici", "Ruth": "Rut", "1 Samuel": "1 Samuele", "2 Samuel": "2 Samuele",
+  "1 Kings": "1 Re", "2 Kings": "2 Re", "1 Chronicles": "1 Cronache", "2 Chronicles": "2 Cronache",
+  "Ezra": "Esdra", "Nehemiah": "Neemia", "Esther": "Ester", "Job": "Giobbe", "Psalms": "Salmi", "Proverbs": "Proverbi",
+  "Ecclesiastes": "Ecclesiaste", "Song of Solomon": "Cantico dei Cantici", "Isaiah": "Isaia", "Jeremiah": "Geremia",
+  "Lamentations": "Lamentazioni", "Ezekiel": "Ezechiele", "Daniel": "Daniele", "Hosea": "Osea", "Joel": "Gioele",
+  "Amos": "Amos", "Obadiah": "Abdia", "Jonah": "Giona", "Micah": "Michea", "Nahum": "Naum",
+  "Habakkuk": "Abacuc", "Zephaniah": "Sofonia", "Haggai": "Aggeo", "Zechariah": "Zaccaria", "Malachi": "Malachia",
+  "Matthew": "Matteo", "Mark": "Marco", "Luke": "Luca", "John": "Giovanni", "Acts": "Atti", "Romans": "Romani",
+  "1 Corinthians": "1 Corinzi", "2 Corinthians": "2 Corinzi", "Galatians": "Galati", "Ephesians": "Efesini",
+  "Philippians": "Filippesi", "Colossians": "Colossesi", "1 Thessalonians": "1 Tessalonicesi", "2 Thessalonians": "2 Tessalonicesi",
+  "1 Timothy": "1 Timoteo", "2 Timothy": "2 Timoteo", "Titus": "Tito", "Philemon": "Filemone", "Hebrews": "Ebrei",
+  "James": "Giacomo", "1 Peter": "1 Pietro", "2 Peter": "2 Pietro", "1 John": "1 Giovanni", "2 John": "2 Giovanni",
+  "3 John": "3 Giovanni", "Jude": "Giuda", "Revelation": "Apocalisse",
+};
+
+export const getTranslatedBookName = (englishName, lang) => {
+  if (lang === "es") return BOOK_NAMES_ES[englishName] || englishName;
+  if (lang === "pt") return BOOK_NAMES_PT[englishName] || englishName;
+  if (lang === "fr") return BOOK_NAMES_FR[englishName] || englishName;
+  if (lang === "it") return BOOK_NAMES_IT[englishName] || englishName;
+  return englishName;
+};
+
 export const TRANSLATIONS = [
   // English (42 versions)
   { code: "KJV",    name: "King James Version",           lang: "en", source: "cdn" },

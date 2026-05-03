@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
+import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleData";
 
 export default function ChapterNavigator({ book, chapter, translation, onNavigate, onTranslationChange }) {
   const [showPicker, setShowPicker] = useState(false);
@@ -10,6 +10,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
   const totalChapters = bookData?.chapters || 1;
+  const transData = TRANSLATIONS.find(t => t.code === translation);
+  const displayBook = getTranslatedBookName(book, transData?.lang || "en");
 
   const goTo = (newBook, newChapter) => {
     onNavigate(newBook, newChapter);
@@ -59,7 +61,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
           className="flex-1 flex items-center justify-center gap-2 h-9 rounded-xl font-cinzel text-sm font-semibold"
           style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.85)" }}
         >
-          {book} {chapter}
+          {displayBook} {chapter}
           <ChevronDown className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.4)", transform: showPicker ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
         </motion.button>
 
@@ -118,7 +120,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                           color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.6)",
                           border: selectedBook === b.name ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
                         }}>
-                        {b.name}
+                        {getTranslatedBookName(b.name, transData?.lang || "en")}
                       </button>
                     ))}
                   </div>
@@ -135,7 +137,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                           color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.6)",
                           border: selectedBook === b.name ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
                         }}>
-                        {b.name}
+                        {getTranslatedBookName(b.name, transData?.lang || "en")}
                       </button>
                     ))}
                   </div>
@@ -146,7 +148,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
             {/* Chapter picker */}
             {pickerTab === "chapter" && (
               <div className="p-3">
-                <p className="text-xs font-cinzel mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>{selectedBook}</p>
+                <p className="text-xs font-cinzel mb-3" style={{ color: "rgba(255,255,255,0.5)" }}>{getTranslatedBookName(selectedBook, transData?.lang || "en")}</p>
                 <div className="grid grid-cols-6 gap-1.5">
                   {Array.from({ length: selBookData?.chapters || 1 }, (_, i) => i + 1).map(ch => (
                     <button key={ch}
@@ -166,19 +168,33 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
             {/* Translation picker */}
             {pickerTab === "translation" && (
-              <div className="p-3 space-y-1.5">
-                {TRANSLATIONS.map(t => (
-                  <button key={t.code}
-                    onClick={() => { onTranslationChange?.(t.code); setShowPicker(false); }}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-colors"
-                    style={{
-                      background: translation === t.code ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.03)",
-                      border: translation === t.code ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.06)"
-                    }}>
-                    <span className="font-cinzel text-sm font-semibold" style={{ color: translation === t.code ? "#00f5ff" : "rgba(255,255,255,0.8)" }}>{t.code}</span>
-                    <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{t.name}</span>
-                  </button>
-                ))}
+              <div className="p-3 space-y-3">
+                {["en", "es", "pt", "fr", "it"].map(lang => {
+                  const langTranslations = TRANSLATIONS.filter(t => t.lang === lang);
+                  if (langTranslations.length === 0) return null;
+                  const langFlags = { en: "🇬🇧", es: "🇲🇽", pt: "🇧🇷", fr: "🇫🇷", it: "🇮🇹" };
+                  return (
+                    <div key={lang}>
+                      <p className="text-[10px] font-cinzel uppercase tracking-widest px-1 mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
+                        {langFlags[lang]} {lang.toUpperCase()}
+                      </p>
+                      <div className="space-y-1.5">
+                        {langTranslations.map(t => (
+                          <button key={t.code}
+                            onClick={() => { onTranslationChange?.(t.code); setShowPicker(false); }}
+                            className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-colors"
+                            style={{
+                              background: translation === t.code ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.03)",
+                              border: translation === t.code ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.06)"
+                            }}>
+                            <span className="font-cinzel text-sm font-semibold" style={{ color: translation === t.code ? "#00f5ff" : "rgba(255,255,255,0.8)" }}>{t.code}</span>
+                            <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{t.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </motion.div>
