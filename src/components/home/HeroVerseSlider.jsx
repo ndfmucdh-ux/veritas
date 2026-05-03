@@ -51,7 +51,8 @@ export default function HeroVerseSlider() {
 
   // Update slides when language changes
   useEffect(() => {
-    setSlides(FALLBACK_VERSES[lang] || FALLBACK_VERSES.en);
+    const next = FALLBACK_VERSES[lang] || FALLBACK_VERSES.en;
+    setSlides(next);
     setCurrent(0);
   }, [lang]);
 
@@ -86,7 +87,7 @@ export default function HeroVerseSlider() {
     setCurrent(c => (c + dir + slides.length) % slides.length);
   };
 
-  const verse = slides[current];
+  const verse = slides[current] || slides[0] || FALLBACK_VERSES.en[0];
   const parts = verse.verse_ref?.split(" ") || [];
   const chapterVerse = parts[parts.length - 1] || "1:1";
   const bookName = parts.slice(0, -1).join(" ");
