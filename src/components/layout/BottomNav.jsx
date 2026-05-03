@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, GraduationCap, Zap } from "lucide-react";
+import { Home, BookOpen, Search, BookMarked, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
@@ -8,7 +8,6 @@ const NAV_ITEMS = [
   { path: "/study", icon: GraduationCap, label: "Study" },
   { path: "/search", icon: Search, label: "Search" },
   { path: "/library", icon: BookMarked, label: "Library" },
-  { path: "/profile", icon: Zap, label: "Profile" },
 ];
 
 export default function BottomNav() {
@@ -32,7 +31,7 @@ export default function BottomNav() {
             <motion.div animate={{ scale: active ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 22 }}>
               <Icon
                 style={{
-                  width: 20, height: 20,
+                  width: 26, height: 26,
                   color: active ? "#fbbf24" : "rgba(255,255,255,0.35)",
                 }}
               />
