@@ -7,6 +7,7 @@ import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
+
 import { getLevelForXP, LEVELS } from "@/lib/bibleData";
 import { pageTransition } from "@/hooks/useAnimations";
 import { useLang } from "@/lib/LanguageContext";
@@ -61,7 +62,7 @@ export default function Home() {
             </h1>
           </div>
           <p className="font-inter text-sm pl-9" style={{ color: "rgba(255,255,255,0.3)" }}>
-            "Know the Truth. Live the Truth."
+            "{t.slogan}"
           </p>
         </motion.div>
 
@@ -81,7 +82,7 @@ export default function Home() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-cinzel text-sm font-semibold text-white/90">{t.continueReading}</p>
-                <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>Pick up where you left off</p>
+                <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{t.pickUp}</p>
               </div>
               <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(0,245,255,0.5)" }} />
             </motion.div>
@@ -96,7 +97,7 @@ export default function Home() {
 
         {/* Category Cards */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.28 }}>
-          <SectionHeader label="For You" />
+          <SectionHeader label={t.forYou} />
           <CategoryCards />
         </motion.div>
 
@@ -108,7 +109,7 @@ export default function Home() {
               { label: t.studyCenter, emoji: "📚", path: "/study", color: "rgba(0,245,255,0.08)", border: "rgba(0,245,255,0.15)" },
               { label: t.readingPlans, emoji: "📖", path: "/plans", color: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)" },
               { label: t.discover, emoji: "✨", path: "/discover", color: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.15)" },
-              { label: "Verse Art", emoji: "🖼️", path: "/verse-art", color: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.15)" },
+              { label: t.verseArt, emoji: "🖼️", path: "/verse-art", color: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.15)" },
             ].map((s, i) => (
               <Link key={s.path} to={s.path}>
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
@@ -127,7 +128,7 @@ export default function Home() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
           <SectionHeader label={t.belovedVerses} linkTo="/search" linkLabel={t.search} />
           <div className="space-y-3">
-            {FEATURED_VERSES.slice(0, 5).map((v, i) => (
+            {(t.featuredVerses || FEATURED_VERSES).slice(0, 5).map((v, i) => (
               <motion.div key={v.ref} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 + i * 0.07 }}>
                 <VersePreviewCard verse={v} />
               </motion.div>
@@ -137,7 +138,7 @@ export default function Home() {
 
         {/* Quick start books */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}>
-          <SectionHeader label={t.startReading} linkTo="/read" linkLabel="All books" />
+          <SectionHeader label={t.startReading} linkTo="/read" linkLabel={t.allBooks} />
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             {["John", "Psalms", "Proverbs", "Romans", "Genesis", "Matthew", "Isaiah"].map((name, i) => (
               <Link key={name} to={`/read?book=${name}&chapter=1`}>

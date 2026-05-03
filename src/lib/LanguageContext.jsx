@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 const T = {
   en: {
-    home: "Home", read: "Read", search: "Search", library: "Library",
+    home: "Home", read: "Read", readBtn: "Read", search: "Search", library: "Library",
     plans: "Plans", discover: "Discover", profile: "Profile", study: "Study",
     verseOfTheDay: "Verse of the Day", continueReading: "Continue Reading",
     goodMorning: "Good morning", goodAfternoon: "Good afternoon", goodEvening: "Good evening",
@@ -16,9 +16,16 @@ const T = {
     marriage: "Marriage", newBeliever: "New Believer",
     searchPlaceholder: "Search by topic, keyword, or verse…",
     languageLabel: "EN",
+    slogan: "Know the Truth. Live the Truth.",
+    forYou: "For You",
+    allBooks: "All books",
+    pickUp: "Pick up where you left off",
+    verseArt: "Verse Art",
+    // Featured verses in Spanish (used when lang=es)
+    featuredVerses: null, // null = use default English ones
   },
   es: {
-    home: "Inicio", read: "Leer", search: "Buscar", library: "Biblioteca",
+    home: "Inicio", read: "Leer", readBtn: "Leer", search: "Buscar", library: "Biblioteca",
     plans: "Planes", discover: "Descubrir", profile: "Perfil", study: "Estudio",
     verseOfTheDay: "Versículo del Día", continueReading: "Continuar Leyendo",
     goodMorning: "Buenos días", goodAfternoon: "Buenas tardes", goodEvening: "Buenas noches",
@@ -32,6 +39,18 @@ const T = {
     marriage: "Matrimonio", newBeliever: "Nuevo Creyente",
     searchPlaceholder: "Busca por tema, palabra clave o versículo…",
     languageLabel: "ES",
+    slogan: "Conoce la Verdad. Vive la Verdad.",
+    forYou: "Para Ti",
+    allBooks: "Todos los libros",
+    pickUp: "Continúa donde lo dejaste",
+    verseArt: "Arte de Versículos",
+    featuredVerses: [
+      { ref: "Juan 3:16", text: "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.", theme: "amor" },
+      { ref: "Salmo 23:1", text: "El Señor es mi pastor; nada me faltará.", theme: "confianza" },
+      { ref: "Filipenses 4:13", text: "Todo lo puedo en Cristo que me fortalece.", theme: "fortaleza" },
+      { ref: "Proverbios 3:5-6", text: "Confía en el Señor con todo tu corazón, y no te apoyes en tu propia prudencia.", theme: "sabiduría" },
+      { ref: "Romanos 8:28", text: "Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien.", theme: "esperanza" },
+    ],
   },
 };
 

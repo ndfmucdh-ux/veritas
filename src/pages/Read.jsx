@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check } from "lucide-react";
+import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check, Columns } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
@@ -9,6 +9,7 @@ import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
 import ChapterNavigator from "@/components/reader/ChapterNavigator.jsx";
 import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
+import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 
 export default function Read() {
   const params = new URLSearchParams(window.location.search);
@@ -27,6 +28,7 @@ export default function Read() {
   const [notes, setNotes] = useState({});
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showParallel, setShowParallel] = useState(false);
   const containerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
@@ -147,6 +149,7 @@ export default function Read() {
           <IconBtn onClick={() => copyChapter()} title="Copy chapter">
             {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
           </IconBtn>
+          <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings}><Settings className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setImmersive(v => !v)}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -248,6 +251,19 @@ export default function Read() {
           )}
         </div>
       </div>
+
+      {/* Parallel view */}
+      <AnimatePresence>
+        {showParallel && (
+          <ParallelPanel
+            book={book}
+            chapter={chapter}
+            primaryTranslation={translation}
+            primaryVerses={verses}
+            onClose={() => setShowParallel(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Scroll to top */}
       <AnimatePresence>

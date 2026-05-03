@@ -82,7 +82,13 @@ export default function VerseRow({
         onClick={() => setMenuOpen(v => !v)}
         whileTap={{ scale: 0.995 }}
       >
-        <span className="font-inter leading-relaxed select-text" style={{ fontSize, color: redLetter ? "#f87171" : "rgba(255,255,255,0.88)" }}>
+        <span className="font-inter leading-relaxed select-text"
+          style={{
+            fontSize,
+            color: redLetter ? "#f87171" : "rgba(255,255,255,0.88)",
+            textShadow: redLetter ? "0 0 18px rgba(248,113,113,0.45), 0 0 8px rgba(248,113,113,0.25)" : "none",
+            transition: "text-shadow 0.3s ease",
+          }}>
           {showNumbers && (
             <span className="text-xs mr-2 font-cinzel select-none" style={{ color: "rgba(255,255,255,0.25)", verticalAlign: "super", fontSize: "10px" }}>
               {verseNum}
