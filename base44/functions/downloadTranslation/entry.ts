@@ -77,7 +77,6 @@ const QUICK_PACK_BOOKS = [
 ];
 
 async function fetchChapterWithRetry(base44, translation, book, chapter, maxRetries = 3) {
-  let lastError;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const verseRes = await base44.functions.invoke("getChapter", {
@@ -87,10 +86,16 @@ async function fetchChapterWithRetry(base44, translation, book, chapter, maxRetr
       });
       return verseRes?.data?.verses || [];
     } catch (error) {
-      lastError = error;
-      // Exponential backoff: 500ms, 1.5s, 4s
-      const delay = 500 * Math.pow(3, attempt);
-      await new Promise(r => setTimeout(r, delay));
+      const is429 = error?.response?.status === 429 || error?.message?.includes("429");
+      const is500 = error?.response?.status === 500 || error?.message?.includes("Rate limit");
+      
+      if ((is429 || is500) && attempt < maxRetries - 1) {
+        // Aggressive backoff for rate limits: 1s, 3s, 7s
+        const delay = 1000 * (Math.pow(2, attempt) + attempt);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+      return [];
     }
   }
   return [];
@@ -124,8 +129,8 @@ Deno.serve(async (req) => {
           }));
           totalChapters++;
         }
-        // Stagger requests: 200ms between chapters
-        await new Promise(r => setTimeout(r, 200));
+        // Stagger requests: 500ms between chapters to avoid rate limits
+        await new Promise(r => setTimeout(r, 500));
       }
     }
 
