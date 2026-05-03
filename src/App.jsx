@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import AppLayout from '@/components/layout/AppLayout';
 import VeritasLogo from '@/components/ui/VeritasLogo';
+import { LanguageProvider } from '@/lib/LanguageContext';
 
 // Page imports
 import Home from './pages/Home';
@@ -16,6 +17,8 @@ import Library from './pages/Library';
 import Discover from './pages/Discover';
 import Plans from './pages/Plans';
 import Profile from './pages/Profile';
+import Study from './pages/Study';
+import VerseImageGenerator from './pages/VerseImageGenerator';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -53,6 +56,8 @@ const AuthenticatedApp = () => {
         <Route path="/discover" element={<Discover />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/study" element={<Study />} />
+        <Route path="/verse-art" element={<VerseImageGenerator />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
@@ -62,12 +67,14 @@ const AuthenticatedApp = () => {
 function App() {
   return (
     <AuthProvider>
+      <LanguageProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <AuthenticatedApp />
         </Router>
         <Toaster />
       </QueryClientProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 }

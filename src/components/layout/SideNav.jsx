@@ -1,14 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, User, Map, Compass } from "lucide-react";
+import { Home, BookOpen, Search, BookMarked, User, Map, Compass, GraduationCap, Image } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/read", icon: BookOpen, label: "Read" },
+  { path: "/study", icon: GraduationCap, label: "Study" },
   { path: "/search", icon: Search, label: "Search" },
   { path: "/library", icon: BookMarked, label: "Library" },
   { path: "/plans", icon: Map, label: "Plans" },
   { path: "/discover", icon: Compass, label: "Discover" },
+  { path: "/verse-art", icon: Image, label: "Verse Art" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
 

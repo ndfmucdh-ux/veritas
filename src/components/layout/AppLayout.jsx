@@ -6,6 +6,7 @@ import BottomNav from "./BottomNav.jsx";
 import SideNav from "./SideNav.jsx";
 import FloatingActionButton from "./FloatingActionButton.jsx";
 import VeritasLogo from "@/components/ui/VeritasLogo";
+import { useLang } from "@/lib/LanguageContext";
 
 export default function AppLayout() {
   const location = useLocation();
@@ -35,6 +36,7 @@ export default function AppLayout() {
           </Link>
 
           <div className="flex items-center gap-1">
+            <LangToggle />
             <NavPill to="/plans" icon={Target} label="Plans" />
             <NavPill to="/discover" icon={Star} label="Discover" />
             <NavPill to="/profile" icon={Zap} iconOnly />
@@ -49,6 +51,19 @@ export default function AppLayout() {
       {!isImmersive && <BottomNav />}
       {location.pathname === "/read" && <FloatingActionButton />}
     </div>
+  );
+}
+
+function LangToggle() {
+  const { lang, setLang } = useLang();
+  return (
+    <button
+      onClick={() => setLang(lang === "en" ? "es" : "en")}
+      className="px-2.5 py-1.5 rounded-xl text-[10px] font-cinzel font-bold tracking-widest transition-colors"
+      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.08)" }}
+    >
+      {lang === "en" ? "ES" : "EN"}
+    </button>
   );
 }
 
