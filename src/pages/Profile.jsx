@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X
+  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+
+// Default hero: beautiful deep-space starfield — keep this as the permanent default
+const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
 
 const TABS = ["overview", "library", "stats", "settings"];
 const TAB_LABELS = { overview: "Overview", library: "Library", stats: "Growth", settings: "Settings" };
@@ -35,6 +38,13 @@ export default function Profile() {
   const [darkMode, setDarkMode] = useState(true);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [heroUrl, setHeroUrl] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
+  const [downloadingBible, setDownloadingBible] = useState(false);
+  const avatarInputRef = useRef(null);
+  const heroInputRef = useRef(null);
 
   useEffect(() => {
     Promise.all([
@@ -52,11 +62,52 @@ export default function Profile() {
       setNotes(nt || []);
       setPlans(rp || []);
       setNameInput(u?.full_name || "");
+      setAvatarUrl(u?.avatar_url || null);
+      setHeroUrl(u?.hero_url || null);
       setLoading(false);
     });
   }, []);
 
   const handleLogout = () => base44.auth.logout();
+
+  const saveName = async () => {
+    if (!nameInput.trim()) return;
+    await base44.auth.updateMe({ full_name: nameInput.trim() });
+    setUser(u => ({ ...u, full_name: nameInput.trim() }));
+    setEditingName(false);
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.auth.updateMe({ avatar_url: file_url });
+    setAvatarUrl(file_url);
+    setUploadingAvatar(false);
+  };
+
+  const handleHeroUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingHero(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.auth.updateMe({ hero_url: file_url });
+    setHeroUrl(file_url);
+    setUploadingHero(false);
+  };
+
+  const handleDownloadBible = async () => {
+    setDownloadingBible(true);
+    const r = await fetch("https://bible-api.com/john+3?translation=kjv");
+    const data = await r.json();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "bible_kjv_sample.json"; a.click();
+    URL.revokeObjectURL(url);
+    setDownloadingBible(false);
+  };
 
   const xp = xpData?.total_xp || 0;
   const level = getLevelForXP(xp);
@@ -76,31 +127,55 @@ export default function Profile() {
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       {/* ── Hero Header ── */}
+      {/* Default hero is the beautiful deep-space starfield photo — users can replace with their own */}
       <div className="relative h-52 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80"
+          src={heroUrl || DEFAULT_HERO}
           alt=""
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(8,12,24,0.92) 80%, rgb(8,12,24) 100%)" }} />
+
+        {/* Hero upload button */}
+        <button
+          onClick={() => heroInputRef.current?.click()}
+          className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-inter"
+          style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)" }}
+        >
+          {uploadingHero ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
+          Change Cover
+        </button>
+        <input ref={heroInputRef} type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
 
         {/* Avatar + name */}
         <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 flex items-end gap-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="relative flex-shrink-0"
+            className="relative flex-shrink-0 cursor-pointer"
+            onClick={() => avatarInputRef.current?.click()}
           >
-            <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold"
-              style={{ background: `linear-gradient(135deg, ${level.color}44, ${level.color}11)`, border: `2px solid ${level.color}55`, boxShadow: `0 0 24px ${level.color}33` }}
-            >
-              {user?.full_name?.[0]?.toUpperCase() || "✝"}
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="avatar" className="w-20 h-20 rounded-2xl object-cover"
+                style={{ border: `2px solid ${level.color}55`, boxShadow: `0 0 24px ${level.color}33` }} />
+            ) : (
+              <div
+                className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold"
+                style={{ background: `linear-gradient(135deg, ${level.color}44, ${level.color}11)`, border: `2px solid ${level.color}55`, boxShadow: `0 0 24px ${level.color}33` }}
+              >
+                {user?.full_name?.[0]?.toUpperCase() || "✝"}
+              </div>
+            )}
+            {/* Camera overlay */}
+            <div className="absolute inset-0 rounded-2xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+              style={{ background: "rgba(0,0,0,0.5)" }}>
+              {uploadingAvatar ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
             </div>
             <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-base bg-background border-2 border-background">
               {level.icon}
             </div>
           </motion.div>
+          <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
 
           <div className="flex-1 min-w-0 pb-1">
             {editingName ? (
@@ -108,10 +183,11 @@ export default function Profile() {
                 <input
                   value={nameInput}
                   onChange={e => setNameInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && saveName()}
                   className="bg-transparent border-b border-white/40 text-white font-cinzel text-lg font-bold focus:outline-none flex-1 min-w-0"
                   autoFocus
                 />
-                <button onClick={() => setEditingName(false)} className="text-white/40"><Check className="w-4 h-4" /></button>
+                <button onClick={saveName} className="text-white/60 hover:text-white transition-colors"><Check className="w-4 h-4" /></button>
                 <button onClick={() => { setNameInput(user?.full_name || ""); setEditingName(false); }} className="text-white/40"><X className="w-4 h-4" /></button>
               </div>
             ) : (
@@ -324,7 +400,19 @@ export default function Profile() {
               </Section>
 
               <Section label="Data & Privacy" icon={Shield}>
-                <SettingLink icon={Download} label="Download Bible for Offline" sub="Save translations locally" color="#00f5ff" />
+                <button onClick={handleDownloadBible}
+                  className="w-full flex items-center gap-3 py-3 border-b text-left"
+                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                  <Download className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>Download Bible for Offline</p>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>Save KJV translation locally</p>
+                  </div>
+                  {downloadingBible
+                    ? <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#00f5ff" }} />
+                    : <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.2)" }} />
+                  }
+                </button>
                 <SettingLink icon={Shield} label="Private Notes" sub="All notes are encrypted by default" color="#34d399" tag="On" />
                 <SettingLink icon={StickyNote} label="Export My Data" sub="Download all highlights, notes, bookmarks" color="#a78bfa" />
               </Section>
