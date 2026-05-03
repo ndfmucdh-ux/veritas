@@ -4,46 +4,71 @@ import { Share2, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 
-const FALLBACK_VERSES = [
-  {
-    verse_ref: "John 3:16", text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
-    reflection: "God's love is not passive — it is sacrificial. Today, rest in the truth that you are loved completely.",
-    theme: "love", photo: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
-  },
-  {
-    verse_ref: "Isaiah 40:31", text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary.",
-    reflection: "Waiting on God is not passive resignation — it is active trust. He replenishes what life depletes.",
-    theme: "strength", photo: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
-  },
-  {
-    verse_ref: "Jeremiah 29:11", text: "For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.",
-    reflection: "God's plans for you are not afterthoughts. Before your crisis, He had already written your redemption.",
-    theme: "hope", photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
-  },
-];
+const FALLBACK_VERSES = {
+  en: [
+    {
+      verse_ref: "John 3:16", text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
+      reflection: "God's love is not passive — it is sacrificial. Today, rest in the truth that you are loved completely.",
+      theme: "love", photo: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
+    },
+    {
+      verse_ref: "Isaiah 40:31", text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary.",
+      reflection: "Waiting on God is not passive resignation — it is active trust. He replenishes what life depletes.",
+      theme: "strength", photo: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
+    },
+    {
+      verse_ref: "Jeremiah 29:11", text: "For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.",
+      reflection: "God's plans for you are not afterthoughts. Before your crisis, He had already written your redemption.",
+      theme: "hope", photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
+    },
+  ],
+  es: [
+    {
+      verse_ref: "Juan 3:16", text: "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.",
+      reflection: "El amor de Dios no es pasivo — es sacrificial. Hoy, descansa en la verdad de que eres completamente amado.",
+      theme: "amor", photo: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
+    },
+    {
+      verse_ref: "Isaías 40:31", text: "Pero los que esperan en el Señor renovarán sus fuerzas; levantarán alas como las águilas; correrán, y no se cansarán.",
+      reflection: "Esperar en Dios no es resignación pasiva — es confianza activa. Él repone lo que la vida agota.",
+      theme: "fortaleza", photo: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
+    },
+    {
+      verse_ref: "Jeremías 29:11", text: "Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.",
+      reflection: "Los planes de Dios para ti no son improvisados. Antes de tu crisis, Él ya había escrito tu redención.",
+      theme: "esperanza", photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
+    },
+  ],
+};
 
 export default function HeroVerseSlider() {
-  const { t } = useLang();
-  const [slides, setSlides] = useState(FALLBACK_VERSES);
+  const { t, lang } = useLang();
+  const [slides, setSlides] = useState(FALLBACK_VERSES[lang] || FALLBACK_VERSES.en);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showReflection, setShowReflection] = useState(false);
   const autoRef = useRef(null);
 
+  // Update slides when language changes
+  useEffect(() => {
+    setSlides(FALLBACK_VERSES[lang] || FALLBACK_VERSES.en);
+    setCurrent(0);
+  }, [lang]);
+
   useEffect(() => {
     base44.functions.invoke("getVerseOfTheDay", {})
       .then(res => {
         const d = res.data?.dailyVerse || res.data;
-        if (d?.text) {
+        if (d?.text && lang === "en") {
           setSlides(prev => [
             {
               verse_ref: d.verse_ref || d.ref,
               text: d.text,
               reflection: d.reflection,
               theme: d.theme,
-              photo: FALLBACK_VERSES[0].photo,
+              photo: FALLBACK_VERSES.en[0].photo,
             },
-            ...FALLBACK_VERSES.slice(1),
+            ...FALLBACK_VERSES.en.slice(1),
           ]);
         }
       })
