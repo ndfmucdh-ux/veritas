@@ -6,6 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import AppLayout from '@/components/layout/AppLayout';
+import VeritasLogo from '@/components/ui/VeritasLogo.jsx';
 
 // Page imports
 import Home from './pages/Home';
@@ -23,8 +24,8 @@ const AuthenticatedApp = () => {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-xl gradient-cyan flex items-center justify-center">
-            <span className="text-background font-cinzel font-bold text-xl">V</span>
+          <div style={{ boxShadow: "0 0 30px rgba(255,215,0,0.3)" }} className="rounded-2xl">
+            <VeritasLogo size={60} className="rounded-2xl" />
           </div>
           <div className="w-8 h-8 border-2 border-cyan/30 border-t-cyan rounded-full animate-spin"></div>
           <p className="text-muted-foreground text-sm font-cinzel tracking-widest">VERITAS</p>

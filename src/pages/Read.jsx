@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Maximize2, Minimize2, Loader2, ChevronUp } from "lucide-react";
+import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
-import VerseRow from "@/components/reader/VerseRow";
-import ChapterHeader from "@/components/reader/ChapterHeader";
-import ChapterNavigator from "@/components/reader/ChapterNavigator";
-import { SkeletonVerse } from "@/components/ui/SkeletonPulse";
+import VerseRow from "@/components/reader/VerseRow.jsx";
+import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
+import ChapterNavigator from "@/components/reader/ChapterNavigator.jsx";
+import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
 
 export default function Read() {
@@ -26,6 +26,7 @@ export default function Read() {
   const [bookmarks, setBookmarks] = useState({});
   const [notes, setNotes] = useState({});
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [copied, setCopied] = useState(false);
   const containerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
@@ -102,6 +103,15 @@ export default function Read() {
     else if (type === "note") setNotes(p => ({ ...p, [verseNum]: data }));
   };
 
+  const copyChapter = () => {
+    if (!verses.length) return;
+    const text = verses.map(v => `${v.verse}. ${v.text}`).join("\n");
+    const header = `${book} ${chapter} (${translation})\n\n`;
+    navigator.clipboard?.writeText(header + text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const handleNavigate = (newBook, newChapter) => {
     setBook(newBook);
     setChapter(newChapter);
@@ -124,20 +134,19 @@ export default function Read() {
           borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}
       >
-        <ChapterNavigator book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
+        <ChapterNavigator
+          book={book}
+          chapter={chapter}
+          translation={translation}
+          onNavigate={handleNavigate}
+          onTranslationChange={(t) => { setTranslation(t); }}
+        />
 
         <div className="flex items-center gap-2">
-          <select
-            value={translation}
-            onChange={e => setTranslation(e.target.value)}
-            className="text-xs font-inter rounded-lg px-2.5 py-1.5 border-0 focus:outline-none focus:ring-1 focus:ring-cyan-400/30"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.55)" }}
-          >
-            {TRANSLATIONS.map(t => <option key={t.code} value={t.code}>{t.code}</option>)}
-          </select>
-
           <div className="flex-1" />
-
+          <IconBtn onClick={() => copyChapter()} title="Copy chapter">
+            {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
+          </IconBtn>
           <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings}><Settings className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setImmersive(v => !v)}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
