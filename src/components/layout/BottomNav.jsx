@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, User, GraduationCap } from "lucide-react";
+import { Home, BookOpen, Search, BookMarked, GraduationCap, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { path: "/study", icon: GraduationCap, label: "Study" },
   { path: "/search", icon: Search, label: "Search" },
   { path: "/library", icon: BookMarked, label: "Library" },
+  { path: "/profile", icon: Zap, label: "Profile" },
 ];
 
 export default function BottomNav() {

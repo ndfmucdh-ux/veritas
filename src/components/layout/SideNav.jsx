@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, User, Map, Compass, GraduationCap, Image } from "lucide-react";
+import { Home, BookOpen, Search, BookMarked, Zap, Map, Compass, GraduationCap, Image } from "lucide-react";
 import { motion } from "framer-motion";
 
 const NAV_ITEMS = [
@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { path: "/plans", icon: Map, label: "Plans" },
   { path: "/discover", icon: Compass, label: "Discover" },
   { path: "/verse-art", icon: Image, label: "Verse Art" },
-  { path: "/profile", icon: User, label: "Profile" },
+  { path: "/profile", icon: Zap, label: "Profile" },
 ];
 
 export default function SideNav() {
