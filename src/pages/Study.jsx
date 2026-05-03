@@ -6,16 +6,26 @@ import { useLang } from "@/lib/LanguageContext";
 
 const TABS = ["commentary", "crossRefs", "topical", "dictionary"];
 
-const TAB_LABELS = { commentary: "Commentary", crossRefs: "Cross-Refs", topical: "Topical", dictionary: "Dictionary" };
+const TAB_LABELS_EN = { commentary: "Commentary", crossRefs: "Cross-Refs", topical: "Topical", dictionary: "Dictionary" };
+const TAB_LABELS_ES = { commentary: "Comentario", crossRefs: "Referencias", topical: "Temático", dictionary: "Diccionario" };
 
-const TOPICAL_TAGS = [
+const TOPICAL_TAGS_EN = [
   "faith", "love", "prayer", "hope", "salvation", "grace", "forgiveness",
   "wisdom", "strength", "fear not", "family", "marriage", "money", "healing",
   "Holy Spirit", "Jesus", "eternal life", "worship", "service", "suffering",
 ];
 
+const TOPICAL_TAGS_ES = [
+  "fe", "amor", "oración", "esperanza", "salvación", "gracia", "perdón",
+  "sabiduría", "fortaleza", "no temas", "familia", "matrimonio", "dinero", "sanidad",
+  "Espíritu Santo", "Jesús", "vida eterna", "adoración", "servicio", "sufrimiento",
+];
+
 export default function Study() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const langInstruction = lang === "es" ? "Respond entirely in Spanish." : "Respond in English.";
+  const TOPICAL_TAGS = lang === "es" ? TOPICAL_TAGS_ES : TOPICAL_TAGS_EN;
+  const TAB_LABELS = lang === "es" ? TAB_LABELS_ES : TAB_LABELS_EN;
   const [tab, setTab] = useState("commentary");
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
@@ -27,7 +37,7 @@ export default function Study() {
     setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a Bible scholar. Provide a rich verse-by-verse commentary for: "${query}". Include:
+        prompt: `${langInstruction} You are a Bible scholar. Provide a rich verse-by-verse commentary for: "${query}". Include:
           1. Historical & cultural context
           2. Greek/Hebrew word insights (key words)
           3. Theological significance
@@ -55,7 +65,7 @@ export default function Study() {
     setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `List 10 cross-references for the Bible verse or passage: "${query}". For each, give the reference and a one-sentence connection explanation.
+        prompt: `${langInstruction} List 10 cross-references for the Bible verse or passage: "${query}". For each, give the reference and a one-sentence connection explanation.
           Return JSON: { refs: [{reference, connection, theme}] }`,
         response_json_schema: {
           type: "object",
@@ -71,7 +81,7 @@ export default function Study() {
     setSelectedTag(tag); setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `List 8 of the best Bible verses about "${tag}". Return JSON: { verses: [{ref, text, insight}] }`,
+        prompt: `${langInstruction} List 8 of the best Bible verses about "${tag}". Return JSON: { verses: [{ref, text, insight}] }`,
         response_json_schema: {
           type: "object",
           properties: { verses: { type: "array", items: { type: "object", properties: { ref: { type: "string" }, text: { type: "string" }, insight: { type: "string" } } } } }
@@ -87,7 +97,7 @@ export default function Study() {
     setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `Define the biblical/theological term: "${query}". Include etymology, Greek/Hebrew roots, biblical usage, and key verses.
+        prompt: `${langInstruction} Define the biblical/theological term: "${query}". Include etymology, Greek/Hebrew roots, biblical usage, and key verses.
           Return JSON: { term, definition, etymology, greek_hebrew, usage, key_verses: [string] }`,
         response_json_schema: {
           type: "object",
@@ -146,9 +156,11 @@ export default function Study() {
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleSearch()}
               placeholder={
-                tab === "commentary" ? "e.g. John 3:16 or Romans 8:28" :
-                tab === "crossRefs" ? "e.g. Psalm 23:1" :
-                "e.g. grace, atonement, sanctification"
+                tab === "commentary"
+                  ? (lang === "es" ? "ej. Juan 3:16 o Romanos 8:28" : "e.g. John 3:16 or Romans 8:28")
+                  : tab === "crossRefs"
+                  ? (lang === "es" ? "ej. Salmos 23:1" : "e.g. Psalm 23:1")
+                  : (lang === "es" ? "ej. gracia, expiación, santificación" : "e.g. grace, atonement, sanctification")
               }
               className="w-full pl-10 pr-12 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
               style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }}
@@ -164,7 +176,7 @@ export default function Study() {
         {/* Topical tag grid */}
         {tab === "topical" && (
           <div>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Choose a Topic</p>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{lang === "es" ? "Elige un Tema" : "Choose a Topic"}</p>
             <div className="flex flex-wrap gap-2">
               {TOPICAL_TAGS.map(tag => (
                 <button key={tag} onClick={() => runTopical(tag)}
@@ -186,7 +198,7 @@ export default function Study() {
         {loading && (
           <div className="flex items-center gap-3 py-8 justify-center">
             <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
-            <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>Searching scripture…</p>
+            <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>{lang === "es" ? "Buscando en las Escrituras…" : "Searching scripture…"}</p>
           </div>
         )}
 
@@ -198,7 +210,7 @@ export default function Study() {
               {result.type === "crossRefs" && <CrossRefsResult data={result.data} />}
               {result.type === "topical" && <TopicalResult tag={result.tag} data={result.data} />}
               {result.type === "dictionary" && <DictionaryResult data={result.data} />}
-              {result.type === "error" && <p className="text-sm text-red-400 text-center py-4">Something went wrong. Try again.</p>}
+              {result.type === "error" && <p className="text-sm text-red-400 text-center py-4">{lang === "es" ? "Algo salió mal. Inténtalo de nuevo." : "Something went wrong. Try again."}</p>}
             </motion.div>
           )}
         </AnimatePresence>
