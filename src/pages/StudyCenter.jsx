@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
+import StudyDropdown from "@/components/reader/StudyDropdown";
 
 export default function StudyCenter() {
   const { lang } = useLang();
@@ -181,28 +182,18 @@ export default function StudyCenter() {
           </div>
         </div>
 
-        {/* Chapter selector - only show if book selected */}
+        {/* Chapter selector dropdown */}
         {selectedBook && (
-          <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Chapters</p>
-            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-              {Array.from({ length: BIBLE_BOOKS.find(b => b.name === selectedBook)?.chapters || 1 }, (_, i) => i + 1).map(ch => (
-                <motion.button
-                  key={ch}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setSelectedChapter(ch)}
-                  className="py-2 px-1 rounded-lg text-xs md:text-[10px] font-cinzel transition-all font-semibold"
-                  style={{
-                    background: selectedChapter === ch ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)",
-                    color: selectedChapter === ch ? "#fbbf24" : "rgba(255,255,255,0.4)",
-                    border: selectedChapter === ch ? "1px solid rgba(251,191,36,0.3)" : "1px solid transparent"
-                  }}
-                >
-                  {ch}
-                </motion.button>
-              ))}
-            </div>
-          </div>
+          <StudyDropdown
+            label="Select Chapter"
+            value={selectedChapter}
+            icon="📖"
+            onChange={setSelectedChapter}
+            items={Array.from({ length: BIBLE_BOOKS.find(b => b.name === selectedBook)?.chapters || 1 }, (_, i) => ({
+              value: i + 1,
+              label: `Chapter ${i + 1}`
+            }))}
+          />
         )}
 
         {/* Depth selector */}
@@ -224,46 +215,29 @@ export default function StudyCenter() {
           ))}
         </div>
 
-        {/* Verse expansion for selected chapter */}
+        {/* Verse dropdown */}
         {selectedChapter && !loading && (
-          <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(251,191,36,0.04)", border: "1px solid rgba(251,191,36,0.12)" }}>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Chapter Verses</p>
-            <div className="space-y-2 max-h-96 overflow-y-auto">
-              {Array.from({ length: 15 }, (_, i) => i + 1).map(verse => {
-                const verseKey = `${selectedChapter}:${verse}`;
-                const isExpanded = expandedVerses.has(verse);
-                const text = verseData[verseKey] || "...";
-                return (
-                  <motion.button
-                    key={verse}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      if (isExpanded) {
-                        const newExpanded = new Set(expandedVerses);
-                        newExpanded.delete(verse);
-                        setExpandedVerses(newExpanded);
-                      } else {
-                        loadVerse(verseKey);
-                        const newExpanded = new Set(expandedVerses);
-                        newExpanded.add(verse);
-                        setExpandedVerses(newExpanded);
-                      }
-                    }}
-                    className="w-full flex flex-col gap-2 p-3 rounded-lg transition-all text-left"
-                    style={{
-                      background: isExpanded ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.04)",
-                      borderLeft: isExpanded ? "3px solid #fbbf24" : "1px solid rgba(255,255,255,0.1)"
-                    }}
-                  >
-                    <span className="text-xs font-cinzel font-semibold text-white/70">{selectedBook} {selectedChapter}:{verse}</span>
-                    <p className={`text-xs text-white/60 leading-relaxed ${isExpanded ? "" : "line-clamp-1"}`}>
-                      {text}
-                    </p>
-                  </motion.button>
-                );
-              })}
-            </div>
-          </div>
+          <StudyDropdown
+            label="Explore Verses"
+            value={expandedVerses.size > 0 ? Array.from(expandedVerses)[0] : null}
+            icon="✨"
+            onChange={(verse) => {
+              const verseKey = `${selectedChapter}:${verse}`;
+              loadVerse(verseKey);
+              const newExpanded = new Set(expandedVerses);
+              newExpanded.add(verse);
+              setExpandedVerses(newExpanded);
+            }}
+            items={Array.from({ length: 15 }, (_, i) => i + 1).map(verse => {
+              const verseKey = `${selectedChapter}:${verse}`;
+              const text = verseData[verseKey] || "Loading...";
+              return {
+                value: verse,
+                label: `${selectedBook} ${selectedChapter}:${verse}`,
+                subtitle: text.substring(0, 60) + (text.length > 60 ? "..." : "")
+              };
+            })}
+          />
         )}
 
         {/* Outline display with error handling */}
