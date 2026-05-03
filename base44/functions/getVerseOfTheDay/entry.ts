@@ -25,7 +25,9 @@ Deno.serve(async (req) => {
         "text": "For God so loved the world...",
         "reflection": "A 2-3 sentence devotional reflection on this verse",
         "theme": "love"
-      }`,
+      }
+      
+      Important style rules for the reflection field: always use "Father" instead of "God", and refer to the Bible as "Sacred Scriptures" instead of "Bible". Exception: keep the exact wording of any direct verse text unchanged.`,
       response_json_schema: {
         type: "object",
         properties: {

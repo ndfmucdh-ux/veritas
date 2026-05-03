@@ -8,13 +8,15 @@ Deno.serve(async (req) => {
 
     const { topic, category, verse_ref } = await req.json();
 
+    const STYLE_RULE = `Important style rules: In all your narrative text (reflections, insights, applications, prayers), always use "Father" instead of "God" or "Dios", and always refer to the Bible as "Sacred Scriptures" (or "Sagradas Escrituras" in Spanish) instead of "Bible" or "Biblia". Exception: when quoting or referencing a direct Bible verse citation (e.g. "John 3:16"), keep the original wording of the verse text itself unchanged.`;
+
     const prompt = verse_ref
       ? `Write a rich, spiritually deep devotional for the verse: ${verse_ref}.
          Include: an opening reflection (2 paragraphs), key insights, a practical application, and a closing prayer.
-         Make it warm, personal, and biblically grounded.`
+         Make it warm, personal, and biblically grounded. ${STYLE_RULE}`
       : `Write a daily devotional on the topic "${topic || 'faith'}" for ${category || 'general'} audience.
          Include: a key verse, opening reflection (2 paragraphs), key insights, a practical application, and a closing prayer.
-         Make it warm, personal, and biblically grounded.`;
+         Make it warm, personal, and biblically grounded. ${STYLE_RULE}`;
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,

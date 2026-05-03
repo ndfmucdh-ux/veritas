@@ -8,6 +8,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import AppLayout from '@/components/layout/AppLayout';
 import VeritasLogo from '@/components/ui/VeritasLogo';
 import { LanguageProvider } from '@/lib/LanguageContext';
+import SplashScreen from '@/components/ui/SplashScreen';
+import { useState } from 'react';
 
 // Page imports
 import Home from './pages/Home';
@@ -65,10 +67,23 @@ const AuthenticatedApp = () => {
 };
 
 function App() {
+  const [splashDone, setSplashDone] = useState(() => {
+    // Only show splash once per session
+    const shown = sessionStorage.getItem("veritas_splash_shown");
+    if (shown) return true;
+    return false;
+  });
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem("veritas_splash_shown", "1");
+    setSplashDone(true);
+  };
+
   return (
     <AuthProvider>
       <LanguageProvider>
       <QueryClientProvider client={queryClientInstance}>
+        {!splashDone && <SplashScreen onComplete={handleSplashComplete} />}
         <Router>
           <AuthenticatedApp />
         </Router>

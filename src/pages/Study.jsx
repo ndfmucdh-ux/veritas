@@ -26,6 +26,9 @@ export default function Study() {
   const langInstruction = lang === "es" ? "Respond entirely in Spanish." : "Respond in English.";
   const TOPICAL_TAGS = lang === "es" ? TOPICAL_TAGS_ES : TOPICAL_TAGS_EN;
   const TAB_LABELS = lang === "es" ? TAB_LABELS_ES : TAB_LABELS_EN;
+  const STYLE_RULE = lang === "es"
+    ? "Regla de estilo importante: en todo tu texto narrativo (reflexiones, comentarios, aplicaciones, oraciones), usa siempre 'Padre' en lugar de 'Dios', y siempre llama a la Biblia 'Sagradas Escrituras' en lugar de 'Biblia'. Excepción: cuando cites o referencíes directamente el texto de un versículo bíblico, conserva la redacción original del versículo sin cambios."
+    : "Important style rule: in all your narrative text (reflections, commentary, applications, prayers), always use 'Father' instead of 'God', and always refer to the Bible as 'Sacred Scriptures' instead of 'Bible'. Exception: when quoting or referencing a direct Bible verse text, keep its original wording unchanged.";
   const [tab, setTab] = useState("commentary");
   const [query, setQuery] = useState("");
   const [result, setResult] = useState(null);
@@ -37,7 +40,7 @@ export default function Study() {
     setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `${langInstruction} You are a Bible scholar. Provide a rich verse-by-verse commentary for: "${query}". Include:
+        prompt: `${langInstruction} ${STYLE_RULE} You are a Bible scholar. Provide a rich verse-by-verse commentary for: "${query}". Include:
           1. Historical & cultural context
           2. Greek/Hebrew word insights (key words)
           3. Theological significance
@@ -65,7 +68,7 @@ export default function Study() {
     setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `${langInstruction} List 10 cross-references for the Bible verse or passage: "${query}". For each, give the reference and a one-sentence connection explanation.
+        prompt: `${langInstruction} ${STYLE_RULE} List 10 cross-references for the Bible verse or passage: "${query}". For each, give the reference and a one-sentence connection explanation.
           Return JSON: { refs: [{reference, connection, theme}] }`,
         response_json_schema: {
           type: "object",
@@ -81,7 +84,7 @@ export default function Study() {
     setSelectedTag(tag); setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `${langInstruction} List 8 of the best Bible verses about "${tag}". Return JSON: { verses: [{ref, text, insight}] }`,
+        prompt: `${langInstruction} ${STYLE_RULE} List 8 of the best Bible verses about "${tag}". Return JSON: { verses: [{ref, text, insight}] }`,
         response_json_schema: {
           type: "object",
           properties: { verses: { type: "array", items: { type: "object", properties: { ref: { type: "string" }, text: { type: "string" }, insight: { type: "string" } } } } }
@@ -97,7 +100,7 @@ export default function Study() {
     setLoading(true); setResult(null);
     try {
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `${langInstruction} Define the biblical/theological term: "${query}". Include etymology, Greek/Hebrew roots, biblical usage, and key verses.
+        prompt: `${langInstruction} ${STYLE_RULE} Define the biblical/theological term: "${query}". Include etymology, Greek/Hebrew roots, biblical usage, and key verses.
           Return JSON: { term, definition, etymology, greek_hebrew, usage, key_verses: [string] }`,
         response_json_schema: {
           type: "object",
