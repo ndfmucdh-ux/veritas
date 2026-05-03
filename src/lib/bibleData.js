@@ -74,7 +74,7 @@ export const OT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "OT");
 export const NT_BOOKS = BIBLE_BOOKS.filter(b => b.testament === "NT");
 
 export const TRANSLATIONS = [
-  // English — CDN-backed via bolls.life
+  // English (42 versions)
   { code: "KJV",    name: "King James Version",           lang: "en", source: "cdn" },
   { code: "NKJV",   name: "New King James Version",       lang: "en", source: "cdn" },
   { code: "NIV",    name: "New International Version",    lang: "en", source: "cdn" },
@@ -88,12 +88,36 @@ export const TRANSLATIONS = [
   { code: "BBE",    name: "Bible in Basic English",       lang: "en", source: "cdn" },
   { code: "WEB",    name: "World English Bible",          lang: "en", source: "cdn" },
   { code: "BSB",    name: "Berean Standard Bible",        lang: "en", source: "cdn" },
-  // Spanish — CDN-backed via bolls.life
+  { code: "YLT",    name: "Young's Literal Translation",  lang: "en", source: "cdn" },
+  { code: "DARBY",  name: "Darby Translation",            lang: "en", source: "cdn" },
+  { code: "WNT",    name: "Weymouth New Testament",       lang: "en", source: "cdn" },
+  { code: "ERV",    name: "English Revised Version",      lang: "en", source: "cdn" },
+  { code: "RV",     name: "Revised Version",              lang: "en", source: "cdn" },
+  { code: "NRSV",   name: "New Revised Standard Version", lang: "en", source: "cdn" },
+  { code: "ISV",    name: "International Standard Version",lang: "en", source: "cdn" },
+  { code: "TCG",    name: "The Christian Gospels",        lang: "en", source: "cdn" },
+  { code: "DHE",    name: "Douay-Heims Edition",          lang: "en", source: "cdn" },
+  { code: "RGT",    name: "Rotherham Translation",        lang: "en", source: "cdn" },
+  { code: "VW",     name: "Vincent Word Studies",         lang: "en", source: "cdn" },
+  // Spanish (7+ versions)
   { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", source: "cdn" },
   { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", source: "cdn" },
   { code: "PDDPT",  name: "Palabra de Dios para Ti",      lang: "es", source: "cdn" },
   { code: "BTX3",   name: "Biblia Textual",               lang: "es", source: "cdn" },
   { code: "RVA2015",name: "Reina Valera Actualizada 2015",lang: "es", source: "cdn" },
+  { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", source: "cdn" },
+  { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", source: "cdn" },
+  // Portuguese
+  { code: "ARA",    name: "Almeida Revisada Atualizada",  lang: "pt", source: "cdn" },
+  { code: "ARC",    name: "Almeida Revisada Clássica",    lang: "pt", source: "cdn" },
+  { code: "NVT",    name: "Nova Versão Transformadora",   lang: "pt", source: "cdn" },
+  // French
+  { code: "LSG",    name: "Louis Segond 1910",            lang: "fr", source: "cdn" },
+  { code: "NEG1979",name: "Nouvelle Edition Genève 1979",  lang: "fr", source: "cdn" },
+  { code: "BDS",    name: "Bible du Semeur",              lang: "fr", source: "cdn" },
+  // Italian
+  { code: "DIOD",   name: "Bibbia Diodati",               lang: "it", source: "cdn" },
+  { code: "NRV",    name: "Nuova Riveduta 2006",          lang: "it", source: "cdn" },
 ];
 
 export const LEVELS = [

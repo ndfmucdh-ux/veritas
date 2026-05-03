@@ -16,12 +16,32 @@ const TRANSLATION_MAP = {
   BBE:    { name: "Bible in Basic English",       lang: "en" },
   WEB:    { name: "World English Bible",          lang: "en" },
   BSB:    { name: "Berean Standard Bible",        lang: "en" },
+  YLT:    { name: "Young's Literal Translation",  lang: "en" },
+  DARBY:  { name: "Darby Translation",            lang: "en" },
+  WNT:    { name: "Weymouth New Testament",       lang: "en" },
+  ERV:    { name: "English Revised Version",      lang: "en" },
+  RV:     { name: "Revised Version",              lang: "en" },
+  NRSV:   { name: "New Revised Standard Version", lang: "en" },
+  ISV:    { name: "International Standard Version",lang: "en" },
   // Spanish
   RVR1960:{ name: "Reina-Valera 1960",            lang: "es" },
   NVI:    { name: "Nueva Versión Internacional",  lang: "es" },
   PDDPT:  { name: "Palabra de Dios para Ti",      lang: "es" },
   BTX3:   { name: "Biblia Textual",               lang: "es" },
   RVA2015:{ name: "Reina Valera Actualizada 2015",lang: "es" },
+  LBLA:   { name: "Biblia de las Américas",       lang: "es" },
+  NTV:    { name: "Nueva Traducción Viviente",    lang: "es" },
+  // Portuguese
+  ARA:    { name: "Almeida Revisada Atualizada",  lang: "pt" },
+  ARC:    { name: "Almeida Revisada Clássica",    lang: "pt" },
+  NVT:    { name: "Nova Versão Transformadora",   lang: "pt" },
+  // French
+  LSG:    { name: "Louis Segond 1910",            lang: "fr" },
+  NEG1979:{ name: "Nouvelle Edition Genève 1979", lang: "fr" },
+  BDS:    { name: "Bible du Semeur",              lang: "fr" },
+  // Italian
+  DIOD:   { name: "Bibbia Diodati",               lang: "it" },
+  NRV:    { name: "Nuova Riveduta 2006",          lang: "it" },
 };
 
 // Book name → canonical book number (1-66) for getChapter API
