@@ -147,6 +147,7 @@ export default function Read() {
           background: "rgba(6,10,20,0.9)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
+          overflow: "visible",
         }}
       >
         <ChapterNavigator
@@ -213,7 +214,7 @@ export default function Read() {
       </div>
 
       {/* Scrollable reading area */}
-      <div ref={containerRef} className="flex-1 overflow-y-auto scrollbar-hide">
+      <div ref={containerRef} className="flex-1 overflow-y-auto overflow-x-visible scrollbar-hide">
         <div className="px-4 md:px-8 max-w-2xl mx-auto w-full pb-32 pt-2">
           {/* Chapter header with parallax */}
           <ChapterHeader

@@ -92,8 +92,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 360, damping: 26 }}
-            className="absolute left-0 right-0 z-50 mt-2 rounded-2xl overflow-hidden"
-            style={{ background: "rgba(10,15,30,0.98)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 16px 48px rgba(0,0,0,0.6)", maxHeight: "70vh", overflowY: "auto" }}
+            className="absolute left-0 right-0 z-50 mt-2 rounded-2xl"
+            style={{ background: "rgba(10,15,30,0.98)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 16px 48px rgba(0,0,0,0.6)", maxHeight: "70vh", overflow: "auto" }}
           >
             {/* Tabs */}
             <div className="flex border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
