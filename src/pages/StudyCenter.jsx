@@ -1,29 +1,40 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronDown, ChevronRight } from "lucide-react";
+import { Loader2, ChevronDown, AlertCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS } from "@/lib/bibleData";
+import { useLang } from "@/lib/LanguageContext";
 
 export default function StudyCenter() {
+  const { lang } = useLang();
   const [selectedBook, setSelectedBook] = useState("John");
   const [selectedChapter, setSelectedChapter] = useState(1);
+  const [expandedVerses, setExpandedVerses] = useState(new Set());
   const [outline, setOutline] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [depth, setDepth] = useState("overview");
   const [expandedCategory, setExpandedCategory] = useState("Gospels");
 
   const loadOutline = async (book) => {
     setLoading(true);
     setOutline(null);
+    setError(null);
     try {
       const res = await base44.functions.invoke("generateBibleOutline", {
         book,
-        depth
+        depth,
+        language: lang
       });
       const outlineData = res.data?.outline?.response || res.data?.outline;
-      setOutline(outlineData);
+      if (outlineData && typeof outlineData === "object") {
+        setOutline(outlineData);
+      } else {
+        setError("Unable to load analysis. Please try again.");
+      }
     } catch (err) {
       console.error("Error loading outline:", err);
+      setError(err?.message || "Failed to analyze. Please try again.");
       setOutline(null);
     } finally {
       setLoading(false);
@@ -32,7 +43,7 @@ export default function StudyCenter() {
 
   useEffect(() => {
     loadOutline(selectedBook);
-  }, [selectedBook, depth]);
+  }, [selectedBook, depth, lang]);
 
   const theologicalGroups = [
     { id: "Pentateuch", name: "📖 The Law (Pentateuch)", books: BIBLE_BOOKS.filter(b => [1,2,3,4,5].includes(b.num)) },
@@ -165,28 +176,80 @@ export default function StudyCenter() {
           ))}
         </div>
 
-        {/* Outline display */}
+        {/* Verse expansion for selected chapter */}
+        {selectedChapter && !loading && (
+          <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(251,191,36,0.04)", border: "1px solid rgba(251,191,36,0.12)" }}>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3 text-white/40">Chapter Verses</p>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map(verse => (
+                <motion.button
+                  key={verse}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    const newExpanded = new Set(expandedVerses);
+                    if (newExpanded.has(verse)) newExpanded.delete(verse);
+                    else newExpanded.add(verse);
+                    setExpandedVerses(newExpanded);
+                  }}
+                  className="w-full flex items-start gap-2 p-3 rounded-lg transition-all text-left"
+                  style={{
+                    background: expandedVerses.has(verse) ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.04)",
+                    borderLeft: expandedVerses.has(verse) ? "2px solid #fbbf24" : "1px solid rgba(255,255,255,0.1)"
+                  }}
+                >
+                  <span className="text-xs font-cinzel font-semibold text-white/60 mt-1 flex-shrink-0">{verse}</span>
+                  <div className="flex-1 text-left">
+                    <p className="text-xs text-white/70 line-clamp-1">Verse text preview...</p>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Outline display with error handling */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-cyan mb-3" />
-            <p className="text-sm text-white/60">Analyzing {selectedBook} Chapter {selectedChapter}...</p>
+            <p className="text-sm text-white/60">Analyzing {selectedBook}...</p>
             <p className="text-xs text-white/30 mt-2">This may take a moment</p>
           </div>
-        ) : outline ? (
+        ) : error ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="space-y-4"
+            className="rounded-2xl p-6 flex items-start gap-3"
+            style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)" }}
           >
-            <div className="rounded-2xl p-6" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.15)" }}>
-              <h2 className="font-cinzel text-lg text-white mb-4">{outline.book}</h2>
+            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-cinzel text-red-400">Analysis Failed</p>
+              <p className="text-xs text-white/50 mt-1">{error}</p>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => loadOutline(selectedBook)}
+                className="text-xs font-cinzel mt-3 px-3 py-1.5 rounded-lg transition-all"
+                style={{ background: "rgba(248,113,113,0.15)", color: "#f87171" }}
+              >
+                Try Again
+              </motion.button>
+            </div>
+          </motion.div>
+        ) : outline && typeof outline === "object" ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-4 overflow-hidden"
+          >
+            <div className="rounded-2xl p-4 md:p-6 overflow-hidden" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.15)" }}>
+              <h2 className="font-cinzel text-lg text-white mb-4">{outline.book || selectedBook}</h2>
               
-              {outline.themes && (
+              {outline.themes && Array.isArray(outline.themes) && outline.themes.length > 0 && (
                 <div className="mb-6">
                   <p className="text-xs font-cinzel text-white/60 mb-2">THEMES</p>
                   <div className="flex flex-wrap gap-2">
-                    {outline.themes?.map(theme => (
-                      <span key={theme} className="text-xs px-3 py-1 rounded-full" style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff" }}>
+                    {outline.themes.map((theme, idx) => (
+                      <span key={idx} className="text-xs px-3 py-1 rounded-full truncate" style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff" }}>
                         {theme}
                       </span>
                     ))}
@@ -194,25 +257,31 @@ export default function StudyCenter() {
                 </div>
               )}
 
-              {outline.sections?.map((section, idx) => (
-                <div key={idx} className="mb-4 pb-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-                  <p className="font-cinzel text-white mb-2">{section.title}</p>
-                  <p className="text-xs text-white/50 leading-relaxed mb-2">{section.summary}</p>
-                  {section.key_verses?.length > 0 && (
-                    <div className="text-[10px] text-white/40">
-                      <p className="font-inter font-semibold mb-1">Key verses:</p>
-                      <ul className="list-disc list-inside space-y-0.5">
-                        {section.key_verses.map(v => <li key={v}>{v}</li>)}
-                      </ul>
+              {outline.sections && Array.isArray(outline.sections) && outline.sections.length > 0 && (
+                <div className="space-y-4">
+                  {outline.sections.map((section, idx) => (
+                    <div key={idx} className="pb-4 border-b overflow-hidden" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+                      <p className="font-cinzel text-white mb-2 truncate">{section.title || `Section ${idx + 1}`}</p>
+                      <p className="text-xs text-white/50 leading-relaxed mb-2 line-clamp-3">{section.summary || ""}</p>
+                      {section.key_verses && Array.isArray(section.key_verses) && section.key_verses.length > 0 && (
+                        <div className="text-[10px] text-white/40 max-h-20 overflow-hidden">
+                          <p className="font-inter font-semibold mb-1">Key verses:</p>
+                          <ul className="list-disc list-inside space-y-0.5">
+                            {section.key_verses.slice(0, 3).map((v, vi) => (
+                              <li key={vi} className="truncate">{v}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+              )}
 
               {outline.theology && (
                 <div>
                   <p className="text-xs font-cinzel text-white/60 mb-2">THEOLOGICAL SIGNIFICANCE</p>
-                  <p className="text-xs leading-relaxed text-white/60">{outline.theology}</p>
+                  <p className="text-xs leading-relaxed text-white/60 line-clamp-4">{outline.theology}</p>
                 </div>
               )}
             </div>
