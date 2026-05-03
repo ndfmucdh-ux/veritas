@@ -1,21 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronDown, AlertCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 
 export default function StudyCenter() {
   const { lang } = useLang();
-  const [selectedBook, setSelectedBook] = useState("John");
-  const [selectedChapter, setSelectedChapter] = useState(1);
+  const location = useLocation();
+  const isMountedRef = useRef(true);
+
+  // Restore state from URL params
+  const urlParams = new URLSearchParams(location.search);
+  const [selectedBook, setSelectedBook] = useState(urlParams.get("book") || "John");
+  const [selectedChapter, setSelectedChapter] = useState(parseInt(urlParams.get("chapter")) || 1);
   const [expandedVerses, setExpandedVerses] = useState(new Set());
   const [verseData, setVerseData] = useState({});
   const [outline, setOutline] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [depth, setDepth] = useState("overview");
+  const [depth, setDepth] = useState(urlParams.get("depth") || "overview");
   const [expandedCategory, setExpandedCategory] = useState("Gospels");
+
+  // Update URL when state changes
+  useEffect(() => {
+    const newParams = new URLSearchParams();
+    newParams.set("book", selectedBook);
+    newParams.set("chapter", selectedChapter);
+    newParams.set("depth", depth);
+    window.history.replaceState(null, "", `?${newParams.toString()}`);
+  }, [selectedBook, selectedChapter, depth]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const loadOutline = async (book) => {
     setLoading(true);
@@ -27,6 +49,7 @@ export default function StudyCenter() {
         depth,
         language: lang
       });
+      if (!isMountedRef.current) return;
       const outlineData = res.data?.outline?.response || res.data?.outline;
       if (outlineData && typeof outlineData === "object") {
         setOutline(outlineData);
@@ -34,11 +57,12 @@ export default function StudyCenter() {
         setError("Unable to load analysis. Please try again.");
       }
     } catch (err) {
+      if (!isMountedRef.current) return;
       console.error("Error loading outline:", err);
       setError(err?.message || "Failed to analyze. Please try again.");
       setOutline(null);
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) setLoading(false);
     }
   };
 
@@ -50,6 +74,7 @@ export default function StudyCenter() {
         chapter: selectedChapter,
         translation: "KJV"
       });
+      if (!isMountedRef.current) return;
       if (res.data?.verses) {
         const versesMap = {};
         res.data.verses.forEach(v => {
