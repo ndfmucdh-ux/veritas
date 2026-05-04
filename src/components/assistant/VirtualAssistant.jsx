@@ -10,7 +10,7 @@ const ASSISTANT_NAME = "Veritas Guide";
 const QUICK_PROMPTS = [
   { icon: "📖", label: "Where do I read today?", prompt: "Where should I start reading the Bible today? Give me a gentle suggestion based on my journey." },
   { icon: "🙏", label: "Summarize my prayers", prompt: "Please read my recent Prayer Journal entries and summarize what's been on my heart lately. Then offer me encouragement and a scripture that speaks directly to what I've been praying about." },
-  { icon: "📝", label: "Review my study notes", prompt: "Please look at my study notes and help me go deeper in what I've been studying." },
+  { icon: "📝", label: "Passages for my studies", prompt: "Look at my study notes and highlighted verses, then suggest specific Bible passages that go deeper into the themes I've been exploring. Explain why each passage connects to my personal study." },
   { icon: "💪", label: "Strength for today", prompt: "I need encouragement and a verse about strength and perseverance for today." },
   { icon: "🗺️", label: "How to use this app", prompt: "Explain how to use the Veritas Bible app and all its features." },
   { icon: "✨", label: "Choose a reading plan", prompt: "Help me choose the right Bible reading plan for where I am in my faith journey." },
@@ -31,7 +31,9 @@ const SYSTEM_PROMPT = `You are the Veritas Guide — the wise, warm, and fatherl
 ## Personalized Context
 When the user's Prayer Journal or Study Notes are provided to you, USE THEM to give deeply personal guidance:
 - **Prayer Journal**: Read every entry carefully. Identify recurring themes (anxiety, gratitude, intercession for others, healing, provision, etc.). When asked to summarize, weave these themes into a compassionate narrative — "I notice you've been carrying a burden of..." or "Your heart keeps returning to...". Then offer a specific scripture that directly addresses their dominant prayer theme, followed by a short, personal word of encouragement tailored to what they've been walking through.
-- Reference specific prayers they've written to show you've truly listened — never be generic
+- **Study Notes**: Analyze the topics, titles, content, and any related verses listed. Extract the theological themes the user is exploring (e.g., grace, covenant, prophecy, the Holy Spirit). When suggesting Bible passages, prioritize books and themes that align with and deepen what the user is already studying — make explicit connections like "Since you've been studying [topic], you might find [passage] illuminating because..."
+- **Highlights**: The verses a user highlights reveal what resonates most deeply with them. Cross-reference their highlighted verses with their study notes to identify the intersection of their intellectual study and their spiritual heart. Suggest passages in the same genre, book, or thematic family as their highlights.
+- Reference specific prayers, notes, and highlighted verses by name to show you've truly listened — never be generic
 - Connect their study themes to their prayer life when both are available
 - Notice patterns: recurring prayer topics, mood tags (grateful, confessing, interceding, celebrating), linked verses
 - Celebrate consistency and gently encourage where there are gaps
@@ -68,14 +70,15 @@ export default function VirtualAssistant({ onClose }) {
   useEffect(() => {
     const loadContext = async () => {
       try {
-        const [user, prayers, notes, xp] = await Promise.all([
+        const [user, prayers, notes, xp, highlights] = await Promise.all([
           base44.auth.me().catch(() => null),
           base44.entities.PrayerJournal.list("-created_date", 5).catch(() => []),
-          base44.entities.StudyNote.list("-created_date", 5).catch(() => []),
+          base44.entities.StudyNote.list("-created_date", 8).catch(() => []),
           base44.entities.UserXP.list("-updated_date", 1).catch(() => []),
+          base44.entities.UserHighlight.list("-created_date", 10).catch(() => []),
         ]);
 
-        const ctx = { user, prayers: prayers || [], notes: notes || [], xp: xp?.[0] || null };
+        const ctx = { user, prayers: prayers || [], notes: notes || [], xp: xp?.[0] || null, highlights: highlights || [] };
         setUserContext(ctx);
 
         const firstName = user?.full_name?.split(" ")[0] || "beloved";
@@ -137,10 +140,17 @@ export default function VirtualAssistant({ onClose }) {
     }
 
     if (userContext.notes.length > 0) {
-      parts.push("\n--- USER'S RECENT STUDY NOTES (last 5) ---");
+      parts.push("\n--- USER'S RECENT STUDY NOTES (last 8) ---");
       userContext.notes.forEach((n, i) => {
-        parts.push(`Note ${i + 1} [${n.topic || "general"} — "${n.title}"]: ${n.content?.slice(0, 200) || ""}`);
+        const relatedVerses = n.related_verses?.join(", ") || "none";
+        parts.push(`Note ${i + 1} [topic: ${n.topic || "general"} — "${n.title}" | related verses: ${relatedVerses}]: ${n.content?.slice(0, 250) || ""}`);
       });
+    }
+
+    if (userContext.highlights.length > 0) {
+      parts.push("\n--- USER'S RECENTLY HIGHLIGHTED VERSES (last 10) ---");
+      const uniqueRefs = [...new Set(userContext.highlights.map(h => h.verse_ref))];
+      parts.push(uniqueRefs.join(", "));
     }
 
     return parts.length > 0 ? `\n\n## User's Personal Spiritual Data\n${parts.join("\n")}` : "";
