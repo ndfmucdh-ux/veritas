@@ -45,7 +45,12 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
     const handler = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false);
     };
-    const onScroll = () => setShowPicker(false);
+    const onScroll = (e) => {
+      // Only close if the scroll happened outside the picker panel
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        setShowPicker(false);
+      }
+    };
     document.addEventListener("mousedown", handler);
     document.addEventListener("touchstart", handler, { passive: true });
     window.addEventListener("scroll", onScroll, true);
