@@ -9,7 +9,7 @@ const ASSISTANT_NAME = "Veritas Guide";
 
 const QUICK_PROMPTS = [
   { icon: "📖", label: "Where do I read today?", prompt: "Where should I start reading the Bible today? Give me a gentle suggestion based on my journey." },
-  { icon: "🙏", label: "Reflect on my prayers", prompt: "Can you look at my recent prayer journal and help me reflect on my spiritual walk?" },
+  { icon: "🙏", label: "Summarize my prayers", prompt: "Please read my recent Prayer Journal entries and summarize what's been on my heart lately. Then offer me encouragement and a scripture that speaks directly to what I've been praying about." },
   { icon: "📝", label: "Review my study notes", prompt: "Please look at my study notes and help me go deeper in what I've been studying." },
   { icon: "💪", label: "Strength for today", prompt: "I need encouragement and a verse about strength and perseverance for today." },
   { icon: "🗺️", label: "How to use this app", prompt: "Explain how to use the Veritas Bible app and all its features." },
@@ -30,10 +30,12 @@ const SYSTEM_PROMPT = `You are the Veritas Guide — the wise, warm, and fatherl
 
 ## Personalized Context
 When the user's Prayer Journal or Study Notes are provided to you, USE THEM to give deeply personal guidance:
-- Reference specific prayers they've written to show you've truly listened
-- Connect their study themes to their current spiritual needs
-- Notice patterns: recurring prayer topics, books they've been studying
+- **Prayer Journal**: Read every entry carefully. Identify recurring themes (anxiety, gratitude, intercession for others, healing, provision, etc.). When asked to summarize, weave these themes into a compassionate narrative — "I notice you've been carrying a burden of..." or "Your heart keeps returning to...". Then offer a specific scripture that directly addresses their dominant prayer theme, followed by a short, personal word of encouragement tailored to what they've been walking through.
+- Reference specific prayers they've written to show you've truly listened — never be generic
+- Connect their study themes to their prayer life when both are available
+- Notice patterns: recurring prayer topics, mood tags (grateful, confessing, interceding, celebrating), linked verses
 - Celebrate consistency and gently encourage where there are gaps
+- If they have no prayer entries yet, lovingly invite them to begin their Prayer Journal
 
 ## Veritas App Knowledge
 - **Read** (/read): Full Bible reader — multiple translations (KJV, NIV, ESV, NLT, etc.), highlights, bookmarks, notes, parallel view, immersive mode
