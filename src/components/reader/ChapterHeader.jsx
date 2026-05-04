@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { getTranslatedBookName } from "@/lib/bibleData";
+import { useLang } from "@/lib/LanguageContext";
 
 const TESTAMENT_IMAGES = {
   OT: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80",
@@ -6,7 +8,9 @@ const TESTAMENT_IMAGES = {
 };
 
 export default function ChapterHeader({ book, chapter, testament }) {
+  const { lang } = useLang();
   const imgSrc = TESTAMENT_IMAGES[testament] || TESTAMENT_IMAGES.OT;
+  const displayBook = getTranslatedBookName(book, lang);
 
   return (
     <div className="relative h-36 rounded-2xl overflow-hidden mb-6">
@@ -20,7 +24,7 @@ export default function ChapterHeader({ book, chapter, testament }) {
           transition={{ duration: 0.4 }}
           className="font-cinzel text-2xl font-bold text-white"
         >
-          {book}
+          {displayBook}
         </motion.h2>
         <p className="font-inter text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
           Chapter {chapter}

@@ -170,7 +170,7 @@ export default function StudyCenter() {
                               border: selectedBook === book.name ? "2px solid rgba(0,245,255,0.4)" : "1px solid rgba(255,255,255,0.1)"
                             }}
                           >
-                            {book.abbr}
+                            {getTranslatedBookName(book.name, lang).substring(0, 6)}
                           </motion.button>
                         ))}
                       </div>
@@ -185,7 +185,7 @@ export default function StudyCenter() {
         {/* Chapter selector dropdown */}
         {selectedBook && (
           <StudyDropdown
-            label="Select Chapter"
+            label={getTranslatedBookName(selectedBook, lang)}
             value={selectedChapter}
             icon="📖"
             onChange={setSelectedChapter}
