@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import VirtualAssistant from "./VirtualAssistant";
+import VeritasLogo from "@/components/ui/VeritasLogo";
 
 export default function AssistantButton() {
   const [open, setOpen] = useState(false);
@@ -42,21 +43,22 @@ export default function AssistantButton() {
           WebkitBackdropFilter: "blur(16px)",
         }}
       >
-        <motion.span
-          animate={{ rotate: open ? 15 : 0, scale: open ? 0.85 : 1 }}
+        <motion.div
+          animate={{ scale: open ? 0.88 : 1 }}
           transition={{ type: "spring", stiffness: 380, damping: 22 }}
-          className="text-2xl select-none"
+          className="rounded-xl overflow-hidden"
+          style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
         >
-          ✝️
-        </motion.span>
+          <VeritasLogo size={36} />
+        </motion.div>
 
         {/* Pulse ring */}
         {!open && (
           <motion.div
             className="absolute inset-0 rounded-2xl"
-            animate={{ scale: [1, 1.25, 1], opacity: [0.5, 0, 0.5] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            style={{ border: "1.5px solid rgba(251,191,36,0.4)" }}
+            animate={{ scale: [1, 1.28, 1], opacity: [0.6, 0, 0.6] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+            style={{ border: "1.5px solid rgba(251,191,36,0.45)" }}
           />
         )}
       </motion.button>
