@@ -27,6 +27,13 @@ export default function Home() {
     ]).then(([u, xp]) => {
       setUser(u);
       setXpData(xp?.[0] || null);
+      // Seed session if not already set
+      if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
+        sessionStorage.setItem("veritas_display_name", u.full_name);
+      }
+      if (u?.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
+        sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
+      }
     });
   }, []);
 
@@ -34,7 +41,10 @@ export default function Home() {
   const period = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
   const greetingKey = period === "morning" ? "goodMorning" : period === "afternoon" ? "goodAfternoon" : "goodEvening";
   const emoji = GREETING_EMOJIS[period];
-  const firstName = user?.full_name?.split(" ")[0];
+
+  const displayName = sessionStorage.getItem("veritas_display_name") || user?.full_name || "";
+  const displayAvatar = sessionStorage.getItem("veritas_avatar_url") || user?.avatar_url || null;
+  const firstName = displayName.split(" ")[0];
 
   const xp = xpData?.total_xp || 0;
   const level = getLevelForXP(xp);
@@ -56,14 +66,14 @@ export default function Home() {
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
           <div className="flex items-center gap-3 mb-1">
             {/* Avatar */}
-            {user?.avatar_url ? (
-              <img src={user.avatar_url} alt="avatar"
+            {displayAvatar ? (
+              <img src={displayAvatar} alt="avatar"
                 className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
                 style={{ border: "1.5px solid rgba(0,245,255,0.3)", boxShadow: "0 0 14px rgba(0,245,255,0.15)" }} />
             ) : (
               <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-lg font-bold"
                 style={{ background: "rgba(0,245,255,0.12)", border: "1.5px solid rgba(0,245,255,0.25)", color: "#00f5ff" }}>
-                {user?.full_name?.[0]?.toUpperCase() || emoji}
+                {displayName?.[0]?.toUpperCase() || emoji}
               </div>
             )}
             <div>

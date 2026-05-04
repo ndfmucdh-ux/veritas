@@ -80,9 +80,18 @@ export default function Profile() {
       setHighlights(hl || []);
       setNotes(nt || []);
       setPlans(rp || []);
-      setNameInput(u?.full_name || "");
-      setAvatarUrl(u?.avatar_url || null);
+      const savedName = sessionStorage.getItem("veritas_display_name") || u?.full_name || "";
+      const savedAvatar = sessionStorage.getItem("veritas_avatar_url") || u?.avatar_url || null;
+      setNameInput(savedName);
+      setAvatarUrl(savedAvatar);
       setHeroUrl(u?.hero_url || null);
+      // Keep session in sync with actual user data
+      if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
+        sessionStorage.setItem("veritas_display_name", u.full_name);
+      }
+      if (u?.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
+        sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
+      }
       setLoading(false);
     });
   }, []);
@@ -91,8 +100,10 @@ export default function Profile() {
 
   const saveName = async () => {
     if (!nameInput.trim()) return;
-    await base44.auth.updateMe({ full_name: nameInput.trim() });
-    setUser(u => ({ ...u, full_name: nameInput.trim() }));
+    const trimmed = nameInput.trim();
+    await base44.auth.updateMe({ full_name: trimmed });
+    setUser(u => ({ ...u, full_name: trimmed }));
+    sessionStorage.setItem("veritas_display_name", trimmed);
     setEditingName(false);
   };
 
@@ -103,6 +114,7 @@ export default function Profile() {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     await base44.auth.updateMe({ avatar_url: file_url });
     setAvatarUrl(file_url);
+    sessionStorage.setItem("veritas_avatar_url", file_url);
     setUploadingAvatar(false);
   };
 
@@ -202,7 +214,7 @@ export default function Profile() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h1 className="font-cinzel text-lg font-bold text-white truncate">{user?.full_name || "Believer"}</h1>
+                <h1 className="font-cinzel text-lg font-bold text-white truncate">{sessionStorage.getItem("veritas_display_name") || user?.full_name || "Believer"}</h1>
                 <button onClick={() => setEditingName(true)}>
                   <Edit3 className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
                 </button>
