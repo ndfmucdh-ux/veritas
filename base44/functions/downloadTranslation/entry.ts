@@ -1,50 +1,47 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// Map of downloadable translations to their names and language
+// Translations supported by bolls.life
+const BOLLS_TRANSLATIONS = new Set([
+  "KJV","NKJV","NIV","ESV","NLT","NASB","AMP","CSB","MSG",
+  "ASV","BBE","WEB","BSB","RVR1960","NVI","BTX3","PDDPT","RVA2015",
+  "LBLA","NTV","ARA","ARC","NVT","LSG","NEG1979","BDS","DIOD","NRV",
+  "YLT","DARBY","WNT",
+]);
+
 const TRANSLATION_MAP = {
-  // English
-  KJV:    { name: "King James Version",           lang: "en" },
-  NKJV:   { name: "New King James Version",       lang: "en" },
-  NIV:    { name: "New International Version",    lang: "en" },
-  ESV:    { name: "English Standard Version",     lang: "en" },
-  NLT:    { name: "New Living Translation",       lang: "en" },
-  NASB:   { name: "New American Standard Bible",  lang: "en" },
-  AMP:    { name: "Amplified Bible",              lang: "en" },
-  CSB:    { name: "Christian Standard Bible",     lang: "en" },
-  MSG:    { name: "The Message",                  lang: "en" },
-  ASV:    { name: "American Standard Version",    lang: "en" },
-  BBE:    { name: "Bible in Basic English",       lang: "en" },
-  WEB:    { name: "World English Bible",          lang: "en" },
-  BSB:    { name: "Berean Standard Bible",        lang: "en" },
-  YLT:    { name: "Young's Literal Translation",  lang: "en" },
-  DARBY:  { name: "Darby Translation",            lang: "en" },
-  WNT:    { name: "Weymouth New Testament",       lang: "en" },
-  ERV:    { name: "English Revised Version",      lang: "en" },
-  RV:     { name: "Revised Version",              lang: "en" },
-  NRSV:   { name: "New Revised Standard Version", lang: "en" },
-  ISV:    { name: "International Standard Version",lang: "en" },
-  // Spanish
-  RVR1960:{ name: "Reina-Valera 1960",            lang: "es" },
-  NVI:    { name: "Nueva Versión Internacional",  lang: "es" },
-  PDDPT:  { name: "Palabra de Dios para Ti",      lang: "es" },
-  BTX3:   { name: "Biblia Textual",               lang: "es" },
-  RVA2015:{ name: "Reina Valera Actualizada 2015",lang: "es" },
-  LBLA:   { name: "Biblia de las Américas",       lang: "es" },
-  NTV:    { name: "Nueva Traducción Viviente",    lang: "es" },
-  // Portuguese
-  ARA:    { name: "Almeida Revisada Atualizada",  lang: "pt" },
-  ARC:    { name: "Almeida Revisada Clássica",    lang: "pt" },
-  NVT:    { name: "Nova Versão Transformadora",   lang: "pt" },
-  // French
-  LSG:    { name: "Louis Segond 1910",            lang: "fr" },
-  NEG1979:{ name: "Nouvelle Edition Genève 1979", lang: "fr" },
-  BDS:    { name: "Bible du Semeur",              lang: "fr" },
-  // Italian
-  DIOD:   { name: "Bibbia Diodati",               lang: "it" },
-  NRV:    { name: "Nuova Riveduta 2006",          lang: "it" },
+  KJV: { name: "King James Version", lang: "en" },
+  NKJV: { name: "New King James Version", lang: "en" },
+  NIV: { name: "New International Version", lang: "en" },
+  ESV: { name: "English Standard Version", lang: "en" },
+  NLT: { name: "New Living Translation", lang: "en" },
+  NASB: { name: "New American Standard Bible", lang: "en" },
+  AMP: { name: "Amplified Bible", lang: "en" },
+  CSB: { name: "Christian Standard Bible", lang: "en" },
+  MSG: { name: "The Message", lang: "en" },
+  ASV: { name: "American Standard Version", lang: "en" },
+  BBE: { name: "Bible in Basic English", lang: "en" },
+  WEB: { name: "World English Bible", lang: "en" },
+  BSB: { name: "Berean Standard Bible", lang: "en" },
+  YLT: { name: "Young's Literal Translation", lang: "en" },
+  DARBY: { name: "Darby Translation", lang: "en" },
+  WNT: { name: "Weymouth New Testament", lang: "en" },
+  RVR1960: { name: "Reina-Valera 1960", lang: "es" },
+  NVI: { name: "Nueva Versión Internacional", lang: "es" },
+  PDDPT: { name: "Palabra de Dios para Ti", lang: "es" },
+  BTX3: { name: "Biblia Textual", lang: "es" },
+  RVA2015: { name: "Reina Valera Actualizada 2015", lang: "es" },
+  LBLA: { name: "Biblia de las Américas", lang: "es" },
+  NTV: { name: "Nueva Traducción Viviente", lang: "es" },
+  ARA: { name: "Almeida Revisada Atualizada", lang: "pt" },
+  ARC: { name: "Almeida Revisada Clássica", lang: "pt" },
+  NVT: { name: "Nova Versão Transformadora", lang: "pt" },
+  LSG: { name: "Louis Segond 1910", lang: "fr" },
+  NEG1979: { name: "Nouvelle Edition Genève 1979", lang: "fr" },
+  BDS: { name: "Bible du Semeur", lang: "fr" },
+  DIOD: { name: "Bibbia Diodati", lang: "it" },
+  NRV: { name: "Nuova Riveduta 2006", lang: "it" },
 };
 
-// Book name → canonical book number (1-66) for getChapter API
 const BOOK_NUM = {
   "Genesis":1,"Exodus":2,"Leviticus":3,"Numbers":4,"Deuteronomy":5,
   "Joshua":6,"Judges":7,"Ruth":8,"1 Samuel":9,"2 Samuel":10,
@@ -62,43 +59,65 @@ const BOOK_NUM = {
   "3 John":64,"Jude":65,"Revelation":66,
 };
 
-// Quick Pack — most-read books for fast downloads (231 chapters)
 const QUICK_PACK_BOOKS = [
-  { name: "John",         chapters: 21 },
-  { name: "Psalms",       chapters: 150 },
-  { name: "Proverbs",     chapters: 31 },
-  { name: "Romans",       chapters: 16 },
-  { name: "Matthew",      chapters: 28 },
-  { name: "Genesis",      chapters: 50 },
-  { name: "Isaiah",       chapters: 66 },
-  { name: "Acts",         chapters: 28 },
-  { name: "Luke",         chapters: 24 },
-  { name: "Revelation",   chapters: 22 },
+  { name: "John", chapters: 21 },
+  { name: "Psalms", chapters: 150 },
+  { name: "Proverbs", chapters: 31 },
+  { name: "Romans", chapters: 16 },
+  { name: "Matthew", chapters: 28 },
+  { name: "Genesis", chapters: 50 },
+  { name: "Acts", chapters: 28 },
+  { name: "Luke", chapters: 24 },
+  { name: "Revelation", chapters: 22 },
 ];
 
-async function fetchChapterWithRetry(base44, translation, book, chapter, maxRetries = 3) {
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      const verseRes = await base44.functions.invoke("getChapter", {
-        translation,
-        book,
-        chapter,
-      });
-      return verseRes?.data?.verses || [];
-    } catch (error) {
-      const is429 = error?.response?.status === 429 || error?.message?.includes("429");
-      const is500 = error?.response?.status === 500 || error?.message?.includes("Rate limit");
-      
-      if ((is429 || is500) && attempt < maxRetries - 1) {
-        // Aggressive backoff for rate limits: 1s, 3s, 7s
-        const delay = 1000 * (Math.pow(2, attempt) + attempt);
-        await new Promise(r => setTimeout(r, delay));
-        continue;
-      }
-      return [];
-    }
+function cleanBollsText(raw) {
+  let text = raw
+    .replace(/<sup[^>]*>.*?<\/sup>/gi, "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\d{3,5}/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  const nlIdx = text.indexOf("\n");
+  if (nlIdx > 0 && nlIdx < 80) {
+    const after = text.substring(nlIdx + 1).trim();
+    if (after.length > 10) text = after;
   }
-  return [];
+  text = text.replace(/^((?:[A-Z][a-zA-Z']*\s+){1,8}[A-Z][a-zA-Z']*)([A-Z][a-z])/, "$2");
+  return text.trim();
+}
+
+// Fetch a chapter directly from bolls.life API (no nested function call)
+async function fetchChapterDirect(translation, bookName, chapter) {
+  const bookNum = BOOK_NUM[bookName];
+  if (!bookNum) return [];
+  const url = `https://bolls.life/get-chapter/${translation}/${bookNum}/${chapter}/`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return [];
+    const verses = [];
+    for (const v of data) {
+      const num = parseInt(v.verse);
+      if (isNaN(num) || !v.text) continue;
+      const text = cleanBollsText(v.text.trim());
+      if (text) verses.push({ verse: num, text });
+    }
+    verses.sort((a, b) => a.verse - b.verse);
+    return verses;
+  } catch {
+    return [];
+  }
+}
+
+// Fetch multiple chapters concurrently in batches
+async function fetchBatch(translation, tasks) {
+  const results = await Promise.all(
+    tasks.map(({ bookName, chapter }) => fetchChapterDirect(translation, bookName, chapter))
+  );
+  return results;
 }
 
 Deno.serve(async (req) => {
@@ -110,32 +129,50 @@ Deno.serve(async (req) => {
     const { translation, pack = "quick" } = await req.json();
     if (!translation) return Response.json({ error: 'Missing translation' }, { status: 400 });
 
-    const trans = TRANSLATION_MAP[translation.toUpperCase()];
+    const tCode = translation.toUpperCase();
+    const trans = TRANSLATION_MAP[tCode];
     if (!trans) return Response.json({ error: `Unsupported translation: ${translation}` }, { status: 400 });
+
+    if (!BOLLS_TRANSLATIONS.has(tCode)) {
+      return Response.json({ error: `Translation ${tCode} is not available for offline download` }, { status: 400 });
+    }
 
     const books = QUICK_PACK_BOOKS;
     const result = {};
     let totalChapters = 0;
 
+    // Build all fetch tasks
+    const allTasks = [];
     for (const book of books) {
       result[book.name] = {};
-
       for (let ch = 1; ch <= book.chapters; ch++) {
-        const verses = await fetchChapterWithRetry(base44, translation.toUpperCase(), book.name, ch);
+        allTasks.push({ bookName: book.name, chapter: ch });
+      }
+    }
+
+    // Process in batches of 10 concurrent requests
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < allTasks.length; i += BATCH_SIZE) {
+      const batch = allTasks.slice(i, i + BATCH_SIZE);
+      const batchResults = await fetchBatch(tCode, batch);
+      
+      for (let j = 0; j < batch.length; j++) {
+        const { bookName, chapter } = batch[j];
+        const verses = batchResults[j];
         if (verses.length > 0) {
-          result[book.name][ch] = verses.map(v => ({
-            verse: v.verse,
-            text: v.text,
-          }));
+          result[bookName][chapter] = verses;
           totalChapters++;
         }
-        // Stagger requests: 500ms between chapters to avoid rate limits
-        await new Promise(r => setTimeout(r, 500));
+      }
+      
+      // Small delay between batches to be polite to the API
+      if (i + BATCH_SIZE < allTasks.length) {
+        await new Promise(r => setTimeout(r, 200));
       }
     }
 
     return Response.json({
-      translation: translation.toUpperCase(),
+      translation: tCode,
       name: trans.name,
       lang: trans.lang,
       pack,
@@ -144,6 +181,7 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
+    console.error("downloadTranslation error:", error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

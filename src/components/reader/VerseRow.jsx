@@ -79,7 +79,7 @@ export default function VerseRow({
       <motion.div
         className="rounded-lg px-2 py-1.5 cursor-pointer transition-all"
         style={{ ...hlStyle }}
-        onClick={() => setMenuOpen(v => !v)}
+        onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
         whileTap={{ scale: 0.995 }}
       >
         <span className="font-inter leading-relaxed select-text"
@@ -107,6 +107,7 @@ export default function VerseRow({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
+            onClick={(e) => e.stopPropagation()}
             className="absolute left-0 right-0 z-20 rounded-2xl p-3 mt-1"
             style={{ background: "rgba(10,15,30,0.97)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
           >

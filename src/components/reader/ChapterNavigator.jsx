@@ -4,31 +4,49 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 
+const THEOLOGICAL_GROUPS = [
+  { id: "Pentateuch", label: "📖 The Law", books: [1,2,3,4,5] },
+  { id: "Historical", label: "⚔️ Historical", books: [6,7,8,9,10,11,12,13,14,15,16,17] },
+  { id: "Wisdom", label: "💎 Wisdom & Poetry", books: [18,19,20,21,22] },
+  { id: "MajorProphets", label: "🔥 Major Prophets", books: [23,24,25,26,27] },
+  { id: "MinorProphets", label: "⚡ Minor Prophets", books: [28,29,30,31,32,33,34,35,36,37,38,39] },
+  { id: "Gospels", label: "✝️ Gospels", books: [40,41,42,43] },
+  { id: "Acts", label: "🌍 Acts & Epistles", books: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65] },
+  { id: "Revelation", label: "👑 Revelation", books: [66] },
+];
+
 export default function ChapterNavigator({ book, chapter, translation, onNavigate, onTranslationChange }) {
   const { lang } = useLang();
   const [showPicker, setShowPicker] = useState(false);
   const [pickerTab, setPickerTab] = useState("book");
   const [selectedBook, setSelectedBook] = useState(book);
+  const [expandedGroup, setExpandedGroup] = useState(null);
   const pickerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
   const totalChapters = bookData?.chapters || 1;
-  const transData = TRANSLATIONS.find(t => t.code === translation);
-  // Use UI language for display, not translation language
   const displayBook = getTranslatedBookName(book, lang);
   const selBookData = BIBLE_BOOKS.find(b => b.name === selectedBook);
 
-  // Sync selectedBook when book prop changes
   useEffect(() => { setSelectedBook(book); }, [book]);
 
-  // Close on outside click
+  // Auto-expand the group containing the currently selected book
+  useEffect(() => {
+    if (pickerTab === "book") {
+      const selBookNum = BIBLE_BOOKS.find(b => b.name === selectedBook)?.num;
+      if (selBookNum) {
+        const group = THEOLOGICAL_GROUPS.find(g => g.books.includes(selBookNum));
+        if (group) setExpandedGroup(group.id);
+      }
+    }
+  }, [pickerTab, selectedBook]);
+
   useEffect(() => {
     const handler = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false);
     };
     document.addEventListener("mousedown", handler);
-    document.addEventListener("touchstart", handler);
-    return () => { document.removeEventListener("mousedown", handler); document.removeEventListener("touchstart", handler); };
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   const goTo = (newBook, newChapter) => { onNavigate(newBook, newChapter); setShowPicker(false); };
@@ -49,8 +67,6 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
     }
   };
 
-  const OT = BIBLE_BOOKS.filter(b => b.testament === "OT");
-  const NT = BIBLE_BOOKS.filter(b => b.testament === "NT");
   const chapterNums = Array.from({ length: selBookData?.chapters || 1 }, (_, i) => i + 1);
   const tabs = onTranslationChange ? ["book", "chapter", "translation"] : ["book", "chapter"];
 
@@ -125,65 +141,88 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
             <div className="overflow-y-auto scrollbar-hide flex-1">
               <AnimatePresence mode="wait">
 
-                {/* Book picker */}
+                {/* Book picker — Theological groups */}
                 {pickerTab === "book" && (
-                  <motion.div key="book" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.18 }} className="p-3 space-y-3">
-                    <div>
-                      <p className="text-[9px] font-cinzel uppercase tracking-widest px-1 mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>Old Testament</p>
-                      <div className="grid grid-cols-4 gap-1">
-                        {OT.map(b => (
-                          <motion.button key={b.name} whileTap={{ scale: 0.9 }}
-                            onClick={() => { setSelectedBook(b.name); setPickerTab("chapter"); }}
-                            className="text-[10px] px-1.5 py-2 rounded-lg font-inter truncate transition-all"
+                  <motion.div key="book" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.18 }} className="p-2 space-y-1">
+                    {THEOLOGICAL_GROUPS.map(group => {
+                      const groupBooks = BIBLE_BOOKS.filter(b => group.books.includes(b.num));
+                      const isExpanded = expandedGroup === group.id;
+                      return (
+                        <div key={group.id}>
+                          <button
+                            onClick={() => setExpandedGroup(isExpanded ? null : group.id)}
+                            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-left"
                             style={{
-                              background: selectedBook === b.name ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.04)",
-                              color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.55)",
-                              border: selectedBook === b.name ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent"
-                            }}>
-                            {getTranslatedBookName(b.name, lang).substring(0, 7)}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-cinzel uppercase tracking-widest px-1 mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>New Testament</p>
-                      <div className="grid grid-cols-4 gap-1">
-                        {NT.map(b => (
-                          <motion.button key={b.name} whileTap={{ scale: 0.9 }}
-                            onClick={() => { setSelectedBook(b.name); setPickerTab("chapter"); }}
-                            className="text-[10px] px-1.5 py-2 rounded-lg font-inter truncate transition-all"
-                            style={{
-                              background: selectedBook === b.name ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.04)",
-                              color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.55)",
-                              border: selectedBook === b.name ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent"
-                            }}>
-                            {getTranslatedBookName(b.name, lang).substring(0, 7)}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
+                              background: isExpanded ? "rgba(0,245,255,0.08)" : "transparent",
+                              borderLeft: isExpanded ? "2px solid #00f5ff" : "2px solid transparent"
+                            }}
+                          >
+                            <ChevronDown
+                              className="w-3 h-3 flex-shrink-0 transition-transform"
+                              style={{
+                                color: isExpanded ? "#00f5ff" : "rgba(255,255,255,0.25)",
+                                transform: isExpanded ? "rotate(0deg)" : "rotate(-90deg)",
+                              }}
+                            />
+                            <span className="text-[11px] font-cinzel" style={{ color: isExpanded ? "#00f5ff" : "rgba(255,255,255,0.6)" }}>
+                              {group.label}
+                            </span>
+                          </button>
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="pl-5 pr-2 pb-1 space-y-0.5">
+                                  {groupBooks.map(b => (
+                                    <button key={b.name}
+                                      onClick={() => { setSelectedBook(b.name); setPickerTab("chapter"); }}
+                                      className="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg transition-all text-xs font-inter"
+                                      style={{
+                                        background: selectedBook === b.name ? "rgba(0,245,255,0.12)" : "transparent",
+                                        color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.55)",
+                                      }}>
+                                      <span>{getTranslatedBookName(b.name, lang)}</span>
+                                      <span className="text-[9px]" style={{ color: "rgba(255,255,255,0.2)" }}>{b.chapters} ch</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
                   </motion.div>
                 )}
 
-                {/* Chapter picker — inline grid, no nested dropdown */}
+                {/* Chapter picker — compact scrollable list */}
                 {pickerTab === "chapter" && (
-                  <motion.div key="chapter" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.18 }} className="p-3">
-                    <p className="text-[9px] font-cinzel uppercase tracking-widest px-1 mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>
+                  <motion.div key="chapter" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.18 }} className="p-2">
+                    <p className="text-[9px] font-cinzel uppercase tracking-widest px-2 mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>
                       {getTranslatedBookName(selectedBook, lang)} — {selBookData?.chapters} chapters
                     </p>
-                    <div className="grid grid-cols-6 gap-1">
-                      {chapterNums.map(ch => (
-                        <motion.button key={ch} whileTap={{ scale: 0.85 }}
-                          onClick={() => goTo(selectedBook, ch)}
-                          className="py-2 rounded-lg text-xs font-cinzel font-semibold transition-all flex items-center justify-center"
-                          style={{
-                            background: selectedBook === book && ch === chapter ? "rgba(0,245,255,0.2)" : "rgba(255,255,255,0.05)",
-                            color: selectedBook === book && ch === chapter ? "#00f5ff" : "rgba(255,255,255,0.6)",
-                            border: selectedBook === book && ch === chapter ? "1px solid rgba(0,245,255,0.35)" : "1px solid transparent"
-                          }}>
-                          {ch}
-                        </motion.button>
-                      ))}
+                    <div className="space-y-0.5 max-h-[50vh] overflow-y-auto scrollbar-hide">
+                      {chapterNums.map(ch => {
+                        const isActive = selectedBook === book && ch === chapter;
+                        return (
+                          <button key={ch}
+                            onClick={() => goTo(selectedBook, ch)}
+                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-inter transition-all text-left"
+                            style={{
+                              background: isActive ? "rgba(0,245,255,0.12)" : "transparent",
+                              color: isActive ? "#00f5ff" : "rgba(255,255,255,0.6)",
+                              borderLeft: isActive ? "3px solid #00f5ff" : "3px solid transparent"
+                            }}>
+                            <span>Chapter {ch}</span>
+                            {isActive && <Check className="w-3 h-3" style={{ color: "#00f5ff" }} />}
+                          </button>
+                        );
+                      })}
                     </div>
                   </motion.div>
                 )}

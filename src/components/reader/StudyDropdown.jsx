@@ -51,7 +51,7 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
       <motion.button
         ref={triggerRef}
         whileTap={{ scale: 0.98 }}
-        onClick={() => setIsOpen(v => !v)}
+        onClick={(e) => { e.stopPropagation(); setIsOpen(v => !v); }}
         className="w-full flex items-center justify-between rounded-xl font-cinzel font-semibold transition-all"
         style={{
           padding: "10px 14px",
@@ -100,7 +100,7 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.012, duration: 0.15 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => { onChange(item.value); setIsOpen(false); }}
+                  onClick={(e) => { e.stopPropagation(); onChange(item.value); setIsOpen(false); }}
                   className="w-full px-3.5 py-2.5 text-left flex items-center justify-between gap-2 group transition-colors"
                   style={{
                     background: value === item.value ? "rgba(0,245,255,0.1)" : "transparent",
