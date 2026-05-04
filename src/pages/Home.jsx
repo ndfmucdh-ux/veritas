@@ -67,9 +67,6 @@ export default function Home() {
           </p>
         </motion.div>
 
-        {/* Morning Inspiration */}
-        <MorningInspiration />
-
         {/* Hero Verse Slider */}
         <HeroVerseSlider />
 
@@ -155,6 +152,11 @@ export default function Home() {
               </Link>
             ))}
           </div>
+        </motion.div>
+
+        {/* Morning Inspiration — bottom of page */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+          <MorningInspiration />
         </motion.div>
       </div>
     </motion.div>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Loader2, ChevronRight, RefreshCw } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
+import { useLang } from "@/lib/LanguageContext";
 
 const THEMES = {
   hope: { color: "#fbbf24", bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)" },
@@ -16,6 +17,7 @@ const THEMES = {
 const getThemeStyle = (theme) => THEMES[theme?.toLowerCase()] || THEMES.faith;
 
 export default function MorningInspiration() {
+  const { lang } = useLang();
   const [inspiration, setInspiration] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -25,15 +27,15 @@ export default function MorningInspiration() {
     if (isRefresh) setRefreshing(true);
     else setLoading(true);
     try {
-      // Cache for 2 hours
-      const cacheKey = `morning_inspiration_${new Date().toISOString().slice(0, 13)}`;
+      // Cache for 2 hours per language
+      const cacheKey = `morning_inspiration_${lang}_${new Date().toISOString().slice(0, 13)}`;
       const cached = sessionStorage.getItem(cacheKey);
       if (cached && !isRefresh) {
         setInspiration(JSON.parse(cached));
         setLoading(false);
         return;
       }
-      const res = await base44.functions.invoke("getMorningInspiration", {});
+      const res = await base44.functions.invoke("getMorningInspiration", { language: lang });
       const data = res.data?.inspiration;
       if (data?.verse_ref) {
         setInspiration(data);
@@ -47,7 +49,7 @@ export default function MorningInspiration() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [lang]);
 
   if (loading) {
     return (
@@ -77,7 +79,7 @@ export default function MorningInspiration() {
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5" style={{ color: theme.color }} />
             <span className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: theme.color }}>
-              Morning Inspiration
+              {lang === "es" ? "Inspiración del día" : lang === "pt" ? "Inspiração do dia" : "Morning Inspiration"}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -130,7 +132,10 @@ export default function MorningInspiration() {
                 className="text-[11px] font-inter"
                 style={{ color: "rgba(255,255,255,0.35)" }}
               >
-                {expanded ? "Less ↑" : "Reflect ↓"}
+                {expanded
+                ? (lang === "es" ? "Menos ↑" : lang === "pt" ? "Menos ↑" : "Less ↑")
+                : (lang === "es" ? "Reflexionar ↓" : lang === "pt" ? "Refletir ↓" : "Reflect ↓")
+              }
               </button>
               <div className="flex-1" />
               {inspiration.book && inspiration.chapter && (
@@ -138,7 +143,7 @@ export default function MorningInspiration() {
                   <motion.div whileTap={{ scale: 0.95 }}
                     className="flex items-center gap-1 text-[11px] font-cinzel px-3 py-1.5 rounded-lg"
                     style={{ background: `${theme.color}15`, color: theme.color, border: `1px solid ${theme.color}30` }}>
-                    Read Chapter <ChevronRight className="w-3 h-3" />
+                     {lang === "es" ? "Leer capítulo" : lang === "pt" ? "Ler capítulo" : "Read Chapter"} <ChevronRight className="w-3 h-3" />
                   </motion.div>
                 </Link>
               )}
