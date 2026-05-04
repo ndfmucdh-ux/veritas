@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe } from "lucide-react";
+import PlanTimeline from "@/components/plans/PlanTimeline";
 import { base44 } from "@/api/base44Client";
 
 // Real-life Unsplash photo headers per plan
@@ -235,7 +236,15 @@ export default function Plans() {
           </div>
         </div>
 
-        {/* Days list */}
+        {/* Timeline */}
+        <PlanTimeline
+          plan={activePlan}
+          completedDays={completed}
+          onSelectDay={setSelectedDay}
+          selectedDay={selectedDay}
+        />
+
+        {/* Days expanded content */}
         <div className="px-4 space-y-3">
           {activePlan.days.map((day, i) => {
             const done = isDayComplete(activePlan.title, day.day);

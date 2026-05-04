@@ -12,6 +12,7 @@ import StudyDropdown from "@/components/reader/StudyDropdown.jsx";
 import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
+import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
 
 export default function Read() {
   const params = new URLSearchParams(window.location.search);
@@ -32,6 +33,7 @@ export default function Read() {
   const [copied, setCopied] = useState(false);
   const [showParallel, setShowParallel] = useState(false);
   const [selectedVerse, setSelectedVerse] = useState(null);
+  const [sidePanelVerse, setSidePanelVerse] = useState(null);
   const containerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
@@ -274,6 +276,7 @@ export default function Read() {
                     showNumbers={showNumbers}
                     fontSize={fontSize}
                     onUpdate={handleVerseUpdate}
+                    onOpenNote={(verseData) => setSidePanelVerse(verseData)}
                   />
                 </div>
               ))}
@@ -288,6 +291,19 @@ export default function Read() {
           )}
         </div>
       </div>
+
+      {/* Verse side panel */}
+      <VerseSidePanel
+        verse={sidePanelVerse}
+        book={book}
+        chapter={chapter}
+        translation={translation}
+        onClose={() => setSidePanelVerse(null)}
+        onNoteSaved={(verseNum, text) => {
+          handleVerseUpdate({ type: "note", verseNum, data: text });
+          setSidePanelVerse(null);
+        }}
+      />
 
       {/* Parallel view */}
       <AnimatePresence>

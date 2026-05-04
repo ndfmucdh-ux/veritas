@@ -5,6 +5,7 @@ import { BookOpen, ChevronRight } from "lucide-react";
 import HeroVerseSlider from "@/components/home/HeroVerseSlider.jsx";
 import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
+import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
 
@@ -65,6 +66,9 @@ export default function Home() {
             "{t.slogan}"
           </p>
         </motion.div>
+
+        {/* Morning Inspiration */}
+        <MorningInspiration />
 
         {/* Hero Verse Slider */}
         <HeroVerseSlider />
@@ -175,17 +179,18 @@ function VersePreviewCard({ verse }) {
   const chapter = parts[parts.length - 1]?.split(":")[0];
   const book = parts.slice(0, -1).join(" ");
   return (
-    <motion.div whileTap={{ scale: 0.985 }} transition={{ type: "spring", stiffness: 380, damping: 26 }}
-      onClick={() => window.location.href = `/read?book=${encodeURIComponent(book)}&chapter=${chapter}`}
-      className="rounded-2xl p-4 cursor-pointer"
-      style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}>
-      <p className="font-playfair italic leading-relaxed mb-2.5" style={{ fontSize: "15px", color: "rgba(255,255,255,0.82)" }}>
-        "{verse.text.length > 130 ? verse.text.slice(0, 130) + "…" : verse.text}"
-      </p>
-      <div className="flex items-center justify-between">
-        <span className="font-cinzel text-xs" style={{ color: "#FFD700" }}>{verse.ref}</span>
-        <span className="text-[10px] font-inter px-2 py-0.5 rounded-full capitalize" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>{verse.theme}</span>
-      </div>
-    </motion.div>
+    <Link to={`/read?book=${encodeURIComponent(book)}&chapter=${chapter}`}>
+      <motion.div whileTap={{ scale: 0.985 }} transition={{ type: "spring", stiffness: 380, damping: 26 }}
+        className="rounded-2xl p-4 cursor-pointer"
+        style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <p className="font-playfair italic leading-relaxed mb-2.5" style={{ fontSize: "15px", color: "rgba(255,255,255,0.82)" }}>
+          "{verse.text.length > 130 ? verse.text.slice(0, 130) + "…" : verse.text}"
+        </p>
+        <div className="flex items-center justify-between">
+          <span className="font-cinzel text-xs" style={{ color: "#FFD700" }}>{verse.ref}</span>
+          <span className="text-[10px] font-inter px-2 py-0.5 rounded-full capitalize" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>{verse.theme}</span>
+        </div>
+      </motion.div>
+    </Link>
   );
 }

@@ -15,7 +15,7 @@ const COLOR_HEX = { yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa", green
 
 export default function VerseRow({
   verseNum, text, redLetter, book, chapter, translation,
-  highlight, isBookmarked, note, showNumbers, fontSize, onUpdate
+  highlight, isBookmarked, note, showNumbers, fontSize, onUpdate, onOpenNote
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [noteMode, setNoteMode] = useState(false);
@@ -136,7 +136,10 @@ export default function VerseRow({
                 <Bookmark className="w-3.5 h-3.5" />
                 {isBookmarked ? "Saved" : "Bookmark"}
               </button>
-              <button onClick={() => setNoteMode(v => !v)}
+              <button onClick={() => {
+                  setMenuOpen(false);
+                  onOpenNote?.({ verse: verseNum, text, red_letter: redLetter });
+                }}
                 className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
                 style={{ background: "rgba(167,139,250,0.1)", color: "#a78bfa" }}>
                 <StickyNote className="w-3.5 h-3.5" />

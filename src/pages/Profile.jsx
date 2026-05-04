@@ -11,6 +11,7 @@ import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
+import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -37,6 +38,8 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("overview");
   const [notifEnabled, setNotifEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [levelUpData, setLevelUpData] = useState(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -57,7 +60,22 @@ export default function Profile() {
       base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
     ]).then(([u, xp, bm, hl, nt, rp]) => {
       setUser(u);
-      setXpData(xp?.[0] || null);
+      const xpRecord = xp?.[0] || null;
+      setXpData(xpRecord);
+      // Check for level-up since last visit
+      const lastXP = parseInt(sessionStorage.getItem("veritas_last_xp") || "0");
+      const currentXP = xpRecord?.total_xp || 0;
+      if (currentXP > lastXP) {
+        sessionStorage.setItem("veritas_last_xp", String(currentXP));
+        base44.functions.invoke("checkXPMilestones", { previous_xp: lastXP, current_xp: currentXP }).catch(() => {});
+        // Show level-up animation if level changed
+        const prevLevel = getLevelForXP(lastXP);
+        const currLevel = getLevelForXP(currentXP);
+        if (prevLevel.name !== currLevel.name && lastXP > 0) {
+          setLevelUpData(currLevel);
+          setShowLevelUp(true);
+        }
+      }
       setBookmarks(bm || []);
       setHighlights(hl || []);
       setNotes(nt || []);
@@ -117,6 +135,7 @@ export default function Profile() {
 
   return (
     <div className="md:ml-16 min-h-screen pb-28">
+      <LevelUpAnimation level={levelUpData} show={showLevelUp} onComplete={() => setShowLevelUp(false)} />
       {/* ── Hero Header ── */}
       {/* Default hero is the beautiful deep-space starfield photo — users can replace with their own */}
       <div className="relative h-52 overflow-hidden">
@@ -388,6 +407,8 @@ export default function Profile() {
               <Section label="Preferences" icon={Bell}>
                 <ToggleRow icon={Bell} label="Daily Verse Notifications" value={notifEnabled} onChange={() => setNotifEnabled(v => !v)} color="#fbbf24" />
                 <ToggleRow icon={Moon} label="Dark Theme" value={darkMode} onChange={() => setDarkMode(v => !v)} color="#a78bfa" />
+                <NotifTimeRow label="🙏 Prayer Journal Reminder" settingKey="prayer_reminder_time" defaultTime="20:00" />
+                <NotifTimeRow label="📖 Devotional Plan Reminder" settingKey="devotional_reminder_time" defaultTime="19:00" />
               </Section>
 
               <Section label="Data & Privacy" icon={Shield}>
@@ -468,6 +489,26 @@ function SettingLink({ icon: Icon, label, sub, color, tag }) {
         ? <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full" style={{ background: "rgba(52,211,153,0.15)", color: "#34d399" }}>{tag}</span>
         : <ChevronRight className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.2)" }} />
       }
+    </div>
+  );
+}
+
+function NotifTimeRow({ label, settingKey, defaultTime }) {
+  const [time, setTime] = useState(() => localStorage.getItem(`veritas_notif_${settingKey}`) || defaultTime);
+  const handleChange = (e) => {
+    setTime(e.target.value);
+    localStorage.setItem(`veritas_notif_${settingKey}`, e.target.value);
+  };
+  return (
+    <div className="flex items-center gap-3 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+      <p className="flex-1 text-sm font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>{label}</p>
+      <input
+        type="time"
+        value={time}
+        onChange={handleChange}
+        className="text-xs font-cinzel px-3 py-1.5 rounded-xl focus:outline-none"
+        style={{ background: "rgba(0,245,255,0.07)", border: "1px solid rgba(0,245,255,0.2)", color: "#00f5ff" }}
+      />
     </div>
   );
 }
