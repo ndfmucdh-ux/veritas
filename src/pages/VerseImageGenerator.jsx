@@ -83,8 +83,14 @@ function QRCodeDisplay({ url, onClose }) {
 export default function VerseImageGenerator() {
   const { t } = useLang();
   const [template, setTemplate] = useState(TEMPLATES[0]);
-  const [verseRef, setVerseRef] = useState("John 3:16");
-  const [verseText, setVerseText] = useState("For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.");
+
+  // Support pre-filling from URL params (e.g. from VerseRow share button)
+  const urlParams = new URLSearchParams(window.location.search);
+  const preRef = urlParams.get("ref") || "John 3:16";
+  const preText = urlParams.get("text") || "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.";
+
+  const [verseRef, setVerseRef] = useState(preRef);
+  const [verseText, setVerseText] = useState(preText);
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);

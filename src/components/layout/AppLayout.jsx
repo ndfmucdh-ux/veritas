@@ -7,6 +7,7 @@ import SideNav from "./SideNav.jsx";
 import FloatingActionButton from "./FloatingActionButton.jsx";
 import VeritasLogo from "@/components/ui/VeritasLogo";
 import { useLang } from "@/lib/LanguageContext";
+import AssistantButton from "@/components/assistant/AssistantButton";
 
 export default function AppLayout() {
   const location = useLocation();
@@ -50,6 +51,7 @@ export default function AppLayout() {
 
       {!isImmersive && <BottomNav />}
       {location.pathname === "/read" && <FloatingActionButton />}
+      {!isImmersive && <AssistantButton />}
     </div>
   );
 }

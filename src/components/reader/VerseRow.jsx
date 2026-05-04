@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, Highlighter, StickyNote, X, Check } from "lucide-react";
+import { Bookmark, Highlighter, StickyNote, X, Check, Share2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const COLORS = ["yellow", "cyan", "purple", "green", "red"];
@@ -144,6 +144,17 @@ export default function VerseRow({
                 style={{ background: "rgba(167,139,250,0.1)", color: "#a78bfa" }}>
                 <StickyNote className="w-3.5 h-3.5" />
                 Note
+              </button>
+              <button onClick={() => {
+                  setMenuOpen(false);
+                  const ref = encodeURIComponent(`${book} ${chapter}:${verseNum}`);
+                  const txt = encodeURIComponent(text);
+                  window.location.href = `/verse-art?ref=${ref}&text=${txt}`;
+                }}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
+                style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}>
+                <Share2 className="w-3.5 h-3.5" />
+                Art
               </button>
               <button onClick={() => setMenuOpen(false)}
                 className="ml-auto flex items-center justify-center w-7 h-7 rounded-xl"

@@ -174,8 +174,7 @@ export default function Profile() {
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="relative flex-shrink-0 cursor-pointer"
-            onClick={() => avatarInputRef.current?.click()}
+            className="relative flex-shrink-0"
           >
             {avatarUrl ? (
               <img src={avatarUrl} alt="avatar" className="w-20 h-20 rounded-2xl object-cover"
@@ -188,12 +187,15 @@ export default function Profile() {
                 {user?.full_name?.[0]?.toUpperCase() || "✝"}
               </div>
             )}
-            {/* Camera overlay */}
-            <div className="absolute inset-0 rounded-2xl flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
-              style={{ background: "rgba(0,0,0,0.5)" }}>
-              {uploadingAvatar ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-base bg-background border-2 border-background">
+            {/* Always-visible camera button */}
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl flex items-center justify-center z-10"
+              style={{ background: "rgba(10,15,30,0.95)", border: `1.5px solid ${level.color}55`, boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+            >
+              {uploadingAvatar ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Camera className="w-3.5 h-3.5" style={{ color: level.color }} />}
+            </button>
+            <div className="absolute -top-1 -left-1 w-6 h-6 rounded-full flex items-center justify-center text-sm bg-background border-2 border-background">
               {level.icon}
             </div>
           </motion.div>
