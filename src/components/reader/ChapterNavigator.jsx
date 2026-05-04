@@ -45,8 +45,15 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
     const handler = (e) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false);
     };
+    const onScroll = () => setShowPicker(false);
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler, { passive: true });
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+      window.removeEventListener("scroll", onScroll, true);
+    };
   }, []);
 
   const goTo = (newBook, newChapter) => { onNavigate(newBook, newChapter); setShowPicker(false); };
@@ -114,6 +121,13 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
       {/* Picker panel */}
       <AnimatePresence>
         {showPicker && (
+          <>
+            {/* Invisible full-screen backdrop to catch all outside taps */}
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setShowPicker(false)}
+              onTouchStart={() => setShowPicker(false)}
+            />
           <motion.div
             initial={{ opacity: 0, y: -10, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -263,6 +277,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               </AnimatePresence>
             </div>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
