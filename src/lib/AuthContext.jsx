@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     checkAppState();
   }, []);
 
-  const checkAppState = async () => {
+  const checkAppState = async (retryCount = 0) => {
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
@@ -49,6 +49,14 @@ export const AuthProvider = ({ children }) => {
         setIsLoadingPublicSettings(false);
       } catch (appError) {
         console.error('App state check failed:', appError);
+
+        // Retry on transient network errors (no status = network error, or 5xx)
+        const isTransient = !appError.status || appError.status >= 500;
+        if (isTransient && retryCount < 2) {
+          const delay = (retryCount + 1) * 800;
+          await new Promise(r => setTimeout(r, delay));
+          return checkAppState(retryCount + 1);
+        }
         
         // Handle app-level errors
         if (appError.status === 403 && appError.data?.extra_data?.reason) {
@@ -89,7 +97,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = async (retryCount = 0) => {
     try {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
@@ -100,6 +108,15 @@ export const AuthProvider = ({ children }) => {
       setAuthChecked(true);
     } catch (error) {
       console.error('User auth check failed:', error);
+
+      // Retry on transient errors
+      const isTransient = !error.status || error.status >= 500;
+      if (isTransient && retryCount < 2) {
+        const delay = (retryCount + 1) * 800;
+        await new Promise(r => setTimeout(r, delay));
+        return checkUserAuth(retryCount + 1);
+      }
+
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
       setAuthChecked(true);
