@@ -64,26 +64,26 @@ export default function Home() {
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="flex items-center gap-3 mb-1">
-            {/* Avatar */}
-            {displayAvatar ? (
-              <img src={displayAvatar} alt="avatar"
-                className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
-                style={{ border: "1.5px solid rgba(0,245,255,0.3)", boxShadow: "0 0 14px rgba(0,245,255,0.15)" }} />
-            ) : (
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-lg font-bold"
-                style={{ background: "rgba(0,245,255,0.12)", border: "1.5px solid rgba(0,245,255,0.25)", color: "#00f5ff" }}>
-                {displayName?.[0]?.toUpperCase() || emoji}
-              </div>
-            )}
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="font-cinzel font-bold text-white leading-tight" style={{ fontSize: "clamp(18px, 5vw, 24px)" }}>
+              <h1 className="font-cinzel font-bold text-white leading-tight" style={{ fontSize: "clamp(16px, 4.5vw, 21px)" }}>
                 {t[greetingKey]}{firstName ? `, ${firstName}` : ""}
               </h1>
               <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
                 "{t.slogan}"
               </p>
             </div>
+            {/* Avatar — right side */}
+            {displayAvatar ? (
+              <img src={displayAvatar} alt="avatar"
+                className="w-9 h-9 rounded-xl object-cover flex-shrink-0"
+                style={{ border: "1.5px solid rgba(0,245,255,0.25)", boxShadow: "0 0 10px rgba(0,245,255,0.12)" }} />
+            ) : (
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-base font-bold"
+                style={{ background: "rgba(0,245,255,0.1)", border: "1.5px solid rgba(0,245,255,0.2)", color: "#00f5ff" }}>
+                {displayName?.[0]?.toUpperCase() || emoji}
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -197,9 +197,14 @@ function SectionHeader({ label, linkTo, linkLabel }) {
 }
 
 function VersePreviewCard({ verse }) {
-  const parts = verse.ref.split(" ");
-  const chapter = parts[parts.length - 1]?.split(":")[0];
-  const book = parts.slice(0, -1).join(" ");
+  // ref format: "Book Chapter:Verse" e.g. "John 3:16", "Proverbs 3:5-6", "Psalm 23:1"
+  const lastSpace = verse.ref.lastIndexOf(" ");
+  const rawBook = verse.ref.substring(0, lastSpace);
+  const chapterVerse = verse.ref.substring(lastSpace + 1);
+  const chapter = chapterVerse.split(":")[0];
+  // Normalize common abbreviations to full book names used in the reader
+  const bookMap = { "Psalm": "Psalms" };
+  const book = bookMap[rawBook] || rawBook;
   return (
     <Link to={`/read?book=${encodeURIComponent(book)}&chapter=${chapter}`}>
       <motion.div whileTap={{ scale: 0.985 }} transition={{ type: "spring", stiffness: 380, damping: 26 }}

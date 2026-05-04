@@ -88,10 +88,13 @@ export default function HeroVerseSlider() {
   };
 
   const verse = slides[current] || slides[0] || FALLBACK_VERSES.en[0];
-  const parts = verse.verse_ref?.split(" ") || [];
-  const chapterVerse = parts[parts.length - 1] || "1:1";
-  const bookName = parts.slice(0, -1).join(" ");
+  const ref = verse.verse_ref || "";
+  const lastSpace = ref.lastIndexOf(" ");
+  const rawBook = ref.substring(0, lastSpace);
+  const chapterVerse = ref.substring(lastSpace + 1) || "1:1";
   const chapterNum = chapterVerse.split(":")[0];
+  const BOOK_MAP = { "Psalm": "Psalms", "Song of Solomon": "Song of Solomon" };
+  const bookName = BOOK_MAP[rawBook] || rawBook;
 
   return (
     <div className="relative rounded-3xl overflow-hidden" style={{ minHeight: 260 }}>
