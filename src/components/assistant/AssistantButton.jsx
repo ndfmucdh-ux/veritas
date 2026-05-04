@@ -44,12 +44,11 @@ export default function AssistantButton() {
         }}
       >
         <motion.div
-          animate={{ scale: open ? 0.88 : 1 }}
+          animate={{ scale: open ? 0.92 : 1 }}
           transition={{ type: "spring", stiffness: 380, damping: 22 }}
-          className="rounded-xl overflow-hidden"
-          style={{ boxShadow: "0 0 14px rgba(251,191,36,0.3)" }}
+          className="absolute inset-0 rounded-2xl overflow-hidden"
         >
-          <VeritasLogo size={36} />
+          <VeritasLogo size={56} className="w-full h-full" />
         </motion.div>
 
         {/* Pulse ring */}
