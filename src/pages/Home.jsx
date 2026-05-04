@@ -54,17 +54,27 @@ export default function Home() {
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-          <div className="flex items-center gap-2.5 mb-1">
-            <motion.span className="text-2xl" animate={{ rotate: [0, 8, -4, 0] }} transition={{ duration: 1.5, delay: 0.5 }}>
-              {emoji}
-            </motion.span>
-            <h1 className="font-cinzel font-bold text-white" style={{ fontSize: "clamp(20px, 5vw, 26px)" }}>
-              {t[greetingKey]}{firstName ? `, ${firstName}` : ""}
-            </h1>
+          <div className="flex items-center gap-3 mb-1">
+            {/* Avatar */}
+            {user?.avatar_url ? (
+              <img src={user.avatar_url} alt="avatar"
+                className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
+                style={{ border: "1.5px solid rgba(0,245,255,0.3)", boxShadow: "0 0 14px rgba(0,245,255,0.15)" }} />
+            ) : (
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-lg font-bold"
+                style={{ background: "rgba(0,245,255,0.12)", border: "1.5px solid rgba(0,245,255,0.25)", color: "#00f5ff" }}>
+                {user?.full_name?.[0]?.toUpperCase() || emoji}
+              </div>
+            )}
+            <div>
+              <h1 className="font-cinzel font-bold text-white leading-tight" style={{ fontSize: "clamp(18px, 5vw, 24px)" }}>
+                {t[greetingKey]}{firstName ? `, ${firstName}` : ""}
+              </h1>
+              <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                "{t.slogan}"
+              </p>
+            </div>
           </div>
-          <p className="font-inter text-sm pl-9" style={{ color: "rgba(255,255,255,0.3)" }}>
-            "{t.slogan}"
-          </p>
         </motion.div>
 
         {/* Hero Verse Slider */}
