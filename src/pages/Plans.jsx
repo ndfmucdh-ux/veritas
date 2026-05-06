@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List } from "lucide-react";
+import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List, Plus, Trash2, Target, Check } from "lucide-react";
 import PlanTimeline from "@/components/plans/PlanTimeline";
 import ReadingCalendar from "@/components/plans/ReadingCalendar";
+import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
 import { base44 } from "@/api/base44Client";
 
 // Real-life Unsplash photo headers per plan
@@ -153,10 +154,15 @@ export default function Plans() {
   const [genLoading, setGenLoading] = useState(false);
   const [genDevo, setGenDevo] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showBuilder, setShowBuilder] = useState(false);
+  const [customPlans, setCustomPlans] = useState([]);
+  const [activeCustomPlan, setActiveCustomPlan] = useState(null);
 
   useEffect(() => {
     base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } })
       .then(p => setProgress(p || [])).catch(() => {});
+    base44.entities.CustomPlan.list("-created_date", 20)
+      .then(p => setCustomPlans(p || [])).catch(() => {});
   }, []);
 
   const getCompletedDays = (planTitle) => progress.filter(p => p.plan_id === planTitle).length;
@@ -190,6 +196,110 @@ export default function Plans() {
     (langFilter === "all" || p.lang === langFilter) &&
     (catFilter === "all" || p.category === catFilter)
   );
+
+  const toggleCustomChapter = async (plan, bookName, ch) => {
+    const key = `${bookName}:${ch}`;
+    const completed = new Set(plan.completed_chapters || []);
+    if (completed.has(key)) completed.delete(key);
+    else completed.add(key);
+    const updatedArr = [...completed];
+    await base44.entities.CustomPlan.update(plan.id, { completed_chapters: updatedArr });
+    const updated = { ...plan, completed_chapters: updatedArr };
+    setCustomPlans(prev => prev.map(p => p.id === plan.id ? updated : p));
+    setActiveCustomPlan(updated);
+  };
+
+  const deleteCustomPlan = async (id) => {
+    await base44.entities.CustomPlan.delete(id);
+    setCustomPlans(prev => prev.filter(p => p.id !== id));
+  };
+
+  // ── Custom Plan Detail View ────────────────────────────────────
+  if (activeCustomPlan) {
+    const plan = activeCustomPlan;
+    const totalCh = plan.total_chapters || 0;
+    const doneCh = (plan.completed_chapters || []).length;
+    const pct = totalCh > 0 ? Math.round((doneCh / totalCh) * 100) : 0;
+    const daysLeft = plan.target_date
+      ? Math.ceil((new Date(plan.target_date) - new Date()) / (1000 * 60 * 60 * 24))
+      : null;
+    const accent = plan.accent_color || "#00f5ff";
+
+    return (
+      <div className="md:ml-16 min-h-screen pb-28">
+        <div className="px-4 pt-4 pb-3 flex items-center gap-3"
+          style={{ background: "rgba(6,10,20,0.9)", position: "sticky", top: "57px", zIndex: 20, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <button onClick={() => setActiveCustomPlan(null)}
+            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl"
+            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>
+            <ChevronLeft className="w-4 h-4" /> Back
+          </button>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <span className="text-xl">{plan.icon || "📖"}</span>
+            <span className="font-cinzel text-sm font-semibold text-white truncate">{plan.title}</span>
+          </div>
+        </div>
+
+        <div className="px-4 pt-5">
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3 mb-5">
+            {[
+              { label: "Chapters", value: `${doneCh}/${totalCh}` },
+              { label: "Progress", value: `${pct}%` },
+              { label: daysLeft !== null ? (daysLeft > 0 ? "Days Left" : "Overdue") : "Target", value: daysLeft !== null ? Math.abs(daysLeft) : "—" },
+            ].map(s => (
+              <div key={s.label} className="rounded-2xl p-3 text-center"
+                style={{ background: `${accent}08`, border: `1px solid ${accent}20` }}>
+                <p className="font-cinzel text-base font-bold" style={{ color: accent }}>{s.value}</p>
+                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Progress bar */}
+          <div className="h-1.5 rounded-full overflow-hidden mb-6" style={{ background: "rgba(255,255,255,0.07)" }}>
+            <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }}
+              className="h-full rounded-full" style={{ background: accent }} />
+          </div>
+
+          {/* Book + chapters */}
+          <div className="space-y-3">
+            {(plan.selections || []).map(sel => {
+              const completedInBook = (plan.completed_chapters || []).filter(k => k.startsWith(`${sel.book}:`)).length;
+              const allDone = completedInBook === sel.chapters.length;
+              return (
+                <div key={sel.book} className="rounded-2xl overflow-hidden"
+                  style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${allDone ? "rgba(52,211,153,0.25)" : "rgba(255,255,255,0.07)"}` }}>
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <p className="font-cinzel text-sm font-semibold text-white">{sel.book}</p>
+                    <span className="text-xs font-cinzel" style={{ color: allDone ? "#34d399" : accent }}>
+                      {completedInBook}/{sel.chapters.length}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 px-4 pb-4">
+                    {sel.chapters.map(ch => {
+                      const done = (plan.completed_chapters || []).includes(`${sel.book}:${ch}`);
+                      return (
+                        <button key={ch} onClick={() => toggleCustomChapter(plan, sel.book, ch)}
+                          className="w-9 h-9 rounded-xl font-cinzel text-xs font-semibold flex items-center justify-center transition-all"
+                          style={{
+                            background: done ? "rgba(52,211,153,0.15)" : `${accent}10`,
+                            color: done ? "#34d399" : accent,
+                            border: done ? "1px solid rgba(52,211,153,0.35)" : `1px solid ${accent}30`,
+                          }}>
+                          {done ? <Check className="w-3 h-3" /> : ch}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── Plan Detail View ───────────────────────────────────────────
   if (activePlan) {
@@ -460,6 +570,84 @@ export default function Plans() {
           </button>
         ))}
       </div>
+
+      {/* Custom Plans */}
+      <div className="px-4 pt-2 pb-1">
+        <div className="flex items-center justify-between mb-3">
+          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>My Custom Plans</p>
+          <button onClick={() => setShowBuilder(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-cinzel text-xs transition-all"
+            style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
+            <Plus className="w-3.5 h-3.5" /> Build Plan
+          </button>
+        </div>
+
+        {customPlans.length === 0 ? (
+          <button onClick={() => setShowBuilder(true)}
+            className="w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-left transition-all mb-4"
+            style={{ background: "rgba(0,245,255,0.04)", border: "1px dashed rgba(0,245,255,0.2)" }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: "rgba(0,245,255,0.1)", border: "1px solid rgba(0,245,255,0.2)" }}>
+              <Target className="w-5 h-5" style={{ color: "#00f5ff" }} />
+            </div>
+            <div>
+              <p className="font-cinzel text-sm font-semibold text-white">Build Your Own Plan</p>
+              <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Select books, chapters & a target date</p>
+            </div>
+          </button>
+        ) : (
+          <div className="space-y-2 mb-4">
+            {customPlans.map((plan, i) => {
+              const total = plan.total_chapters || 0;
+              const done = (plan.completed_chapters || []).length;
+              const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+              const accent = plan.accent_color || "#00f5ff";
+              return (
+                <motion.div key={plan.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                  className="flex items-center gap-3 px-4 py-3 rounded-2xl cursor-pointer"
+                  style={{ background: `${accent}08`, border: `1px solid ${accent}20` }}
+                  onClick={() => setActiveCustomPlan(plan)}>
+                  <span className="text-xl flex-shrink-0">{plan.icon || "📖"}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-cinzel text-sm font-semibold text-white truncate">{plan.title}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: accent }} />
+                      </div>
+                      <span className="text-[10px] font-cinzel flex-shrink-0" style={{ color: accent }}>{pct}%</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button onClick={e => { e.stopPropagation(); deleteCustomPlan(plan.id); }}
+                      className="p-1.5 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                    <ChevronRight className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)" }} />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3 px-4 mb-3">
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>Curated Plans</p>
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+      </div>
+
+      <AnimatePresence>
+        {showBuilder && (
+          <CustomPlanBuilder
+            onClose={() => setShowBuilder(false)}
+            onSaved={() => {
+              base44.entities.CustomPlan.list("-created_date", 20).then(p => setCustomPlans(p || [])).catch(() => {});
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Plan cards */}
       <div className="px-4 space-y-4 pt-2">

@@ -1,0 +1,59 @@
+{
+  "name": "CustomPlan",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Plan title"
+    },
+    "description": {
+      "type": "string"
+    },
+    "target_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date YYYY-MM-DD"
+    },
+    "accent_color": {
+      "type": "string",
+      "default": "#00f5ff"
+    },
+    "icon": {
+      "type": "string",
+      "default": "\ud83d\udcd6"
+    },
+    "selections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "chapters": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "description": "Array of { book, chapters[] } objects"
+    },
+    "total_chapters": {
+      "type": "number",
+      "default": 0
+    },
+    "completed_chapters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of 'Book:chapter' strings that are done"
+    }
+  },
+  "required": [
+    "title",
+    "selections"
+  ]
+}

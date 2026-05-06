@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import FolderManager from "@/components/library/FolderManager";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
@@ -190,31 +191,11 @@ export default function Library() {
   );
 
   const renderFolders = () => (
-    <div className="space-y-3">
-      {folders.length === 0 && !loading && (
-        <EmptyState icon="📁" text="No folders yet" sub="Select multiple verses in the reader and save them to a folder" />
-      )}
-      {folders.map((folder, i) => (
-        <motion.div key={folder.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-          className="glass rounded-xl p-4 border border-border/50">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl flex-shrink-0">{folder.icon || "📁"}</span>
-            <div className="flex-1 min-w-0">
-              <p className="font-cinzel text-sm text-foreground">{folder.name}</p>
-              <p className="text-xs text-muted-foreground">{(folder.verse_refs || []).length} verse{(folder.verse_refs || []).length !== 1 ? "s" : ""}</p>
-            </div>
-          </div>
-          {(folder.verse_refs || []).length > 0 && (
-            <div className="mt-3 space-y-1 pl-9">
-              {(folder.verse_refs || []).slice(0, 5).map(ref => (
-                <p key={ref} className="text-xs font-inter" style={{ color: folder.color || "#00f5ff" }}>· {ref}</p>
-              ))}
-              {folder.verse_refs.length > 5 && <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>+{folder.verse_refs.length - 5} more</p>}
-            </div>
-          )}
-        </motion.div>
-      ))}
-    </div>
+    <FolderManager
+      folders={folders}
+      highlights={highlights}
+      onFoldersChange={setFolders}
+    />
   );
 
   return (
