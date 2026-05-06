@@ -1,0 +1,31 @@
+{
+  "name": "VerseFolder",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Folder name e.g. 'Favorite Promises'"
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "default": "\ud83d\udcc1"
+    },
+    "verse_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of verse_ref strings saved in this folder"
+    },
+    "color": {
+      "type": "string",
+      "default": "#00f5ff"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

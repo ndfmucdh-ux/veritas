@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe } from "lucide-react";
+import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List } from "lucide-react";
 import PlanTimeline from "@/components/plans/PlanTimeline";
+import ReadingCalendar from "@/components/plans/ReadingCalendar";
 import { base44 } from "@/api/base44Client";
 
 // Real-life Unsplash photo headers per plan
@@ -151,6 +152,7 @@ export default function Plans() {
   const [catFilter, setCatFilter] = useState(urlCat);
   const [genLoading, setGenLoading] = useState(false);
   const [genDevo, setGenDevo] = useState(null);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   useEffect(() => {
     base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } })
@@ -219,6 +221,20 @@ export default function Plans() {
           </div>
         </div>
 
+        {/* View toggle */}
+        <div className="flex gap-2 px-5 pt-4">
+          <button onClick={() => setShowCalendar(false)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
+            style={{ background: !showCalendar ? `${activePlan.accent}22` : "rgba(255,255,255,0.04)", color: !showCalendar ? activePlan.accent : "rgba(255,255,255,0.35)", border: !showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgba(255,255,255,0.07)" }}>
+            <List className="w-3.5 h-3.5" /> Timeline
+          </button>
+          <button onClick={() => setShowCalendar(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
+            style={{ background: showCalendar ? `${activePlan.accent}22` : "rgba(255,255,255,0.04)", color: showCalendar ? activePlan.accent : "rgba(255,255,255,0.35)", border: showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgba(255,255,255,0.07)" }}>
+            <CalendarDays className="w-3.5 h-3.5" /> Calendar
+          </button>
+        </div>
+
         {/* Progress bar */}
         <div className="px-5 pt-5 mb-6">
           <div className="flex justify-between text-xs mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>
@@ -236,13 +252,19 @@ export default function Plans() {
           </div>
         </div>
 
-        {/* Timeline */}
-        <PlanTimeline
-          plan={activePlan}
-          completedDays={completed}
-          onSelectDay={setSelectedDay}
-          selectedDay={selectedDay}
-        />
+        {/* Calendar or Timeline */}
+        {showCalendar ? (
+          <div className="px-5 mb-6">
+            <ReadingCalendar progress={progress} accent={activePlan.accent} />
+          </div>
+        ) : (
+          <PlanTimeline
+            plan={activePlan}
+            completedDays={completed}
+            onSelectDay={setSelectedDay}
+            selectedDay={selectedDay}
+          />
+        )}
 
         {/* Days expanded content */}
         <div className="px-4 space-y-3">

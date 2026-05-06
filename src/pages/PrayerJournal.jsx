@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, Trash2, Calendar, Tag, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import PrayerModal from "@/components/prayer/PrayerModal";
+import PrayerStreakTracker from "@/components/prayer/PrayerStreakTracker";
 
 export default function PrayerJournal() {
   const [prayers, setPrayers] = useState([]);
@@ -62,6 +63,9 @@ export default function PrayerJournal() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Streak Tracker */}
+        {!loading && <PrayerStreakTracker prayers={prayers} />}
+
         {/* Mood filter */}
         <div className="flex overflow-x-auto gap-2 pb-2">
           {moods.map(m => (

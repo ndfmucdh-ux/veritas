@@ -13,7 +13,7 @@ const QUICK_PROMPTS = [
   { icon: "📝", label: "Passages for my studies", prompt: "Look at my study notes and highlighted verses, then suggest specific Bible passages that go deeper into the themes I've been exploring. Explain why each passage connects to my personal study." },
   { icon: "✨", label: "Daily devotional", prompt: "Pick one of my recently highlighted verses and write me a short, personal daily devotional based on it — include a reflection, a prayer, and one practical way to apply this verse to my day." },
   { icon: "💪", label: "Strength for today", prompt: "I need encouragement and a verse about strength and perseverance for today." },
-  { icon: "🗺️", label: "Choose a reading plan", prompt: "Based on my reading history and highlighted verses, help me choose the right Bible reading plan for where I am in my faith journey." },
+  { icon: "🌙", label: "Evening reflection", prompt: "Look at my recent study notes and ask me one thoughtful, reflective question about what I've been learning — help me meditate and go deeper on what the Lord has been teaching me." },
 ];
 
 const SYSTEM_PROMPT = `You are the Veritas Guide — the wise, warm, and fatherly spiritual companion built into the Veritas Bible app.

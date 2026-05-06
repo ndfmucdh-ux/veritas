@@ -1,27 +1,30 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, Highlighter, StickyNote, X, Check, Share2 } from "lucide-react";
+import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import FolderSaveModal from "@/components/reader/FolderSaveModal";
 
-const COLORS = ["yellow", "cyan", "purple", "green", "red"];
+const COLORS = ["yellow", "cyan", "purple", "green", "red", "orange", "pink"];
 const COLOR_STYLES = {
-  yellow: { bg: "rgba(251,191,36,0.2)", border: "#fbbf24" },
-  cyan:   { bg: "rgba(0,229,255,0.15)", border: "#00e5ff" },
+  yellow: { bg: "rgba(251,191,36,0.2)",  border: "#fbbf24" },
+  cyan:   { bg: "rgba(0,229,255,0.15)",  border: "#00e5ff" },
   purple: { bg: "rgba(167,139,250,0.2)", border: "#a78bfa" },
   green:  { bg: "rgba(52,211,153,0.2)",  border: "#34d399" },
   red:    { bg: "rgba(248,113,113,0.2)", border: "#f87171" },
+  orange: { bg: "rgba(251,146,60,0.2)",  border: "#fb923c" },
+  pink:   { bg: "rgba(244,114,182,0.2)", border: "#f472b6" },
 };
-const COLOR_HEX = { yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa", green: "#34d399", red: "#f87171" };
+const COLOR_HEX = { yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa", green: "#34d399", red: "#f87171", orange: "#fb923c", pink: "#f472b6" };
 
 export default function VerseRow({
   verseNum, text, redLetter, book, chapter, translation,
-  highlight, isBookmarked, note, showNumbers, fontSize, onUpdate, onOpenNote
+  highlight, isBookmarked, note, showNumbers, fontSize, onUpdate, onOpenNote,
+  isSelected, onToggleSelect, selectionMode
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [noteMode, setNoteMode] = useState(false);
   const [noteText, setNoteText] = useState(note || "");
-
-  const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
+  const [showFolderModal, setShowFolderModal] = useState(false);
 
   const hlStyle = highlight ? {
     background: COLOR_STYLES[highlight.color]?.bg,
@@ -74,14 +77,32 @@ export default function VerseRow({
     setMenuOpen(false);
   };
 
+  const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
+
   return (
     <div className="relative">
+      {showFolderModal && (
+        <FolderSaveModal
+          verseRefs={[verseRef]}
+          onClose={() => setShowFolderModal(false)}
+          onSaved={(name) => {}}
+        />
+      )}
       <motion.div
-        className="rounded-lg px-2 py-1.5 cursor-pointer transition-all"
-        style={{ ...hlStyle }}
-        onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
+        className="rounded-lg px-2 py-1.5 cursor-pointer transition-all flex items-start gap-2"
+        style={{ ...hlStyle, background: isSelected ? "rgba(0,245,255,0.08)" : hlStyle.background, outline: isSelected ? "1px solid rgba(0,245,255,0.3)" : "none" }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (selectionMode) { onToggleSelect?.(verseNum); return; }
+          setMenuOpen(v => !v);
+        }}
         whileTap={{ scale: 0.995 }}
       >
+        {selectionMode && (
+          <span className="flex-shrink-0 mt-0.5" style={{ color: isSelected ? "#00f5ff" : "rgba(255,255,255,0.2)" }}>
+            {isSelected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
+          </span>
+        )}
         <span className="font-inter leading-relaxed select-text"
           style={{
             fontSize,
@@ -99,6 +120,7 @@ export default function VerseRow({
           {note && <span className="ml-1 text-xs" style={{ color: "#a78bfa" }}>✍</span>}
         </span>
       </motion.div>
+
 
       <AnimatePresence>
         {menuOpen && (
@@ -155,6 +177,11 @@ export default function VerseRow({
                 style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}>
                 <Share2 className="w-3.5 h-3.5" />
                 Art
+              </button>
+              <button onClick={() => { setMenuOpen(false); setShowFolderModal(true); }}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
+                style={{ background: "rgba(0,245,255,0.07)", color: "#00f5ff" }}>
+                <FolderPlus className="w-3.5 h-3.5" />
               </button>
               <button onClick={() => setMenuOpen(false)}
                 className="ml-auto flex items-center justify-center w-7 h-7 rounded-xl"

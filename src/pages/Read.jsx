@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, ChevronDown, Copy, Check, Columns } from "lucide-react";
+import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, ChevronDown, Copy, Check, Columns, CheckSquare, FolderPlus, X as XIcon } from "lucide-react";
+import FolderSaveModal from "@/components/reader/FolderSaveModal";
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { getOfflineVerse } from "@/lib/offlineBible";
@@ -35,6 +36,9 @@ export default function Read() {
   const [showParallel, setShowParallel] = useState(false);
   const [selectedVerse, setSelectedVerse] = useState(null);
   const [sidePanelVerse, setSidePanelVerse] = useState(null);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedVerses, setSelectedVerses] = useState(new Set());
+  const [showFolderModal, setShowFolderModal] = useState(false);
   const containerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
@@ -183,6 +187,9 @@ export default function Read() {
 
         <div className="flex items-center gap-2">
           <div className="flex-1" />
+          <IconBtn onClick={() => { setSelectionMode(v => !v); setSelectedVerses(new Set()); }} active={selectionMode} title="Multi-select verses">
+            <CheckSquare className="w-4 h-4" />
+          </IconBtn>
           <IconBtn onClick={() => copyChapter()} title="Copy chapter">
             {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
           </IconBtn>
@@ -298,6 +305,13 @@ export default function Read() {
                     fontSize={fontSize}
                     onUpdate={handleVerseUpdate}
                     onOpenNote={(verseData) => setSidePanelVerse(verseData)}
+                    selectionMode={selectionMode}
+                    isSelected={selectedVerses.has(v.verse)}
+                    onToggleSelect={(vn) => setSelectedVerses(prev => {
+                      const next = new Set(prev);
+                      next.has(vn) ? next.delete(vn) : next.add(vn);
+                      return next;
+                    })}
                   />
                 </div>
               ))}
@@ -312,6 +326,39 @@ export default function Read() {
           )}
         </div>
       </div>
+
+      {/* Multi-select action bar */}
+      <AnimatePresence>
+        {selectionMode && selectedVerses.size > 0 && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-3 rounded-2xl"
+            style={{ background: "rgba(8,13,26,0.97)", border: "1px solid rgba(0,245,255,0.25)", boxShadow: "0 8px 32px rgba(0,0,0,0.6)", backdropFilter: "blur(20px)" }}
+          >
+            <span className="font-cinzel text-sm" style={{ color: "#00f5ff" }}>{selectedVerses.size} selected</span>
+            <button onClick={() => setShowFolderModal(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-cinzel"
+              style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.3)" }}>
+              <FolderPlus className="w-4 h-4" /> Save to Folder
+            </button>
+            <button onClick={() => { setSelectionMode(false); setSelectedVerses(new Set()); }}
+              className="w-7 h-7 rounded-xl flex items-center justify-center"
+              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+              <XIcon className="w-3.5 h-3.5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {showFolderModal && (
+        <FolderSaveModal
+          verseRefs={[...selectedVerses].map(vn => `${book} ${chapter}:${vn} ${translation}`)}
+          onClose={() => setShowFolderModal(false)}
+          onSaved={() => { setSelectionMode(false); setSelectedVerses(new Set()); setShowFolderModal(false); }}
+        />
+      )}
 
       {/* Verse side panel */}
       <VerseSidePanel
