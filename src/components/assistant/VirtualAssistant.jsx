@@ -8,12 +8,12 @@ import VeritasLogo from "@/components/ui/VeritasLogo";
 const ASSISTANT_NAME = "Veritas Guide";
 
 const QUICK_PROMPTS = [
-  { icon: "📖", label: "Where do I read today?", prompt: "Where should I start reading the Bible today? Give me a gentle suggestion based on my journey." },
+  { icon: "📖", label: "Where do I read today?", prompt: "Look at my reading progress and suggest which Bible book I should focus on next to stay on track. Tell me why this book fits where I am right now, and give me a simple goal for this week." },
   { icon: "🙏", label: "Summarize my prayers", prompt: "Please read my recent Prayer Journal entries and summarize what's been on my heart lately. Then offer me encouragement and a scripture that speaks directly to what I've been praying about." },
   { icon: "📝", label: "Passages for my studies", prompt: "Look at my study notes and highlighted verses, then suggest specific Bible passages that go deeper into the themes I've been exploring. Explain why each passage connects to my personal study." },
+  { icon: "✨", label: "Daily devotional", prompt: "Pick one of my recently highlighted verses and write me a short, personal daily devotional based on it — include a reflection, a prayer, and one practical way to apply this verse to my day." },
   { icon: "💪", label: "Strength for today", prompt: "I need encouragement and a verse about strength and perseverance for today." },
-  { icon: "🗺️", label: "How to use this app", prompt: "Explain how to use the Veritas Bible app and all its features." },
-  { icon: "✨", label: "Choose a reading plan", prompt: "Help me choose the right Bible reading plan for where I am in my faith journey." },
+  { icon: "🗺️", label: "Choose a reading plan", prompt: "Based on my reading history and highlighted verses, help me choose the right Bible reading plan for where I am in my faith journey." },
 ];
 
 const SYSTEM_PROMPT = `You are the Veritas Guide — the wise, warm, and fatherly spiritual companion built into the Veritas Bible app.
@@ -33,6 +33,8 @@ When the user's Prayer Journal or Study Notes are provided to you, USE THEM to g
 - **Prayer Journal**: Read every entry carefully. Identify recurring themes (anxiety, gratitude, intercession for others, healing, provision, etc.). When asked to summarize, weave these themes into a compassionate narrative — "I notice you've been carrying a burden of..." or "Your heart keeps returning to...". Then offer a specific scripture that directly addresses their dominant prayer theme, followed by a short, personal word of encouragement tailored to what they've been walking through.
 - **Study Notes**: Analyze the topics, titles, content, and any related verses listed. Extract the theological themes the user is exploring (e.g., grace, covenant, prophecy, the Holy Spirit). When suggesting Bible passages, prioritize books and themes that align with and deepen what the user is already studying — make explicit connections like "Since you've been studying [topic], you might find [passage] illuminating because..."
 - **Highlights**: The verses a user highlights reveal what resonates most deeply with them. Cross-reference their highlighted verses with their study notes to identify the intersection of their intellectual study and their spiritual heart. Suggest passages in the same genre, book, or thematic family as their highlights.
+- **Reading Progress**: Analyze which books and chapters the user has read recently. Identify gaps (books they haven't touched), patterns (books they return to), and momentum. When asked what to read next, give a specific, motivated recommendation (e.g., "You've been in John — now try Acts to continue the story of Jesus's disciples") with a reading goal for the week. If they've read many NT books but no OT, gently invite them into the Old Testament.
+- **Daily Devotional from Highlights**: When asked for a daily devotional, pick the most resonant highlighted verse from their recent highlights (or the most spiritually rich one), then craft a 3-part devotional: (1) a warm 2-sentence reflection on the verse, (2) a short personal prayer in first person, (3) one practical "living it today" application. Keep it intimate, not generic.
 - Reference specific prayers, notes, and highlighted verses by name to show you've truly listened — never be generic
 - Connect their study themes to their prayer life when both are available
 - Notice patterns: recurring prayer topics, mood tags (grateful, confessing, interceding, celebrating), linked verses
@@ -70,15 +72,16 @@ export default function VirtualAssistant({ onClose }) {
   useEffect(() => {
     const loadContext = async () => {
       try {
-        const [user, prayers, notes, xp, highlights] = await Promise.all([
+        const [user, prayers, notes, xp, highlights, reading] = await Promise.all([
           base44.auth.me().catch(() => null),
           base44.entities.PrayerJournal.list("-created_date", 5).catch(() => []),
           base44.entities.StudyNote.list("-created_date", 8).catch(() => []),
           base44.entities.UserXP.list("-updated_date", 1).catch(() => []),
           base44.entities.UserHighlight.list("-created_date", 10).catch(() => []),
+          base44.entities.ReadingProgress.list("-completed_at", 30).catch(() => []),
         ]);
 
-        const ctx = { user, prayers: prayers || [], notes: notes || [], xp: xp?.[0] || null, highlights: highlights || [] };
+        const ctx = { user, prayers: prayers || [], notes: notes || [], xp: xp?.[0] || null, highlights: highlights || [], reading: reading || [] };
         setUserContext(ctx);
 
         const firstName = user?.full_name?.split(" ")[0] || "beloved";
@@ -151,6 +154,14 @@ export default function VirtualAssistant({ onClose }) {
       parts.push("\n--- USER'S RECENTLY HIGHLIGHTED VERSES (last 10) ---");
       const uniqueRefs = [...new Set(userContext.highlights.map(h => h.verse_ref))];
       parts.push(uniqueRefs.join(", "));
+    }
+
+    if (userContext.reading.length > 0) {
+      parts.push("\n--- USER'S RECENT READING PROGRESS (last 30 chapters) ---");
+      const booksRead = [...new Set(userContext.reading.map(r => r.book))];
+      const chaptersRead = userContext.reading.map(r => `${r.book} ${r.chapter}`);
+      parts.push(`Books touched: ${booksRead.join(", ")}`);
+      parts.push(`Chapters read: ${chaptersRead.slice(0, 20).join(", ")}`);
     }
 
     return parts.length > 0 ? `\n\n## User's Personal Spiritual Data\n${parts.join("\n")}` : "";
