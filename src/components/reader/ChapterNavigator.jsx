@@ -23,11 +23,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
   const [expandedGroup, setExpandedGroup] = useState(null);
   const [pickerTop, setPickerTop] = useState(120);
   const pickerRef = useRef(null);
+  const triggerBtnRef = useRef(null);
 
   const openPicker = useCallback((tab = "book") => {
-    if (pickerRef.current) {
-      const rect = pickerRef.current.getBoundingClientRect();
-      setPickerTop(rect.bottom + 8);
+    // Measure the actual trigger button (or fall back to the wrapper)
+    const el = triggerBtnRef.current || pickerRef.current;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      setPickerTop(rect.bottom + 6);
     }
     setPickerTab(tab);
     setShowPicker(true);
@@ -104,7 +107,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
         <motion.button
           whileTap={{ scale: 0.97 }}
-          onClick={() => showPicker ? setShowPicker(false) : openPicker("book")}
+          onClick={(e) => { triggerBtnRef.current = e.currentTarget; showPicker ? setShowPicker(false) : openPicker("book"); }}
           className="flex-1 flex items-center justify-center gap-2 h-9 rounded-xl font-cinzel text-sm font-semibold"
           style={{ background: showPicker ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.06)", color: showPicker ? "#00f5ff" : "rgba(255,255,255,0.85)", border: showPicker ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent", transition: "all 0.2s" }}
         >
@@ -118,7 +121,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
         {onTranslationChange && (
           <motion.button
             whileTap={{ scale: 0.97 }}
-            onClick={() => openPicker("translation")}
+            onClick={(e) => { triggerBtnRef.current = e.currentTarget; openPicker("translation"); }}
             className="px-3 h-9 rounded-xl font-cinzel text-xs font-semibold flex-shrink-0"
             style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}
           >
