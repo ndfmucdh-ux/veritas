@@ -24,6 +24,7 @@ import VerseImageGenerator from './pages/VerseImageGenerator';
 import StudyCenter from './pages/StudyCenter';
 import PrayerJournal from './pages/PrayerJournal';
 import CommunityHub from './pages/CommunityHub';
+import NotificationStudio from './pages/NotificationStudio';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
         <Route path="/study-center" element={<StudyCenter />} />
         <Route path="/prayer-journal" element={<PrayerJournal />} />
         <Route path="/community" element={<CommunityHub />} />
+        <Route path="/notification-studio" element={<NotificationStudio />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
