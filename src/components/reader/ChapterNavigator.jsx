@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleData";
@@ -21,7 +21,17 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
   const [pickerTab, setPickerTab] = useState("book");
   const [selectedBook, setSelectedBook] = useState(book);
   const [expandedGroup, setExpandedGroup] = useState(null);
+  const [pickerTop, setPickerTop] = useState(120);
   const pickerRef = useRef(null);
+
+  const openPicker = useCallback((tab = "book") => {
+    if (pickerRef.current) {
+      const rect = pickerRef.current.getBoundingClientRect();
+      setPickerTop(rect.bottom + 8);
+    }
+    setPickerTab(tab);
+    setShowPicker(true);
+  }, []);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
   const totalChapters = bookData?.chapters || 1;
@@ -94,7 +104,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
         <motion.button
           whileTap={{ scale: 0.97 }}
-          onClick={() => { setShowPicker(v => !v); setPickerTab("book"); }}
+          onClick={() => showPicker ? setShowPicker(false) : openPicker("book")}
           className="flex-1 flex items-center justify-center gap-2 h-9 rounded-xl font-cinzel text-sm font-semibold"
           style={{ background: showPicker ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.06)", color: showPicker ? "#00f5ff" : "rgba(255,255,255,0.85)", border: showPicker ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent", transition: "all 0.2s" }}
         >
@@ -108,7 +118,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
         {onTranslationChange && (
           <motion.button
             whileTap={{ scale: 0.97 }}
-            onClick={() => { setShowPicker(true); setPickerTab("translation"); }}
+            onClick={() => openPicker("translation")}
             className="px-3 h-9 rounded-xl font-cinzel text-xs font-semibold flex-shrink-0"
             style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}
           >
@@ -138,8 +148,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.96 }}
             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-            className="absolute left-0 right-0 z-50 mt-2 rounded-2xl"
-            style={{ background: "rgba(8,13,26,0.98)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 20px 60px rgba(0,0,0,0.7)", maxHeight: "65vh", overflow: "hidden", display: "flex", flexDirection: "column" }}
+            className="fixed left-2 right-2 z-[200] rounded-2xl"
+            style={{ top: pickerTop, background: "rgba(8,13,26,0.98)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 20px 60px rgba(0,0,0,0.7)", maxHeight: "65vh", overflow: "hidden", display: "flex", flexDirection: "column" }}
           >
             {/* Tabs */}
             <div className="flex flex-shrink-0 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
