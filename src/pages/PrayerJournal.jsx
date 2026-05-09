@@ -6,6 +6,7 @@ import { base44 } from "@/api/base44Client";
 import PrayerModal from "@/components/prayer/PrayerModal";
 import PrayerStreakTracker from "@/components/prayer/PrayerStreakTracker";
 import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
+import PrayerJournalSummary from "@/components/prayer/PrayerJournalSummary";
 
 export default function PrayerJournal() {
   const [prayers, setPrayers] = useState([]);
@@ -82,6 +83,9 @@ export default function PrayerJournal() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Summary Dashboard */}
+        {!loading && <PrayerJournalSummary />}
+
         {/* Streak Tracker */}
         {!loading && <PrayerStreakTracker prayers={prayers} />}
 

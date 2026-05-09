@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, Loader2, BookOpen, Sparkles, X, StickyNote, Heart, FileText, Filter } from "lucide-react";
 import { base44 } from "@/api/base44Client";

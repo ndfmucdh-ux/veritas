@@ -4,7 +4,7 @@ import {
   Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText
+  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
@@ -18,6 +18,8 @@ import DashboardSummary from "@/components/profile/DashboardSummary";
 import DailyReadingRing from "@/components/profile/DailyReadingRing";
 import MilestoneBadges from "@/components/profile/MilestoneBadges";
 import MonthlyProgressChart from "@/components/profile/MonthlyProgressChart";
+import ReadingCalendar from "@/components/profile/ReadingCalendar";
+import SharedReadingPlan from "@/components/community/SharedReadingPlan";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -313,8 +315,16 @@ export default function Profile() {
                 </motion.div>
               </Section>
 
+              {/* Reading Calendar */}
+              <ReadingCalendar />
+
               {/* Monthly Progress Chart */}
               <MonthlyProgressChart />
+
+              {/* Community Reading Plans */}
+              <Section label="Join the Community" icon={Users}>
+                <SharedReadingPlan />
+              </Section>
 
               {/* Milestone Badges */}
               <Section label="Milestones" icon={Star}>
