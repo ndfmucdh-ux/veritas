@@ -1,0 +1,45 @@
+{
+  "name": "PrayerReminder",
+  "type": "object",
+  "properties": {
+    "prayer_journal_id": {
+      "type": "string",
+      "description": "Reference to the PrayerJournal entry"
+    },
+    "verse_ref": {
+      "type": "string",
+      "description": "e.g. John 3:16 KJV"
+    },
+    "reminder_date": {
+      "type": "string",
+      "format": "date",
+      "description": "YYYY-MM-DD when to remind"
+    },
+    "reminder_type": {
+      "type": "string",
+      "enum": [
+        "follow_up",
+        "thanksgiving",
+        "check_status"
+      ],
+      "default": "follow_up"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "dismissed"
+      ],
+      "default": "pending"
+    },
+    "note": {
+      "type": "string",
+      "description": "Custom reminder note"
+    }
+  },
+  "required": [
+    "prayer_journal_id",
+    "reminder_date"
+  ]
+}

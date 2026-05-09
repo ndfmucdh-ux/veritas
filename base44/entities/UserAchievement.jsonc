@@ -1,0 +1,53 @@
+{
+  "name": "UserAchievement",
+  "type": "object",
+  "properties": {
+    "achievement_id": {
+      "type": "string",
+      "description": "e.g. 'completed_book_matthew', 'finished_plan_21days', 'daily_streak_7', 'prayers_answered_5'"
+    },
+    "title": {
+      "type": "string",
+      "description": "Display name e.g. 'Book Complete: Matthew'"
+    },
+    "description": {
+      "type": "string",
+      "description": "Details of the achievement"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji icon for the badge"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "book_completion",
+        "plan_completion",
+        "streak_milestone",
+        "prayer_answered",
+        "reading_milestone",
+        "study_milestone"
+      ]
+    },
+    "earned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the achievement was unlocked"
+    },
+    "progress": {
+      "type": "number",
+      "default": 0,
+      "description": "Percentage progress for locked achievements"
+    },
+    "is_locked": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if achievement not yet unlocked"
+    }
+  },
+  "required": [
+    "achievement_id",
+    "title",
+    "category"
+  ]
+}

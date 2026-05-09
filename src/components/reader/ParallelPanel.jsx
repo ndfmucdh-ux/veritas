@@ -48,21 +48,28 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
   );
   const [secondVerses, setSecondVerses] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [fontSize, setFontSize] = useState(14);
+  const [fontSize, setFontSize] = useState(16);
   const leftScrollRef = useRef(null);
   const rightScrollRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
 
   const handleLeftScroll = () => {
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     if (leftScrollRef.current && rightScrollRef.current) {
-      const ratio = leftScrollRef.current.scrollTop / (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
-      rightScrollRef.current.scrollTop = ratio * (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
+      const ratio = leftScrollRef.current.scrollTop / (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight || 1);
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (rightScrollRef.current) rightScrollRef.current.scrollTop = ratio * (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
+      }, 0);
     }
   };
 
   const handleRightScroll = () => {
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     if (leftScrollRef.current && rightScrollRef.current) {
-      const ratio = rightScrollRef.current.scrollTop / (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
-      leftScrollRef.current.scrollTop = ratio * (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
+      const ratio = rightScrollRef.current.scrollTop / (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight || 1);
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (leftScrollRef.current) leftScrollRef.current.scrollTop = ratio * (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
+      }, 0);
     }
   };
 
@@ -91,24 +98,24 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
           <span className="font-cinzel text-sm font-semibold text-white/80">Parallel View</span>
           <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{book} {chapter}</span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold"
-              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
-            <span className="text-xs font-cinzel px-2" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
-            <button onClick={() => setFontSize(f => Math.min(22, f + 1))} className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold"
-              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
-          </div>
-          <select
-            value={secondTranslation}
-            onChange={e => setSecondTranslation(e.target.value)}
-            className="text-xs font-cinzel px-3 py-1.5 rounded-xl focus:outline-none"
-            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
-          >
-            {ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => (
-              <option key={t.code} value={t.code}>{t.label}</option>
-            ))}
-          </select>
+        <div className="flex items-center gap-4">
+           <div className="flex items-center gap-2.5">
+             <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
+               style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
+             <span className="text-sm font-cinzel px-3" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
+             <button onClick={() => setFontSize(f => Math.min(26, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
+               style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
+           </div>
+           <select
+             value={secondTranslation}
+             onChange={e => setSecondTranslation(e.target.value)}
+             className="text-xs font-cinzel px-4 py-2 rounded-xl focus:outline-none"
+             style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+           >
+             {ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => (
+               <option key={t.code} value={t.code}>{t.label}</option>
+             ))}
+           </select>
           <button onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
             style={{ background: "rgba(255,255,255,0.07)" }}>

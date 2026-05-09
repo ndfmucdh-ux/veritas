@@ -50,37 +50,47 @@ export default function TranslationSplitView({ book, chapter }) {
     }
   };
 
-  // Sync scroll between left and right
-  const handleLeftScroll = () => {
-    if (leftScrollRef.current && rightScrollRef.current) {
-      const ratio = leftScrollRef.current.scrollTop / (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
-      rightScrollRef.current.scrollTop = ratio * (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
-    }
-  };
+  // Sync scroll with requestAnimationFrame for smooth motion
+   const scrollTimeoutRef = useRef(null);
+   const handleLeftScroll = () => {
+     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+     if (leftScrollRef.current && rightScrollRef.current) {
+       const ratio = leftScrollRef.current.scrollTop / (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight || 1);
+       scrollTimeoutRef.current = setTimeout(() => {
+         if (rightScrollRef.current) rightScrollRef.current.scrollTop = ratio * (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
+       }, 0);
+     }
+   };
 
-  const handleRightScroll = () => {
-    if (leftScrollRef.current && rightScrollRef.current) {
-      const ratio = rightScrollRef.current.scrollTop / (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
-      leftScrollRef.current.scrollTop = ratio * (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
-    }
-  };
+   const handleRightScroll = () => {
+     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+     if (leftScrollRef.current && rightScrollRef.current) {
+       const ratio = rightScrollRef.current.scrollTop / (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight || 1);
+       scrollTimeoutRef.current = setTimeout(() => {
+         if (leftScrollRef.current) leftScrollRef.current.scrollTop = ratio * (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
+       }, 0);
+     }
+   };
 
   useEffect(() => { fetchVerses(leftTrans, "left"); }, [book, chapter, leftTrans]);
   useEffect(() => { fetchVerses(rightTrans, "right"); }, [book, chapter, rightTrans]);
 
   const TransPicker = ({ value, onChange }) => (
-    <div className="flex gap-1 flex-wrap mb-3">
-      {QUICK_TRANSLATIONS.map(t => (
-        <button key={t.code} onClick={() => onChange(t.code)}
-          className="px-2 py-1.5 rounded-lg text-[10px] font-cinzel transition-all"
-          style={{
-            background: value === t.code ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-            color: value === t.code ? "#00f5ff" : "rgba(255,255,255,0.4)",
-            border: value === t.code ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent",
-          }}>
-          {t.label}
-        </button>
-      ))}
+    <div className="space-y-2 mb-3">
+      <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.2)" }}>Translations</p>
+      <div className="flex gap-1.5 flex-wrap">
+        {QUICK_TRANSLATIONS.map(t => (
+          <button key={t.code} onClick={() => onChange(t.code)}
+            className="px-2.5 py-1.5 rounded-lg text-[11px] font-cinzel transition-all"
+            style={{
+              background: value === t.code ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
+              color: value === t.code ? "#00f5ff" : "rgba(255,255,255,0.4)",
+              border: value === t.code ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent",
+            }}>
+            {t.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 
@@ -95,12 +105,14 @@ export default function TranslationSplitView({ book, chapter }) {
             {book} {chapter} — Side-by-Side
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
-          <span className="text-xs font-cinzel px-2" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
-          <button onClick={() => setFontSize(f => Math.min(22, f + 1))} className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
+              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
+            <span className="text-sm font-cinzel px-3" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
+            <button onClick={() => setFontSize(f => Math.min(24, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
+              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
+          </div>
         </div>
       </div>
 

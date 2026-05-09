@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import {
@@ -10,6 +11,8 @@ const TABS = [
   { id: "push", label: "Push Notifications", icon: Smartphone },
   { id: "email_daily", label: "Daily Email", icon: Mail },
   { id: "email_weekly", label: "Weekly Digest", icon: Calendar },
+  { id: "devotional_time", label: "Devotional Time", icon: Bell },
+  { id: "prayer_reminders", label: "Prayer Reminders", icon: Bell },
   { id: "specs", label: "Design Specs", icon: Sparkles },
 ];
 
@@ -114,6 +117,8 @@ export default function NotificationStudio() {
   const [sendName, setSendName] = useState("");
   const [sendStatus, setSendStatus] = useState(null);
   const [dailyVerse, setDailyVerse] = useState(null);
+  const [devotionalTime, setDevotionalTime] = useState(localStorage.getItem("veritas_devotional_time") || "06:00");
+  const [prayerReminderTime, setPrayerReminderTime] = useState(localStorage.getItem("veritas_prayer_reminder_time") || "20:00");
 
   useEffect(() => {
     base44.entities.DailyVerse.list("-date", 1).then(v => setDailyVerse(v?.[0] || null)).catch(() => {});
@@ -151,23 +156,35 @@ export default function NotificationStudio() {
   };
 
   const handleSendTest = async () => {
-    if (!sendEmail) return;
-    setLoading(true);
-    setSendStatus(null);
-    try {
-      await base44.functions.invoke("sendVOTDNotification", {
-        mode: "send_daily",
-        recipient_email: sendEmail,
-        recipient_name: sendName || "Beloved",
-      });
-      setSendStatus("success");
-    } catch {
-      setSendStatus("error");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setSendStatus(null), 4000);
-    }
-  };
+     if (!sendEmail) return;
+     setLoading(true);
+     setSendStatus(null);
+     try {
+       await base44.functions.invoke("sendVOTDNotification", {
+         mode: "send_daily",
+         recipient_email: sendEmail,
+         recipient_name: sendName || "Beloved",
+       });
+       setSendStatus("success");
+     } catch {
+       setSendStatus("error");
+     } finally {
+       setLoading(false);
+       setTimeout(() => setSendStatus(null), 4000);
+     }
+   };
+
+   const saveDevotionalTime = () => {
+     localStorage.setItem("veritas_devotional_time", devotionalTime);
+     setSendStatus("success");
+     setTimeout(() => setSendStatus(null), 2000);
+   };
+
+   const savePrayerReminderTime = () => {
+     localStorage.setItem("veritas_prayer_reminder_time", prayerReminderTime);
+     setSendStatus("success");
+     setTimeout(() => setSendStatus(null), 2000);
+   };
 
   return (
     <div className="md:ml-16 min-h-screen pb-28">
@@ -420,6 +437,74 @@ export default function NotificationStudio() {
                     <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>{s}</p>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── DEVOTIONAL TIME TAB ── */}
+          {activeTab === "devotional_time" && (
+            <div className="px-5 space-y-4 pb-4">
+              <SectionHeader icon={Bell} label="Daily Devotional Reminder" color="#00f5ff" />
+              <div className="rounded-2xl p-5 space-y-4" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  Choose what time each day you'd like to be reminded to check your personalized AI devotional.
+                </p>
+                <div>
+                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgba(255,255,255,0.35)" }}>Preferred Time (Your Timezone)</label>
+                  <input
+                    type="time"
+                    value={devotionalTime}
+                    onChange={e => setDevotionalTime(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl text-sm font-cinzel focus:outline-none"
+                    style={{ background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.25)", color: "#00f5ff" }}
+                  />
+                </div>
+                <button onClick={saveDevotionalTime}
+                  className="w-full px-4 py-3 rounded-xl font-cinzel text-sm transition-all"
+                  style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.3)" }}>
+                  {sendStatus === "success" ? <Check className="w-4 h-4 inline mr-2" /> : null}
+                  {sendStatus === "success" ? "Saved!" : "Save Time"}
+                </button>
+                <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: "rgba(0,245,255,0.04)" }}>
+                  <Zap className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00f5ff" }} />
+                  <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>
+                    You'll receive a personalized notification at <strong>{devotionalTime}</strong> reminding you to read your daily devotional based on your recent highlights and prayer journal.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── PRAYER REMINDERS TAB ── */}
+          {activeTab === "prayer_reminders" && (
+            <div className="px-5 space-y-4 pb-4">
+              <SectionHeader icon={Bell} label="Prayer Reminder" color="#a78bfa" />
+              <div className="rounded-2xl p-5 space-y-4" style={{ background: "rgba(167,139,250,0.03)", border: "1px solid rgba(167,139,250,0.15)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                  Set a time to be reminded about prayer journal entries with pending follow-up reminders.
+                </p>
+                <div>
+                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgba(255,255,255,0.35)" }}>Prayer Reminder Time (Your Timezone)</label>
+                  <input
+                    type="time"
+                    value={prayerReminderTime}
+                    onChange={e => setPrayerReminderTime(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl text-sm font-cinzel focus:outline-none"
+                    style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.25)", color: "#a78bfa" }}
+                  />
+                </div>
+                <button onClick={savePrayerReminderTime}
+                  className="w-full px-4 py-3 rounded-xl font-cinzel text-sm transition-all"
+                  style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.3)" }}>
+                  {sendStatus === "success" ? <Check className="w-4 h-4 inline mr-2" /> : null}
+                  {sendStatus === "success" ? "Saved!" : "Save Time"}
+                </button>
+                <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: "rgba(167,139,250,0.04)" }}>
+                  <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#a78bfa" }} />
+                  <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>
+                    At <strong>{prayerReminderTime}</strong>, you'll be notified about pending prayer follow-ups and encouraged to update their status.
+                  </p>
+                </div>
               </div>
             </div>
           )}

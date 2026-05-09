@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, SkipBack, SkipForward, Volume2, X } from "lucide-react";
+
+const DUMMY_VERSES = [
+  { verse: 1, time: 0, text: "In the beginning was the Word..." },
+  { verse: 2, time: 15, text: "And the Word was with God..." },
+  { verse: 3, time: 30, text: "All things were made through him..." },
+];
 
 export default function AudioPlayer({ book, chapter, translation, onClose }) {
   const audioRef = useRef(null);
