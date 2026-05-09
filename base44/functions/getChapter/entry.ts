@@ -5,12 +5,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 // Returns: [{verse, text, ...}]  — text is clean for most translations
 const BOLLS_BASE = "https://bolls.life/get-chapter";
 
-// Translations supported by bolls.life with clean (no Strong's) text
-// KJV on bolls has Strong's numbers embedded — we strip them
-// NOTE: Only add codes here if bolls.life actually returns data for them
+// Translations supported by bolls.life — verified to return data
 const BOLLS_TRANSLATIONS = new Set([
+  // English
   "KJV","NKJV","NIV","ESV","NLT","NASB","AMP","CSB","MSG",
   "ASV","BBE","WEB","YLT","DARBY","WNT","ERV","NRSV","ISV",
+  // Spanish (verified working on bolls.life)
+  "NVI","BTX3","LBLA","NTV",
 ]);
 
 // Book name → canonical book number (1-66)
@@ -180,33 +181,32 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 4. LLM fallback for anything else
-    const rawText = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    // 4. LLM fallback for anything else — use JSON schema for reliable parsing
+    const llmResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
       model: "claude_sonnet_4_6",
       prompt: `Provide the complete and accurate text of ${book} chapter ${chapter} in the ${tCode} (${getFullName(tCode)}) translation of the Bible.
-
-Format each verse on its own line as:
-VERSE_NUM|verse text
-
-Rules:
-- Use ONLY the authentic ${tCode} wording
-- Include ALL verses in the chapter
-- One verse per line, number followed by pipe followed by text
-- No extra commentary, headings, or formatting`,
-    });
-
-    if (rawText && typeof rawText === 'string') {
-      const verses = [];
-      for (const line of rawText.split('\n')) {
-        const trimmed = line.trim();
-        if (!trimmed || !trimmed.includes('|')) continue;
-        const pipeIdx = trimmed.indexOf('|');
-        const num = parseInt(trimmed.substring(0, pipeIdx).trim().replace(/\D/g, ''));
-        const text = trimmed.substring(pipeIdx + 1).trim();
-        if (!isNaN(num) && num > 0 && text.length > 0) {
-          verses.push({ translation: tCode, book, chapter: Number(chapter), verse: num, text, red_letter: false });
+Use ONLY the authentic ${tCode} wording. Include ALL verses. No commentary or headings.`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          verses: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                verse: { type: "number" },
+                text: { type: "string" }
+              }
+            }
+          }
         }
       }
+    });
+
+    if (llmResult && Array.isArray(llmResult.verses) && llmResult.verses.length > 0) {
+      const verses = llmResult.verses
+        .filter(v => v.verse > 0 && v.text)
+        .map(v => ({ translation: tCode, book, chapter: Number(chapter), verse: v.verse, text: v.text.trim(), red_letter: false }));
       if (verses.length > 0) {
         return Response.json({ verses, source: 'llm' });
       }
