@@ -81,9 +81,27 @@ function cleanBollsText(raw) {
   return text;
 }
 
+async function fetchWithTimeout(url, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    return res;
+  } catch (e) {
+    clearTimeout(timer);
+    throw e;
+  }
+}
+
 async function fetchFromBolls(bollsCode, bookNum, chapter) {
   const url = `${BOLLS_BASE}/${bollsCode}/${bookNum}/${chapter}/`;
-  const res = await fetch(url);
+  let res;
+  try {
+    res = await fetchWithTimeout(url, 8000);
+  } catch {
+    return null;
+  }
   if (!res.ok) return null;
   const data = await res.json();
   if (!Array.isArray(data) || data.length === 0) return null;
@@ -137,7 +155,12 @@ function extractHelloaoText(contentArray) {
 
 async function fetchFromHelloAO(translationId, bookId, chapter) {
   const url = `${HELLOAO_BASE}/${translationId}/${bookId}/${chapter}.json`;
-  const res = await fetch(url);
+  let res;
+  try {
+    res = await fetchWithTimeout(url, 8000);
+  } catch {
+    return null;
+  }
   if (!res.ok) return null;
   const json = await res.json();
   const content = json?.chapter?.content;

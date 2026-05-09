@@ -1,12 +1,18 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// Translations supported by bolls.life
-const BOLLS_TRANSLATIONS = new Set([
-  "KJV","NKJV","NIV","ESV","NLT","NASB","AMP","CSB","MSG",
-  "ASV","BBE","WEB","BSB","RVR1960","NVI","BTX3","PDDPT","RVA2015",
-  "LBLA","NTV","ARA","ARC","NVT","LSG","NEG1979","BDS","DIOD","NRV",
-  "YLT","DARBY","WNT",
-]);
+// Map from app translation codes → bolls.life short_name codes (MUST match getChapter function)
+const BOLLS_CODE_MAP = {
+  KJV:"KJV", NKJV:"NKJV", NIV:"NIV", ESV:"ESV", NLT:"NLT",
+  NASB:"NASB", AMP:"AMP", CSB:"CSB17", MSG:"MSG", ASV:"ASV",
+  BBE:"BBE", WEB:"WEB", BSB:"BSB", YLT:"YLT", DARBY:"DARBY",
+  WNT:"WNT", ERV:"ERV", NRSV:"NRSVCE", ISV:"ISV",
+  // Spanish — corrected codes
+  NVI:"NVI", RVR1960:"RV1960", PDDPT:"PDT", BTX3:"LBLA", LBLA:"LBLA", NTV:"NTV",
+  // Portuguese
+  ARA:"ARA",
+  // French
+  BDS:"BDS",
+};
 
 const TRANSLATION_MAP = {
   KJV: { name: "King James Version", lang: "en" },
@@ -133,7 +139,8 @@ Deno.serve(async (req) => {
     const trans = TRANSLATION_MAP[tCode];
     if (!trans) return Response.json({ error: `Unsupported translation: ${translation}` }, { status: 400 });
 
-    if (!BOLLS_TRANSLATIONS.has(tCode)) {
+    const bollsCode = BOLLS_CODE_MAP[tCode];
+    if (!bollsCode) {
       return Response.json({ error: `Translation ${tCode} is not available for offline download` }, { status: 400 });
     }
 
@@ -141,7 +148,7 @@ Deno.serve(async (req) => {
     const result = {};
     let totalChapters = 0;
 
-    // Build all fetch tasks
+    // Build all fetch tasks — use bollsCode for API calls, store under tCode
     const allTasks = [];
     for (const book of books) {
       result[book.name] = {};
@@ -154,7 +161,7 @@ Deno.serve(async (req) => {
     const BATCH_SIZE = 10;
     for (let i = 0; i < allTasks.length; i += BATCH_SIZE) {
       const batch = allTasks.slice(i, i + BATCH_SIZE);
-      const batchResults = await fetchBatch(tCode, batch);
+      const batchResults = await fetchBatch(bollsCode, batch);
       
       for (let j = 0; j < batch.length; j++) {
         const { bookName, chapter } = batch[j];

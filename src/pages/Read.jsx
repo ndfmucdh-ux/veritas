@@ -59,15 +59,8 @@ export default function Read() {
   const loadChapter = async () => {
     setLoading(true);
     setVerses([]);
-    // Only use hardcoded KJV samples when translation is KJV
-    const key = `${book}:${chapter}`;
-    if (translation === "KJV" && SAMPLE_VERSES[key]) {
-      setVerses(SAMPLE_VERSES[key]);
-      setLoading(false);
-      trackReading();
-      return;
-    }
-    // Check offline cache first
+
+    // 1. Offline cache — highest priority, always instant
     const offline = getOfflineVerse(translation, book, chapter);
     if (offline) {
       setVerses(offline);
@@ -75,31 +68,44 @@ export default function Read() {
       trackReading();
       return;
     }
+
+    // 2. KJV bundled samples
+    const key = `${book}:${chapter}`;
+    if (translation === "KJV" && SAMPLE_VERSES[key]) {
+      setVerses(SAMPLE_VERSES[key]);
+      setLoading(false);
+      trackReading();
+      return;
+    }
+
+    // 3. Backend API (with timeout safety)
     try {
       const res = await base44.functions.invoke("getChapter", { translation, book, chapter });
       if (res.data?.verses?.length > 0) {
         setVerses(res.data.verses);
-      } else {
-        await fetchFromApi();
+      } else if (translation === "KJV") {
+        // KJV-only public fallback
+        await fetchKjvFallback(book, chapter);
       }
     } catch {
-      await fetchFromApi();
+      if (translation === "KJV") {
+        await fetchKjvFallback(book, chapter);
+      }
     } finally {
       setLoading(false);
       trackReading();
     }
   };
 
-  const fetchFromApi = async () => {
-    // Only use bible-api.com as last resort fallback for English KJV
-    // Never override a non-English translation with KJV text
-    if (translation !== "KJV") return;
-    const slug = book.toLowerCase().replace(/\s+/g, "+");
-    const r = await fetch(`https://bible-api.com/${slug}+${chapter}?translation=kjv`);
-    if (r.ok) {
-      const d = await r.json();
-      setVerses((d.verses || []).map(v => ({ verse: v.verse, text: v.text.trim(), red_letter: false })));
-    }
+  const fetchKjvFallback = async (b, ch) => {
+    try {
+      const slug = b.toLowerCase().replace(/\s+/g, "+");
+      const r = await fetch(`https://bible-api.com/${slug}+${ch}?translation=kjv`);
+      if (r.ok) {
+        const d = await r.json();
+        setVerses((d.verses || []).map(v => ({ verse: v.verse, text: v.text.trim(), red_letter: false })));
+      }
+    } catch {}
   };
 
   const trackReading = () => {
