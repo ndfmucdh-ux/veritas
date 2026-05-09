@@ -19,7 +19,7 @@ const COLOR_HEX = { yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa", green
 export default function VerseRow({
   verseNum, text, redLetter, book, chapter, translation,
   highlight, isBookmarked, note, showNumbers, fontSize, onUpdate, onOpenNote,
-  isSelected, onToggleSelect, selectionMode
+  isSelected, onToggleSelect, selectionMode, isJumped
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [noteMode, setNoteMode] = useState(false);
@@ -90,7 +90,9 @@ export default function VerseRow({
       )}
       <motion.div
         className="rounded-lg px-2 py-1.5 cursor-pointer transition-all flex items-start gap-2"
-        style={{ ...hlStyle, background: isSelected ? "rgba(0,245,255,0.08)" : hlStyle.background, outline: isSelected ? "1px solid rgba(0,245,255,0.3)" : "none" }}
+        animate={isJumped ? { boxShadow: ["0 0 0px rgba(0,245,255,0)", "0 0 18px rgba(0,245,255,0.45)", "0 0 0px rgba(0,245,255,0)"] } : {}}
+        transition={{ duration: 1.8, ease: "easeInOut" }}
+        style={{ ...hlStyle, background: isJumped ? "rgba(0,245,255,0.1)" : isSelected ? "rgba(0,245,255,0.08)" : hlStyle.background, outline: isSelected ? "1px solid rgba(0,245,255,0.3)" : isJumped ? "1px solid rgba(0,245,255,0.4)" : "none" }}
         onClick={(e) => {
           e.stopPropagation();
           if (selectionMode) { onToggleSelect?.(verseNum); return; }

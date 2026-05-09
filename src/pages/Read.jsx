@@ -39,6 +39,7 @@ export default function Read() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState(new Set());
   const [showFolderModal, setShowFolderModal] = useState(false);
+  const [jumpedVerse, setJumpedVerse] = useState(null);
   const containerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
@@ -256,9 +257,11 @@ export default function Read() {
                 icon="✨"
                 onChange={(verseNum) => {
                   setSelectedVerse(verseNum);
+                  setJumpedVerse(verseNum);
+                  setTimeout(() => setJumpedVerse(null), 2000);
                   const verseEl = document.getElementById(`verse-${verseNum}`);
                   if (verseEl) {
-                    verseEl.scrollIntoView({ behavior: "smooth", block: "start" });
+                    verseEl.scrollIntoView({ behavior: "smooth", block: "center" });
                   }
                 }}
                 items={verses.map(v => ({
@@ -300,6 +303,7 @@ export default function Read() {
                     onOpenNote={(verseData) => setSidePanelVerse(verseData)}
                     selectionMode={selectionMode}
                     isSelected={selectedVerses.has(v.verse)}
+                    isJumped={jumpedVerse === v.verse}
                     onToggleSelect={(vn) => setSelectedVerses(prev => {
                       const next = new Set(prev);
                       next.has(vn) ? next.delete(vn) : next.add(vn);

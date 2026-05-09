@@ -1,7 +1,23 @@
-// Offline Bible storage using localStorage
-// Keys: "offline_bible_{TRANSLATION}" → { name, lang, data, downloadedAt }
+// Offline Bible storage using IndexedDB (much larger quota than localStorage)
+// Falls back to localStorage for metadata only.
 
-const KEY = (t) => `offline_bible_${t.toUpperCase()}`;
+const DB_NAME = "veritas_offline_bible";
+const DB_VERSION = 1;
+const STORE = "translations";
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        db.createObjectStore(STORE, { keyPath: "code" });
+      }
+    };
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = () => reject(req.error);
+  });
+}
 
 export const DOWNLOADABLE_TRANSLATIONS = [
   // English (most popular)
@@ -35,69 +51,153 @@ export const DOWNLOADABLE_TRANSLATIONS = [
   { code: "NVT",    name: "Nova Versão Transformadora",   lang: "pt", flag: "🇧🇷" },
   // French
   { code: "LSG",    name: "Louis Segond 1910",            lang: "fr", flag: "🇫🇷" },
-  { code: "NEG1979",name: "Nouvelle Edition Genève 1979",  lang: "fr", flag: "🇫🇷" },
+  { code: "NEG1979",name: "Nouvelle Edition Genève 1979", lang: "fr", flag: "🇫🇷" },
   { code: "BDS",    name: "Bible du Semeur",              lang: "fr", flag: "🇫🇷" },
   // Italian
   { code: "DIOD",   name: "Bibbia Diodati",               lang: "it", flag: "🇮🇹" },
   { code: "NRV",    name: "Nuova Riveduta 2006",          lang: "it", flag: "🇮🇹" },
 ];
 
-export function getDownloadedTranslations() {
-  return DOWNLOADABLE_TRANSLATIONS.filter(t => {
-    try {
-      return !!localStorage.getItem(KEY(t.code));
-    } catch {
-      return false;
-    }
-  });
+// ── Async IndexedDB operations ────────────────────────────────────────────
+
+export async function saveTranslationAsync(code, payload) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).put({
+        code: code.toUpperCase(),
+        ...payload,
+        downloadedAt: new Date().toISOString(),
+      });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch (e) {
+    console.warn("IndexedDB save failed:", e);
+    return false;
+  }
 }
 
-export function isTranslationDownloaded(code) {
+export async function removeTranslationAsync(code) {
   try {
-    return !!localStorage.getItem(KEY(code));
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).delete(code.toUpperCase());
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    });
+  } catch {}
+}
+
+export async function getOfflineVerseAsync(code, book, chapter) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).get(code.toUpperCase());
+      req.onsuccess = () => {
+        const record = req.result;
+        resolve(record?.data?.[book]?.[chapter] || null);
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+export async function isTranslationDownloadedAsync(code) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getKey(code.toUpperCase());
+      req.onsuccess = () => resolve(!!req.result);
+      req.onerror = () => resolve(false);
+    });
   } catch {
     return false;
   }
 }
 
-export function saveTranslation(code, payload) {
+export async function getTranslationMetaAsync(code) {
   try {
-    localStorage.setItem(KEY(code), JSON.stringify({
-      ...payload,
-      downloadedAt: new Date().toISOString(),
-    }));
-    return true;
-  } catch (e) {
-    // localStorage quota exceeded
-    console.warn("Could not save offline Bible:", e.message);
-    return false;
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).get(code.toUpperCase());
+      req.onsuccess = () => {
+        const r = req.result;
+        if (!r) return resolve(null);
+        resolve({ name: r.name, lang: r.lang, totalChapters: r.totalChapters, downloadedAt: r.downloadedAt });
+      };
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
   }
 }
 
-export function removeTranslation(code) {
+export async function getAllDownloadedCodesAsync() {
   try {
-    localStorage.removeItem(KEY(code));
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getAllKeys();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => resolve([]);
+    });
+  } catch {
+    return [];
+  }
+}
+
+// ── Sync shims for backward compatibility (used in Read.jsx) ──────────────
+// These are kept synchronous but delegate to a cached in-memory map seeded at startup.
+
+const _memCache = {}; // code → { data, name, lang, totalChapters, downloadedAt }
+
+// Call once on app boot to warm the memory cache from IDB
+export async function warmOfflineCache() {
+  try {
+    const db = await openDB();
+    const all = await new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => resolve([]);
+    });
+    all.forEach(r => { _memCache[r.code] = r; });
   } catch {}
 }
 
 export function getOfflineVerse(code, book, chapter) {
-  try {
-    const raw = localStorage.getItem(KEY(code));
-    if (!raw) return null;
-    const { data } = JSON.parse(raw);
-    return data?.[book]?.[chapter] || null;
-  } catch {
-    return null;
-  }
+  const r = _memCache[code?.toUpperCase()];
+  return r?.data?.[book]?.[chapter] || null;
+}
+
+export function isTranslationDownloaded(code) {
+  return !!_memCache[code?.toUpperCase()];
 }
 
 export function getTranslationMeta(code) {
-  try {
-    const raw = localStorage.getItem(KEY(code));
-    if (!raw) return null;
-    const { name, lang, totalChapters, downloadedAt } = JSON.parse(raw);
-    return { name, lang, totalChapters, downloadedAt };
-  } catch {
-    return null;
-  }
+  const r = _memCache[code?.toUpperCase()];
+  if (!r) return null;
+  return { name: r.name, lang: r.lang, totalChapters: r.totalChapters, downloadedAt: r.downloadedAt };
+}
+
+// Alias for components that still import the old sync save
+export function saveTranslation(code, payload) {
+  // Fire-and-forget async save; also update mem cache immediately
+  const record = { code: code.toUpperCase(), ...payload, downloadedAt: new Date().toISOString() };
+  _memCache[code.toUpperCase()] = record;
+  saveTranslationAsync(code, payload);
+  return true; // always optimistic
+}
+
+export function removeTranslation(code) {
+  delete _memCache[code?.toUpperCase()];
+  removeTranslationAsync(code);
 }

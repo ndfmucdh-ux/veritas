@@ -11,7 +11,8 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { warmOfflineCache } from '@/lib/offlineBible';
 
 // Page imports
 import Home from './pages/Home';
@@ -84,6 +85,8 @@ const AuthenticatedApp = () => {
 };
 
 function App() {
+  useEffect(() => { warmOfflineCache(); }, []);
+
   const [splashDone, setSplashDone] = useState(() => {
     // Only show splash once per session
     const shown = sessionStorage.getItem("veritas_splash_shown");
