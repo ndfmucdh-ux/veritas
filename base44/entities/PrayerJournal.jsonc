@@ -26,23 +26,23 @@
         "type": "string"
       },
       "description": "User-defined tags"
+    },
+    "answered": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this prayer has been answered"
+    },
+    "answered_note": {
+      "type": "string",
+      "description": "How/when the prayer was answered"
+    },
+    "answered_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the prayer was marked as answered"
     }
   },
   "required": [
     "prayer_text"
-  ],
-  "rls": {
-    "create": {
-      "created_by": "{{user.email}}"
-    },
-    "read": {
-      "created_by": "{{user.email}}"
-    },
-    "update": {
-      "created_by": "{{user.email}}"
-    },
-    "delete": {
-      "created_by": "{{user.email}}"
-    }
-  }
+  ]
 }

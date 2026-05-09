@@ -6,6 +6,7 @@ import HeroVerseSlider from "@/components/home/HeroVerseSlider.jsx";
 import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import MorningInspiration from "@/components/home/MorningInspiration.jsx";
+import MorningReminder from "@/components/home/MorningReminder.jsx";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
 
@@ -86,6 +87,9 @@ export default function Home() {
             )}
           </div>
         </motion.div>
+
+        {/* Morning Reminder */}
+        <MorningReminder />
 
         {/* Hero Verse Slider */}
         <HeroVerseSlider />

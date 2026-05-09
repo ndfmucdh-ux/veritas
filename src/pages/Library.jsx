@@ -4,12 +4,14 @@ import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2,
 import { base44 } from "@/api/base44Client";
 import FolderManager from "@/components/library/FolderManager";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
+import NotesManager from "@/components/library/NotesManager";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
   { id: "highlights", label: "Highlights", icon: Highlighter },
   { id: "notes", label: "Notes", icon: StickyNote },
-  { id: "folders", label: "Folders", icon: Folder },
+  { id: "note-folders", label: "Folders", icon: Folder },
+  { id: "verse-folders", label: "Verses", icon: Bookmark },
   { id: "audio", label: "Audio", icon: Headphones },
 ];
 
@@ -257,7 +259,10 @@ export default function Library() {
         {activeTab === "bookmarks" && renderBookmarks()}
         {activeTab === "highlights" && renderHighlights()}
         {activeTab === "notes" && renderNotes()}
-        {activeTab === "folders" && renderFolders()}
+        {activeTab === "note-folders" && (
+          <NotesManager notes={notes} onNotesChange={setNotes} />
+        )}
+        {activeTab === "verse-folders" && renderFolders()}
         {activeTab === "audio" && <AudioStreakChart />}
       </div>
     </div>

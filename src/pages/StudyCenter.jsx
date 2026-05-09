@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronDown, AlertCircle } from "lucide-react";
+import { Loader2, ChevronDown, AlertCircle, Columns } from "lucide-react";
+import TranslationSplitView from "@/components/study/TranslationSplitView";
 import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
@@ -23,6 +24,7 @@ export default function StudyCenter() {
   const [error, setError] = useState(null);
   const [depth, setDepth] = useState(urlParams.get("depth") || "overview");
   const [expandedCategory, setExpandedCategory] = useState("Gospels");
+  const [splitView, setSplitView] = useState(false);
 
   // Update URL when state changes
   useEffect(() => {
@@ -113,8 +115,17 @@ export default function StudyCenter() {
     <div className="md:ml-16 min-h-screen pb-28 px-4 md:px-8">
       {/* Header */}
       <div className="max-w-4xl mx-auto pt-6 mb-8">
-        <h1 className="font-cinzel text-2xl font-bold text-white mb-2">Study Center</h1>
-        <p className="text-sm text-white/50">Deep dive into scripture with AI-powered analysis</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="font-cinzel text-2xl font-bold text-white mb-2">Study Center</h1>
+            <p className="text-sm text-white/50">Deep dive into scripture with AI-powered analysis</p>
+          </div>
+          <button onClick={() => setSplitView(v => !v)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
+            style={{ background: splitView ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.06)", color: splitView ? "#00f5ff" : "rgba(255,255,255,0.5)", border: splitView ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.1)" }}>
+            <Columns className="w-4 h-4" /> Split View
+          </button>
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
@@ -238,6 +249,11 @@ export default function StudyCenter() {
               };
             })}
           />
+        )}
+
+        {/* Split View */}
+        {splitView && (
+          <TranslationSplitView book={selectedBook} chapter={selectedChapter} />
         )}
 
         {/* Outline display with error handling */}

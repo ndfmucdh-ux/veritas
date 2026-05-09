@@ -13,6 +13,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "rec
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
 import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 import AudioSummary from "@/components/profile/AudioSummary";
+import DashboardSummary from "@/components/profile/DashboardSummary";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -370,6 +371,11 @@ export default function Profile() {
           {/* ── STATS TAB ── */}
           {activeTab === "stats" && (
             <div className="px-5 space-y-5">
+              {/* Dashboard Summary */}
+              <Section label="My Progress Summary" icon={TrendingUp}>
+                <DashboardSummary xpData={xpData} readingProgress={plans.length} />
+              </Section>
+
               {/* Audio Summary */}
               <Section label="Audio Listening" icon={Headphones}>
                 <AudioSummary />
