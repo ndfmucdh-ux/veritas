@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, SkipBack, SkipForward, Volume2, X } from "lucide-react";
 

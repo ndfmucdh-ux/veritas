@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, Trash2, Calendar, Tag, Loader2, CheckCircle2, Clock, History } from "lucide-react";
 import { base44 } from "@/api/base44Client";
