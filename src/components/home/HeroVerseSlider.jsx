@@ -93,8 +93,10 @@ export default function HeroVerseSlider() {
   const rawBook = ref.substring(0, lastSpace);
   const chapterVerse = ref.substring(lastSpace + 1) || "1:1";
   const chapterNum = chapterVerse.split(":")[0];
+  const verseNum = chapterVerse.split(":")[1];
   const BOOK_MAP = { "Psalm": "Psalms", "Song of Solomon": "Song of Solomon" };
   const bookName = BOOK_MAP[rawBook] || rawBook;
+  const readUrl = `/read?book=${encodeURIComponent(bookName)}&chapter=${chapterNum}${verseNum ? `&verse=${verseNum}` : ""}`;
 
   return (
     <div className="relative rounded-3xl overflow-hidden" style={{ minHeight: 260 }}>
@@ -151,7 +153,7 @@ export default function HeroVerseSlider() {
             style={{ background: "rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
             {showReflection ? t.hide : t.reflect}
           </button>
-          <a href={`/read?book=${encodeURIComponent(bookName)}&chapter=${chapterNum}`}
+          <a href={readUrl}
             className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter"
             style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff" }}>
             <BookOpen className="w-3 h-3" /> {t.read}

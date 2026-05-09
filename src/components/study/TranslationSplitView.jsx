@@ -2,9 +2,28 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Loader2, Columns } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { TRANSLATIONS } from "@/lib/bibleData";
 
-const QUICK_TRANSLATIONS = ["KJV", "NIV", "ESV", "NKJV", "NLT", "ASV", "YLT"];
+const QUICK_TRANSLATIONS = [
+  // English
+  { code: "KJV", label: "KJV 🇬🇧" },
+  { code: "NIV", label: "NIV 🇬🇧" },
+  { code: "ESV", label: "ESV 🇬🇧" },
+  { code: "NKJV", label: "NKJV 🇬🇧" },
+  { code: "NLT", label: "NLT 🇬🇧" },
+  { code: "MSG", label: "MSG 🇬🇧" },
+  { code: "ASV", label: "ASV 🇺🇸" },
+  { code: "YLT", label: "YLT 🇬🇧" },
+  // Spanish
+  { code: "RVR1960", label: "RVR1960 🇲🇽" },
+  { code: "NVI", label: "NVI 🇲🇽" },
+  { code: "PDDPT", label: "PDT 🇲🇽" },
+  { code: "NTV", label: "NTV 🇲🇽" },
+  { code: "LBLA", label: "LBLA 🇲🇽" },
+  // Portuguese
+  { code: "ARA", label: "ARA 🇧🇷" },
+  // French
+  { code: "LSG", label: "LSG 🇫🇷" },
+];
 
 export default function TranslationSplitView({ book, chapter }) {
   const [leftTrans, setLeftTrans] = useState("KJV");
@@ -31,17 +50,17 @@ export default function TranslationSplitView({ book, chapter }) {
   useEffect(() => { fetchVerses(leftTrans, "left"); }, [book, chapter, leftTrans]);
   useEffect(() => { fetchVerses(rightTrans, "right"); }, [book, chapter, rightTrans]);
 
-  const TransPicker = ({ value, onChange, side }) => (
+  const TransPicker = ({ value, onChange }) => (
     <div className="flex gap-1 flex-wrap mb-3">
       {QUICK_TRANSLATIONS.map(t => (
-        <button key={t} onClick={() => onChange(t)}
-          className="px-2 py-1 rounded-lg text-[10px] font-cinzel transition-all"
+        <button key={t.code} onClick={() => onChange(t.code)}
+          className="px-2 py-1.5 rounded-lg text-[10px] font-cinzel transition-all"
           style={{
-            background: value === t ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-            color: value === t ? "#00f5ff" : "rgba(255,255,255,0.4)",
-            border: value === t ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent",
+            background: value === t.code ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
+            color: value === t.code ? "#00f5ff" : "rgba(255,255,255,0.4)",
+            border: value === t.code ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent",
           }}>
-          {t}
+          {t.label}
         </button>
       ))}
     </div>

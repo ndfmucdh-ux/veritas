@@ -21,6 +21,7 @@ export default function Read() {
   const [book, setBook] = useState(params.get("book") || "John");
   const [chapter, setChapter] = useState(Number(params.get("chapter")) || 3);
   const [translation, setTranslation] = useState(params.get("translation") || "KJV");
+  const targetVerse = Number(params.get("verse")) || null;
   const [verses, setVerses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [immersive, setImmersive] = useState(false);
@@ -41,6 +42,7 @@ export default function Read() {
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [jumpedVerse, setJumpedVerse] = useState(null);
   const containerRef = useRef(null);
+  const glowTimerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
 
@@ -48,6 +50,20 @@ export default function Read() {
     loadChapter();
     loadAnnotations();
   }, [book, chapter, translation]);
+
+  // Auto-scroll + glow when coming from VOTD / plans / devotionals via ?verse=N
+  useEffect(() => {
+    if (!targetVerse || loading) return;
+    clearTimeout(glowTimerRef.current);
+    // Small delay to allow verses to render
+    glowTimerRef.current = setTimeout(() => {
+      const el = document.getElementById(`verse-${targetVerse}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      setJumpedVerse(targetVerse);
+      glowTimerRef.current = setTimeout(() => setJumpedVerse(null), 2500);
+    }, 400);
+    return () => clearTimeout(glowTimerRef.current);
+  }, [targetVerse, loading]);
 
   useEffect(() => {
     const el = containerRef.current;

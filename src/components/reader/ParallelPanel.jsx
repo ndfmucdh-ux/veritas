@@ -3,7 +3,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Columns, Plus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-const TRANSLATIONS = ["KJV", "NIV", "ESV", "NLT", "NKJV", "MSG"];
+const ALL_TRANSLATIONS = [
+  // English
+  { code: "KJV", label: "KJV 🇬🇧" },
+  { code: "NIV", label: "NIV 🇬🇧" },
+  { code: "ESV", label: "ESV 🇬🇧" },
+  { code: "NLT", label: "NLT 🇬🇧" },
+  { code: "NKJV", label: "NKJV 🇬🇧" },
+  { code: "MSG", label: "MSG 🇺🇸" },
+  { code: "ASV", label: "ASV 🇺🇸" },
+  { code: "NASB", label: "NASB 🇺🇸" },
+  { code: "CSB", label: "CSB 🇺🇸" },
+  // Spanish
+  { code: "RVR1960", label: "RVR1960 🇲🇽" },
+  { code: "NVI", label: "NVI 🇲🇽" },
+  { code: "PDDPT", label: "PDT 🇲🇽" },
+  { code: "NTV", label: "NTV 🇲🇽" },
+  { code: "LBLA", label: "LBLA 🇲🇽" },
+  // Portuguese
+  { code: "ARA", label: "ARA 🇧🇷" },
+  // French
+  { code: "LSG", label: "LSG 🇫🇷" },
+];
 
 async function fetchTranslation(book, chapter, translation) {
   // Try backend first
@@ -23,7 +44,7 @@ async function fetchTranslation(book, chapter, translation) {
 
 export default function ParallelPanel({ book, chapter, primaryTranslation, primaryVerses, onClose }) {
   const [secondTranslation, setSecondTranslation] = useState(
-    TRANSLATIONS.find(t => t !== primaryTranslation) || "NIV"
+    ALL_TRANSLATIONS.find(t => t.code !== primaryTranslation)?.code || "NIV"
   );
   const [secondVerses, setSecondVerses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -59,8 +80,8 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
           className="text-xs font-cinzel px-3 py-1.5 rounded-xl focus:outline-none"
           style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
         >
-          {TRANSLATIONS.filter(t => t !== primaryTranslation).map(t => (
-            <option key={t} value={t}>{t}</option>
+          {ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => (
+            <option key={t.code} value={t.code}>{t.label}</option>
           ))}
         </select>
         <button onClick={onClose}
