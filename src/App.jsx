@@ -7,6 +7,8 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import AppLayout from '@/components/layout/AppLayout';
 import VeritasLogo from '@/components/ui/VeritasLogo';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
 import { useState } from 'react';
@@ -56,20 +58,25 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route element={<AppLayout />}>
+        {/* Public routes — no login required */}
         <Route path="/" element={<Home />} />
         <Route path="/read" element={<Read />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/library" element={<Library />} />
         <Route path="/discover" element={<Discover />} />
-        <Route path="/plans" element={<Plans />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/study" element={<Study />} />
-        <Route path="/verse-art" element={<VerseImageGenerator />} />
-        <Route path="/study-center" element={<StudyCenter />} />
-        <Route path="/prayer-journal" element={<PrayerJournal />} />
-        <Route path="/community" element={<CommunityHub />} />
-        <Route path="/notification-studio" element={<NotificationStudio />} />
-        <Route path="/audio-dashboard" element={<AudioDashboard />} />
+        <Route path="/plans" element={<Plans />} />
+
+        {/* Protected routes — require login */}
+        <Route element={<ProtectedRoute unauthenticatedElement={<AuthGate />} />}>
+          <Route path="/library" element={<Library />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/verse-art" element={<VerseImageGenerator />} />
+          <Route path="/study-center" element={<StudyCenter />} />
+          <Route path="/prayer-journal" element={<PrayerJournal />} />
+          <Route path="/community" element={<CommunityHub />} />
+          <Route path="/notification-studio" element={<NotificationStudio />} />
+          <Route path="/audio-dashboard" element={<AudioDashboard />} />
+        </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
