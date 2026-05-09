@@ -53,24 +53,26 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
   const rightScrollRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
 
+  const syncingRef = useRef(false);
+
   const handleLeftScroll = () => {
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    if (leftScrollRef.current && rightScrollRef.current) {
-      const ratio = leftScrollRef.current.scrollTop / (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight || 1);
-      scrollTimeoutRef.current = setTimeout(() => {
-        if (rightScrollRef.current) rightScrollRef.current.scrollTop = ratio * (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight);
-      }, 0);
-    }
+    if (syncingRef.current || !leftScrollRef.current || !rightScrollRef.current) return;
+    syncingRef.current = true;
+    const maxScroll = leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight || 1;
+    const ratio = leftScrollRef.current.scrollTop / maxScroll;
+    const rightMaxScroll = rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight;
+    rightScrollRef.current.scrollTop = ratio * rightMaxScroll;
+    syncingRef.current = false;
   };
 
   const handleRightScroll = () => {
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    if (leftScrollRef.current && rightScrollRef.current) {
-      const ratio = rightScrollRef.current.scrollTop / (rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight || 1);
-      scrollTimeoutRef.current = setTimeout(() => {
-        if (leftScrollRef.current) leftScrollRef.current.scrollTop = ratio * (leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight);
-      }, 0);
-    }
+    if (syncingRef.current || !leftScrollRef.current || !rightScrollRef.current) return;
+    syncingRef.current = true;
+    const maxScroll = rightScrollRef.current.scrollHeight - rightScrollRef.current.clientHeight || 1;
+    const ratio = rightScrollRef.current.scrollTop / maxScroll;
+    const leftMaxScroll = leftScrollRef.current.scrollHeight - leftScrollRef.current.clientHeight;
+    leftScrollRef.current.scrollTop = ratio * leftMaxScroll;
+    syncingRef.current = false;
   };
 
   useEffect(() => {
@@ -145,7 +147,7 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
         <div className="flex-1 overflow-hidden">
           <div className="grid grid-cols-2 divide-x h-full" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
             {/* Left column — primary */}
-            <div ref={leftScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide" onScroll={handleLeftScroll}>
+            <div ref={leftScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide will-change-scroll" onScroll={handleLeftScroll}>
               {primaryVerses.map(v => (
                 <div key={v.verse} className="flex gap-1.5">
                   <span className="font-cinzel flex-shrink-0 pt-1 w-5 text-right select-none" style={{ color: "rgba(255,255,255,0.2)", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
@@ -158,7 +160,7 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
               ))}
             </div>
             {/* Right column — secondary */}
-            <div ref={rightScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide" style={{ borderLeft: "1px solid rgba(255,255,255,0.06)" }} onScroll={handleRightScroll}>
+            <div ref={rightScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide will-change-scroll" style={{ borderLeft: "1px solid rgba(255,255,255,0.06)" }} onScroll={handleRightScroll}>
               {secondVerses.map(v => (
                 <div key={v.verse} className="flex gap-1.5">
                   <span className="font-cinzel flex-shrink-0 pt-1 w-5 text-right select-none" style={{ color: "rgba(255,255,255,0.2)", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>

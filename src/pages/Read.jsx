@@ -14,6 +14,7 @@ import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
+import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
 
 
 export default function Read() {
@@ -41,6 +42,7 @@ export default function Read() {
   const [selectedVerses, setSelectedVerses] = useState(new Set());
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [jumpedVerse, setJumpedVerse] = useState(null);
+  const [devotionalVerse, setDevotionalVerse] = useState(null);
   const containerRef = useRef(null);
   const glowTimerRef = useRef(null);
 
@@ -204,6 +206,7 @@ export default function Read() {
             {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
           </IconBtn>
           <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title="AI Devotional">✨</IconBtn>
           <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings}><Settings className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setImmersive(v => !v)}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -395,6 +398,19 @@ export default function Read() {
             primaryTranslation={translation}
             primaryVerses={verses}
             onClose={() => setShowParallel(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Devotional panel */}
+      <AnimatePresence>
+        {devotionalVerse && (
+          <DevotionalPanel
+            book={book}
+            chapter={chapter}
+            verseRef={devotionalVerse.verse_ref}
+            verseText={devotionalVerse.verse_text}
+            onClose={() => setDevotionalVerse(null)}
           />
         )}
       </AnimatePresence>

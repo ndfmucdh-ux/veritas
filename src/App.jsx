@@ -99,18 +99,32 @@ function App() {
     setSplashDone(true);
   };
 
-  // Prevent swipe-back page reload on iOS
+  // Prevent swipe-back page reload on iOS + history manipulation
   useEffect(() => {
     const preventSwipeBack = (e) => {
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        if (touch.clientX < 10 || touch.clientX > window.innerWidth - 10) {
+        if (touch.clientX < 12 || touch.clientX > window.innerWidth - 12) {
           e.preventDefault();
         }
       }
     };
+    
+    // Block history back if at app root
+    const blockHistoryBack = (e) => {
+      if (window.location.pathname === "/" && history.length <= 2) {
+        window.history.pushState(null, null, window.location.href);
+      }
+    };
+    
     document.addEventListener("touchmove", preventSwipeBack, { passive: false });
-    return () => document.removeEventListener("touchmove", preventSwipeBack);
+    window.addEventListener("popstate", blockHistoryBack);
+    window.history.pushState(null, null, window.location.href);
+    
+    return () => {
+      document.removeEventListener("touchmove", preventSwipeBack);
+      window.removeEventListener("popstate", blockHistoryBack);
+    };
   }, []);
 
   return (
