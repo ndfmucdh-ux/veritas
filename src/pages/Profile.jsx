@@ -16,6 +16,7 @@ import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 import AudioSummary from "@/components/profile/AudioSummary";
 import DashboardSummary from "@/components/profile/DashboardSummary";
 import DailyReadingRing from "@/components/profile/DailyReadingRing";
+import MilestoneBadges from "@/components/profile/MilestoneBadges";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -264,34 +265,34 @@ export default function Profile() {
       </div>
 
       {/* ── Quick Stats Row ── */}
-      <div className="grid grid-cols-4 gap-2 px-5 mb-4">
+      <div className="grid grid-cols-4 gap-3 px-5 mb-4">
         {[
           { label: "Streak", value: `${xpData?.streak_days || 0}d`, icon: Flame, color: "#f97316" },
           { label: "Chapters", value: xpData?.chapters_read || 0, icon: BookOpen, color: "#00f5ff" },
           { label: "Notes", value: notes.length, icon: StickyNote, color: "#a78bfa" },
           { label: "Saved", value: bookmarks.length, icon: Heart, color: "#f472b6" },
         ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="rounded-2xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <Icon className="w-4 h-4 mx-auto mb-1" style={{ color }} />
-            <p className="font-cinzel text-base font-bold text-white">{value}</p>
-            <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</p>
+          <div key={label} className="rounded-2xl p-4 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <Icon className="w-5 h-5 mx-auto mb-1.5" style={{ color }} />
+            <p className="font-cinzel text-lg font-bold text-white">{value}</p>
+            <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</p>
           </div>
         ))}
       </div>
 
       {/* ── Tab Bar ── */}
-      <div className="flex gap-1 px-5 mb-5">
+      <div className="flex gap-2 px-5 mb-5">
         {TABS.map(tab => {
           const Icon = TAB_ICONS[tab];
           return (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className="flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all"
+              className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all"
               style={{
                 background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.03)",
                 color: activeTab === tab ? "#00f5ff" : "rgba(255,255,255,0.35)",
                 border: activeTab === tab ? "1px solid rgba(0,245,255,0.2)" : "1px solid rgba(255,255,255,0.06)",
               }}>
-              <Icon className="w-4 h-4" />
+              <Icon className="w-5 h-5" />
               {TAB_LABELS[tab]}
             </button>
           );
@@ -309,6 +310,17 @@ export default function Profile() {
                 <div className="flex justify-center py-2">
                   <DailyReadingRing chaptersReadToday={0} />
                 </div>
+              </Section>
+
+              {/* Milestone Badges */}
+              <Section label="Milestones" icon={Star}>
+                <MilestoneBadges 
+                  streak={xpData?.streak_days || 0}
+                  prayerCount={0} // Will be fetched from prayer journal
+                  highlightCount={highlights.length}
+                  noteCount={notes.length}
+                  audioDays={0}
+                />
               </Section>
 
               {/* Badges */}

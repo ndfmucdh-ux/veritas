@@ -8,6 +8,7 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
+  const [currentVerseIndex, setCurrentVerseIndex] = useState(0);
 
   const handlePlayPause = () => setIsPlaying(!isPlaying);
 
@@ -15,6 +16,15 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
     if (isPlaying) audioRef.current?.play();
     else audioRef.current?.pause();
   }, [isPlaying]);
+
+  useEffect(() => {
+    // Update current verse based on playback time
+    const verseIndex = DUMMY_VERSES.findIndex((v, i) => {
+      const nextVerse = DUMMY_VERSES[i + 1];
+      return currentTime >= v.time && (!nextVerse || currentTime < nextVerse.time);
+    });
+    if (verseIndex !== -1) setCurrentVerseIndex(verseIndex);
+  }, [currentTime]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -38,10 +48,13 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex-1 min-w-0">
           <p className="font-cinzel text-sm text-white truncate">{book} {chapter}</p>
-          <p className="text-[10px] text-white/40">{translation} Audio</p>
+          <p className="text-[10px] text-white/40">Verse {DUMMY_VERSES[currentVerseIndex]?.verse || 1} — {translation} Audio</p>
+          {DUMMY_VERSES[currentVerseIndex] && (
+            <p className="text-[9px] text-cyan/70 italic truncate mt-1">{DUMMY_VERSES[currentVerseIndex].text}</p>
+          )}
         </div>
-        <button onClick={onClose} className="text-white/40 hover:text-white">
-          <X className="w-4 h-4" />
+        <button onClick={onClose} className="text-white/40 hover:text-white ml-2 flex-shrink-0">
+          <X className="w-5 h-5" />
         </button>
       </div>
 
@@ -60,20 +73,18 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={handlePlayPause}
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff" }}
-          >
-            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-          </motion.button>
-        </div>
+      <div className="flex items-center justify-between gap-2">
+        <motion.button
+          whileTap={{ scale: 0.88 }}
+          onClick={handlePlayPause}
+          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff" }}
+        >
+          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
+        </motion.button>
 
-        <div className="flex items-center gap-2">
-          <Volume2 className="w-3.5 h-3.5 text-white/40" />
+        <div className="flex items-center gap-2 flex-1">
+          <Volume2 className="w-4 h-4 text-white/40 flex-shrink-0" />
           <input
             type="range"
             min="0"
@@ -84,7 +95,7 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
               setVolume(parseFloat(e.target.value));
               if (audioRef.current) audioRef.current.volume = parseFloat(e.target.value);
             }}
-            className="w-16"
+            className="flex-1"
           />
         </div>
       </div>

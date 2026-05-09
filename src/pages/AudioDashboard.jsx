@@ -260,18 +260,18 @@ export default function AudioDashboard() {
         {activeTab === "dashboard" && (
           <>
             {/* Stats grid */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {[
                 { icon: "🎧", label: "Chapters Done", value: completed, color: "#00f5ff" },
                 { icon: "🔥", label: "Day Streak", value: streak, color: "#fb923c" },
                 { icon: "📚", label: "Books Heard", value: booksCompleted, color: "#a78bfa" },
                 { icon: "⏱️", label: "Total Minutes", value: totalMinutes, color: "#34d399" },
               ].map(s => (
-                <div key={s.label} className="rounded-2xl p-4 text-center"
+                <div key={s.label} className="rounded-2xl p-5 text-center"
                   style={{ background: `${s.color}08`, border: `1px solid ${s.color}20` }}>
-                  <div className="text-2xl mb-1">{s.icon}</div>
-                  <p className="font-cinzel text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
+                  <div className="text-3xl mb-2">{s.icon}</div>
+                  <p className="font-cinzel text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                  <p className="text-[10px] font-inter mt-1" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
                 </div>
               ))}
             </div>
@@ -315,26 +315,26 @@ export default function AudioDashboard() {
             </div>
 
             {/* Action buttons */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <button onClick={() => setShowSleepPicker(true)}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl font-cinzel text-sm transition-all"
+                className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
                 style={{ background: "rgba(167,139,250,0.08)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.2)" }}>
-                <Timer className="w-4 h-4" /> Sleep Timer
+                <Timer className="w-5 h-5" /> Sleep Timer
               </button>
               <button onClick={shareProgress} disabled={shareLoading}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl font-cinzel text-sm transition-all"
+                className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
                 style={{ background: "rgba(251,191,36,0.08)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.2)" }}>
-                <Share2 className="w-4 h-4" /> Share Progress
+                <Share2 className="w-5 h-5" /> Share Progress
               </button>
               <button onClick={exportCSV} disabled={exporting}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl font-cinzel text-sm transition-all"
+                className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
                 style={{ background: "rgba(0,245,255,0.06)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.15)" }}>
-                <Download className="w-4 h-4" /> Export CSV
+                <Download className="w-5 h-5" /> Export CSV
               </button>
               <button onClick={exportPDF} disabled={exporting}
-                className="flex items-center gap-2 px-4 py-3 rounded-2xl font-cinzel text-sm transition-all"
+                className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
                 style={{ background: "rgba(52,211,153,0.06)", color: "#34d399", border: "1px solid rgba(52,211,153,0.15)" }}>
-                <Download className="w-4 h-4" /> Export PDF
+                <Download className="w-5 h-5" /> Export PDF
               </button>
             </div>
 

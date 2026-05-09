@@ -91,6 +91,7 @@ export default function VerseImageGenerator() {
 
   const [verseRef, setVerseRef] = useState(preRef);
   const [verseText, setVerseText] = useState(preText);
+  const [highlightedWord, setHighlightedWord] = useState("");
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -151,7 +152,15 @@ export default function VerseImageGenerator() {
 
           <div className="relative z-10 max-w-xs">
             <p className="italic leading-relaxed mb-4" style={{ fontFamily: template.font, fontSize: "clamp(15px, 4vw, 18px)", color: template.textColor }}>
-              "{verseText}"
+              "
+              {highlightedWord ? (
+                verseText.split(/(\s+)/).map((word, i) => 
+                  word.toLowerCase() === highlightedWord.toLowerCase() 
+                    ? <span key={i} style={{ background: "rgba(251,191,36,0.35)", padding: "2px 4px", borderRadius: "3px" }}>{word}</span>
+                    : word
+                )
+              ) : verseText}
+              "
             </p>
             <p className="font-cinzel text-sm font-bold tracking-wider" style={{ color: template.refColor }}>
               — {verseRef}
@@ -190,6 +199,12 @@ export default function VerseImageGenerator() {
               className="w-full px-4 py-3 rounded-xl text-sm resize-none focus:outline-none"
               style={{ fontFamily: template.font, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.82)" }} />
           </div>
+          <div>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>Highlight Word (Optional)</p>
+            <input value={highlightedWord} onChange={e => setHighlightedWord(e.target.value)} placeholder="e.g., 'loved' or 'faith'"
+              className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
+          </div>
         </div>
 
         {/* Quick pick */}
@@ -211,13 +226,13 @@ export default function VerseImageGenerator() {
         </div>
 
         {/* Action buttons */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           {/* Share */}
           <div className="relative">
             <motion.button whileTap={{ scale: 0.96 }} onClick={nativeShare}
-              className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-cinzel text-sm font-semibold"
+              className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
               style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(251,191,36,0.08))", border: "1px solid rgba(251,191,36,0.3)", color: "#fbbf24" }}>
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-5 h-5" />
               {t.share}
             </motion.button>
 
@@ -251,18 +266,18 @@ export default function VerseImageGenerator() {
 
           {/* Copy */}
           <motion.button whileTap={{ scale: 0.96 }} onClick={copyText}
-            className="flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-cinzel text-sm font-semibold"
+            className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
-            {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-5 h-5" style={{ color: "#34d399" }} /> : <Copy className="w-5 h-5" />}
             {copied ? "Copied!" : "Copy"}
           </motion.button>
         </div>
 
         {/* QR Code button */}
         <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowQR(true)}
-          className="w-full flex items-center justify-center gap-2.5 py-3 rounded-2xl font-cinzel text-sm"
+          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
           style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)", color: "#00f5ff" }}>
-          <QrCode className="w-4 h-4" />
+          <QrCode className="w-5 h-5" />
           Share QR Code
         </motion.button>
       </div>
