@@ -27,7 +27,7 @@ export default function BottomNav() {
       {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
         const active = location.pathname === path;
         return (
-          <Link key={path} to={path} className="flex-1 flex flex-col items-center justify-center py-3 gap-1">
+          <Link key={path} to={path} className="flex-1 flex flex-col items-center justify-center py-4 px-3 gap-1 min-h-16">
             <motion.div animate={{ scale: active ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 22 }}>
               <Icon
                 style={{

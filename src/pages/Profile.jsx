@@ -289,7 +289,7 @@ export default function Profile() {
           const Icon = TAB_ICONS[tab];
           return (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className="flex-1 flex flex-col items-center gap-1.5 py-3 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all"
+              className="flex-1 flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all min-h-14"
               style={{
                 background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.03)",
                 color: activeTab === tab ? "#00f5ff" : "rgba(255,255,255,0.35)",

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, BookOpen, TrendingUp, Loader2, Plus, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import SharedReadingPlanInvite from "./SharedReadingPlanInvite";
 
 export default function SharedReadingPlan() {
   const [plans, setPlans] = useState([]);
@@ -137,11 +138,14 @@ export default function SharedReadingPlan() {
                     {plan.member_count} member{plan.member_count > 1 ? "s" : ""}
                   </p>
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} onClick={() => handleJoinPlan(plan)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-cinzel"
-                  style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff" }}>
-                  Join
-                </motion.button>
+                <div className="flex items-center gap-2">
+                  <SharedReadingPlanInvite planId={plan.id} planName={plan.name} />
+                  <motion.button whileTap={{ scale: 0.95 }} onClick={() => handleJoinPlan(plan)}
+                    className="px-4 py-2 rounded-lg text-xs font-cinzel min-h-10"
+                    style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff" }}>
+                    Join
+                  </motion.button>
+                </div>
               </div>
 
               {/* Member progress */}

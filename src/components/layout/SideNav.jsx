@@ -34,7 +34,7 @@ export default function SideNav() {
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.92 }}
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+              className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors"
               style={{
                 background: active ? "rgba(251,191,36,0.12)" : "transparent",
                 border: active ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent",

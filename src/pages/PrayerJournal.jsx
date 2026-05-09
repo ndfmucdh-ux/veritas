@@ -6,6 +6,7 @@ import PrayerModal from "@/components/prayer/PrayerModal";
 import PrayerStreakTracker from "@/components/prayer/PrayerStreakTracker";
 import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
 import PrayerJournalSummary from "@/components/prayer/PrayerJournalSummary";
+import { getPrayerIdFromUrl } from "@/components/prayer/PrayerNotificationDeepLink";
 
 export default function PrayerJournal() {
   const [prayers, setPrayers] = useState([]);
@@ -19,6 +20,14 @@ export default function PrayerJournal() {
 
   useEffect(() => {
     loadPrayers();
+    // Auto-scroll to deep-linked prayer entry
+    const entryId = getPrayerIdFromUrl();
+    if (entryId) {
+      setTimeout(() => {
+        const element = document.getElementById(`prayer-${entryId}`);
+        if (element) element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
   }, []);
 
   const loadPrayers = async () => {
@@ -139,6 +148,7 @@ export default function PrayerJournal() {
                 return (
                   <motion.div
                     key={prayer.id}
+                    id={`prayer-${prayer.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
