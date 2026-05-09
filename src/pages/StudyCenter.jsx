@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronDown, AlertCircle, Columns, FileText } from "lucide-react";
+import { Loader2, ChevronDown, AlertCircle, Columns, FileText, Lightbulb } from "lucide-react";
 import TranslationSplitView from "@/components/study/TranslationSplitView";
 import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
+import CrossReferencePanel from "@/components/study/CrossReferencePanel";
 import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
@@ -27,6 +28,8 @@ export default function StudyCenter() {
   const [expandedCategory, setExpandedCategory] = useState("Gospels");
   const [splitView, setSplitView] = useState(false);
   const [activeTab, setActiveTab] = useState("analysis"); // "analysis" | "sidebyside" | "templates"
+  const [showCrossRef, setShowCrossRef] = useState(false);
+  const [activeVerses, setActiveVerses] = useState([]);
 
   // Update URL when state changes
   useEffect(() => {
@@ -120,13 +123,13 @@ export default function StudyCenter() {
         <h1 className="font-cinzel text-2xl font-bold text-white mb-1">Study Center</h1>
         <p className="text-sm text-white/50 mb-5">Deep dive into scripture with AI-powered analysis</p>
 
-        {/* Tabs */}
-        <div className="flex gap-2">
-          {[
-            { id: "analysis", label: "Analysis", icon: "📖" },
-            { id: "sidebyside", label: "Side by Side", icon: "⚡" },
-            { id: "templates", label: "My Templates", icon: "📝" },
-          ].map(tab => (
+        {/* Tabs + Cross-ref toggle */}
+         <div className="flex gap-2">
+           {[
+             { id: "analysis", label: "Analysis", icon: "📖" },
+             { id: "sidebyside", label: "Side by Side", icon: "⚡" },
+             { id: "templates", label: "My Templates", icon: "📝" },
+           ].map(tab => (
             <motion.button key={tab.id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
               className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-cinzel text-xs font-semibold transition-all"
@@ -134,13 +137,23 @@ export default function StudyCenter() {
                 background: activeTab === tab.id ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
                 color: activeTab === tab.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
                 border: activeTab === tab.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)",
-              }}>
-              <span>{tab.icon}</span>
-              <span className="hidden sm:inline">{tab.label}</span>
-            </motion.button>
-          ))}
-        </div>
-      </div>
+                }}>
+                <span>{tab.icon}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
+                </motion.button>
+                ))}
+                <motion.button whileTap={{ scale: 0.95 }}
+                onClick={() => setShowCrossRef(!showCrossRef)}
+                className="px-3 py-3 rounded-xl font-cinzel text-xs font-semibold transition-all"
+                style={{
+                background: showCrossRef ? "rgba(124,58,237,0.12)" : "rgba(255,255,255,0.04)",
+                color: showCrossRef ? "#7c3aed" : "rgba(255,255,255,0.4)",
+                border: showCrossRef ? "1px solid rgba(124,58,237,0.25)" : "1px solid rgba(255,255,255,0.07)",
+                }} title="Related Verses Panel">
+                <Lightbulb className="w-4 h-4" />
+                </motion.button>
+                </div>
+                </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
 
@@ -344,8 +357,15 @@ export default function StudyCenter() {
               </motion.div>
             ) : null}
           </>
-        )}
-      </div>
-    </div>
-  );
-}
+          )}
+          </div>
+
+          {/* Cross-reference side panel */}
+          <AnimatePresence>
+          {showCrossRef && (
+           <CrossReferencePanel book={selectedBook} chapter={selectedChapter} activeVerses={activeVerses} />
+          )}
+          </AnimatePresence>
+          </div>
+          );
+          }

@@ -6,6 +6,7 @@ import PrayerModal from "@/components/prayer/PrayerModal";
 import PrayerStreakTracker from "@/components/prayer/PrayerStreakTracker";
 import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
 import PrayerJournalSummary from "@/components/prayer/PrayerJournalSummary";
+import PrayerStatsChart from "@/components/prayer/PrayerStatsChart";
 import { getPrayerIdFromUrl } from "@/components/prayer/PrayerNotificationDeepLink";
 
 export default function PrayerJournal() {
@@ -93,6 +94,9 @@ export default function PrayerJournal() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Summary Dashboard */}
         {!loading && <PrayerJournalSummary />}
+
+        {/* Stats Chart */}
+        {!loading && <PrayerStatsChart />}
 
         {/* Streak Tracker */}
         {!loading && <PrayerStreakTracker prayers={prayers} />}
