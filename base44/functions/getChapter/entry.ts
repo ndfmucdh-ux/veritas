@@ -1,18 +1,23 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 // ── bolls.life API ─────────────────────────────────────────────────────────
-// Format: https://bolls.life/get-chapter/{TRANSLATION}/{BOOK_NUM}/{CHAPTER}/
-// Returns: [{verse, text, ...}]  — text is clean for most translations
 const BOLLS_BASE = "https://bolls.life/get-chapter";
 
-// Translations supported by bolls.life — verified to return data
-const BOLLS_TRANSLATIONS = new Set([
+// Map from app translation codes → bolls.life short_name codes
+// (some differ: RVR1960→RV1960, PDDPT→PDT, etc.)
+const BOLLS_CODE_MAP = {
   // English
-  "KJV","NKJV","NIV","ESV","NLT","NASB","AMP","CSB","MSG",
-  "ASV","BBE","WEB","YLT","DARBY","WNT","ERV","NRSV","ISV",
-  // Spanish (verified working on bolls.life)
-  "NVI","BTX3","LBLA","NTV",
-]);
+  KJV:"KJV", NKJV:"NKJV", NIV:"NIV", ESV:"ESV", NLT:"NLT",
+  NASB:"NASB", AMP:"AMP", CSB:"CSB17", MSG:"MSG", ASV:"ASV",
+  BBE:"BBE", WEB:"WEB", BSB:"BSB", YLT:"YLT", DARBY:"DARBY",
+  WNT:"WNT", ERV:"ERV", NRSV:"NRSVCE", ISV:"ISV",
+  // Spanish — verified codes on bolls.life
+  NVI:"NVI", RVR1960:"RV1960", PDDPT:"PDT", BTX3:"LBLA", LBLA:"LBLA", NTV:"NTV",
+  // Portuguese
+  ARA:"ARA",
+  // French
+  BDS:"BDS",
+};
 
 // Book name → canonical book number (1-66)
 const BOOK_NUM = {
@@ -32,51 +37,52 @@ const BOOK_NUM = {
   "3 John":64,"Jude":65,"Revelation":66,
 };
 
-// Clean bolls.life verse text:
-// - Remove HTML tags (including <sup> footnotes)
-// - Strip Strong's concordance numbers (digits appended to/around words, e.g. "man444", "1161 There", "was2258")
-// - Remove section headings prepended to verse text
-// - Collapse whitespace
+// Clean bolls.life verse text
 function cleanBollsText(raw) {
   let text = raw
-    .replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, "") // remove <sup>...</sup> footnote blocks
-    .replace(/<br\s*\/?>/gi, "\n")               // <br> → newline (heading separator)
-    .replace(/<[^>]+>/g, "")                     // strip remaining HTML tags
-    // Strip Strong's numbers: digits that appear (a) at word boundaries attached to letters,
-    // or (b) as standalone tokens. Covers: "man444", "1161 There", "was2258 a"
-    .replace(/\b\d{1,5}\b/g, "")                // standalone number tokens
-    .replace(/([a-zA-Z])\d+/g, "$1")            // numbers appended to word characters
-    .replace(/\d+([a-zA-Z])/g, "$1")            // numbers prepended to word characters
+    .replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\b\d{1,5}\b/g, "")
+    .replace(/([a-zA-Z])\d+/g, "$1")
+    .replace(/\d+([a-zA-Z])/g, "$1")
     .replace(/\s{2,}/g, " ")
     .trim();
 
-  // If a <br> separated a heading from the verse text, take only what follows the newline
+  // If a <br> separated a section heading from the verse, take only what follows
   const nlIdx = text.indexOf("\n");
   if (nlIdx > 0 && nlIdx < 120) {
     const after = text.substring(nlIdx + 1).trim();
     if (after.length > 10) text = after;
   }
 
-  // Remove run-on section headings prepended to verse text (no <br> separator).
-  // These appear as Title Case words glued directly to the verse start with no space.
-  // e.g. "Jesus Teaches NicodemusNow there was" → "Now there was" (glued at "NicodemusNow")
-  // e.g. "John the Baptist's Testimony About JesusAfter this" → "After this"
-  // Only match when there's a clear glueing: uppercase letter immediately after a lowercase letter
-  // (i.e., "sNow", "sAfter") — this avoids stripping legitimate verse starts.
-  text = text.replace(/^((?:[A-Z][A-Za-z'.]*\s+){1,10}[A-Z][a-z]+)([A-Z][a-z])/, (match, heading, cap) => {
-    // Confirm the heading ends with a lowercase letter glued to a new capital (no space between)
-    // If heading ends naturally with the last char being a letter and next char is capital with no space → heading
-    return cap;
-  });
+  // Strip any leading quote/apostrophe that may wrap section headings in some translations (e.g. PDDPT)
+  text = text.replace(/^['\u2018\u2019\u201c\u201d]+/, "").trim();
 
-  // Final cleanup of any leftover leading punctuation / numbers
-  text = text.replace(/^[\s,.:;'\u2018\u2019\u201c\u201d-]+/, "").trim();
+  // Detect and strip run-on section headings glued to verse text (no space between heading end and verse start).
+  // The glueing point is always an ASCII lowercase letter immediately followed by an ASCII uppercase letter.
+  // e.g. "Cristo viene al mundoAntes del comienzo" → glue at 'o'+'A' → "Antes del comienzo"
+  // e.g. "Jesus and NicodemusNow there was" → glue at 's'+'N' → "Now there was"
+  // We only look at the first 120 chars, and only strip if enough text remains after.
+  // Using strict ASCII [a-z]/[A-Z] to avoid false matches on accented mid-word characters.
+  const glueMatch = text.slice(0, 120).match(/^.{5,120}?[a-z]([A-Z][a-záéíóúüñàèìòùâêîôûäëïöüç])/);
+  if (glueMatch) {
+    const glueIdx = text.indexOf(glueMatch[1]);
+    if (glueIdx > 4) {
+      const after = text.slice(glueIdx).trim();
+      if (after.length > 15) text = after;
+    }
+  }
+
+  // Final cleanup of any leftover leading/trailing punctuation
+  text = text.replace(/^[\s,.:;\u2018\u2019\u201c\u201d-]+/, "").trim();
+  text = text.replace(/[\s'\u2018\u2019\u201d]+$/, "").trim();
 
   return text;
 }
 
-async function fetchFromBolls(translation, bookNum, chapter) {
-  const url = `${BOLLS_BASE}/${translation}/${bookNum}/${chapter}/`;
+async function fetchFromBolls(bollsCode, bookNum, chapter) {
+  const url = `${BOLLS_BASE}/${bollsCode}/${bookNum}/${chapter}/`;
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = await res.json();
@@ -86,7 +92,7 @@ async function fetchFromBolls(translation, bookNum, chapter) {
   for (const v of data) {
     const num = parseInt(v.verse);
     if (isNaN(num) || !v.text) continue;
-    let text = cleanBollsText(v.text.trim());
+    const text = cleanBollsText(v.text.trim());
     if (text) verses.push({ verse: num, text, red_letter: false });
   }
   verses.sort((a, b) => a.verse - b.verse);
@@ -94,7 +100,6 @@ async function fetchFromBolls(translation, bookNum, chapter) {
 }
 
 // ── helloao.org API ────────────────────────────────────────────────────────
-// Excellent for BSB and WEB (ENGWEBP) with poetry/footnote-free clean JSON
 const HELLOAO_BASE = "https://bible.helloao.org/api";
 const HELLOAO_MAP = { BSB: "BSB", WEB: "ENGWEBP" };
 
@@ -148,6 +153,58 @@ async function fetchFromHelloAO(translationId, bookId, chapter) {
   return verses.length > 0 ? verses : null;
 }
 
+// ── LLM fallback via base44 integrations (no user auth needed — uses service role) ──
+async function fetchFromLLM(base44, tCode, book, chapter) {
+  const fullName = TRANSLATION_NAMES[tCode] || tCode;
+  const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    prompt: `Provide the complete and accurate text of ${book} chapter ${chapter} in the ${tCode} (${fullName}) translation of the Bible. Use ONLY the authentic ${tCode} wording. Include ALL verses. No commentary, headings, or footnotes.`,
+    response_json_schema: {
+      type: "object",
+      properties: {
+        verses: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              verse: { type: "number" },
+              text: { type: "string" }
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (result && Array.isArray(result.verses) && result.verses.length > 0) {
+    return result.verses
+      .filter(v => v.verse > 0 && v.text)
+      .map(v => ({ verse: v.verse, text: v.text.trim(), red_letter: false }));
+  }
+  return null;
+}
+
+const TRANSLATION_NAMES = {
+  KJV:"King James Version", NKJV:"New King James Version",
+  NIV:"New International Version", ESV:"English Standard Version",
+  NLT:"New Living Translation", NASB:"New American Standard Bible",
+  AMP:"Amplified Bible", CSB:"Christian Standard Bible",
+  MSG:"The Message", ASV:"American Standard Version",
+  BBE:"Bible in Basic English", WEB:"World English Bible",
+  BSB:"Berean Standard Bible", YLT:"Young's Literal Translation",
+  DARBY:"Darby Translation", WNT:"Weymouth New Testament",
+  ERV:"Easy-to-Read Version", NRSV:"New Revised Standard Version",
+  ISV:"International Standard Version",
+  RVR1960:"Reina-Valera 1960", NVI:"Nueva Versión Internacional",
+  PDDPT:"Palabra de Dios para Ti", BTX3:"Biblia Textual",
+  RVA2015:"Reina Valera Actualizada 2015", LBLA:"La Biblia de las Américas",
+  NTV:"Nueva Traducción Viviente",
+  ARA:"Almeida Revisada Atualizada", ARC:"Almeida Revisada Clássica",
+  NVT:"Nova Versão Transformadora",
+  LSG:"Louis Segond 1910", NEG1979:"Nouvelle Edition Genève 1979",
+  BDS:"Bible du Semeur",
+  DIOD:"Bibbia Diodati", NRV:"Nuova Riveduta 2006",
+};
+
 // ── Main handler ───────────────────────────────────────────────────────────
 Deno.serve(async (req) => {
   try {
@@ -160,7 +217,7 @@ Deno.serve(async (req) => {
 
     const tCode = translation.toUpperCase();
 
-    // 1. Check database first (service role — no auth required)
+    // 1. Check database cache first (no auth needed — service role)
     const dbVerses = await base44.asServiceRole.entities.Verse.filter({
       translation: tCode, book, chapter: Number(chapter),
     });
@@ -169,19 +226,18 @@ Deno.serve(async (req) => {
       return Response.json({ verses: dbVerses, source: 'database' });
     }
 
-    // 2. bolls.life — primary CDN (supports 100+ translations including NIV, ESV, NLT, KJV, NKJV...)
-    if (BOLLS_TRANSLATIONS.has(tCode)) {
-      const bookNum = BOOK_NUM[book];
-      if (bookNum) {
-        const verses = await fetchFromBolls(tCode, bookNum, chapter);
-        if (verses && verses.length > 0) {
-          const result = verses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
-          return Response.json({ verses: result, source: 'bolls' });
-        }
+    // 2. bolls.life — primary source, no auth needed, covers most translations
+    const bollsCode = BOLLS_CODE_MAP[tCode];
+    const bookNum = BOOK_NUM[book];
+    if (bollsCode && bookNum) {
+      const verses = await fetchFromBolls(bollsCode, bookNum, chapter);
+      if (verses && verses.length > 0) {
+        const result = verses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
+        return Response.json({ verses: result, source: 'bolls' });
       }
     }
 
-    // 3. helloao.org — great for BSB and WEB (poetry-aware, footnote-free)
+    // 3. helloao.org — great for BSB/WEB with clean poetry formatting
     const helloaoId = HELLOAO_MAP[tCode];
     const bookId = BOOK_ID_MAP[book];
     if (helloaoId && bookId) {
@@ -192,35 +248,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 4. LLM fallback for anything else — use JSON schema for reliable parsing
-    const llmResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      model: "claude_sonnet_4_6",
-      prompt: `Provide the complete and accurate text of ${book} chapter ${chapter} in the ${tCode} (${getFullName(tCode)}) translation of the Bible.
-Use ONLY the authentic ${tCode} wording. Include ALL verses. No commentary or headings.`,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          verses: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                verse: { type: "number" },
-                text: { type: "string" }
-              }
-            }
-          }
-        }
-      }
-    });
-
-    if (llmResult && Array.isArray(llmResult.verses) && llmResult.verses.length > 0) {
-      const verses = llmResult.verses
-        .filter(v => v.verse > 0 && v.text)
-        .map(v => ({ translation: tCode, book, chapter: Number(chapter), verse: v.verse, text: v.text.trim(), red_letter: false }));
-      if (verses.length > 0) {
-        return Response.json({ verses, source: 'llm' });
-      }
+    // 4. LLM fallback — for translations not available on CDNs (ARC, NVT, LSG, NEG1979, DIOD, NRV, RVA2015...)
+    // base44.asServiceRole.integrations works WITHOUT user auth
+    const llmVerses = await fetchFromLLM(base44, tCode, book, chapter);
+    if (llmVerses && llmVerses.length > 0) {
+      const result = llmVerses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
+      return Response.json({ verses: result, source: 'llm' });
     }
 
     return Response.json({ verses: [], source: 'empty' });
@@ -228,32 +261,3 @@ Use ONLY the authentic ${tCode} wording. Include ALL verses. No commentary or he
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
-
-function getFullName(code) {
-  const names = {
-    NIV:"New International Version", ESV:"English Standard Version",
-    NLT:"New Living Translation", AMP:"Amplified Bible",
-    NASB:"New American Standard Bible", NKJV:"New King James Version",
-    CSB:"Christian Standard Bible", MSG:"The Message",
-    KJV:"King James Version", WEB:"World English Bible",
-    ASV:"American Standard Version", BBE:"Bible in Basic English",
-    BSB:"Berean Standard Bible", YLT:"Young's Literal Translation",
-    DARBY:"Darby Translation", WNT:"Weymouth New Testament",
-    ERV:"English Revised Version", NRSV:"New Revised Standard Version",
-    ISV:"International Standard Version",
-    // Spanish
-    RVR1960:"Reina-Valera 1960", NVI:"Nueva Versión Internacional",
-    PDDPT:"Palabra de Dios para Ti", BTX3:"Biblia Textual",
-    RVA2015:"Reina Valera Actualizada 2015", LBLA:"La Biblia de las Américas",
-    NTV:"Nueva Traducción Viviente",
-    // Portuguese
-    ARA:"Almeida Revisada Atualizada", ARC:"Almeida Revisada Clássica",
-    NVT:"Nova Versão Transformadora",
-    // French
-    LSG:"Louis Segond 1910", NEG1979:"Nouvelle Edition Genève 1979",
-    BDS:"Bible du Semeur",
-    // Italian
-    DIOD:"Bibbia Diodati", NRV:"Nuova Riveduta 2006",
-  };
-  return names[code] || code;
-}
