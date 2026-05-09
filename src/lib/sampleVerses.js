@@ -59,6 +59,7 @@ export const SAMPLE_VERSES = {
 };
 
 export const FEATURED_VERSES = [
+  { ref: "John 3:3", text: "Jesus answered and said unto him, Verily, verily, I say unto thee, Except a man be born again, he cannot see the kingdom of God.", translation: "KJV", theme: "salvation", red_letter: true },
   { ref: "John 3:16", text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.", translation: "KJV", theme: "love" },
   { ref: "Psalm 23:1", text: "The LORD is my shepherd; I shall not want.", translation: "KJV", theme: "trust" },
   { ref: "Philippians 4:13", text: "I can do all things through Christ which strengtheneth me.", translation: "KJV", theme: "strength" },

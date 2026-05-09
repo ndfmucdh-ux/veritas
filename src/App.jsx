@@ -99,6 +99,20 @@ function App() {
     setSplashDone(true);
   };
 
+  // Prevent swipe-back page reload on iOS
+  useEffect(() => {
+    const preventSwipeBack = (e) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        if (touch.clientX < 10 || touch.clientX > window.innerWidth - 10) {
+          e.preventDefault();
+        }
+      }
+    };
+    document.addEventListener("touchmove", preventSwipeBack, { passive: false });
+    return () => document.removeEventListener("touchmove", preventSwipeBack);
+  }, []);
+
   return (
     <AuthProvider>
       <LanguageProvider>

@@ -224,9 +224,9 @@ export default function Read() {
                 style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 <SettingRow label="Font Size">
                   <div className="flex items-center gap-2">
-                    <Stepper onClick={() => setFontSize(f => Math.max(14, f - 2))}>−</Stepper>
+                    <Stepper onClick={() => setFontSize(f => Math.max(12, f - 2))}>−</Stepper>
                     <span className="text-sm text-white/70 w-7 text-center font-inter">{fontSize}</span>
-                    <Stepper onClick={() => setFontSize(f => Math.min(28, f + 2))}>+</Stepper>
+                    <Stepper onClick={() => setFontSize(f => Math.min(32, f + 2))}>+</Stepper>
                   </div>
                 </SettingRow>
                 <SettingRow label="Font">
