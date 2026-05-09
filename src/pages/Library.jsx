@@ -2,16 +2,14 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import FolderManager from "@/components/library/FolderManager";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
-import NotesManager from "@/components/library/NotesManager";
+import VerseNoteFolderManager from "@/components/library/VerseNoteFolderManager";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
   { id: "highlights", label: "Highlights", icon: Highlighter },
   { id: "notes", label: "Notes", icon: StickyNote },
-  { id: "note-folders", label: "Folders", icon: Folder },
-  { id: "verse-folders", label: "Verses", icon: Bookmark },
+  { id: "folders", label: "Folders", icon: Folder },
   { id: "audio", label: "Audio", icon: Headphones },
 ];
 
@@ -212,14 +210,6 @@ export default function Library() {
     </div>
   );
 
-  const renderFolders = () => (
-    <FolderManager
-      folders={folders}
-      highlights={highlights}
-      onFoldersChange={setFolders}
-    />
-  );
-
   return (
     <div className="md:ml-16 min-h-screen px-4 pt-6">
       <div className="mb-6 flex items-start justify-between gap-3">
@@ -259,10 +249,9 @@ export default function Library() {
         {activeTab === "bookmarks" && renderBookmarks()}
         {activeTab === "highlights" && renderHighlights()}
         {activeTab === "notes" && renderNotes()}
-        {activeTab === "note-folders" && (
-          <NotesManager notes={notes} onNotesChange={setNotes} />
+        {activeTab === "folders" && (
+          <VerseNoteFolderManager highlights={highlights} notes={notes} />
         )}
-        {activeTab === "verse-folders" && renderFolders()}
         {activeTab === "audio" && <AudioStreakChart />}
       </div>
     </div>

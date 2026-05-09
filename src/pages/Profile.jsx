@@ -4,7 +4,7 @@ import {
   Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones
+  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
@@ -99,6 +99,20 @@ export default function Profile() {
   }, []);
 
   const handleLogout = () => base44.auth.logout();
+
+  const handleDownloadLibrary = async () => {
+    const res = await base44.functions.invoke("exportLibraryData", {});
+    // res.data is the markdown text
+    const blob = new Blob([res.data], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `veritas-library-${new Date().toISOString().slice(0, 10)}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const saveName = async () => {
     if (!nameInput.trim()) return;
@@ -442,7 +456,20 @@ export default function Profile() {
                   <OfflineBibleManager />
                 </div>
                 <SettingLink icon={Shield} label="Private Notes" sub="All notes are encrypted by default" color="#34d399" tag="On" />
-                <SettingLink icon={StickyNote} label="Export My Data" sub="Download all highlights, notes, bookmarks" color="#a78bfa" />
+                {/* Download Library Button */}
+                <button onClick={handleDownloadLibrary}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-inter text-left transition-colors border-b"
+                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                  <FileText className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>Download My Library</p>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                      Bookmarks, highlights &amp; notes as a beautiful Markdown file
+                    </p>
+                  </div>
+                  <Download className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
+                </button>
+                <SettingLink icon={StickyNote} label="Export Raw Data" sub="Download all data as plain text" color="#a78bfa" />
               </Section>
 
               <Section label="Account" icon={LogOut}>
