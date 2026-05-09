@@ -8,8 +8,17 @@ const BOLLS_BASE = "https://bolls.life/get-chapter";
 // Translations supported by bolls.life with clean (no Strong's) text
 // KJV on bolls has Strong's numbers embedded — we strip them
 const BOLLS_TRANSLATIONS = new Set([
+  // English
   "KJV","NKJV","NIV","ESV","NLT","NASB","AMP","CSB","MSG",
-  "ASV","BBE","WEB","RVR1960","NVI","BTX3","PDDPT","RVA2015",
+  "ASV","BBE","WEB","YLT","DARBY","WNT","ERV","NRSV","ISV",
+  // Spanish
+  "RVR1960","NVI","BTX3","PDDPT","RVA2015","LBLA","NTV",
+  // Portuguese
+  "ARA","ARC","NVT",
+  // French
+  "LSG","NEG1979","BDS",
+  // Italian
+  "DIOD","NRV",
 ]);
 
 // Book name → canonical book number (1-66)
@@ -225,9 +234,23 @@ function getFullName(code) {
     CSB:"Christian Standard Bible", MSG:"The Message",
     KJV:"King James Version", WEB:"World English Bible",
     ASV:"American Standard Version", BBE:"Bible in Basic English",
-    BSB:"Berean Standard Bible", RVR1960:"Reina-Valera 1960",
-    PDDPT:"Palabra de Dios para Ti", NVI:"Nueva Versión Internacional",
-    BTX3:"Biblia Textual", RVA2015:"Reina Valera Actualizada 2015",
+    BSB:"Berean Standard Bible", YLT:"Young's Literal Translation",
+    DARBY:"Darby Translation", WNT:"Weymouth New Testament",
+    ERV:"English Revised Version", NRSV:"New Revised Standard Version",
+    ISV:"International Standard Version",
+    // Spanish
+    RVR1960:"Reina-Valera 1960", NVI:"Nueva Versión Internacional",
+    PDDPT:"Palabra de Dios para Ti", BTX3:"Biblia Textual",
+    RVA2015:"Reina Valera Actualizada 2015", LBLA:"La Biblia de las Américas",
+    NTV:"Nueva Traducción Viviente",
+    // Portuguese
+    ARA:"Almeida Revisada Atualizada", ARC:"Almeida Revisada Clássica",
+    NVT:"Nova Versão Transformadora",
+    // French
+    LSG:"Louis Segond 1910", NEG1979:"Nouvelle Edition Genève 1979",
+    BDS:"Bible du Semeur",
+    // Italian
+    DIOD:"Bibbia Diodati", NRV:"Nuova Riveduta 2006",
   };
   return names[code] || code;
 }

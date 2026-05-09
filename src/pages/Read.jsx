@@ -267,7 +267,7 @@ export default function Read() {
             </div>
           ) : (
             <motion.div
-              key={`${book}-${chapter}`}
+              key={`${book}-${chapter}-${translation}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
