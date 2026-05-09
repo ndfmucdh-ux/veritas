@@ -33,33 +33,46 @@ const BOOK_NUM = {
 };
 
 // Clean bolls.life verse text:
-// 1. Remove <sup> footnote blocks entirely
-// 2. Strip all remaining HTML tags
-// 3. Strip Strong's numbers (digits attached to words, e.g. "shepherd7462" or "3068 is")
-// 4. Remove section headings prepended before verse text (heuristic: text before first uppercase-start sentence)
-// 5. Collapse whitespace
+// - Remove HTML tags (including <sup> footnotes)
+// - Strip Strong's concordance numbers (digits appended to/around words, e.g. "man444", "1161 There", "was2258")
+// - Remove section headings prepended to verse text
+// - Collapse whitespace
 function cleanBollsText(raw) {
   let text = raw
-    .replace(/<sup[^>]*>.*?<\/sup>/gi, "")  // remove footnote <sup>...</sup> blocks entirely
-    .replace(/<br\s*\/?>/gi, "\n")           // convert <br> to newline (heading separator)
-    .replace(/<[^>]+>/g, "")                // strip all remaining HTML tags
-    .replace(/\d{3,5}/g, "")                // strip Strong's concordance numbers (3-5 digits)
+    .replace(/<sup[^>]*>[\s\S]*?<\/sup>/gi, "") // remove <sup>...</sup> footnote blocks
+    .replace(/<br\s*\/?>/gi, "\n")               // <br> → newline (heading separator)
+    .replace(/<[^>]+>/g, "")                     // strip remaining HTML tags
+    // Strip Strong's numbers: digits that appear (a) at word boundaries attached to letters,
+    // or (b) as standalone tokens. Covers: "man444", "1161 There", "was2258 a"
+    .replace(/\b\d{1,5}\b/g, "")                // standalone number tokens
+    .replace(/([a-zA-Z])\d+/g, "$1")            // numbers appended to word characters
+    .replace(/\d+([a-zA-Z])/g, "$1")            // numbers prepended to word characters
     .replace(/\s{2,}/g, " ")
     .trim();
 
-  // If a <br> separated a heading from the verse text, take only what's after the newline
+  // If a <br> separated a heading from the verse text, take only what follows the newline
   const nlIdx = text.indexOf("\n");
-  if (nlIdx > 0 && nlIdx < 80) {
+  if (nlIdx > 0 && nlIdx < 120) {
     const after = text.substring(nlIdx + 1).trim();
     if (after.length > 10) text = after;
   }
 
-  // Heuristic: if text starts with a run-on section heading (Title Case words immediately followed
-  // by a capital letter with no space), split on the camelCase boundary
-  // e.g. "Jesus Teaches NicodemusNow there was" → "Now there was"
-  text = text.replace(/^((?:[A-Z][a-zA-Z']*\s+){1,8}[A-Z][a-zA-Z']*)([A-Z][a-z])/, "$2");
+  // Remove run-on section headings prepended to verse text (no <br> separator).
+  // These appear as Title Case words glued directly to the verse start with no space.
+  // e.g. "Jesus Teaches NicodemusNow there was" → "Now there was" (glued at "NicodemusNow")
+  // e.g. "John the Baptist's Testimony About JesusAfter this" → "After this"
+  // Only match when there's a clear glueing: uppercase letter immediately after a lowercase letter
+  // (i.e., "sNow", "sAfter") — this avoids stripping legitimate verse starts.
+  text = text.replace(/^((?:[A-Z][A-Za-z'.]*\s+){1,10}[A-Z][a-z]+)([A-Z][a-z])/, (match, heading, cap) => {
+    // Confirm the heading ends with a lowercase letter glued to a new capital (no space between)
+    // If heading ends naturally with the last char being a letter and next char is capital with no space → heading
+    return cap;
+  });
 
-  return text.trim();
+  // Final cleanup of any leftover leading punctuation / numbers
+  text = text.replace(/^[\s,.:;'\u2018\u2019\u201c\u201d-]+/, "").trim();
+
+  return text;
 }
 
 async function fetchFromBolls(translation, bookNum, chapter) {
