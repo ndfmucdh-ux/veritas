@@ -17,6 +17,7 @@ import AudioSummary from "@/components/profile/AudioSummary";
 import DashboardSummary from "@/components/profile/DashboardSummary";
 import DailyReadingRing from "@/components/profile/DailyReadingRing";
 import MilestoneBadges from "@/components/profile/MilestoneBadges";
+import MonthlyProgressChart from "@/components/profile/MonthlyProgressChart";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -307,10 +308,13 @@ export default function Profile() {
             <div className="px-5 space-y-5">
               {/* Daily Reading Ring */}
               <Section label="Today's Reading Goal" icon={Target}>
-                <div className="flex justify-center py-2">
+                <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.location.href = "/plans"}>
                   <DailyReadingRing chaptersReadToday={0} />
-                </div>
+                </motion.div>
               </Section>
+
+              {/* Monthly Progress Chart */}
+              <MonthlyProgressChart />
 
               {/* Milestone Badges */}
               <Section label="Milestones" icon={Star}>

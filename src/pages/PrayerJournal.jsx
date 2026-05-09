@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, Trash2, Calendar, Tag, Loader2, CheckCircle2, Clock, History } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import PrayerModal from "@/components/prayer/PrayerModal";
 import PrayerStreakTracker from "@/components/prayer/PrayerStreakTracker";
+import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
 
 export default function PrayerJournal() {
   const [prayers, setPrayers] = useState([]);
@@ -231,6 +233,9 @@ export default function PrayerJournal() {
           />
         )}
       </AnimatePresence>
+
+      {/* Focus Timer */}
+      <PrayerFocusTimer />
     </div>
   );
 }

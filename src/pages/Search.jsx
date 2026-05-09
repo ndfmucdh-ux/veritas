@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, Loader2, BookOpen, Sparkles, X, StickyNote, Heart, FileText, Filter } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
+import ThemeFilterTags from "@/components/search/ThemeFilterTags";
 
 const SUGGESTED_TOPICS = [
   "faith", "love", "peace", "hope", "fear not", "strength",
@@ -22,6 +24,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [activeSource, setActiveSource] = useState("all");
+  const [selectedTheme, setSelectedTheme] = useState(null);
   const inputRef = useRef(null);
   const debounceRef = useRef(null);
 
@@ -137,6 +140,13 @@ export default function Search() {
             );
           })}
         </div>
+      )}
+
+      {/* Theme filter — always visible */}
+      {!searched && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-6">
+          <ThemeFilterTags selectedTag={selectedTheme} onTagSelect={setSelectedTheme} />
+        </motion.div>
       )}
 
       {/* Suggested Topics — pre-search */}
