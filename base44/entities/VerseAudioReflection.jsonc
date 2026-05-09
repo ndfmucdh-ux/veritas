@@ -1,0 +1,69 @@
+{
+  "name": "VerseAudioReflection",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string",
+      "description": "e.g. John 3:16 KJV"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string",
+      "default": "KJV"
+    },
+    "audio_url": {
+      "type": "string",
+      "description": "URL to the uploaded audio file"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "description": "Length of the audio recording"
+    },
+    "transcript": {
+      "type": "string",
+      "description": "Optional auto-transcribed text from the audio"
+    },
+    "mood": {
+      "type": "string",
+      "enum": [
+        "grateful",
+        "confessing",
+        "interceding",
+        "celebrating",
+        "questioning",
+        "seeking"
+      ],
+      "default": "grateful"
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "verse_ref",
+    "audio_url"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

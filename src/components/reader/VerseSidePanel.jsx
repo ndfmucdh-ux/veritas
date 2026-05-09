@@ -1,12 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Check, StickyNote, BookOpen } from "lucide-react";
+import { X, Check, StickyNote, BookOpen, Mic } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import AudioReflectionRecorder from "./AudioReflectionRecorder";
+import AudioReflectionPlayback from "./AudioReflectionPlayback";
 
 export default function VerseSidePanel({ verse, book, chapter, translation, onClose, onNoteSaved }) {
   const [noteText, setNoteText] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showAudioRecorder, setShowAudioRecorder] = useState(false);
+  const [audioReflections, setAudioReflections] = useState([]);
   const textareaRef = useRef(null);
 
   const verseRef = `${book} ${chapter}:${verse?.verse} ${translation}`;
@@ -15,9 +19,15 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
     if (verse) {
       setNoteText("");
       setSaved(false);
+      setShowAudioRecorder(false);
+      setAudioReflections([]);
       // Load existing note
       base44.entities.UserNote.filter({ verse_ref: verseRef })
         .then(notes => { if (notes?.[0]) setNoteText(notes[0].note_text); })
+        .catch(() => {});
+      // Load audio reflections
+      base44.entities.VerseAudioReflection.filter({ verse_ref: verseRef })
+        .then(reflections => setAudioReflections(reflections || []))
         .catch(() => {});
       // Focus textarea after animation
       setTimeout(() => textareaRef.current?.focus(), 350);
@@ -145,7 +155,44 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
                     <><StickyNote className="w-4 h-4" /> Save Note</>
                   )}
                 </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowAudioRecorder(!showAudioRecorder)}
+                  className="px-3 py-2.5 rounded-xl font-cinzel text-sm transition-all"
+                  style={{
+                    background: "rgba(0,229,255,0.12)",
+                    color: "#00f5ff",
+                    border: "1px solid rgba(0,229,255,0.2)",
+                  }}
+                >
+                  <Mic className="w-4 h-4" />
+                </motion.button>
               </div>
+
+              {/* Audio recorder */}
+              <AnimatePresence>
+                {showAudioRecorder && (
+                  <AudioReflectionRecorder
+                    verseRef={verseRef}
+                    book={book}
+                    chapter={chapter}
+                    verse={verse.verse}
+                    translation={translation}
+                    onSaved={() => {
+                      setShowAudioRecorder(false);
+                      base44.entities.VerseAudioReflection.filter({ verse_ref: verseRef })
+                        .then(reflections => setAudioReflections(reflections || []))
+                        .catch(() => {});
+                    }}
+                  />
+                )}
+              </AnimatePresence>
+
+              {/* Playback */}
+              <AudioReflectionPlayback
+                reflections={audioReflections}
+                onDeleted={(id) => setAudioReflections(r => r.filter(ref => ref.id !== id))}
+              />
             </div>
 
             {/* Read full chapter link */}

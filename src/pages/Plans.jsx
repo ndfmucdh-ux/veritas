@@ -4,6 +4,7 @@ import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, H
 import PlanTimeline from "@/components/plans/PlanTimeline";
 import ReadingCalendar from "@/components/plans/ReadingCalendar";
 import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
+import ReadingStatsChart from "@/components/plans/ReadingStatsChart";
 import { base44 } from "@/api/base44Client";
 
 // Real-life Unsplash photo headers per plan
@@ -629,6 +630,11 @@ export default function Plans() {
             })}
           </div>
         )}
+      </div>
+
+      {/* Reading Stats */}
+      <div className="px-4 mb-6">
+        <ReadingStatsChart />
       </div>
 
       {/* Divider */}

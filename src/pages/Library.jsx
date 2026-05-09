@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download } from "lucide-react";
+import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download, Library as LibraryIcon } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
 import VerseNoteFolderManager from "@/components/library/VerseNoteFolderManager";
+import VersesCollectionManager from "@/components/library/VersesCollectionManager";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
   { id: "highlights", label: "Highlights", icon: Highlighter },
   { id: "notes", label: "Notes", icon: StickyNote },
   { id: "folders", label: "Folders", icon: Folder },
+  { id: "collections", label: "Collections", icon: LibraryIcon },
   { id: "audio", label: "Audio", icon: Headphones },
 ];
 
@@ -251,6 +253,9 @@ export default function Library() {
         {activeTab === "notes" && renderNotes()}
         {activeTab === "folders" && (
           <VerseNoteFolderManager highlights={highlights} notes={notes} />
+        )}
+        {activeTab === "collections" && (
+          <VersesCollectionManager />
         )}
         {activeTab === "audio" && <AudioStreakChart />}
       </div>
