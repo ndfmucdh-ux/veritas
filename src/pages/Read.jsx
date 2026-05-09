@@ -91,7 +91,9 @@ export default function Read() {
   };
 
   const fetchFromApi = async () => {
-    // Only bible-api.com KJV as last resort fallback
+    // Only use bible-api.com as last resort fallback for English KJV
+    // Never override a non-English translation with KJV text
+    if (translation !== "KJV") return;
     const slug = book.toLowerCase().replace(/\s+/g, "+");
     const r = await fetch(`https://bible-api.com/${slug}+${chapter}?translation=kjv`);
     if (r.ok) {

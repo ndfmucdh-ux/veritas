@@ -7,18 +7,10 @@ const BOLLS_BASE = "https://bolls.life/get-chapter";
 
 // Translations supported by bolls.life with clean (no Strong's) text
 // KJV on bolls has Strong's numbers embedded — we strip them
+// NOTE: Only add codes here if bolls.life actually returns data for them
 const BOLLS_TRANSLATIONS = new Set([
-  // English
   "KJV","NKJV","NIV","ESV","NLT","NASB","AMP","CSB","MSG",
   "ASV","BBE","WEB","YLT","DARBY","WNT","ERV","NRSV","ISV",
-  // Spanish
-  "RVR1960","NVI","BTX3","PDDPT","RVA2015","LBLA","NTV",
-  // Portuguese
-  "ARA","ARC","NVT",
-  // French
-  "LSG","NEG1979","BDS",
-  // Italian
-  "DIOD","NRV",
 ]);
 
 // Book name → canonical book number (1-66)
