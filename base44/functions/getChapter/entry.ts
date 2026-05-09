@@ -152,8 +152,6 @@ async function fetchFromHelloAO(translationId, bookId, chapter) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { translation, book, chapter } = await req.json();
     if (!translation || !book || !chapter) {
@@ -162,7 +160,7 @@ Deno.serve(async (req) => {
 
     const tCode = translation.toUpperCase();
 
-    // 1. Check database first
+    // 1. Check database first (service role — no auth required)
     const dbVerses = await base44.asServiceRole.entities.Verse.filter({
       translation: tCode, book, chapter: Number(chapter),
     });
