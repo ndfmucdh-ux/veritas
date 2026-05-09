@@ -20,7 +20,7 @@ export default function Read() {
   const params = new URLSearchParams(window.location.search);
   const [book, setBook] = useState(params.get("book") || "John");
   const [chapter, setChapter] = useState(Number(params.get("chapter")) || 3);
-  const [translation, setTranslation] = useState("KJV");
+  const [translation, setTranslation] = useState(params.get("translation") || "KJV");
   const [verses, setVerses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [immersive, setImmersive] = useState(false);
@@ -61,7 +61,8 @@ export default function Read() {
     setVerses([]);
 
     // 1. Offline cache — highest priority, always instant
-    const offline = getOfflineVerse(translation, book, chapter);
+    const offline = getOfflineVerse(translation, book, chapter)
+      || (translation === "KJV" ? getOfflineVerse("PLAN_CACHE", book, chapter) : null);
     if (offline) {
       setVerses(offline);
       setLoading(false);

@@ -11,9 +11,11 @@ import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
+import ReadingPlanCacheSettings from "@/components/profile/ReadingPlanCacheSettings";
 import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 import AudioSummary from "@/components/profile/AudioSummary";
 import DashboardSummary from "@/components/profile/DashboardSummary";
+import DailyReadingRing from "@/components/profile/DailyReadingRing.jsx";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -302,6 +304,13 @@ export default function Profile() {
           {/* ── OVERVIEW TAB ── */}
           {activeTab === "overview" && (
             <div className="px-5 space-y-5">
+              {/* Daily Reading Ring */}
+              <Section label="Today's Reading Goal" icon={Target}>
+                <div className="flex justify-center py-2">
+                  <DailyReadingRing chaptersReadToday={0} />
+                </div>
+              </Section>
+
               {/* Badges */}
               <Section label="Achievements" icon={Trophy}>
                 <div className="grid grid-cols-4 gap-2.5">
@@ -452,8 +461,9 @@ export default function Profile() {
               </Section>
 
               <Section label="Data & Privacy" icon={Shield}>
-                <div className="mb-3">
+                <div className="mb-3 space-y-3">
                   <OfflineBibleManager />
+                  <ReadingPlanCacheSettings />
                 </div>
                 <SettingLink icon={Shield} label="Private Notes" sub="All notes are encrypted by default" color="#34d399" tag="On" />
                 {/* Download Library Button */}

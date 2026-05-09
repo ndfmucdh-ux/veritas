@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Tag, Loader2 } from "lucide-react";
+import { Search, Tag, Loader2, Sparkles, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 
@@ -34,6 +34,46 @@ export default function Study() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
+  const [insights, setInsights] = useState(null);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+
+  const runInsights = async () => {
+    setInsightsLoading(true);
+    setInsights(null);
+    try {
+      const [highlights, notes] = await Promise.all([
+        base44.entities.UserHighlight.list("-created_date", 30),
+        base44.entities.UserNote.list("-created_date", 20),
+      ]);
+      const hlRefs = (highlights || []).map(h => h.verse_ref).join(", ");
+      const noteTexts = (notes || []).slice(0, 8).map(n => `${n.verse_ref}: "${n.note_text}"`).join("\n");
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `${langInstruction} You are a Bible study assistant. A user has highlighted these verses: ${hlRefs || "none"}.
+Their personal notes include: ${noteTexts || "none"}.
+Based on these, identify 3 recurring spiritual themes and suggest a short devotional topic for each.
+Return JSON: { themes: [{ theme, description, suggested_verses: [string], devotional_prompt }] }`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            themes: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  theme: { type: "string" },
+                  description: { type: "string" },
+                  suggested_verses: { type: "array", items: { type: "string" } },
+                  devotional_prompt: { type: "string" },
+                }
+              }
+            }
+          }
+        }
+      });
+      setInsights(res.themes || []);
+    } catch { setInsights([]); }
+    finally { setInsightsLoading(false); }
+  };
 
   const runCommentary = async () => {
     if (!query.trim()) return;
@@ -132,6 +172,49 @@ export default function Study() {
           <h1 className="font-cinzel text-2xl font-bold text-white">{t.studyCenter}</h1>
           <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Commentary · Cross-refs · Dictionary · Topical</p>
         </div>
+      </div>
+
+      {/* AI Insights Button */}
+      <div className="px-4 pt-4">
+        <button onClick={runInsights} disabled={insightsLoading}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl font-cinzel text-sm transition-all"
+          style={{ background: "linear-gradient(135deg, rgba(167,139,250,0.15), rgba(0,245,255,0.1))", border: "1px solid rgba(167,139,250,0.3)", color: "#a78bfa" }}>
+          {insightsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          {insightsLoading ? (lang === "es" ? "Analizando tus notas…" : "Analyzing your highlights…") : (lang === "es" ? "✦ Perspectivas IA de mis notas" : "✦ AI Insights from My Highlights")}
+        </button>
+
+        <AnimatePresence>
+          {insights !== null && (
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="mt-3 rounded-2xl overflow-hidden"
+              style={{ background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.2)" }}>
+              <div className="flex items-center justify-between px-4 pt-3 pb-1">
+                <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "#a78bfa" }}>✦ Personal Devotional Themes</p>
+                <button onClick={() => setInsights(null)}><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+              </div>
+              {insights.length === 0 ? (
+                <p className="px-4 pb-4 text-sm font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  {lang === "es" ? "Añade más notas y subrayados para obtener perspectivas." : "Add more highlights and notes to get insights."}
+                </p>
+              ) : insights.map((item, i) => (
+                <div key={i} className="px-4 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                  <p className="font-cinzel text-sm font-semibold mb-1" style={{ color: "#a78bfa" }}>✦ {item.theme}</p>
+                  <p className="text-xs font-inter leading-relaxed mb-2" style={{ color: "rgba(255,255,255,0.65)" }}>{item.description}</p>
+                  <p className="text-xs font-inter italic mb-2" style={{ color: "rgba(255,255,255,0.45)" }}>💡 {item.devotional_prompt}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(item.suggested_verses || []).map((v, j) => (
+                      <a key={j} href={`/study`}
+                        className="text-[10px] font-cinzel px-2.5 py-1 rounded-lg"
+                        style={{ background: "rgba(167,139,250,0.12)", color: "#a78bfa" }}>
+                        {v}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Tabs */}
