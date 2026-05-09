@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, ChevronDown, Copy, Check, Columns, CheckSquare, FolderPlus, X as XIcon } from "lucide-react";
+import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check, Columns, CheckSquare, FolderPlus, X as XIcon } from "lucide-react";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
@@ -14,7 +14,7 @@ import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
-import BibleNavigator from "@/components/reader/BibleNavigator";
+
 
 export default function Read() {
   const params = new URLSearchParams(window.location.search);
@@ -159,30 +159,14 @@ export default function Read() {
       >
         <div className="flex items-center gap-2">
           <div className="flex-1">
-            <BibleNavigator
+            <ChapterNavigator
               book={book}
               chapter={chapter}
-              verse={1}
               translation={translation}
-              onNavigate={(b, ch) => handleNavigate(b, ch)}
-              trigger={
-                <motion.button whileTap={{ scale: 0.97 }}
-                  className="w-full flex items-center justify-between gap-2 h-10 rounded-xl font-cinzel text-sm font-semibold px-4"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.85)", border: "1px solid rgba(255,215,0,0.2)" }}>
-                  <span style={{ color: "#FFD700" }}>{book}</span>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Ch. {chapter}</span>
-                  <ChevronDown className="w-3.5 h-3.5 opacity-40" />
-                </motion.button>
-              }
+              onNavigate={handleNavigate}
+              onTranslationChange={(t) => { setTranslation(t); }}
             />
           </div>
-          <ChapterNavigator
-            book={book}
-            chapter={chapter}
-            translation={translation}
-            onNavigate={handleNavigate}
-            onTranslationChange={(t) => { setTranslation(t); }}
-          />
         </div>
 
         <div className="flex items-center gap-2">

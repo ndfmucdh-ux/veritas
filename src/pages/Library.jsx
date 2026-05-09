@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones } from "lucide-react";
+import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import FolderManager from "@/components/library/FolderManager";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
@@ -27,6 +27,24 @@ export default function Library() {
   const [loading, setLoading] = useState(true);
   const [hlDevotional, setHlDevotional] = useState(null); // { ref, text, loading }
   const [hlDevLoading, setHlDevLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  const exportLibrary = async () => {
+    setExporting(true);
+    try {
+      const res = await base44.functions.invoke("exportLibraryData", {});
+      // The function returns a text file — trigger download via blob
+      const text = typeof res.data === "string" ? res.data : JSON.stringify(res.data, null, 2);
+      const blob = new Blob([text], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `veritas-library-${new Date().toISOString().slice(0, 10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {}
+    setExporting(false);
+  };
 
   useEffect(() => {
     loadAll();
@@ -202,9 +220,20 @@ export default function Library() {
 
   return (
     <div className="md:ml-16 min-h-screen px-4 pt-6">
-      <div className="mb-6">
-        <h1 className="font-cinzel text-2xl font-bold mb-1">My Library</h1>
-        <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
+      <div className="mb-6 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="font-cinzel text-2xl font-bold mb-1">My Library</h1>
+          <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
+        </div>
+        <button
+          onClick={exportLibrary}
+          disabled={exporting}
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
+          style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}
+        >
+          {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+          Export
+        </button>
       </div>
 
       {/* Tabs */}
