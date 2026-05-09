@@ -15,7 +15,7 @@ import ReadingPlanCacheSettings from "@/components/profile/ReadingPlanCacheSetti
 import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 import AudioSummary from "@/components/profile/AudioSummary";
 import DashboardSummary from "@/components/profile/DashboardSummary";
-import DailyReadingRing from "@/components/profile/DailyReadingRing.jsx";
+import DailyReadingRing from "@/components/profile/DailyReadingRing";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
