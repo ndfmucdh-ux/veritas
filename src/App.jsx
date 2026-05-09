@@ -25,6 +25,7 @@ import StudyCenter from './pages/StudyCenter';
 import PrayerJournal from './pages/PrayerJournal';
 import CommunityHub from './pages/CommunityHub';
 import NotificationStudio from './pages/NotificationStudio';
+import AudioDashboard from './pages/AudioDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -68,6 +69,7 @@ const AuthenticatedApp = () => {
         <Route path="/prayer-journal" element={<PrayerJournal />} />
         <Route path="/community" element={<CommunityHub />} />
         <Route path="/notification-studio" element={<NotificationStudio />} />
+        <Route path="/audio-dashboard" element={<AudioDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
