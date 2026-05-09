@@ -4,7 +4,7 @@ import {
   Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2
+  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
@@ -12,6 +12,7 @@ import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
 import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
+import AudioSummary from "@/components/profile/AudioSummary";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -369,6 +370,11 @@ export default function Profile() {
           {/* ── STATS TAB ── */}
           {activeTab === "stats" && (
             <div className="px-5 space-y-5">
+              {/* Audio Summary */}
+              <Section label="Audio Listening" icon={Headphones}>
+                <AudioSummary />
+              </Section>
+
               {/* Reading chart */}
               <Section label="Reading Activity (Last 7 Days)" icon={TrendingUp}>
                 <div className="h-36">

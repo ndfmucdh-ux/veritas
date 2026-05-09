@@ -14,7 +14,7 @@ import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
 import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
-import BibleNavigator from "@/components/reader/BibleNavigator.jsx";
+import BibleNavigator from "@/components/reader/BibleNavigator";
 
 export default function Read() {
   const params = new URLSearchParams(window.location.search);

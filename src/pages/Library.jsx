@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder } from "lucide-react";
+import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import FolderManager from "@/components/library/FolderManager";
+import AudioStreakChart from "@/components/library/AudioStreakChart";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
   { id: "highlights", label: "Highlights", icon: Highlighter },
   { id: "notes", label: "Notes", icon: StickyNote },
   { id: "folders", label: "Folders", icon: Folder },
+  { id: "audio", label: "Audio", icon: Headphones },
 ];
 
 const HIGHLIGHT_COLOR_HEX = {
@@ -227,6 +229,7 @@ export default function Library() {
         {activeTab === "highlights" && renderHighlights()}
         {activeTab === "notes" && renderNotes()}
         {activeTab === "folders" && renderFolders()}
+        {activeTab === "audio" && <AudioStreakChart />}
       </div>
     </div>
   );
