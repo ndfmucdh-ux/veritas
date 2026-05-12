@@ -57,18 +57,31 @@ export default function HeroVerseSlider() {
   }, [lang]);
 
   useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const cacheKey = `veritas_votd_${today}`;
+    const cached = sessionStorage.getItem(cacheKey);
+
+    if (cached) {
+      try {
+        const d = JSON.parse(cached);
+        if (d?.text && lang === "en") {
+          setSlides([
+            { verse_ref: d.verse_ref || d.ref, text: d.text, reflection: d.reflection, theme: d.theme, photo: FALLBACK_VERSES.en[0].photo },
+            ...FALLBACK_VERSES.en.slice(1),
+          ]);
+        }
+      } catch {}
+      setLoading(false);
+      return;
+    }
+
     base44.functions.invoke("getVerseOfTheDay", {})
       .then(res => {
         const d = res.data?.dailyVerse || res.data;
         if (d?.text && lang === "en") {
-          setSlides(prev => [
-            {
-              verse_ref: d.verse_ref || d.ref,
-              text: d.text,
-              reflection: d.reflection,
-              theme: d.theme,
-              photo: FALLBACK_VERSES.en[0].photo,
-            },
+          sessionStorage.setItem(cacheKey, JSON.stringify(d));
+          setSlides([
+            { verse_ref: d.verse_ref || d.ref, text: d.text, reflection: d.reflection, theme: d.theme, photo: FALLBACK_VERSES.en[0].photo },
             ...FALLBACK_VERSES.en.slice(1),
           ]);
         }
