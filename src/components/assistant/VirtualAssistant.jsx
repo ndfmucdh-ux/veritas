@@ -13,7 +13,7 @@ const QUICK_PROMPTS = [
   { icon: "📝", label: "Passages for my studies", prompt: "Look at my study notes and highlighted verses, then suggest specific Bible passages that go deeper into the themes I've been exploring. Explain why each passage connects to my personal study." },
   { icon: "✨", label: "Daily devotional", prompt: "Pick one of my recently highlighted verses and write me a short, personal daily devotional based on it — include a reflection, a prayer, and one practical way to apply this verse to my day." },
   { icon: "💪", label: "Strength for today", prompt: "I need encouragement and a verse about strength and perseverance for today." },
-  { icon: "🌙", label: "Evening reflection", prompt: "Look at my recent study notes and ask me one thoughtful, reflective question about what I've been learning — help me meditate and go deeper on what the Lord has been teaching me." },
+  { icon: "🌙", label: "Evening reflection", prompt: "Look at my recent study notes and ask me one thoughtful, reflective question about what I've been learning — help me meditate and go deeper on what the Father has been teaching me." },
 ];
 
 const SYSTEM_PROMPT = `You are the Veritas Guide — the wise, warm, and fatherly spiritual companion built into the Veritas Bible app.
@@ -24,7 +24,8 @@ const SYSTEM_PROMPT = `You are the Veritas Guide — the wise, warm, and fatherl
 - Use natural scripture references as living words, not mere citations
 - Address the user with warmth: "beloved", "dear friend", "brother", "sister", "child of God"
 - Celebrate even small steps of faith: "What a blessing that you've been reading!", "The Lord sees every prayer you've written"
-- Use phrases like "Praise God", "Amen", "The Lord is faithful", "Grace upon grace" naturally — not mechanically
+- Use phrases like "Praise God", "Amen", "Our Father is faithful", "Grace upon grace" naturally — not mechanically
+- Always say "Father" instead of "Lord" when referring to God
 - Be concise yet profound. Say much with few words. Leave space for the Spirit to move.
 - Never rush. Never lecture. Walk alongside, don't push from behind.
 
@@ -93,7 +94,7 @@ export default function VirtualAssistant({ onClose }) {
         let greeting = `Peace be with you, **${firstName}**. I am your **Veritas Guide** — your faithful companion on this sacred journey through God's Word.\n\n`;
 
         if (streakDays > 0) {
-          greeting += `I see you've been faithful — **${streakDays} days** of reading. The Lord sees every step you take toward Him. 🔥\n\n`;
+          greeting += `I see you've been faithful — **${streakDays} days** of reading. The Father sees every step you take toward Him. 🔥\n\n`;
         }
         if (hasPrayers) {
           const lastPrayer = ctx.prayers[0];
@@ -113,7 +114,7 @@ export default function VirtualAssistant({ onClose }) {
 
         setMessages([{ role: "assistant", content: greeting }]);
       } catch {
-        setMessages([{ role: "assistant", content: `Peace be with you, beloved. I am your **Veritas Guide** — your faithful companion on this sacred journey.\n\nWhat is on your heart today? 🙏` }]);
+        setMessages([{ role: "assistant", content: `Peace be with you, beloved. I am your **Veritas Guide** — your faithful companion on this sacred journey.\n\nThe Father is with you. What is on your heart today? 🙏` }]);
       }
     };
 

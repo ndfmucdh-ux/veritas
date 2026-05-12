@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, BookOpen, Loader2 } from "lucide-react";
+import { Sparkles, BookOpen, Loader2, LayoutGrid, Shield, Heart, Zap, Star, Gem, Sprout } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const CATEGORIES = [
-  { id: "general", label: "All", emoji: "✨" },
-  { id: "men", label: "For Men", emoji: "⚔️" },
-  { id: "women", label: "For Women", emoji: "🌸" },
-  { id: "youth", label: "For Youth", emoji: "🔥" },
-  { id: "kids", label: "For Kids", emoji: "⭐" },
-  { id: "marriage", label: "Marriage", emoji: "💍" },
-  { id: "new_believer", label: "New Believer", emoji: "🌱" },
+  { id: "general", label: "All", Icon: LayoutGrid },
+  { id: "men", label: "For Men", Icon: Shield },
+  { id: "women", label: "For Women", Icon: Heart },
+  { id: "youth", label: "For Youth", Icon: Zap },
+  { id: "kids", label: "For Kids", Icon: Star },
+  { id: "marriage", label: "Marriage", Icon: Gem },
+  { id: "new_believer", label: "New Believer", Icon: Sprout },
 ];
 
 const CATEGORY_VERSES = {
@@ -88,20 +88,23 @@ export default function Discover() {
 
       {/* Category Filter */}
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 mb-6">
-        {CATEGORIES.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => { setCategory(cat.id); setDevotional(null); }}
-            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all ${
-              category === cat.id
-                ? "bg-cyan/20 text-cyan border border-cyan/40 font-medium"
-                : "glass border border-border/50 text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <span>{cat.emoji}</span>
-            <span>{cat.label}</span>
-          </button>
-        ))}
+        {CATEGORIES.map(cat => {
+          const CatIcon = cat.Icon;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => { setCategory(cat.id); setDevotional(null); }}
+              className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-all ${
+                category === cat.id
+                  ? "bg-cyan/20 text-cyan border border-cyan/40 font-medium"
+                  : "glass border border-border/50 text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <CatIcon className="w-3.5 h-3.5" />
+              <span>{cat.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Verses Grid */}

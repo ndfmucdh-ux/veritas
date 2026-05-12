@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List, Plus, Trash2, Target, Check } from "lucide-react";
+import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List, Plus, Trash2, Target, Check, LayoutGrid, Shield, Flower2, Zap, Star, Gem, Sprout } from "lucide-react";
 import PlanTimeline from "@/components/plans/PlanTimeline";
 import ReadingCalendar from "@/components/plans/ReadingCalendar";
 import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
@@ -563,15 +563,15 @@ export default function Plans() {
       {/* Category filter */}
       <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
         {[
-          ["all", "All", "📖"],
-          ["men", "Men", "⚔️"],
-          ["women", "Women", "🌸"],
-          ["youth", "Youth", "🔥"],
-          ["kids", "Kids", "⭐"],
-          ["marriage", "Marriage", "💍"],
-          ["new_believer", "New Believer", "🌱"],
-          ["general", "General", "🙏"],
-        ].map(([v, l, emoji]) => (
+          ["all", "All", LayoutGrid],
+          ["men", "Men", Shield],
+          ["women", "Women", Flower2],
+          ["youth", "Youth", Zap],
+          ["kids", "Kids", Star],
+          ["marriage", "Marriage", Gem],
+          ["new_believer", "New Believer", Sprout],
+          ["general", "General", BookOpen],
+        ].map(([v, l, CatIcon]) => (
           <button key={v} onClick={() => setCatFilter(v)}
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
             style={{
@@ -579,7 +579,7 @@ export default function Plans() {
               border: catFilter === v ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.07)",
               color: catFilter === v ? "#fbbf24" : "rgba(255,255,255,0.4)",
             }}>
-            <span>{emoji}</span><span>{l}</span>
+            <CatIcon className="w-3.5 h-3.5" /><span>{l}</span>
           </button>
         ))}
       </div>

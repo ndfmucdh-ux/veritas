@@ -1,19 +1,18 @@
-import { Tag } from "lucide-react";
-import { useState } from "react";
+import { Tag, Waves, Heart, Compass, Zap, Cross, Flower2, Sunrise, Brain, Sparkles, Bird, Shield, Target } from "lucide-react";
 
 const THEME_TAGS = [
-  { id: "peace", label: "Peace", icon: "☮️", color: "#00f5ff" },
-  { id: "healing", label: "Healing", icon: "🩹", color: "#34d399" },
-  { id: "guidance", label: "Guidance", icon: "🧭", color: "#fbbf24" },
-  { id: "strength", label: "Strength", icon: "💪", color: "#f87171" },
-  { id: "faith", label: "Faith", icon: "✝️", color: "#a78bfa" },
-  { id: "love", label: "Love", icon: "💗", color: "#f472b6" },
-  { id: "hope", label: "Hope", icon: "🌅", color: "#fb923c" },
-  { id: "wisdom", label: "Wisdom", icon: "🧠", color: "#ec4899" },
-  { id: "grace", label: "Grace", icon: "✨", color: "#06b6d4" },
-  { id: "forgiveness", label: "Forgiveness", icon: "🕊️", color: "#8b5cf6" },
-  { id: "protection", label: "Protection", icon: "🛡️", color: "#22d3ee" },
-  { id: "purpose", label: "Purpose", icon: "🎯", color: "#ea580c" },
+  { id: "peace", label: "Peace", Icon: Waves, color: "#00f5ff" },
+  { id: "healing", label: "Healing", Icon: Heart, color: "#34d399" },
+  { id: "guidance", label: "Guidance", Icon: Compass, color: "#fbbf24" },
+  { id: "strength", label: "Strength", Icon: Zap, color: "#f87171" },
+  { id: "faith", label: "Faith", Icon: Sparkles, color: "#a78bfa" },
+  { id: "love", label: "Love", Icon: Flower2, color: "#f472b6" },
+  { id: "hope", label: "Hope", Icon: Sunrise, color: "#fb923c" },
+  { id: "wisdom", label: "Wisdom", Icon: Brain, color: "#ec4899" },
+  { id: "grace", label: "Grace", Icon: Sparkles, color: "#06b6d4" },
+  { id: "forgiveness", label: "Forgiveness", Icon: Bird, color: "#8b5cf6" },
+  { id: "protection", label: "Protection", Icon: Shield, color: "#22d3ee" },
+  { id: "purpose", label: "Purpose", Icon: Target, color: "#ea580c" },
 ];
 
 export default function ThemeFilterTags({ selectedTag, onTagSelect }) {
@@ -37,7 +36,7 @@ export default function ThemeFilterTags({ selectedTag, onTagSelect }) {
               border: selectedTag === theme.id ? `1px solid ${theme.color}44` : "1px solid rgba(255,255,255,0.07)"
             }}
           >
-            <span className="text-sm">{theme.icon}</span>
+            <theme.Icon className="w-3.5 h-3.5" />
             {theme.label}
           </button>
         ))}
