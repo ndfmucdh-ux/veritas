@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check, Columns, CheckSquare, FolderPlus, X as XIcon } from "lucide-react";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
@@ -45,6 +46,7 @@ export default function Read() {
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [jumpedVerse, setJumpedVerse] = useState(null);
   const [devotionalVerse, setDevotionalVerse] = useState(null);
+  const navigate = useNavigate();
   const containerRef = useRef(null);
   const glowTimerRef = useRef(null);
 
@@ -167,7 +169,7 @@ export default function Read() {
   const handleNavigate = (newBook, newChapter) => {
     setBook(newBook);
     setChapter(newChapter);
-    window.history.pushState({}, "", `/read?book=${encodeURIComponent(newBook)}&chapter=${newChapter}`);
+    navigate(`/read?book=${encodeURIComponent(newBook)}&chapter=${newChapter}`, { replace: false });
     containerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 

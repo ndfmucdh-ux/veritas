@@ -101,23 +101,7 @@ function App() {
     setSplashDone(true);
   };
 
-  // Prevent swipe-back page reload on iOS + history manipulation
-  useEffect(() => {
-    const preventSwipeBack = (e) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        if (touch.clientX < 12 || touch.clientX > window.innerWidth - 12) {
-          e.preventDefault();
-        }
-      }
-    };
-    
-    document.addEventListener("touchmove", preventSwipeBack, { passive: false });
-    
-    return () => {
-      document.removeEventListener("touchmove", preventSwipeBack);
-    };
-  }, []);
+
 
   return (
     <AuthProvider>
