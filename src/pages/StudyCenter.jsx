@@ -4,6 +4,7 @@ import { Loader2, ChevronDown, AlertCircle, Columns, FileText, Lightbulb, Sparkl
 import TranslationSplitView from "@/components/study/TranslationSplitView";
 import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
 import CrossReferencePanel from "@/components/study/CrossReferencePanel";
+import MemorizeMode from "@/components/study/MemorizeMode";
 import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
@@ -162,6 +163,7 @@ export default function StudyCenter() {
              { id: "analysis", label: "Analysis", icon: "📖" },
              { id: "sidebyside", label: "Side by Side", icon: "⚡" },
              { id: "templates", label: "My Templates", icon: "📝" },
+             { id: "memorize", label: "Memorize", icon: "🎯" },
            ].map(tab => (
             <motion.button key={tab.id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
@@ -193,6 +195,11 @@ export default function StudyCenter() {
         {/* ── TEMPLATES TAB ── */}
         {activeTab === "templates" && (
           <StudyNoteTemplates book={selectedBook} chapter={selectedChapter} />
+        )}
+
+        {/* ── MEMORIZE TAB ── */}
+        {activeTab === "memorize" && (
+          <MemorizeMode book={selectedBook} chapter={selectedChapter} />
         )}
 
         {/* ── SIDE BY SIDE TAB ── */}

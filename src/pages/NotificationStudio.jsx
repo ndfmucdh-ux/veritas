@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import {
   Bell, Mail, Smartphone, Send, Eye, ChevronRight,
-  Loader2, Check, Sparkles, Calendar, BarChart3, Zap
+  Loader2, Check, Sparkles, Calendar, BarChart3, Zap, BellOff
 } from "lucide-react";
+import QuietModeSettings from "@/components/notifications/QuietModeSettings";
 
 const TABS = [
   { id: "push", label: "Push Notifications", icon: Smartphone },
@@ -12,6 +13,7 @@ const TABS = [
   { id: "email_weekly", label: "Weekly Digest", icon: Calendar },
   { id: "devotional_time", label: "Devotional Time", icon: Bell },
   { id: "prayer_reminders", label: "Prayer Reminders", icon: Bell },
+  { id: "quiet_mode", label: "Quiet Mode", icon: BellOff },
   { id: "specs", label: "Design Specs", icon: Sparkles },
 ];
 
@@ -505,6 +507,13 @@ export default function NotificationStudio() {
                   </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* ── QUIET MODE TAB ── */}
+          {activeTab === "quiet_mode" && (
+            <div className="px-5 pb-4">
+              <QuietModeSettings />
             </div>
           )}
 

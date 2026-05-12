@@ -16,7 +16,7 @@ import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 import AudioSummary from "@/components/profile/AudioSummary";
 import DashboardSummary from "@/components/profile/DashboardSummary";
 import DailyReadingRing from "@/components/profile/DailyReadingRing";
-import MilestoneBadges from "@/components/profile/MilestoneBadges";
+import EmblemBadges from "@/components/profile/EmblemBadges";
 import MonthlyProgressChart from "@/components/profile/MonthlyProgressChart";
 import ReadingCalendar from "@/components/profile/ReadingCalendar";
 import SharedReadingPlan from "@/components/community/SharedReadingPlan";
@@ -326,14 +326,12 @@ export default function Profile() {
                 <SharedReadingPlan />
               </Section>
 
-              {/* Milestone Badges */}
-              <Section label="Milestones" icon={Star}>
-                <MilestoneBadges 
+              {/* Emblem Badges */}
+              <Section label="Emblems & Honours" icon={Star}>
+                <EmblemBadges
                   streak={xpData?.streak_days || 0}
-                  prayerCount={0} // Will be fetched from prayer journal
                   highlightCount={highlights.length}
                   noteCount={notes.length}
-                  audioDays={0}
                 />
               </Section>
 

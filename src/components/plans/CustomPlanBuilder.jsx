@@ -24,7 +24,9 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
   const [step, setStep] = useState("details"); // details → books → confirm
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
   const [targetDate, setTargetDate] = useState("");
+  const [dailyGoal, setDailyGoal] = useState(1);
   const [accentColor, setAccentColor] = useState("#00f5ff");
   const [icon, setIcon] = useState("📖");
   const [selections, setSelections] = useState({}); // { bookName: Set<chapter> }
@@ -42,8 +44,18 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
     return diff > 0 ? diff : null;
   }, [targetDate]);
 
+  const daysUntilStart = useMemo(() => {
+    if (!startDate) return 0;
+    const diff = Math.ceil((new Date(startDate) - new Date()) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 0;
+  }, [startDate]);
+
   const chaptersPerDay = daysUntilTarget && totalChapters
     ? (totalChapters / daysUntilTarget).toFixed(1)
+    : dailyGoal > 0 ? String(dailyGoal) : null;
+
+  const estimatedDays = dailyGoal > 0 && totalChapters > 0
+    ? Math.ceil(totalChapters / dailyGoal)
     : null;
 
   const toggleChapter = (bookName, ch) => {
@@ -91,6 +103,9 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
       total_chapters: totalChapters,
       completed_chapters: [],
     });
+    // Store start date and daily goal in localStorage keyed by title
+    localStorage.setItem(`veritas_plan_start_${title.trim()}`, startDate);
+    localStorage.setItem(`veritas_plan_daily_${title.trim()}`, String(dailyGoal));
     setSaving(false);
     onSaved?.();
     onClose();
@@ -217,9 +232,50 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                   />
                 </div>
 
+                {/* Start date */}
+                <div>
+                  <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Start Date</p>
+                  <div className="relative">
+                    <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />
+                    <input
+                      type="date"
+                      value={startDate}
+                      min={minDate}
+                      onChange={e => setStartDate(e.target.value)}
+                      className="w-full rounded-xl pl-10 pr-4 py-3 text-sm font-inter focus:outline-none"
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }}
+                    />
+                  </div>
+                  {daysUntilStart > 0 && (
+                    <p className="text-[10px] font-inter mt-1.5" style={{ color: accentColor }}>Starts in {daysUntilStart} days</p>
+                  )}
+                </div>
+
+                {/* Daily chapter goal */}
+                <div>
+                  <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Daily Chapter Goal</p>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => setDailyGoal(g => Math.max(1, g - 1))}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>−</button>
+                    <div className="flex-1 text-center">
+                      <p className="font-cinzel text-2xl font-bold" style={{ color: accentColor }}>{dailyGoal}</p>
+                      <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>chapter{dailyGoal > 1 ? "s" : ""} / day</p>
+                    </div>
+                    <button onClick={() => setDailyGoal(g => Math.min(10, g + 1))}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
+                      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>+</button>
+                  </div>
+                  {estimatedDays && (
+                    <p className="text-[10px] font-inter mt-2 text-center" style={{ color: "rgba(255,255,255,0.4)" }}>
+                      Est. completion in <span style={{ color: accentColor }}>{estimatedDays} days</span>
+                    </p>
+                  )}
+                </div>
+
                 {/* Target date */}
                 <div>
-                  <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Target Completion Date</p>
+                  <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Target Completion Date (optional)</p>
                   <div className="relative">
                     <CalendarDays className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />
                     <input
@@ -228,7 +284,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                       min={minDate}
                       onChange={e => setTargetDate(e.target.value)}
                       className="w-full rounded-xl pl-10 pr-4 py-3 text-sm font-inter focus:outline-none"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: targetDate ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.3)" }}
+                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: targetDate ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.3)", fontSize: "16px" }}
                     />
                   </div>
                   {daysUntilTarget && (
@@ -366,10 +422,12 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                       {description && <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>{description}</p>}
                     </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-3 mt-4">
+                  <div className="grid grid-cols-2 gap-3 mt-4">
                     <Stat label="Chapters" value={totalChapters} color={accentColor} />
-                    {targetDate && <Stat label="Target" value={new Date(targetDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })} color={accentColor} />}
-                    {chaptersPerDay && <Stat label="Per Day" value={`~${chaptersPerDay}`} color={accentColor} />}
+                    <Stat label="Daily Goal" value={`${dailyGoal} ch`} color={accentColor} />
+                    {startDate && <Stat label="Start" value={new Date(startDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })} color={accentColor} />}
+                    {estimatedDays && <Stat label="Est. Days" value={estimatedDays} color={accentColor} />}
+                    {targetDate && <Stat label="Deadline" value={new Date(targetDate + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })} color={accentColor} />}
                   </div>
                 </div>
 

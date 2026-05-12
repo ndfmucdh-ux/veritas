@@ -225,6 +225,9 @@ export default function Plans() {
       ? Math.ceil((new Date(plan.target_date) - new Date()) / (1000 * 60 * 60 * 24))
       : null;
     const accent = plan.accent_color || "#00f5ff";
+    const dailyGoal = parseInt(localStorage.getItem(`veritas_plan_daily_${plan.title}`) || "1");
+    const remainingCh = totalCh - doneCh;
+    const daysToFinish = dailyGoal > 0 ? Math.ceil(remainingCh / dailyGoal) : null;
 
     return (
       <div className="md:ml-16 min-h-screen pb-28">
@@ -243,11 +246,12 @@ export default function Plans() {
 
         <div className="px-4 pt-5">
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="grid grid-cols-4 gap-2 mb-5">
             {[
               { label: "Chapters", value: `${doneCh}/${totalCh}` },
               { label: "Progress", value: `${pct}%` },
-              { label: daysLeft !== null ? (daysLeft > 0 ? "Days Left" : "Overdue") : "Target", value: daysLeft !== null ? Math.abs(daysLeft) : "—" },
+              { label: "Daily Goal", value: `${dailyGoal}ch` },
+              { label: daysLeft !== null ? (daysLeft > 0 ? "Deadline" : "Overdue") : "Est. Done", value: daysLeft !== null ? `${Math.abs(daysLeft)}d` : daysToFinish ? `${daysToFinish}d` : "—" },
             ].map(s => (
               <div key={s.label} className="rounded-2xl p-3 text-center"
                 style={{ background: `${accent}08`, border: `1px solid ${accent}20` }}>
