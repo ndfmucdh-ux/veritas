@@ -4,14 +4,14 @@ import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleDat
 import { useLang } from "@/lib/LanguageContext";
 
 const GROUPS = [
-  { id: "Law",        label: "📖 The Law",          books: [1,2,3,4,5] },
-  { id: "History",    label: "⚔️ Historical",        books: [6,7,8,9,10,11,12,13,14,15,16,17] },
-  { id: "Wisdom",     label: "💎 Wisdom & Poetry",   books: [18,19,20,21,22] },
-  { id: "MajorProp",  label: "🔥 Major Prophets",    books: [23,24,25,26,27] },
-  { id: "MinorProp",  label: "⚡ Minor Prophets",    books: [28,29,30,31,32,33,34,35,36,37,38,39] },
-  { id: "Gospels",    label: "✝️ Gospels",            books: [40,41,42,43] },
-  { id: "Epistles",   label: "🌍 Acts & Epistles",   books: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65] },
-  { id: "Revelation", label: "👑 Revelation",        books: [66] },
+  { id: "Law",        label: "The Law",          books: [1,2,3,4,5] },
+  { id: "History",    label: "Historical Books", books: [6,7,8,9,10,11,12,13,14,15,16,17] },
+  { id: "Wisdom",     label: "Wisdom & Poetry",  books: [18,19,20,21,22] },
+  { id: "MajorProp",  label: "Major Prophets",   books: [23,24,25,26,27] },
+  { id: "MinorProp",  label: "Minor Prophets",   books: [28,29,30,31,32,33,34,35,36,37,38,39] },
+  { id: "Gospels",    label: "The Gospels",       books: [40,41,42,43] },
+  { id: "Epistles",   label: "Acts & Epistles",  books: [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65] },
+  { id: "Revelation", label: "Revelation",        books: [66] },
 ];
 
 export default function ChapterNavigator({ book, chapter, translation, onNavigate, onTranslationChange }) {
@@ -194,12 +194,12 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   <Search className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
                   <input
-                    value={bookSearch}
-                    onChange={e => setBookSearch(e.target.value)}
-                    placeholder="Search books…"
-                    className="flex-1 bg-transparent text-xs font-inter focus:outline-none"
-                    style={{ color: "rgba(255,255,255,0.8)" }}
-                    autoFocus
+                   value={bookSearch}
+                   onChange={e => setBookSearch(e.target.value)}
+                   placeholder="Search books…"
+                   className="flex-1 bg-transparent text-xs font-inter focus:outline-none"
+                   style={{ color: "rgba(255,255,255,0.8)", fontSize: "16px" }}
+                   autoFocus
                   />
                   {bookSearch && (
                     <button onClick={() => setBookSearch("")} style={{ color: "rgba(255,255,255,0.3)" }}>

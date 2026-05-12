@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronDown, AlertCircle, Columns, FileText, Lightbulb } from "lucide-react";
+import { Loader2, ChevronDown, AlertCircle, Columns, FileText, Lightbulb, Sparkles, X, Mic, Play, Pause } from "lucide-react";
 import TranslationSplitView from "@/components/study/TranslationSplitView";
 import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
 import CrossReferencePanel from "@/components/study/CrossReferencePanel";
@@ -30,6 +30,13 @@ export default function StudyCenter() {
   const [activeTab, setActiveTab] = useState("analysis"); // "analysis" | "sidebyside" | "templates"
   const [showCrossRef, setShowCrossRef] = useState(false);
   const [activeVerses, setActiveVerses] = useState([]);
+  const [explainVerse, setExplainVerse] = useState("");
+  const [explainLoading, setExplainLoading] = useState(false);
+  const [explainResult, setExplainResult] = useState(null);
+  const [audioNotes, setAudioNotes] = useState([]);
+  const [audioLoading, setAudioLoading] = useState(false);
+  const [playingAudioUrl, setPlayingAudioUrl] = useState(null);
+  const audioElRef = useRef(null);
 
   // Update URL when state changes
   useEffect(() => {
@@ -46,6 +53,32 @@ export default function StudyCenter() {
       isMountedRef.current = false;
     };
   }, []);
+
+  const explainPassage = async () => {
+    if (!explainVerse.trim()) return;
+    setExplainLoading(true);
+    setExplainResult(null);
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `Provide a concise theological summary (3-4 sentences) of "${explainVerse}" from the Bible. Include: 1) Historical/cultural context, 2) Key theological meaning, 3) How it fits in the broader biblical narrative. Be scholarly but accessible.`,
+      });
+      setExplainResult(typeof res === "string" ? res : res?.text || "");
+    } finally {
+      setExplainLoading(false);
+    }
+  };
+
+  const loadAudioNotes = async () => {
+    setAudioLoading(true);
+    try {
+      const notes = await base44.entities.VerseAudioReflection.list("-created_date", 20);
+      setAudioNotes(notes || []);
+    } finally {
+      setAudioLoading(false);
+    }
+  };
+
+  useEffect(() => { loadAudioNotes(); }, []);
 
   const loadOutline = async (book) => {
     setLoading(true);
@@ -290,6 +323,84 @@ export default function StudyCenter() {
                   };
                 })}
               />
+            )}
+
+            {/* ── EXPLAIN THIS ── */}
+            <div className="rounded-2xl p-4" style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)" }}>
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4" style={{ color: "#fbbf24" }} />
+                <p className="font-cinzel text-sm font-semibold text-white">Explain This</p>
+                <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>AI theological summary</p>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  value={explainVerse}
+                  onChange={e => setExplainVerse(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && explainPassage()}
+                  placeholder={`e.g. John 3:16, ${selectedBook} ${selectedChapter}:1-5`}
+                  className="flex-1 rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
+                  style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }}
+                />
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={explainPassage}
+                  disabled={!explainVerse.trim() || explainLoading}
+                  className="px-4 py-2.5 rounded-xl font-cinzel text-sm font-semibold transition-all"
+                  style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.3)", opacity: !explainVerse.trim() ? 0.5 : 1 }}
+                >
+                  {explainLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Explain"}
+                </motion.button>
+              </div>
+              <AnimatePresence>
+                {explainResult && (
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3 overflow-hidden">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>{explainResult}</p>
+                      <button onClick={() => setExplainResult(null)} className="flex-shrink-0"><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* ── VOICE NOTES ── */}
+            {audioNotes.length > 0 && (
+              <div className="rounded-2xl p-4" style={{ background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.12)" }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Mic className="w-4 h-4" style={{ color: "#00f5ff" }} />
+                  <p className="font-cinzel text-sm font-semibold text-white">Voice Notes</p>
+                  <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{audioNotes.length} recordings</p>
+                </div>
+                <div className="space-y-2">
+                  {audioNotes.slice(0, 5).map(note => (
+                    <div key={note.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                      <button
+                        onClick={() => {
+                          if (playingAudioUrl === note.audio_url) {
+                            audioElRef.current?.pause();
+                            setPlayingAudioUrl(null);
+                          } else {
+                            if (audioElRef.current) {
+                              audioElRef.current.src = note.audio_url;
+                              audioElRef.current.play();
+                            }
+                            setPlayingAudioUrl(note.audio_url);
+                          }
+                        }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff" }}
+                      >
+                        {playingAudioUrl === note.audio_url ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      </button>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-cinzel text-xs text-white truncate">{note.verse_ref}</p>
+                        <p className="text-[10px] font-inter capitalize" style={{ color: "rgba(255,255,255,0.35)" }}>{note.mood} · {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <audio ref={audioElRef} onEnded={() => setPlayingAudioUrl(null)} className="hidden" />
+              </div>
             )}
 
             {/* Outline */}

@@ -201,7 +201,7 @@ export default function VirtualAssistant({ onClose }) {
       className="fixed bottom-20 right-4 md:bottom-8 md:right-6 z-50 flex flex-col rounded-3xl overflow-hidden"
       style={{
         width: "min(420px, calc(100vw - 24px))",
-        height: "min(640px, calc(100vh - 120px))",
+        height: "min(580px, calc(100vh - 160px))",
         background: "rgba(7,10,22,0.98)",
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",

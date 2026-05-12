@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square } from "lucide-react";
+import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 
@@ -25,6 +25,12 @@ export default function VerseRow({
   const [noteMode, setNoteMode] = useState(false);
   const [noteText, setNoteText] = useState(note || "");
   const [showFolderModal, setShowFolderModal] = useState(false);
+  // Inline quick-record
+  const [recording, setRecording] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [recSaved, setRecSaved] = useState(false);
+  const mediaRecRef = useRef(null);
+  const chunksRef = useRef([]);
 
   const hlStyle = highlight ? {
     background: COLOR_STYLES[highlight.color]?.bg,
@@ -34,7 +40,6 @@ export default function VerseRow({
 
   const applyHighlight = async (color) => {
     if (highlight?.color === color) {
-      // remove
       const existing = await base44.entities.UserHighlight.filter({ verse_ref: verseRef });
       if (existing?.[0]) await base44.entities.UserHighlight.delete(existing[0].id);
       onUpdate({ type: "highlight", verseNum, data: null });
@@ -77,6 +82,42 @@ export default function VerseRow({
     setMenuOpen(false);
   };
 
+  // Inline quick voice note
+  const startRecord = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      chunksRef.current = [];
+      mr.ondataavailable = e => chunksRef.current.push(e.data);
+      mr.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setUploading(true);
+        try {
+          const { file_url } = await base44.integrations.Core.UploadFile({ file: blob });
+          await base44.entities.VerseAudioReflection.create({
+            verse_ref: verseRef, book, chapter, verse: verseNum, translation,
+            audio_url: file_url, mood: "grateful", is_private: true,
+          });
+          setRecSaved(true);
+          setTimeout(() => setRecSaved(false), 2500);
+        } finally {
+          setUploading(false);
+        }
+      };
+      mr.start();
+      mediaRecRef.current = mr;
+      setRecording(true);
+    } catch {}
+  };
+
+  const stopRecord = () => {
+    if (mediaRecRef.current && recording) {
+      mediaRecRef.current.stop();
+      setRecording(false);
+    }
+  };
+
   const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
 
   return (
@@ -85,7 +126,7 @@ export default function VerseRow({
         <FolderSaveModal
           verseRefs={[verseRef]}
           onClose={() => setShowFolderModal(false)}
-          onSaved={(name) => {}}
+          onSaved={() => {}}
         />
       )}
       <motion.div
@@ -120,9 +161,9 @@ export default function VerseRow({
           {text}
           {isBookmarked && <span className="ml-1.5 text-xs" style={{ color: "#fbbf24" }}>🔖</span>}
           {note && <span className="ml-1 text-xs" style={{ color: "#a78bfa" }}>✍</span>}
+          {recSaved && <span className="ml-1 text-xs" style={{ color: "#00f5ff" }}>🎙</span>}
         </span>
       </motion.div>
-
 
       <AnimatePresence>
         {menuOpen && (
@@ -153,9 +194,9 @@ export default function VerseRow({
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <button onClick={toggleBookmark}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
                 style={{ background: isBookmarked ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)", color: isBookmarked ? "#fbbf24" : "rgba(255,255,255,0.5)" }}>
                 <Bookmark className="w-3.5 h-3.5" />
                 {isBookmarked ? "Saved" : "Bookmark"}
@@ -164,10 +205,23 @@ export default function VerseRow({
                   setMenuOpen(false);
                   onOpenNote?.({ verse: verseNum, text, red_letter: redLetter });
                 }}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
                 style={{ background: "rgba(167,139,250,0.1)", color: "#a78bfa" }}>
                 <StickyNote className="w-3.5 h-3.5" />
                 Note
+              </button>
+              {/* Inline quick mic */}
+              <button
+                onClick={recording ? stopRecord : startRecord}
+                disabled={uploading}
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
+                style={{
+                  background: recording ? "rgba(248,113,113,0.15)" : recSaved ? "rgba(52,211,153,0.15)" : "rgba(0,245,255,0.08)",
+                  color: recording ? "#f87171" : recSaved ? "#34d399" : "#00f5ff",
+                  border: recording ? "1px solid rgba(248,113,113,0.3)" : "1px solid transparent"
+                }}>
+                {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mic className="w-3.5 h-3.5" />}
+                {uploading ? "Saving…" : recording ? "Stop" : recSaved ? "Saved!" : "Voice"}
               </button>
               <button onClick={() => {
                   setMenuOpen(false);
@@ -175,18 +229,18 @@ export default function VerseRow({
                   const txt = encodeURIComponent(text);
                   window.location.href = `/verse-art?ref=${ref}&text=${txt}`;
                 }}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
                 style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}>
                 <Share2 className="w-3.5 h-3.5" />
                 Art
               </button>
               <button onClick={() => { setMenuOpen(false); setShowFolderModal(true); }}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
                 style={{ background: "rgba(0,245,255,0.07)", color: "#00f5ff" }}>
                 <FolderPlus className="w-3.5 h-3.5" />
               </button>
               <button onClick={() => setMenuOpen(false)}
-                className="ml-auto flex items-center justify-center w-7 h-7 rounded-xl"
+                className="ml-auto flex items-center justify-center w-9 h-9 rounded-xl"
                 style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -203,7 +257,7 @@ export default function VerseRow({
                       placeholder="Write your reflection..."
                       rows={3}
                       className="w-full rounded-xl p-3 text-sm font-inter resize-none focus:outline-none"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+                      style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
                     />
                     <button onClick={saveNote}
                       className="mt-2 flex items-center gap-1.5 text-xs px-4 py-2 rounded-xl font-cinzel"
