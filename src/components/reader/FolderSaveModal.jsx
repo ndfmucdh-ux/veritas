@@ -65,6 +65,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
         transition={{ type: "spring", stiffness: 380, damping: 28 }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-sm rounded-3xl overflow-hidden"
+        style={{ maxHeight: "85vh", display: "flex", flexDirection: "column" }}
         style={{ background: "rgba(8,13,26,0.99)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}
       >
         {/* Header */}
@@ -82,7 +83,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
           </button>
         </div>
 
-        <div className="px-5 py-4 space-y-3 max-h-80 overflow-y-auto scrollbar-hide">
+        <div className="px-5 py-4 space-y-3 overflow-y-auto scrollbar-hide flex-1" style={{ maxHeight: "calc(85vh - 80px)" }}>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />

@@ -110,20 +110,10 @@ function App() {
       }
     };
     
-    // Block history back if at app root
-    const blockHistoryBack = (e) => {
-      if (window.location.pathname === "/" && history.length <= 2) {
-        window.history.pushState(null, null, window.location.href);
-      }
-    };
-    
     document.addEventListener("touchmove", preventSwipeBack, { passive: false });
-    window.addEventListener("popstate", blockHistoryBack);
-    window.history.pushState(null, null, window.location.href);
     
     return () => {
       document.removeEventListener("touchmove", preventSwipeBack);
-      window.removeEventListener("popstate", blockHistoryBack);
     };
   }, []);
 

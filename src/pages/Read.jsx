@@ -350,7 +350,7 @@ export default function Read() {
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-3 rounded-2xl"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 px-4 py-3 rounded-2xl"
             style={{ background: "rgba(8,13,26,0.97)", border: "1px solid rgba(0,245,255,0.25)", boxShadow: "0 8px 32px rgba(0,0,0,0.6)", backdropFilter: "blur(20px)" }}
           >
             <span className="font-cinzel text-sm" style={{ color: "#00f5ff" }}>{selectedVerses.size} selected</span>

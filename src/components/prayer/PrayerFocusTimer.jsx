@@ -9,7 +9,17 @@ export default function PrayerFocusTimer() {
   const [selectedDuration, setSelectedDuration] = useState(15);
   const [timeLeft, setTimeLeft] = useState(selectedDuration * 60);
   const [isRunning, setIsRunning] = useState(false);
-  const audioRef = useRef(null);
+
+  // Draggable position state - start bottom-left to avoid AI button (bottom-right)
+  const [pos, setPos] = useState({ x: null, y: null });
+  const dragging = useRef(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const btnRef = useRef(null);
+
+  // Initialize position once on mount
+  useEffect(() => {
+    setPos({ x: 16, y: window.innerHeight - 220 });
+  }, []);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -55,40 +65,62 @@ export default function PrayerFocusTimer() {
 
   const progress = ((selectedDuration * 60 - timeLeft) / (selectedDuration * 60)) * 100;
 
-  return (
-    <div>
-      {/* Floating toggle button */}
-      <motion.button
-        onClick={() => setIsOpen(v => !v)}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-32 right-5 w-12 h-12 rounded-full flex items-center justify-center z-40 shadow-lg"
-        style={{
-          background: isRunning ? "linear-gradient(135deg, #f87171, #f97316)" : "rgba(0,245,255,0.1)",
-          border: isRunning ? "1px solid #f87171" : "1px solid rgba(0,245,255,0.25)",
-        }}
-      >
-        <Clock
-          className="w-5 h-5"
-          style={{ color: isRunning ? "#f87171" : "#00f5ff" }}
-        />
-      </motion.button>
+  // Touch drag handlers
+  const onTouchStart = (e) => {
+    dragging.current = false;
+    const touch = e.touches[0];
+    dragOffset.current = {
+      x: touch.clientX - pos.x,
+      y: touch.clientY - pos.y,
+    };
+  };
 
-      {/* Timer panel */}
+  const onTouchMove = (e) => {
+    dragging.current = true;
+    const touch = e.touches[0];
+    const newX = Math.max(0, Math.min(window.innerWidth - 52, touch.clientX - dragOffset.current.x));
+    const newY = Math.max(0, Math.min(window.innerHeight - 52, touch.clientY - dragOffset.current.y));
+    setPos({ x: newX, y: newY });
+    // Close panel while dragging
+    if (isOpen) setIsOpen(false);
+  };
+
+  const onTouchEnd = () => {
+    // if we didn't drag, treat as tap — toggle is handled by onClick
+  };
+
+  // Panel position — try to open upward from button, keep on screen
+  const panelAbove = pos.y > 380;
+  const panelLeft = pos.x > window.innerWidth / 2 ? "auto" : "0px";
+  const panelRight = pos.x > window.innerWidth / 2 ? "0px" : "auto";
+
+  if (pos.x === null) return null;
+
+  return (
+    <div style={{ position: "fixed", left: pos.x, top: pos.y, zIndex: 55, touchAction: "none" }}>
+      {/* Timer panel — anchored relative to button position */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.85, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, y: 20 }}
-            className="fixed bottom-48 right-5 w-80 rounded-2xl z-40 p-5"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
             style={{
+              position: "absolute",
+              bottom: panelAbove ? "60px" : "auto",
+              top: panelAbove ? "auto" : "60px",
+              left: panelLeft,
+              right: panelRight,
+              width: "min(320px, calc(100vw - 32px))",
               background: "rgba(10,15,30,0.98)",
               backdropFilter: "blur(20px)",
               border: "1px solid rgba(0,245,255,0.2)",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.5)"
+              boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
+              borderRadius: "1rem",
+              padding: "20px",
+              zIndex: 55,
             }}
           >
-            {/* Close */}
             <div className="flex items-center justify-between mb-4">
               <p className="font-cinzel text-sm font-semibold" style={{ color: "#00f5ff" }}>Prayer Focus Timer</p>
               <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white">
@@ -96,34 +128,24 @@ export default function PrayerFocusTimer() {
               </button>
             </div>
 
-            {/* Circular progress */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-28 h-28 mb-4">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
                   <motion.circle
-                    cx="50"
-                    cy="50"
-                    r="45"
-                    fill="none"
-                    stroke="#00f5ff"
-                    strokeWidth="3"
-                    strokeDasharray={283}
-                    strokeDashoffset={283 - (283 * progress) / 100}
+                    cx="50" cy="50" r="45" fill="none" stroke="#00f5ff" strokeWidth="3"
+                    strokeDasharray={283} strokeDashoffset={283 - (283 * progress) / 100}
                     strokeLinecap="round"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <p className="font-cinzel text-2xl font-bold text-white">{formatTime(timeLeft)}</p>
-                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
-                      {selectedDuration} min
-                    </p>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{selectedDuration} min</p>
                   </div>
                 </div>
               </div>
 
-              {/* Play/Pause */}
               <motion.button
                 onClick={() => setIsRunning(v => !v)}
                 whileTap={{ scale: 0.95 }}
@@ -134,38 +156,22 @@ export default function PrayerFocusTimer() {
                   border: isRunning ? "1px solid rgba(248,113,113,0.3)" : "1px solid rgba(0,245,255,0.3)"
                 }}
               >
-                {isRunning ? (
-                  <>
-                    <Pause className="w-3.5 h-3.5 inline mr-1.5" /> Pause
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3.5 h-3.5 inline mr-1.5 ml-0.5" /> Start
-                  </>
-                )}
+                {isRunning ? <><Pause className="w-3.5 h-3.5 inline mr-1.5" />Pause</> : <><Play className="w-3.5 h-3.5 inline mr-1.5 ml-0.5" />Start</>}
               </motion.button>
             </div>
 
-            {/* Duration selector */}
             {!isRunning && (
               <div className="space-y-3">
-                <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
-                  Duration
-                </p>
+                <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>Duration</p>
                 <div className="grid grid-cols-3 gap-2">
                   {DURATIONS.map(d => (
-                    <button
-                      key={d}
-                      onClick={() => handleDurationSelect(d)}
-                      disabled={isRunning}
+                    <button key={d} onClick={() => handleDurationSelect(d)}
                       className="py-2 rounded-lg text-xs font-cinzel transition-all"
                       style={{
                         background: selectedDuration === d ? "rgba(0,245,255,0.2)" : "rgba(255,255,255,0.05)",
                         color: selectedDuration === d ? "#00f5ff" : "rgba(255,255,255,0.4)",
                         border: selectedDuration === d ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
-                        opacity: isRunning ? 0.5 : 1
-                      }}
-                    >
+                      }}>
                       {d}m
                     </button>
                   ))}
@@ -173,7 +179,6 @@ export default function PrayerFocusTimer() {
               </div>
             )}
 
-            {/* Chime toggle */}
             <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
               <p className="text-[10px] font-inter flex items-center gap-2" style={{ color: "rgba(255,255,255,0.4)" }}>
                 <Volume2 className="w-3 h-3" /> Chime plays when timer ends
@@ -182,6 +187,24 @@ export default function PrayerFocusTimer() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Floating drag button */}
+      <motion.button
+        ref={btnRef}
+        onClick={() => !dragging.current && setIsOpen(v => !v)}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        whileTap={{ scale: 0.92 }}
+        className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing select-none"
+        style={{
+          background: isRunning ? "linear-gradient(135deg, #f87171, #f97316)" : "rgba(0,245,255,0.1)",
+          border: isRunning ? "1px solid #f87171" : "1px solid rgba(0,245,255,0.25)",
+          touchAction: "none",
+        }}
+      >
+        <Clock className="w-5 h-5 pointer-events-none" style={{ color: isRunning ? "#fff" : "#00f5ff" }} />
+      </motion.button>
     </div>
   );
 }
