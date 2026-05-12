@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download, Library as LibraryIcon } from "lucide-react";
+import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download, Library as LibraryIcon, FileText, Share2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
 import VerseNoteFolderManager from "@/components/library/VerseNoteFolderManager";
 import VersesCollectionManager from "@/components/library/VersesCollectionManager";
+import SocialShareModal from "@/components/library/SocialShareModal";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
@@ -27,25 +28,42 @@ export default function Library() {
   const [notes, setNotes] = useState([]);
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [hlDevotional, setHlDevotional] = useState(null); // { ref, text, loading }
+  const [hlDevotional, setHlDevotional] = useState(null);
   const [hlDevLoading, setHlDevLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [shareItem, setShareItem] = useState(null); // { verseRef, verseText }
 
   const exportLibrary = async () => {
     setExporting(true);
     try {
       const res = await base44.functions.invoke("exportLibraryData", {});
-      // The function returns a text file — trigger download via blob
       const text = typeof res.data === "string" ? res.data : JSON.stringify(res.data, null, 2);
       const blob = new Blob([text], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `veritas-library-${new Date().toISOString().slice(0, 10)}.txt`;
+      a.download = `veritas-biblioteca-${new Date().toISOString().slice(0, 10)}.txt`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {}
     setExporting(false);
+  };
+
+  const exportPdf = async () => {
+    setExportingPdf(true);
+    try {
+      const res = await base44.functions.invoke("exportLibraryPDF", {});
+      // response is raw PDF bytes via axios arraybuffer
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `veritas-biblioteca-${new Date().toISOString().slice(0, 10)}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {}
+    setExportingPdf(false);
   };
 
   useEffect(() => {
@@ -160,10 +178,15 @@ export default function Library() {
               <p className="text-xs text-muted-foreground capitalize">{hl.color} highlight · {hl.translation}</p>
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={() => generateHighlightDevotional(hl)} title="Generate devotional"
+              <button onClick={() => generateHighlightDevotional(hl)} title="Reflexión devocional"
                 className="p-1.5 rounded-lg transition-colors hover:bg-purple-400/10"
                 style={{ color: "#a78bfa" }}>
                 <Sparkles className="w-3.5 h-3.5" />
+              </button>
+              <button onClick={() => setShareItem({ verseRef: hl.verse_ref, verseText: "" })} title="Compartir"
+                className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
+                style={{ color: "#00f5ff" }}>
+                <Share2 className="w-3.5 h-3.5" />
               </button>
               <a href={`/read?book=${hl.book}&chapter=${hl.chapter}`}
                 className="text-xs text-cyan hover:text-cyan/80 p-1.5 rounded-lg hover:bg-cyan/10 transition-colors">
@@ -197,6 +220,11 @@ export default function Library() {
               </p>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
+              <button onClick={() => setShareItem({ verseRef: note.verse_ref, verseText: note.note_text })} title="Compartir"
+                className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
+                style={{ color: "#00f5ff" }}>
+                <Share2 className="w-3.5 h-3.5" />
+              </button>
               <a href={`/read?book=${note.book}&chapter=${note.chapter}`}
                 className="text-xs text-cyan hover:text-cyan/80 p-1.5 rounded-lg hover:bg-cyan/10 transition-colors">
                 <BookOpen className="w-3.5 h-3.5" />
@@ -219,15 +247,26 @@ export default function Library() {
           <h1 className="font-cinzel text-2xl font-bold mb-1">My Library</h1>
           <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
         </div>
-        <button
-          onClick={exportLibrary}
-          disabled={exporting}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
-          style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}
-        >
-          {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-          Export
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={exportPdf}
+            disabled={exportingPdf}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
+            style={{ background: "rgba(167,139,250,0.08)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.2)" }}
+          >
+            {exportingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+            <span className="hidden sm:inline">PDF</span>
+          </button>
+          <button
+            onClick={exportLibrary}
+            disabled={exporting}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
+            style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}
+          >
+            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            <span className="hidden sm:inline">Texto</span>
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -259,6 +298,17 @@ export default function Library() {
         )}
         {activeTab === "audio" && <AudioStreakChart />}
       </div>
+
+      {/* Social Share Modal */}
+      <AnimatePresence>
+        {shareItem && (
+          <SocialShareModal
+            verseRef={shareItem.verseRef}
+            verseText={shareItem.verseText}
+            onClose={() => setShareItem(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

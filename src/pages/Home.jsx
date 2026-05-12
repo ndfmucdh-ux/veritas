@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronRight } from "lucide-react";
+import { BookOpen, ChevronRight, GraduationCap, Map, Compass, Palette } from "lucide-react";
 import HeroVerseSlider from "@/components/home/HeroVerseSlider.jsx";
 import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
@@ -14,7 +14,7 @@ import { getLevelForXP, LEVELS } from "@/lib/bibleData";
 import { pageTransition } from "@/hooks/useAnimations";
 import { useLang } from "@/lib/LanguageContext";
 
-const GREETING_EMOJIS = { morning: "🌅", afternoon: "☀️", evening: "🌙" };
+// Period icons replaced with avatar — no emojis needed
 
 export default function Home() {
   const { t } = useLang();
@@ -41,7 +41,6 @@ export default function Home() {
   const hour = new Date().getHours();
   const period = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
   const greetingKey = period === "morning" ? "goodMorning" : period === "afternoon" ? "goodAfternoon" : "goodEvening";
-  const emoji = GREETING_EMOJIS[period];
 
   const displayName = sessionStorage.getItem("veritas_display_name") || user?.full_name || "";
   const displayAvatar = sessionStorage.getItem("veritas_avatar_url") || user?.avatar_url || null;
@@ -61,7 +60,7 @@ export default function Home() {
           style={{ background: "radial-gradient(ellipse, rgba(255,215,0,0.03) 0%, transparent 70%)" }} />
       </div>
 
-      <div className="relative z-10 px-4 pt-7 pb-28 space-y-7 max-w-2xl mx-auto">
+      <div className="relative z-10 px-4 pt-4 pb-28 space-y-7 max-w-2xl mx-auto">
 
         {/* Greeting */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
@@ -74,17 +73,19 @@ export default function Home() {
                 "{t.slogan}"
               </p>
             </div>
-            {/* Avatar — right side */}
-            {displayAvatar ? (
-              <img src={displayAvatar} alt="avatar"
-                className="w-9 h-9 rounded-xl object-cover flex-shrink-0"
-                style={{ border: "1.5px solid rgba(0,245,255,0.25)", boxShadow: "0 0 10px rgba(0,245,255,0.12)" }} />
-            ) : (
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-base font-bold"
-                style={{ background: "rgba(0,245,255,0.1)", border: "1.5px solid rgba(0,245,255,0.2)", color: "#00f5ff" }}>
-                {displayName?.[0]?.toUpperCase() || emoji}
-              </div>
-            )}
+            {/* Avatar — right side (links to profile) */}
+            <a href="/profile">
+              {displayAvatar ? (
+                <img src={displayAvatar} alt="avatar"
+                  className="w-9 h-9 rounded-xl object-cover flex-shrink-0"
+                  style={{ border: "1.5px solid rgba(251,191,36,0.3)", boxShadow: "0 0 10px rgba(251,191,36,0.15)" }} />
+              ) : (
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-base font-bold"
+                  style={{ background: "rgba(251,191,36,0.1)", border: "1.5px solid rgba(251,191,36,0.2)", color: "#fbbf24" }}>
+                  {displayName?.[0]?.toUpperCase() || "V"}
+                </div>
+              )}
+            </a>
           </div>
         </motion.div>
 
@@ -131,21 +132,24 @@ export default function Home() {
           <SectionHeader label={t.quickAccess} />
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: t.studyCenter, emoji: "📚", path: "/study-center", color: "rgba(0,245,255,0.08)", border: "rgba(0,245,255,0.15)" },
-              { label: t.readingPlans, emoji: "📖", path: "/plans", color: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)" },
-              { label: t.discover, emoji: "✨", path: "/discover", color: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.15)" },
-              { label: t.verseArt, emoji: "🖼️", path: "/verse-art", color: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.15)" },
-            ].map((s, i) => (
+              { label: t.studyCenter, icon: GraduationCap, path: "/study-center", color: "#00f5ff", bg: "rgba(0,245,255,0.08)", border: "rgba(0,245,255,0.15)" },
+              { label: t.readingPlans, icon: Map, path: "/plans", color: "#a78bfa", bg: "rgba(167,139,250,0.08)", border: "rgba(167,139,250,0.15)" },
+              { label: t.discover, icon: Compass, path: "/discover", color: "#fbbf24", bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.15)" },
+              { label: t.verseArt, icon: Palette, path: "/verse-art", color: "#f472b6", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.15)" },
+            ].map((s, i) => {
+              const Icon = s.icon;
+              return (
               <Link key={s.path} to={s.path}>
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.3 + i * 0.05 }} whileTap={{ scale: 0.96 }}
                   className="flex flex-col gap-2 rounded-2xl px-4 py-5"
-                  style={{ background: s.color, border: `1px solid ${s.border}` }}>
-                  <span className="text-2xl">{s.emoji}</span>
+                  style={{ background: s.bg, border: `1px solid ${s.border}` }}>
+                  <Icon className="w-6 h-6" style={{ color: s.color }} />
                   <span className="font-cinzel text-sm font-semibold text-white/80">{s.label}</span>
                 </motion.div>
               </Link>
-            ))}
+            );})
+          }
           </div>
         </motion.div>
 

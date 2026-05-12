@@ -1,17 +1,38 @@
 import { useLocation, Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Star, Target, Zap } from "lucide-react";
+import { Star, Target } from "lucide-react";
 import BottomNav from "./BottomNav.jsx";
 import SideNav from "./SideNav.jsx";
 import FloatingActionButton from "./FloatingActionButton.jsx";
 import VeritasLogo from "@/components/ui/VeritasLogo";
 import { useLang } from "@/lib/LanguageContext";
 import AssistantButton from "@/components/assistant/AssistantButton";
+import { base44 } from "@/api/base44Client";
+import { useState, useEffect } from "react";
 
 export default function AppLayout() {
   const location = useLocation();
   const isImmersive = location.pathname.startsWith("/read") && location.search.includes("immersive=1");
+  const [avatarUrl, setAvatarUrl] = useState(() => sessionStorage.getItem("veritas_avatar_url") || null);
+  const [displayName, setDisplayName] = useState(() => sessionStorage.getItem("veritas_display_name") || "");
+
+  useEffect(() => {
+    base44.auth.me().then(u => {
+      if (u) {
+        const name = sessionStorage.getItem("veritas_display_name") || u.full_name || "";
+        const avatar = sessionStorage.getItem("veritas_avatar_url") || u.avatar_url || null;
+        setDisplayName(name);
+        setAvatarUrl(avatar);
+        if (u.full_name && !sessionStorage.getItem("veritas_display_name")) {
+          sessionStorage.setItem("veritas_display_name", u.full_name);
+        }
+        if (u.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
+          sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
+        }
+      }
+    }).catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -40,7 +61,21 @@ export default function AppLayout() {
             <LangToggle />
             <NavPill to="/plans" icon={Target} label="Plans" />
             <NavPill to="/discover" icon={Star} label="Discover" />
-            <NavPill to="/profile" icon={Zap} iconOnly />
+            <Link to="/profile">
+              <motion.div whileTap={{ scale: 0.92 }} whileHover={{ scale: 1.05 }}
+                className="ml-1 flex-shrink-0">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={displayName}
+                    className="w-8 h-8 rounded-xl object-cover"
+                    style={{ border: "1.5px solid rgba(251,191,36,0.4)", boxShadow: "0 0 10px rgba(251,191,36,0.15)" }} />
+                ) : (
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center font-cinzel text-sm font-bold"
+                    style={{ background: "rgba(251,191,36,0.12)", border: "1.5px solid rgba(251,191,36,0.3)", color: "#fbbf24" }}>
+                    {displayName?.[0]?.toUpperCase() || "V"}
+                  </div>
+                )}
+              </motion.div>
+            </Link>
           </div>
         </header>
       )}

@@ -21,7 +21,9 @@ export default function Read() {
   const params = new URLSearchParams(window.location.search);
   const [book, setBook] = useState(params.get("book") || "John");
   const [chapter, setChapter] = useState(Number(params.get("chapter")) || 3);
-  const [translation, setTranslation] = useState(params.get("translation") || "KJV");
+  const [translation, setTranslation] = useState(
+    params.get("translation") || localStorage.getItem("veritas_translation") || "KJV"
+  );
   const targetVerse = Number(params.get("verse")) || null;
   const [verses, setVerses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -192,7 +194,7 @@ export default function Read() {
               chapter={chapter}
               translation={translation}
               onNavigate={handleNavigate}
-              onTranslationChange={(t) => { setTranslation(t); }}
+              onTranslationChange={(t) => { setTranslation(t); localStorage.setItem("veritas_translation", t); }}
             />
           </div>
         </div>

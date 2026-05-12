@@ -29,6 +29,7 @@ import PrayerJournal from './pages/PrayerJournal';
 import CommunityHub from './pages/CommunityHub';
 import NotificationStudio from './pages/NotificationStudio';
 import AudioDashboard from './pages/AudioDashboard';
+import ForYouSection from './pages/ForYouSection';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -77,6 +78,7 @@ const AuthenticatedApp = () => {
           <Route path="/community" element={<CommunityHub />} />
           <Route path="/notification-studio" element={<NotificationStudio />} />
           <Route path="/audio-dashboard" element={<AudioDashboard />} />
+          <Route path="/for-you/:category" element={<ForYouSection />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

@@ -45,11 +45,11 @@ const T = {
     pickUp: "Continúa donde lo dejaste",
     verseArt: "Arte de Versículos",
     featuredVerses: [
-      { ref: "Juan 3:16", text: "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.", theme: "amor" },
+      { ref: "Juan 3:16", text: "Porque de tal manera amó el Padre al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.", theme: "amor" },
       { ref: "Salmo 23:1", text: "El Señor es mi pastor; nada me faltará.", theme: "confianza" },
       { ref: "Filipenses 4:13", text: "Todo lo puedo en Cristo que me fortalece.", theme: "fortaleza" },
       { ref: "Proverbios 3:5-6", text: "Confía en el Señor con todo tu corazón, y no te apoyes en tu propia prudencia.", theme: "sabiduría" },
-      { ref: "Romanos 8:28", text: "Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien.", theme: "esperanza" },
+      { ref: "Romanos 8:28", text: "Y sabemos que a los que aman al Padre, todas las cosas les ayudan a bien.", theme: "esperanza" },
     ],
   },
 };
