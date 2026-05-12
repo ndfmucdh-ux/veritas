@@ -20,6 +20,13 @@
     "label": {
       "type": "string",
       "description": "Optional custom label"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User-defined tags e.g. Comfort, Inspiration, Life Events"
     }
   },
   "required": [
