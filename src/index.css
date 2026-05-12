@@ -46,6 +46,7 @@
     @apply bg-background text-foreground font-inter;
     background: radial-gradient(ellipse at top, hsl(222, 47%, 9%) 0%, hsl(222, 47%, 4%) 100%);
     min-height: 100vh;
+    overscroll-behavior-x: none;
   }
 
   h1, h2, h3 {

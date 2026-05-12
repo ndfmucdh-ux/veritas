@@ -80,7 +80,7 @@ export default function AppLayout() {
         </header>
       )}
 
-      <main className="flex-1 pt-[57px]">
+      <main className="flex-1 pt-[57px]" style={{ overscrollBehaviorX: "none" }}>
         <Outlet />
       </main>
 
