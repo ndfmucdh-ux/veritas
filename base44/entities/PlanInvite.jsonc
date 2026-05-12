@@ -1,0 +1,34 @@
+{
+  "name": "PlanInvite",
+  "type": "object",
+  "properties": {
+    "plan_title": {
+      "type": "string"
+    },
+    "plan_category": {
+      "type": "string"
+    },
+    "invitee_email": {
+      "type": "string"
+    },
+    "inviter_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan_title",
+    "invitee_email"
+  ]
+}

@@ -8,6 +8,7 @@ import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
 import PrayerJournalSummary from "@/components/prayer/PrayerJournalSummary";
 import PrayerStatsChart from "@/components/prayer/PrayerStatsChart";
 import { getPrayerIdFromUrl } from "@/components/prayer/PrayerNotificationDeepLink";
+import TestimoniesArchive from "@/components/prayer/TestimoniesArchive";
 
 export default function PrayerJournal() {
   const [prayers, setPrayers] = useState([]);
@@ -15,7 +16,7 @@ export default function PrayerJournal() {
   const [showModal, setShowModal] = useState(false);
   const [selectedVerse, setSelectedVerse] = useState("Psalm 23");
   const [filter, setFilter] = useState("all");
-  const [view, setView] = useState("active"); // "active" | "answered"
+  const [view, setView] = useState("active"); // "active" | "answered" | "testimonies"
   const [answeringId, setAnsweringId] = useState(null);
   const [answerNote, setAnswerNote] = useState("");
 
@@ -61,7 +62,7 @@ export default function PrayerJournal() {
 
   const activePrayers = prayers.filter(p => !p.answered);
   const answeredPrayers = prayers.filter(p => p.answered);
-  const filteredPrayers = (view === "answered" ? answeredPrayers : activePrayers).filter(p => filter === "all" || p.mood === filter);
+  const filteredPrayers = (view === "testimonies" ? answeredPrayers : view === "answered" ? answeredPrayers : activePrayers).filter(p => filter === "all" || p.mood === filter);
 
   const moods = [
     { id: "all", label: "All", icon: "📚", color: "#a78bfa" },
@@ -113,6 +114,11 @@ export default function PrayerJournal() {
             style={{ background: view === "answered" ? "rgba(52,211,153,0.12)" : "rgba(255,255,255,0.05)", color: view === "answered" ? "#34d399" : "rgba(255,255,255,0.4)", border: view === "answered" ? "1px solid rgba(52,211,153,0.25)" : "1px solid transparent" }}>
             <CheckCircle2 className="w-3.5 h-3.5" /> Answered ({answeredPrayers.length})
           </button>
+          <button onClick={() => setView("testimonies")}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-cinzel transition-all"
+            style={{ background: view === "testimonies" ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.05)", color: view === "testimonies" ? "#fbbf24" : "rgba(255,255,255,0.4)", border: view === "testimonies" ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent" }}>
+            <History className="w-3.5 h-3.5" /> Testimonies
+          </button>
         </div>
 
         {/* Mood filter */}
@@ -134,17 +140,23 @@ export default function PrayerJournal() {
           ))}
         </div>
 
-        {/* Prayers list */}
-        {loading ? (
+        {/* Testimonies Archive View */}
+        {view === "testimonies" && !loading && (
+          <TestimoniesArchive prayers={answeredPrayers} />
+        )}
+
+        {view !== "testimonies" && loading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-6 h-6 animate-spin text-cyan" />
           </div>
-        ) : filteredPrayers.length === 0 ? (
+        )}
+        {view !== "testimonies" && !loading && filteredPrayers.length === 0 && (
           <div className="text-center py-12">
             <Heart className="w-8 h-8 mx-auto text-white/20 mb-2" />
             <p className="text-white/40">No prayers yet. Start journaling...</p>
           </div>
-        ) : (
+        )}
+        {view !== "testimonies" && !loading && filteredPrayers.length > 0 && (
           <div className="space-y-3">
             <AnimatePresence>
               {filteredPrayers.map((prayer, idx) => {

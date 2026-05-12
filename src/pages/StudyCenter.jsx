@@ -5,6 +5,7 @@ import TranslationSplitView from "@/components/study/TranslationSplitView";
 import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
 import CrossReferencePanel from "@/components/study/CrossReferencePanel";
 import MemorizeMode from "@/components/study/MemorizeMode";
+import FlashcardStudy from "@/components/study/FlashcardStudy";
 import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
@@ -164,6 +165,7 @@ export default function StudyCenter() {
              { id: "sidebyside", label: "Side by Side", icon: "⚡" },
              { id: "templates", label: "My Templates", icon: "📝" },
              { id: "memorize", label: "Memorize", icon: "🎯" },
+           { id: "flashcards", label: "Flashcards", icon: "🃏" },
            ].map(tab => (
             <motion.button key={tab.id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
@@ -200,6 +202,11 @@ export default function StudyCenter() {
         {/* ── MEMORIZE TAB ── */}
         {activeTab === "memorize" && (
           <MemorizeMode book={selectedBook} chapter={selectedChapter} />
+        )}
+
+        {/* ── FLASHCARDS TAB ── */}
+        {activeTab === "flashcards" && (
+          <FlashcardStudy />
         )}
 
         {/* ── SIDE BY SIDE TAB ── */}

@@ -1,0 +1,77 @@
+{
+  "name": "Flashcard",
+  "type": "object",
+  "properties": {
+    "verse_ref": {
+      "type": "string",
+      "description": "e.g. John 3:16 KJV"
+    },
+    "front": {
+      "type": "string",
+      "description": "Reference shown on front of card"
+    },
+    "back": {
+      "type": "string",
+      "description": "Full verse text or note content"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "highlight",
+        "note",
+        "manual"
+      ],
+      "default": "manual"
+    },
+    "source_color": {
+      "type": "string",
+      "description": "Highlight color if from highlight"
+    },
+    "deck": {
+      "type": "string",
+      "default": "General",
+      "description": "Deck/category name"
+    },
+    "interval_days": {
+      "type": "number",
+      "default": 1,
+      "description": "SRS next review interval"
+    },
+    "ease_factor": {
+      "type": "number",
+      "default": 2.5,
+      "description": "SRS ease factor"
+    },
+    "next_review": {
+      "type": "string",
+      "format": "date",
+      "description": "YYYY-MM-DD next review date"
+    },
+    "repetitions": {
+      "type": "number",
+      "default": 0
+    },
+    "last_quality": {
+      "type": "number",
+      "description": "Last response quality 0-5"
+    }
+  },
+  "required": [
+    "front",
+    "back"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

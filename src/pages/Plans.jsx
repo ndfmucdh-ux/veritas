@@ -6,6 +6,7 @@ import ReadingCalendar from "@/components/plans/ReadingCalendar";
 import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
 import ReadingStatsChart from "@/components/plans/ReadingStatsChart";
 import { base44 } from "@/api/base44Client";
+import PlanInvitePanel from "@/components/plans/PlanInvitePanel";
 
 // Real-life Unsplash photo headers per plan
 const PRESET_PLANS = [
@@ -519,6 +520,13 @@ export default function Plans() {
               </p>
             </div>
           )}
+
+          {/* Invite friends & progress comments */}
+          <PlanInvitePanel
+            planTitle={activePlan.title}
+            planCategory={activePlan.category}
+            accentColor={activePlan.accent}
+          />
         </div>
       </div>
     );

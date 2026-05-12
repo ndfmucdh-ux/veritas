@@ -1,0 +1,26 @@
+{
+  "name": "PlanProgressComment",
+  "type": "object",
+  "properties": {
+    "plan_title": {
+      "type": "string"
+    },
+    "day": {
+      "type": "number"
+    },
+    "comment_text": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan_title",
+    "day",
+    "comment_text"
+  ]
+}
