@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote,
+  Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote, Image,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
   BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail
@@ -21,11 +21,12 @@ import MonthlyProgressChart from "@/components/profile/MonthlyProgressChart";
 import ReadingCalendar from "@/components/profile/ReadingCalendar";
 import SharedReadingPlan from "@/components/community/SharedReadingPlan";
 import EmailEngagementDashboard from "@/components/profile/EmailEngagementDashboard";
+import HighlightImageShare from "@/components/verse/HighlightImageShare";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
 
-const TABS = ["overview", "library", "stats", "emails", "settings"];
+const ALL_TABS = ["overview", "library", "stats", "emails", "settings"];
 const TAB_LABELS = { overview: "Overview", library: "Library", stats: "Growth", emails: "Emails", settings: "Settings" };
 const TAB_ICONS = { overview: Award, library: BookMarked, stats: BarChart3, emails: Mail, settings: Shield };
 
@@ -55,6 +56,7 @@ export default function Profile() {
   const [heroUrl, setHeroUrl] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
+  const [shareHighlight, setShareHighlight] = useState(null);
 
   const avatarInputRef = useRef(null);
   const heroInputRef = useRef(null);
@@ -153,6 +155,9 @@ export default function Profile() {
 
 
 
+  const isAdmin = user?.role === "admin";
+  const TABS = ALL_TABS.filter(t => t !== "emails" || isAdmin);
+
   const xp = xpData?.total_xp || 0;
   const level = getLevelForXP(xp);
   const nextLevel = LEVELS.find(l => l.minXP > xp);
@@ -171,6 +176,9 @@ export default function Profile() {
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       <LevelUpAnimation level={levelUpData} show={showLevelUp} onComplete={() => setShowLevelUp(false)} />
+      <AnimatePresence>
+        {shareHighlight && <HighlightImageShare highlight={shareHighlight} onClose={() => setShareHighlight(null)} />}
+      </AnimatePresence>
       {/* ── Hero Header ── */}
       {/* Default hero is the beautiful deep-space starfield photo — users can replace with their own */}
       <div className="relative h-52 overflow-hidden">
@@ -395,7 +403,15 @@ export default function Profile() {
                 {highlights.length === 0
                   ? <EmptyMsg icon="✨" text="No highlights yet" />
                   : highlights.slice(0, 6).map(hl => (
-                    <LibraryRow key={hl.id} verseRef={hl.verse_ref} sub={`${hl.color} · ${hl.translation}`} href={`/read?book=${hl.book}&chapter=${hl.chapter}`} color="#00f5ff" />
+                    <div key={hl.id} className="flex items-center gap-2">
+                      <LibraryRow verseRef={hl.verse_ref} sub={`${hl.color} · ${hl.translation}`} href={`/read?book=${hl.book}&chapter=${hl.chapter}`} color="#00f5ff" />
+                      <button onClick={() => setShareHighlight(hl)}
+                        className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center"
+                        style={{ background: "rgba(0,245,255,0.07)", border: "1px solid rgba(0,245,255,0.15)" }}
+                        title="Create verse art">
+                        <Zap className="w-3.5 h-3.5" style={{ color: "#00f5ff" }} />
+                      </button>
+                    </div>
                   ))
                 }
                 {highlights.length > 6 && <SeeAll to="/library" />}

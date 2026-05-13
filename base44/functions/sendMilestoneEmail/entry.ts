@@ -49,10 +49,10 @@ function buildMilestoneEmail({ name, streakDays, chaptersRead }) {
       style="width:100%;max-width:480px;display:block;height:220px;object-fit:cover;object-position:center top;"/>
   </div>
 
-  <!-- LOGO + BRAND — below image, fully visible -->
-  <div style="background:#0f0d0a;text-align:center;padding:24px 24px 8px;">
-    <img src="${LOGO}" alt="Veritas" width="64" height="64"
-      style="border-radius:50%;border:2px solid ${accentColor};box-shadow:0 0 20px rgba(201,168,76,0.35);display:inline-block;"/>
+  <!-- LOGO — overlapping hero/body boundary -->
+  <div style="background:#0f0d0a;text-align:center;padding:0 24px 8px;margin-top:-44px;position:relative;z-index:2;">
+    <img src="${LOGO}" alt="Veritas" width="80" height="80"
+      style="border-radius:50%;border:3px solid ${accentColor};box-shadow:0 0 28px ${accentColor}55;display:inline-block;background:#0f0d0a;"/>
     <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:10px 0 0;">VERITAS · THE WORD</p>
   </div>
 

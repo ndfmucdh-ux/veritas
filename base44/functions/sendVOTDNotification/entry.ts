@@ -68,11 +68,11 @@ function buildEmailHtml({ name, verse_ref, verse_text, reflection, theme, date, 
       style="width:100%;max-width:480px;display:block;height:240px;object-fit:cover;object-position:center center;"/>
   </div>
 
-  <!-- LOGO + BRAND — fully below image, never cropped -->
-  <div style="background:#0f0d0a;text-align:center;padding:22px 24px 4px;">
-    <img src="${LOGO}" alt="Veritas" width="68" height="68"
-      style="border-radius:50%;border:2px solid #c9a84c;box-shadow:0 0 22px rgba(201,168,76,0.3);display:inline-block;"/>
-    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin:8px 0 0;">VERITAS · THE WORD</p>
+  <!-- LOGO — overlapping hero/body boundary -->
+  <div style="background:#0f0d0a;text-align:center;padding:0 24px 4px;margin-top:-44px;position:relative;z-index:2;">
+    <img src="${LOGO}" alt="Veritas" width="80" height="80"
+      style="border-radius:50%;border:3px solid #c9a84c;box-shadow:0 0 28px rgba(201,168,76,0.4);display:inline-block;background:#0f0d0a;"/>
+    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin:10px 0 0;">VERITAS · THE WORD</p>
   </div>
 
   <!-- DATE + THEME LABEL -->

@@ -58,37 +58,73 @@ export default function HeroVerseSlider() {
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
-    const cacheKey = `veritas_votd_${today}`;
+    const cacheKey = `veritas_votd3_${today}_${lang}`;
     const cached = sessionStorage.getItem(cacheKey);
 
     if (cached) {
       try {
-        const d = JSON.parse(cached);
-        if (d?.text && lang === "en") {
-          setSlides([
-            { verse_ref: d.verse_ref || d.ref, text: d.text, reflection: d.reflection, theme: d.theme, photo: FALLBACK_VERSES.en[0].photo },
-            ...FALLBACK_VERSES.en.slice(1),
-          ]);
+        const slides = JSON.parse(cached);
+        if (Array.isArray(slides) && slides.length > 0) {
+          setSlides(slides);
+          setLoading(false);
+          return;
         }
       } catch {}
-      setLoading(false);
-      return;
     }
 
-    base44.functions.invoke("getVerseOfTheDay", {})
+    // Generate 3 unique daily verses from AI using the date as seed
+    const THEME_PHOTOS = {
+      hope: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
+      faith: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80",
+      love: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
+      peace: "https://images.unsplash.com/photo-1439405328-88d5d2a8f36d?w=1200&q=80",
+      strength: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
+      wisdom: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
+      grace: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+      joy: "https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1200&q=80",
+      default: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
+    };
+
+    const langLabel = lang === "es" ? "Spanish" : "English";
+    base44.integrations.Core.InvokeLLM({
+      prompt: `Today is ${today}. Generate exactly 3 different, meaningful Bible verses for a daily slider in ${langLabel}. 
+Each verse must have a different theme. Return JSON with array "verses" containing 3 items, each with: ref, text (full verse text in ${langLabel}), reflection (1-2 sentences in ${langLabel}), theme (one word: hope/faith/love/peace/strength/wisdom/grace/joy).
+Do NOT repeat verses used on previous days. Use the date as a seed for variety.`,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          verses: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                ref: { type: "string" },
+                text: { type: "string" },
+                reflection: { type: "string" },
+                theme: { type: "string" }
+              }
+            }
+          }
+        }
+      }
+    })
       .then(res => {
-        const d = res.data?.dailyVerse || res.data;
-        if (d?.text && lang === "en") {
-          sessionStorage.setItem(cacheKey, JSON.stringify(d));
-          setSlides([
-            { verse_ref: d.verse_ref || d.ref, text: d.text, reflection: d.reflection, theme: d.theme, photo: FALLBACK_VERSES.en[0].photo },
-            ...FALLBACK_VERSES.en.slice(1),
-          ]);
+        const verses = res?.verses;
+        if (Array.isArray(verses) && verses.length >= 3) {
+          const built = verses.slice(0, 3).map(v => ({
+            verse_ref: v.ref,
+            text: v.text,
+            reflection: v.reflection,
+            theme: v.theme,
+            photo: THEME_PHOTOS[v.theme?.toLowerCase()] || THEME_PHOTOS.default,
+          }));
+          sessionStorage.setItem(cacheKey, JSON.stringify(built));
+          setSlides(built);
         }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     autoRef.current = setInterval(() => setCurrent(c => (c + 1) % slides.length), 7000);
