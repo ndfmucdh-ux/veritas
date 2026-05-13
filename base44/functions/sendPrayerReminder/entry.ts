@@ -35,7 +35,7 @@ function buildPrayerReminderEmail({ name, daysSince }) {
 
   <!-- LABEL -->
   <div style="text-align:center;padding:12px 24px 4px;">
-    <span style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">&#128591; HORA DE ORAR</span>
+    <span style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">HORA DE ORAR</span>
   </div>
 
   <!-- VERSE CARD -->

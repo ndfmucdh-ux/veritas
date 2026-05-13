@@ -35,7 +35,7 @@ function buildWeeklyReportEmail({ name, chaptersRead, highlightsCount, progressR
 
   <!-- LABEL -->
   <div style="text-align:center;padding:12px 24px 4px;">
-    <span style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">&#128214; RESUMEN SEMANAL</span>
+    <span style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">RESUMEN SEMANAL</span>
   </div>
 
   <!-- GREETING CARD -->
@@ -65,14 +65,14 @@ function buildWeeklyReportEmail({ name, chaptersRead, highlightsCount, progressR
   <!-- CHAPTERS READ -->
   ${chaptersHtml ? `
   <div style="margin:0 20px 16px;">
-    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin:0 0 8px;">📖 Capítulos leídos</p>
+    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin:0 0 8px;">Capítulos leídos</p>
     ${chaptersHtml}
   </div>` : ''}
 
   <!-- HIGHLIGHTS -->
   ${highlightsHtml ? `
   <div style="margin:0 20px 20px;">
-    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin:0 0 8px;">✨ Versículos destacados</p>
+    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin:0 0 8px;">Versículos destacados</p>
     ${highlightsHtml}
   </div>` : ''}
 

@@ -62,12 +62,24 @@ Deno.serve(async (req) => {
 
     await base44.entities.UserXP.update(xpRecord.id, updates);
 
+    // Fire streak milestone email for 7 and 30-day streaks
+    const newStreak = updates.streak_days || xpRecord.streak_days || 0;
+    const STREAK_MILESTONES = [7, 14, 21, 30, 60, 100, 365];
+    if (STREAK_MILESTONES.includes(newStreak) && updates.streak_days) {
+      // Call sendMilestoneEmail as service role — fire and forget
+      base44.asServiceRole.functions.invoke('sendMilestoneEmail', {
+        streakDays: newStreak,
+        preview: false,
+      }).catch(() => {});
+    }
+
     return Response.json({ 
       success: true, 
       new_xp: newXP, 
       new_level: newLevel,
       level_up: newLevel !== xpRecord.level,
-      streak: updates.streak_days || xpRecord.streak_days
+      streak: newStreak,
+      milestone_triggered: STREAK_MILESTONES.includes(updates.streak_days || 0),
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

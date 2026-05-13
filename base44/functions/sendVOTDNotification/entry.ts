@@ -79,7 +79,7 @@ function buildEmailHtml({ name, verse_ref, verse_text, reflection, theme, date, 
   <div style="text-align:center;padding:12px 24px 4px;">
     <div style="display:inline-block;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.28);border-radius:999px;padding:5px 20px;">
       <span style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">
-        📖 VERSÍCULO DEL DÍA · ${themeDisplay.toUpperCase()}
+        VERSÍCULO DEL DÍA · ${themeDisplay.toUpperCase()}
       </span>
     </div>
     <p style="font-family:Arial,sans-serif;font-size:10px;color:rgba(255,255,255,0.25);margin:8px 0 0;">${formattedDate}</p>
@@ -101,7 +101,7 @@ function buildEmailHtml({ name, verse_ref, verse_text, reflection, theme, date, 
   <!-- CTA BUTTON -->
   <div style="text-align:center;padding:16px 24px 28px;">
     <a href="${APP}/#/read" style="display:inline-block;background:#c9a84c;color:#0f0d0a;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.05em;padding:16px 52px;border-radius:50px;text-decoration:none;">
-      Abrir Biblia Interactiva →
+        Abrir en Veritas →
     </a>
   </div>
 
