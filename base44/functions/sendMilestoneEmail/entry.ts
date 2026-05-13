@@ -116,7 +116,7 @@ function buildMilestoneEmail({ name, streakDays, chaptersRead }) {
 
   <!-- CTA BUTTON -->
   <div style="text-align:center;padding:4px 24px 28px;">
-    <a href="${APP}" style="display:inline-block;background:${accentColor};color:#0f0d0a;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.06em;padding:16px 52px;border-radius:50px;text-decoration:none;">
+    <a href="${APP}/#/" style="display:inline-block;background:${accentColor};color:#0f0d0a;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.06em;padding:16px 52px;border-radius:50px;text-decoration:none;">
       ${milestone.icon} Continue Your Streak →
     </a>
   </div>

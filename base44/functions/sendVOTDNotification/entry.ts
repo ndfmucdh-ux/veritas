@@ -100,7 +100,7 @@ function buildEmailHtml({ name, verse_ref, verse_text, reflection, theme, date, 
 
   <!-- CTA BUTTON -->
   <div style="text-align:center;padding:16px 24px 28px;">
-    <a href="${APP}/read" style="display:inline-block;background:#c9a84c;color:#0f0d0a;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.05em;padding:16px 52px;border-radius:50px;text-decoration:none;">
+    <a href="${APP}/#/read" style="display:inline-block;background:#c9a84c;color:#0f0d0a;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.05em;padding:16px 52px;border-radius:50px;text-decoration:none;">
       Abrir Biblia Interactiva →
     </a>
   </div>

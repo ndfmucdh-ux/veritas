@@ -19,16 +19,19 @@ function buildDevotionalReminderEmail({ name, planName }) {
 <div style="max-width:480px;margin:0 auto;background:#1a1510;">
 
   <!-- HERO IMAGE -->
-  <div style="position:relative;width:100%;line-height:0;">
-    <img src="${HERO}" alt="Veritas" width="480" style="width:100%;max-width:480px;display:block;border-radius:0 0 28px 28px;"/>
-    <div style="text-align:center;margin-top:-44px;position:relative;z-index:2;">
-      <img src="${LOGO}" alt="Veritas" width="72" height="72"
-        style="border-radius:50%;border:3px solid #c9a84c;box-shadow:0 4px 20px rgba(0,0,0,0.6);display:inline-block;"/>
-    </div>
+  <div style="width:100%;line-height:0;">
+    <img src="${HERO}" alt="Veritas" width="480" style="width:100%;max-width:480px;display:block;height:220px;object-fit:cover;object-position:center center;"/>
+  </div>
+
+  <!-- LOGO + BRAND -->
+  <div style="background:#1a1510;text-align:center;padding:22px 24px 4px;">
+    <img src="${LOGO}" alt="Veritas" width="68" height="68"
+      style="border-radius:50%;border:2px solid #c9a84c;box-shadow:0 0 22px rgba(201,168,76,0.3);display:inline-block;"/>
+    <p style="font-family:Arial,sans-serif;font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:rgba(255,255,255,0.28);margin:8px 0 0;">VERITAS · THE WORD</p>
   </div>
 
   <!-- LABEL -->
-  <div style="text-align:center;padding:18px 24px 4px;">
+  <div style="text-align:center;padding:12px 24px 4px;">
     <span style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">&#128214; PLAN DEVOCIONAL</span>
   </div>
 
@@ -47,7 +50,7 @@ function buildDevotionalReminderEmail({ name, planName }) {
 
   <!-- CTA BUTTON -->
   <div style="text-align:center;padding:4px 24px 28px;">
-    <a href="${APP}/plans" style="display:inline-block;background:#c9a84c;color:#1a1205;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.04em;padding:16px 48px;border-radius:50px;text-decoration:none;">
+    <a href="${APP}/#/plans" style="display:inline-block;background:#c9a84c;color:#1a1205;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;letter-spacing:0.04em;padding:16px 48px;border-radius:50px;text-decoration:none;">
       Continuar Mi Plan →
     </a>
   </div>

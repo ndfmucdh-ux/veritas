@@ -6,7 +6,7 @@ const HERO = "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=600
 
 function buildReadingReminderEmail({ name, lastBook, lastChapter, devotionalPreview }) {
   const firstName = name?.split(" ")[0] || "Beloved";
-  const readLink = `${APP}/read?book=${encodeURIComponent(lastBook || "John")}&chapter=${lastChapter || 1}`;
+  const readLink = `${APP}/#/read?book=${encodeURIComponent(lastBook || "John")}&chapter=${lastChapter || 1}`;
   const refUpper = `${(lastBook || "John").toUpperCase()} ${lastChapter || 1}`;
 
   const previewSection = devotionalPreview ? `
