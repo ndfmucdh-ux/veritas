@@ -4,7 +4,7 @@ import {
   Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users
+  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
@@ -20,13 +20,14 @@ import EmblemBadges from "@/components/profile/EmblemBadges";
 import MonthlyProgressChart from "@/components/profile/MonthlyProgressChart";
 import ReadingCalendar from "@/components/profile/ReadingCalendar";
 import SharedReadingPlan from "@/components/community/SharedReadingPlan";
+import EmailEngagementDashboard from "@/components/profile/EmailEngagementDashboard";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
 
-const TABS = ["overview", "library", "stats", "settings"];
-const TAB_LABELS = { overview: "Overview", library: "Library", stats: "Growth", settings: "Settings" };
-const TAB_ICONS = { overview: Award, library: BookMarked, stats: BarChart3, settings: Shield };
+const TABS = ["overview", "library", "stats", "emails", "settings"];
+const TAB_LABELS = { overview: "Overview", library: "Library", stats: "Growth", emails: "Emails", settings: "Settings" };
+const TAB_ICONS = { overview: Award, library: BookMarked, stats: BarChart3, emails: Mail, settings: Shield };
 
 // Fake reading data for the chart (last 7 days)
 const buildChartData = (chapters) => {
@@ -470,6 +471,15 @@ export default function Profile() {
                     </div>
                   ))}
                 </div>
+              </Section>
+            </div>
+          )}
+
+          {/* ── EMAILS TAB ── */}
+          {activeTab === "emails" && (
+            <div className="px-5 space-y-5">
+              <Section label="Email Engagement" icon={Mail}>
+                <EmailEngagementDashboard />
               </Section>
             </div>
           )}
