@@ -16,6 +16,7 @@ import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
 import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
+import ChapterAudioPlayer from "@/components/reader/ChapterAudioPlayer";
 
 
 export default function Read() {
@@ -418,6 +419,11 @@ export default function Read() {
           />
         )}
       </AnimatePresence>
+
+      {/* Chapter Audio Player */}
+      {!loading && verses.length > 0 && (
+        <ChapterAudioPlayer book={book} chapter={chapter} translation={translation} verses={verses} />
+      )}
 
       {/* Scroll to top */}
       <AnimatePresence>

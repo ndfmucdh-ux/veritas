@@ -188,15 +188,18 @@ export default function PrayerJournal() {
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1">
                         {!prayer.answered && view === "active" && (
                           <motion.button whileTap={{ scale: 0.9 }} onClick={() => setAnsweringId(prayer.id === answeringId ? null : prayer.id)}
-                            className="p-1.5 rounded-lg transition-colors" style={{ color: "#34d399" }} title="Mark as answered">
-                            <CheckCircle2 className="w-4 h-4" />
+                            className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-cinzel transition-colors"
+                            style={{ background: "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.2)" }}
+                            title="Mark as answered">
+                            <CheckCircle2 className="w-3 h-3" /> Answered
                           </motion.button>
                         )}
-                        <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleDelete(prayer.id)}>
-                          <Trash2 className="w-4 h-4 text-red-500/60" />
+                        <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleDelete(prayer.id)}
+                          className="p-1.5 rounded-lg opacity-40 hover:opacity-80 transition-opacity">
+                          <Trash2 className="w-3.5 h-3.5 text-red-400" />
                         </motion.button>
                       </div>
                     </div>

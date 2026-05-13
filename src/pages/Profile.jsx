@@ -22,6 +22,7 @@ import ReadingCalendar from "@/components/profile/ReadingCalendar";
 import SharedReadingPlan from "@/components/community/SharedReadingPlan";
 import EmailEngagementDashboard from "@/components/profile/EmailEngagementDashboard";
 import HighlightImageShare from "@/components/verse/HighlightImageShare";
+import AccountSettings from "@/components/profile/AccountSettings";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -155,7 +156,8 @@ export default function Profile() {
 
 
 
-  const isAdmin = user?.role === "admin";
+  // role may be at top-level or inside data sub-object depending on auth method
+  const isAdmin = user?.role === "admin" || user?.data?.role === "admin";
   const TABS = ALL_TABS.filter(t => t !== "emails" || isAdmin);
 
   const xp = xpData?.total_xp || 0;
@@ -503,6 +505,10 @@ export default function Profile() {
           {/* ── SETTINGS TAB ── */}
           {activeTab === "settings" && (
             <div className="px-5 space-y-5">
+              <Section label="Account Settings" icon={Shield}>
+                <AccountSettings user={user} />
+              </Section>
+
               <Section label="Preferences" icon={Bell}>
                 <ToggleRow icon={Bell} label="Daily Verse Notifications" value={notifEnabled} onChange={() => setNotifEnabled(v => !v)} color="#fbbf24" />
                 <ToggleRow icon={Moon} label="Dark Theme" value={darkMode} onChange={() => setDarkMode(v => !v)} color="#a78bfa" />

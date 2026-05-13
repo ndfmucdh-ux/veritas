@@ -73,23 +73,33 @@ export default function HeroVerseSlider() {
     }
 
     // Generate 3 unique daily verses from AI using the date as seed
+    // Each theme maps to a UNIQUE photo to ensure all 3 slides look different
     const THEME_PHOTOS = {
-      hope: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
-      faith: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80",
-      love: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
-      peace: "https://images.unsplash.com/photo-1439405328-88d5d2a8f36d?w=1200&q=80",
-      strength: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
-      wisdom: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
-      grace: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
-      joy: "https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1200&q=80",
-      default: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
+      hope:     "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",  // sunrise mist
+      faith:    "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80",  // aerial valley
+      love:     "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&q=80",  // warm forest path
+      peace:    "https://images.unsplash.com/photo-1439405328-88d5d2a8f36d?w=1200&q=80",     // still lake
+      strength: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80", // mountain peak
+      wisdom:   "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80", // starry night
+      grace:    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80", // alpine meadow
+      joy:      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1200&q=80", // wildflowers
+      courage:  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80", // sunlit forest
+      purpose:  "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80", // forest dawn rays
+      default:  "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
     };
+    // Fallback photos list used to guarantee 3 different photos even if themes collide
+    const FALLBACK_PHOTO_POOL = [
+      "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
+      "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
+    ];
 
     const langLabel = lang === "es" ? "Spanish" : "English";
     base44.integrations.Core.InvokeLLM({
       prompt: `Today is ${today}. Generate exactly 3 different, meaningful Bible verses for a daily slider in ${langLabel}. 
-Each verse must have a different theme. Return JSON with array "verses" containing 3 items, each with: ref, text (full verse text in ${langLabel}), reflection (1-2 sentences in ${langLabel}), theme (one word: hope/faith/love/peace/strength/wisdom/grace/joy).
-Do NOT repeat verses used on previous days. Use the date as a seed for variety.`,
+IMPORTANT: Each verse MUST have a DIFFERENT theme — choose 3 DISTINCT themes from this list: hope, faith, love, peace, strength, wisdom, grace, joy, courage, purpose. Never repeat a theme.
+Return JSON with array "verses" containing exactly 3 items, each with: ref, text (full verse text in ${langLabel}), reflection (1-2 sentences in ${langLabel}), theme (one of the listed words).
+Use the date ${today} as a randomization seed for variety day-to-day.`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -111,13 +121,16 @@ Do NOT repeat verses used on previous days. Use the date as a seed for variety.`
       .then(res => {
         const verses = res?.verses;
         if (Array.isArray(verses) && verses.length >= 3) {
-          const built = verses.slice(0, 3).map(v => ({
-            verse_ref: v.ref,
-            text: v.text,
-            reflection: v.reflection,
-            theme: v.theme,
-            photo: THEME_PHOTOS[v.theme?.toLowerCase()] || THEME_PHOTOS.default,
-          }));
+          const usedPhotos = new Set();
+          const built = verses.slice(0, 3).map((v, idx) => {
+            let photo = THEME_PHOTOS[v.theme?.toLowerCase()];
+            // Guarantee each slide has a unique photo
+            if (!photo || usedPhotos.has(photo)) {
+              photo = FALLBACK_PHOTO_POOL.find(p => !usedPhotos.has(p)) || FALLBACK_PHOTO_POOL[idx % FALLBACK_PHOTO_POOL.length];
+            }
+            usedPhotos.add(photo);
+            return { verse_ref: v.ref, text: v.text, reflection: v.reflection, theme: v.theme, photo };
+          });
           sessionStorage.setItem(cacheKey, JSON.stringify(built));
           setSlides(built);
         }
