@@ -1,60 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX, ChevronDown, Headphones, SkipBack, SkipForward } from "lucide-react";
-
-// Uses Web Speech API — natural voices available in modern browsers
-// Prefers high-quality neural voices (e.g. Microsoft David, Google US English)
-function pickBestVoice(langCode = "en") {
-  const voices = window.speechSynthesis?.getVoices() || [];
-
-  // Prioritize by quality tier: Google/Microsoft neural > named natural voices > any matching lang
-  const tiers = [
-    // Tier 1: Google TTS (highest quality, natural)
-    v => v.lang.startsWith(langCode) && v.name.toLowerCase().includes("google"),
-    // Tier 2: Microsoft Neural voices
-    v => v.lang.startsWith(langCode) && v.name.toLowerCase().includes("microsoft") && v.name.toLowerCase().includes("neural"),
-    // Tier 3: Known high-quality named voices
-    v => v.lang.startsWith(langCode) && ["samantha","alex","daniel","karen","moira","tessa","victoria","lee","serena"].some(n => v.name.toLowerCase().includes(n)),
-    // Tier 4: Any Microsoft voice
-    v => v.lang.startsWith(langCode) && v.name.toLowerCase().includes("microsoft"),
-    // Tier 5: Any voice in the language
-    v => v.lang.startsWith(langCode),
-  ];
-
-  for (const tier of tiers) {
-    const match = voices.find(tier);
-    if (match) return match;
-  }
-  return voices[0] || null;
-}
+import { base44 } from "@/api/base44Client";
 
 export default function ChapterAudioPlayer({ book, chapter, translation, verses }) {
   const [open, setOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [currentVerse, setCurrentVerse] = useState(0);
-  const [speed, setSpeed] = useState(0.9); // Natural reading pace
-  const [voicesReady, setVoicesReady] = useState(false);
-  const [voiceName, setVoiceName] = useState("");
-  const utterRef = useRef(null);
+  const [speed, setSpeed] = useState(1.0);
+  const [voiceName, setVoiceName] = useState("YouVersion Audio");
+  const [loading, setLoading] = useState(false);
+  const audioRef = useRef(null);
   const stoppedRef = useRef(false);
-
-  // Wait for voices to load
-  useEffect(() => {
-    const load = () => {
-      const v = pickBestVoice();
-      setVoicesReady(true);
-      setVoiceName(v?.name || "Default Voice");
-    };
-    if (window.speechSynthesis) {
-      if (window.speechSynthesis.getVoices().length > 0) {
-        load();
-      } else {
-        window.speechSynthesis.onvoiceschanged = load;
-      }
-    }
-    return () => { stopAll(); };
-  }, []);
 
   // Reset when chapter changes
   useEffect(() => {
@@ -65,47 +23,59 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
   const stopAll = () => {
     stoppedRef.current = true;
-    window.speechSynthesis?.cancel();
-    utterRef.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setPlaying(false);
   };
 
-  const speakFrom = useCallback((startIdx) => {
-    if (!verses?.length || !window.speechSynthesis) return;
+  const playFromVerse = useCallback(async (startIdx) => {
+    if (!verses?.length) return;
     stoppedRef.current = false;
+    setCurrentVerse(startIdx);
+    setLoading(true);
 
-    const readVerse = (idx) => {
-      if (stoppedRef.current || idx >= verses.length) {
-        setPlaying(false);
-        setCurrentVerse(0);
-        return;
+    try {
+      const res = await base44.functions.invoke("getChapterAudio", {
+        book,
+        chapter,
+        translation,
+        verse: verses[startIdx]?.verse,
+      });
+
+      if (res.data?.audio_url) {
+        if (audioRef.current) {
+          audioRef.current.src = res.data.audio_url;
+          audioRef.current.playbackRate = speed;
+          audioRef.current.volume = muted ? 0 : 1;
+          
+          audioRef.current.onended = () => {
+            if (!stoppedRef.current && startIdx + 1 < verses.length) {
+              playFromVerse(startIdx + 1);
+            } else {
+              setPlaying(false);
+              setCurrentVerse(0);
+            }
+          };
+
+          audioRef.current.play();
+          setPlaying(true);
+          setVoiceName(res.data.narrator || "YouVersion Audio");
+        }
       }
-      setCurrentVerse(idx);
-      const text = verses[idx].text;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = speed;
-      utter.pitch = 0.95;
-      utter.volume = muted ? 0 : 1;
-      const langCode = translation?.match(/^(RVR|NVI|LBLA|BTX|TLA|DHH|NTV|PDDPT|RVA)/i) ? "es" : "en";
-      const voice = pickBestVoice(langCode);
-      if (voice) utter.voice = voice;
-      utter.pitch = 1.0; // Natural pitch
-      utter.onend = () => {
-        if (!stoppedRef.current) readVerse(idx + 1);
-      };
-      utterRef.current = utter;
-      window.speechSynthesis.speak(utter);
-    };
-
-    readVerse(startIdx);
-    setPlaying(true);
-  }, [verses, speed, muted]);
+    } catch (error) {
+      console.error("Failed to load audio:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [verses, book, chapter, translation, speed, muted]);
 
   const handlePlay = () => {
     if (playing) {
       stopAll();
     } else {
-      speakFrom(currentVerse);
+      playFromVerse(currentVerse);
     }
   };
 
@@ -113,26 +83,24 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
     stopAll();
     const next = Math.max(0, currentVerse - 1);
     setCurrentVerse(next);
-    setTimeout(() => speakFrom(next), 100);
+    setTimeout(() => playFromVerse(next), 100);
   };
 
   const skipForward = () => {
     stopAll();
     const next = Math.min((verses?.length || 1) - 1, currentVerse + 1);
     setCurrentVerse(next);
-    setTimeout(() => speakFrom(next), 100);
+    setTimeout(() => playFromVerse(next), 100);
   };
 
   const toggleMute = () => {
     setMuted(m => {
-      if (utterRef.current) utterRef.current.volume = m ? 1 : 0;
+      if (audioRef.current) audioRef.current.volume = m ? 1 : 0;
       return !m;
     });
   };
 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
-
-  if (!window.speechSynthesis) return null;
 
   return (
     <div className="fixed bottom-36 md:bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-80 z-40">
@@ -257,6 +225,9 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
         </span>
         <ChevronDown className="w-3.5 h-3.5 ml-auto" style={{ color: "rgba(255,255,255,0.3)", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
       </motion.button>
+
+      {/* Hidden audio element for YouVersion audio playback */}
+      <audio ref={audioRef} crossOrigin="anonymous" />
     </div>
   );
 }
