@@ -87,18 +87,17 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
         <AnimatePresence>
           {modal && (
             <>
-              {/* Backdrop */}
+              {/* Dark overlay backdrop */}
               <motion.div
-                key="backdrop"
+                key="overlay"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
                 onClick={close}
                 style={{
                   position: "fixed", inset: 0, zIndex: 99990,
-                  background: "rgba(0,0,0,0.6)",
-                  backdropFilter: "blur(6px)",
+                  background: "rgba(0, 0, 0, 0.65)",
+                  backdropFilter: "blur(2px)",
                 }}
               />
 
@@ -106,14 +105,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               {modal !== "chapters" && (
                 <motion.div
                   key="main-modal"
-                  initial={{ opacity: 0, scale: 0.75, y: -40 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.75, y: -40 }}
-                  transition={{ type: "spring", stiffness: 460, damping: 40 }}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99999,
-                    width: "min(calc(100vw - 48px), 480px)", maxHeight: "80vh",
+                    width: "min(calc(100vw - 32px), 480px)", maxHeight: "min(calc(100vh - 32px), 80vh)",
                     padding: "0",
                     background: "rgba(14,18,32,0.97)",
                     backdropFilter: "blur(24px)",
@@ -265,16 +264,16 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
               {/* Chapters modal (separate) */}
               {modal === "chapters" && selectedBook && (
-                <motion.div
-                  key="chapters-modal"
-                  initial={{ opacity: 0, scale: 0.75, y: -40 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.75, y: -40 }}
-                  transition={{ type: "spring", stiffness: 480, damping: 42 }}
-                  style={{
-                    position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
-                    zIndex: 99998,
-                    width: "min(calc(100vw - 48px), 420px)", maxHeight: "75vh",
+              <motion.div
+                key="chapters-modal"
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.7 }}
+                transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                style={{
+                  position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
+                  zIndex: 99998,
+                  width: "min(calc(100vw - 32px), 420px)", maxHeight: "min(calc(100vh - 32px), 80vh)",
                     padding: "0",
                     background: "rgba(14,18,32,0.98)",
                     backdropFilter: "blur(24px)",
