@@ -1,17 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, Search, BookMarked, Heart, Users } from "lucide-react";
 import { motion } from "framer-motion";
-
-const NAV_ITEMS = [
-  { path: "/", icon: Home, label: "Home" },
-  { path: "/read", icon: BookOpen, label: "Read" },
-  { path: "/study-center", icon: BookMarked, label: "Study" },
-  { path: "/prayer-journal", icon: Heart, label: "Prayer" },
-  { path: "/community", icon: Users, label: "Community" },
-];
+import { useLang } from "@/lib/LanguageContext";
 
 export default function BottomNav() {
   const location = useLocation();
+  const { t } = useLang();
+
+  const NAV_ITEMS = [
+    { path: "/", icon: Home, label: t.home },
+    { path: "/read", icon: BookOpen, label: t.read },
+    { path: "/study-center", icon: BookMarked, label: t.study },
+    { path: "/prayer-journal", icon: Heart, label: t.prayer },
+    { path: "/community", icon: Users, label: t.community },
+  ];
 
   return (
     <nav
@@ -29,17 +31,9 @@ export default function BottomNav() {
         return (
           <Link key={path} to={path} className="flex-1 flex flex-col items-center justify-center py-4 px-3 gap-1 min-h-16">
             <motion.div animate={{ scale: active ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 22 }}>
-              <Icon
-                style={{
-                  width: 30, height: 30,
-                  color: active ? "#fbbf24" : "rgba(255,255,255,0.35)",
-                }}
-              />
+              <Icon style={{ width: 30, height: 30, color: active ? "#fbbf24" : "rgba(255,255,255,0.35)" }} />
             </motion.div>
-            <span
-              className="text-[10px] font-inter"
-              style={{ color: active ? "#fbbf24" : "rgba(255,255,255,0.3)" }}
-            >
+            <span className="text-[10px] font-inter" style={{ color: active ? "#fbbf24" : "rgba(255,255,255,0.3)" }}>
               {label}
             </span>
           </Link>

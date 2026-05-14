@@ -1,21 +1,23 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, BookOpen, Search, BookMarked, Zap, Map, Compass, GraduationCap, Image } from "lucide-react";
 import { motion } from "framer-motion";
-
-const NAV_ITEMS = [
-  { path: "/", icon: Home, label: "Home" },
-  { path: "/read", icon: BookOpen, label: "Read" },
-  { path: "/study", icon: GraduationCap, label: "Study" },
-  { path: "/search", icon: Search, label: "Search" },
-  { path: "/library", icon: BookMarked, label: "Library" },
-  { path: "/plans", icon: Map, label: "Plans" },
-  { path: "/discover", icon: Compass, label: "Discover" },
-  { path: "/verse-art", icon: Image, label: "Verse Art" },
-  { path: "/profile", icon: Zap, label: "Profile" },
-];
+import { useLang } from "@/lib/LanguageContext";
 
 export default function SideNav() {
   const location = useLocation();
+  const { t } = useLang();
+
+  const NAV_ITEMS = [
+    { path: "/", icon: Home, label: t.home },
+    { path: "/read", icon: BookOpen, label: t.read },
+    { path: "/study", icon: GraduationCap, label: t.study },
+    { path: "/search", icon: Search, label: t.search },
+    { path: "/library", icon: BookMarked, label: t.library },
+    { path: "/plans", icon: Map, label: t.plans },
+    { path: "/discover", icon: Compass, label: t.discover },
+    { path: "/verse-art", icon: Image, label: t.verseArt },
+    { path: "/profile", icon: Zap, label: t.profile },
+  ];
 
   return (
     <nav
@@ -40,12 +42,7 @@ export default function SideNav() {
                 border: active ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent",
               }}
             >
-              <Icon
-                style={{
-                  width: 24, height: 24,
-                  color: active ? "#fbbf24" : "rgba(255,255,255,0.35)",
-                }}
-              />
+              <Icon style={{ width: 24, height: 24, color: active ? "#fbbf24" : "rgba(255,255,255,0.35)" }} />
             </motion.div>
           </Link>
         );

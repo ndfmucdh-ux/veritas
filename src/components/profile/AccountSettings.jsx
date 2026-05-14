@@ -6,6 +6,7 @@ import {
   BookOpen, Moon, Sun, Zap
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
 
 const SECTION_GROUPS = [
   {
@@ -46,9 +47,12 @@ const TRANSLATIONS = [
   // Spanish
   "RVR60", "NVI", "LBLA", "TLA", "DHH",
 ];
+const LANG_MAP = { "English": "en", "Español": "es", "Français": "fr", "Português": "pt", "Deutsch": "de" };
+const LANG_REVERSE = { en: "English", es: "Español", fr: "Français", pt: "Português", de: "Deutsch" };
 const LANGUAGES = ["English", "Español", "Français", "Português", "Deutsch"];
 
 export default function AccountSettings({ user }) {
+  const { lang: currentLang, setLang } = useLang();
   const [openSection, setOpenSection] = useState(null);
 
   // Name
@@ -78,8 +82,8 @@ export default function AccountSettings({ user }) {
   const [verseNumbers, setVerseNumbers] = useState(() => localStorage.getItem("veritas_verse_numbers") !== "false");
   const [audioAutoplay, setAudioAutoplay] = useState(() => localStorage.getItem("veritas_audio_autoplay") === "true");
 
-  // Language
-  const [appLanguage, setAppLanguage] = useState(() => localStorage.getItem("veritas_app_language") || "English");
+  // Language — synced with LanguageContext
+  const [appLanguage, setAppLanguage] = useState(() => LANG_REVERSE[currentLang] || "English");
 
   // Notification times
   const [morningTime, setMorningTime] = useState(() => localStorage.getItem("veritas_notif_morning") || "07:00");
@@ -144,7 +148,8 @@ export default function AccountSettings({ user }) {
   };
 
   const saveLanguage = () => {
-    localStorage.setItem("veritas_app_language", appLanguage);
+    const code = LANG_MAP[appLanguage] || "en";
+    setLang(code); // Updates LanguageContext + localStorage instantly
     setLangSaved(true);
     setTimeout(() => setLangSaved(false), 2500);
   };
