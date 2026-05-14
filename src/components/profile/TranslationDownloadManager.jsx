@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, Trash2, Check, Loader2, ChevronDown } from "lucide-react";
-import { DOWNLOADABLE_TRANSLATIONS } from "@/lib/offlineBible";
-import {
-  isTranslationDownloadedAsync,
-  removeTranslationAsync,
-  saveTranslationAsync,
-  getTranslationMetaAsync,
-  getAllDownloadedCodesAsync,
-} from "@/lib/offlineBible";
-import { base44 } from "@/api/base44Client";
+import { DOWNLOADABLE_TRANSLATIONS, getAllDownloadedCodesAsync } from "@/lib/offlineBible";
+import { useOfflineDownloadManager } from "@/hooks/useOfflineDownloadManager";
 
 const LANGUAGE_GROUPS = [
   { lang: "en", label: "English", flag: "🇬🇧" },
@@ -23,8 +16,8 @@ const LANGUAGE_GROUPS = [
 export default function TranslationDownloadManager() {
   const [expandedLang, setExpandedLang] = useState("en");
   const [downloaded, setDownloaded] = useState(new Set());
-  const [downloading, setDownloading] = useState(new Map());
   const [storageInfo, setStorageInfo] = useState(null);
+  const { activeDownloads, startDownload, removeTranslation } = useOfflineDownloadManager();
 
   // Load downloaded translations on mount
   useEffect(() => {
@@ -48,48 +41,19 @@ export default function TranslationDownloadManager() {
   };
 
   const handleDownload = async (code, name) => {
-    setDownloading(prev => new Map(prev).set(code, true));
-    try {
-      const res = await base44.functions.invoke("downloadTranslation", { code });
-      if (res.data?.verses) {
-        // Group verses by book and chapter
-        const data = {};
-        res.data.verses.forEach(v => {
-          const book = v.book || "Unknown";
-          const chapter = v.chapter || 1;
-          if (!data[book]) data[book] = {};
-          if (!data[book][chapter]) data[book][chapter] = [];
-          data[book][chapter].push(v);
-        });
-
-        await saveTranslationAsync(code, {
-          name,
-          lang: DOWNLOADABLE_TRANSLATIONS.find(t => t.code === code)?.lang || "en",
-          data,
-          totalChapters: Object.values(data).reduce((sum, book) => sum + Object.keys(book).length, 0),
-        });
-
-        setDownloaded(prev => new Set(prev).add(code));
-        await updateStorageInfo();
-      }
-    } catch (error) {
-      console.error(`Failed to download ${code}:`, error);
-    } finally {
-      setDownloading(prev => {
-        const next = new Map(prev);
-        next.delete(code);
-        return next;
-      });
-    }
+    startDownload(code, name);
+    // Update storage after download completes
+    setTimeout(async () => {
+      const updated = await getAllDownloadedCodesAsync();
+      setDownloaded(new Set(updated));
+      await updateStorageInfo();
+    }, 500);
   };
 
   const handleRemove = async (code) => {
-    await removeTranslationAsync(code);
-    setDownloaded(prev => {
-      const next = new Set(prev);
-      next.delete(code);
-      return next;
-    });
+    await removeTranslation(code);
+    const updated = await getAllDownloadedCodesAsync();
+    setDownloaded(new Set(updated));
     await updateStorageInfo();
   };
 
@@ -168,7 +132,7 @@ export default function TranslationDownloadManager() {
                     <div className="mt-2 ml-2 space-y-1.5 pl-2 border-l border-cyan/20">
                       {translations.map(trans => {
                         const isDownloaded = downloaded.has(trans.code);
-                        const isDownloading = downloading.has(trans.code);
+                        const isDownloading = activeDownloads.has(trans.code);
 
                         return (
                           <div
