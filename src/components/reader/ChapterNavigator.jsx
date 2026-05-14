@@ -106,9 +106,9 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               {modal !== "chapters" && (
                 <motion.div
                   key="main-modal"
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.85 }}
+                  initial={{ opacity: 0, scale: 0.75, y: -40 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.75, y: -40 }}
                   transition={{ type: "spring", stiffness: 460, damping: 40 }}
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
@@ -266,9 +266,9 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               {modal === "chapters" && selectedBook && (
                 <motion.div
                   key="chapters-modal"
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.85 }}
+                  initial={{ opacity: 0, scale: 0.75, y: -40 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.75, y: -40 }}
                   transition={{ type: "spring", stiffness: 480, damping: 42 }}
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
