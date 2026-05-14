@@ -106,15 +106,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               {modal !== "chapters" && (
                 <motion.div
                   key="main-modal"
-                  initial={{ opacity: 0, scale: 0.85, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.85, y: 20 }}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
                   transition={{ type: "spring", stiffness: 460, damping: 40 }}
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99999,
                     maxWidth: 480, width: "90vw", maxHeight: "80vh",
-                    margin: "auto",
                     background: "rgba(14,18,32,0.97)",
                     backdropFilter: "blur(24px)",
                     borderRadius: "20px",
@@ -267,15 +266,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
               {modal === "chapters" && selectedBook && (
                 <motion.div
                   key="chapters-modal"
-                  initial={{ opacity: 0, scale: 0.85, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.85, y: 20 }}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.85 }}
                   transition={{ type: "spring", stiffness: 480, damping: 42 }}
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99998,
                     maxWidth: 420, width: "90vw", maxHeight: "75vh",
-                    margin: "auto",
                     background: "rgba(14,18,32,0.98)",
                     backdropFilter: "blur(24px)",
                     borderRadius: "20px",
