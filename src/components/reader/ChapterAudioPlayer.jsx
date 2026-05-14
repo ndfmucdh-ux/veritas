@@ -4,22 +4,28 @@ import { Play, Pause, Volume2, VolumeX, ChevronDown, Headphones, SkipBack, SkipF
 
 // Uses Web Speech API — natural voices available in modern browsers
 // Prefers high-quality neural voices (e.g. Microsoft David, Google US English)
-function pickBestVoice(lang = "en") {
+function pickBestVoice(langCode = "en") {
   const voices = window.speechSynthesis?.getVoices() || [];
-  const langCode = lang === "es" ? "es" : "en";
 
-  // Priority list: look for natural/neural voices first
-  const preferred = voices.filter(v =>
-    v.lang.startsWith(langCode) &&
-    (v.name.includes("Natural") || v.name.includes("Neural") ||
-     v.name.includes("Google") || v.name.includes("Microsoft") ||
-     v.name.includes("Samantha") || v.name.includes("Daniel") ||
-     v.name.includes("Alex") || v.name.includes("Karen") ||
-     v.name.includes("David") || v.name.includes("Zira"))
-  );
+  // Prioritize by quality tier: Google/Microsoft neural > named natural voices > any matching lang
+  const tiers = [
+    // Tier 1: Google TTS (highest quality, natural)
+    v => v.lang.startsWith(langCode) && v.name.toLowerCase().includes("google"),
+    // Tier 2: Microsoft Neural voices
+    v => v.lang.startsWith(langCode) && v.name.toLowerCase().includes("microsoft") && v.name.toLowerCase().includes("neural"),
+    // Tier 3: Known high-quality named voices
+    v => v.lang.startsWith(langCode) && ["samantha","alex","daniel","karen","moira","tessa","victoria","lee","serena"].some(n => v.name.toLowerCase().includes(n)),
+    // Tier 4: Any Microsoft voice
+    v => v.lang.startsWith(langCode) && v.name.toLowerCase().includes("microsoft"),
+    // Tier 5: Any voice in the language
+    v => v.lang.startsWith(langCode),
+  ];
 
-  if (preferred.length > 0) return preferred[0];
-  return voices.find(v => v.lang.startsWith(langCode)) || voices[0] || null;
+  for (const tier of tiers) {
+    const match = voices.find(tier);
+    if (match) return match;
+  }
+  return voices[0] || null;
 }
 
 export default function ChapterAudioPlayer({ book, chapter, translation, verses }) {
@@ -27,7 +33,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [currentVerse, setCurrentVerse] = useState(0);
-  const [speed, setSpeed] = useState(0.88); // Slightly slower = more natural/readable
+  const [speed, setSpeed] = useState(0.9); // Natural reading pace
   const [voicesReady, setVoicesReady] = useState(false);
   const [voiceName, setVoiceName] = useState("");
   const utterRef = useRef(null);
@@ -80,8 +86,10 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
       utter.rate = speed;
       utter.pitch = 0.95;
       utter.volume = muted ? 0 : 1;
-      const voice = pickBestVoice();
+      const langCode = translation?.match(/^(RVR|NVI|LBLA|BTX|TLA|DHH|NTV|PDDPT|RVA)/i) ? "es" : "en";
+      const voice = pickBestVoice(langCode);
       if (voice) utter.voice = voice;
+      utter.pitch = 1.0; // Natural pitch
       utter.onend = () => {
         if (!stoppedRef.current) readVerse(idx + 1);
       };
@@ -127,7 +135,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   if (!window.speechSynthesis) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-80 z-40">
+    <div className="fixed bottom-36 md:bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-80 z-40">
       <AnimatePresence>
         {open && (
           <motion.div

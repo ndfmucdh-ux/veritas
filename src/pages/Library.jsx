@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download, Library as LibraryIcon, FileText, Share2, Tag, Clock } from "lucide-react";
+import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download, Library as LibraryIcon, FileText, Share2, Tag, Clock, Bot } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
 import VerseNoteFolderManager from "@/components/library/VerseNoteFolderManager";
-import VersesCollectionManager from "@/components/library/VersesCollectionManager";
 import SocialShareModal from "@/components/library/SocialShareModal";
 import TagManager from "@/components/library/TagManager";
 import ReadingHistory from "@/components/library/ReadingHistory";
+import LibraryCollections from "@/components/library/LibraryCollections";
+import LibraryAssistant from "@/components/library/LibraryAssistant";
 
 const TABS = [
   { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
   { id: "highlights", label: "Highlights", icon: Highlighter },
   { id: "notes", label: "Notes", icon: StickyNote },
+  { id: "collections", label: "Collections", icon: LibraryIcon },
   { id: "history", label: "History", icon: Clock },
   { id: "folders", label: "Folders", icon: Folder },
-  { id: "collections", label: "Collections", icon: LibraryIcon },
   { id: "audio", label: "Audio", icon: Headphones },
 ];
 
@@ -38,6 +39,7 @@ export default function Library() {
   const [shareItem, setShareItem] = useState(null); // { verseRef, verseText }
   const [tagManagerItem, setTagManagerItem] = useState(null); // { id, type, tags }
   const [activeTagFilter, setActiveTagFilter] = useState(null);
+  const [showAI, setShowAI] = useState(false);
 
   const exportLibrary = async () => {
     setExporting(true);
@@ -315,6 +317,12 @@ export default function Library() {
           <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
         </div>
         <div className="flex items-center gap-2">
+          <button onClick={() => setShowAI(v => !v)}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
+            style={{ background: showAI ? "rgba(167,139,250,0.18)" : "rgba(167,139,250,0.08)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.25)" }}>
+            <Sparkles className="w-4 h-4" />
+            <span className="hidden sm:inline">AI</span>
+          </button>
           <button
             onClick={exportPdf}
             disabled={exportingPdf}
@@ -362,10 +370,15 @@ export default function Library() {
           <VerseNoteFolderManager highlights={highlights} notes={notes} />
         )}
         {activeTab === "collections" && (
-          <VersesCollectionManager />
+          <LibraryCollections bookmarks={bookmarks} highlights={highlights} notes={notes} />
         )}
         {activeTab === "audio" && <AudioStreakChart />}
       </div>
+
+      {/* Library AI Assistant */}
+      <AnimatePresence>
+        {showAI && <LibraryAssistant open={showAI} onClose={() => setShowAI(false)} />}
+      </AnimatePresence>
 
       {/* Social Share Modal */}
       <AnimatePresence>
