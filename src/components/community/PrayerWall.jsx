@@ -103,7 +103,9 @@ export default function PrayerWall() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-cinzel text-base font-bold text-white">Prayer Wall</h2>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>Anonymous requests from the community</p>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+            {posts.reduce((sum, p) => sum + (p.prayer_count || 0), 0).toLocaleString()} prayers sent · {posts.length} requests
+          </p>
         </div>
         <motion.button whileTap={{ scale: 0.92 }} onClick={() => setShowForm(v => !v)}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-cinzel text-xs"

@@ -17,6 +17,7 @@ import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
 import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
 import ChapterAudioPlayer from "@/components/reader/ChapterAudioPlayer";
+import GuidedReflection from "@/components/prayer/GuidedReflection";
 
 
 export default function Read() {
@@ -47,6 +48,7 @@ export default function Read() {
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [jumpedVerse, setJumpedVerse] = useState(null);
   const [devotionalVerse, setDevotionalVerse] = useState(null);
+  const [showReflection, setShowReflection] = useState(false);
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const glowTimerRef = useRef(null);
@@ -136,6 +138,8 @@ export default function Read() {
   const trackReading = () => {
     base44.entities.ReadingProgress.create({ book, chapter, translation, completed_at: new Date().toISOString() }).catch(() => {});
     base44.functions.invoke("updateXP", { action: "READ_CHAPTER", xp_amount: 10 }).catch(() => {});
+    // Show guided reflection after reading
+    setTimeout(() => setShowReflection(true), 1500);
   };
 
   const loadAnnotations = async () => {
@@ -338,6 +342,20 @@ export default function Read() {
               ))}
             </motion.div>
           )}
+
+          {/* Guided Reflection — shown after chapter is read */}
+          <AnimatePresence>
+            {showReflection && !loading && verses.length > 0 && (
+              <div className="mt-8">
+                <GuidedReflection
+                  book={book}
+                  chapter={chapter}
+                  verses={verses}
+                  onClose={() => setShowReflection(false)}
+                />
+              </div>
+            )}
+          </AnimatePresence>
 
           {/* Bottom nav */}
           {!loading && verses.length > 0 && (

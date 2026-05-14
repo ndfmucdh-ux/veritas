@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Share2, Copy, Check, MessageCircle, Mail, Instagram, QrCode, X, ChevronDown, Upload, Search, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Share2, Copy, Check, MessageCircle, Mail, Instagram, QrCode, X, ChevronDown, Upload, Search, Image as ImageIcon, Loader2, Download } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { base44 } from "@/api/base44Client";
@@ -342,6 +342,24 @@ export default function VerseImageGenerator() {
     setUploadingImage(false);
   };
 
+  const downloadImage = async () => {
+    const imgUrl = bgMode === "image" && selectedImage ? selectedImage
+      : bgMode === "upload" && uploadedImage ? uploadedImage
+      : null;
+    if (imgUrl) {
+      // Download the background image with verse overlay as best effort
+      const a = document.createElement("a");
+      a.href = imgUrl;
+      a.download = `veritas-verse-${verseRef.replace(/[^a-z0-9]/gi, "-")}.jpg`;
+      a.target = "_blank";
+      a.click();
+    } else {
+      // For gradient: copy text to clipboard and notify
+      await navigator.clipboard.writeText(`"${verseText}" — ${verseRef}`);
+      alert("Verse text copied! For gradient cards, use a screenshot to save the image.");
+    }
+  };
+
   const shareText = `"${verseText}" — ${verseRef}\n\nShared from Veritas Bible`;
   const verseUrl = `${window.location.origin}/read?book=${encodeURIComponent(verseRef.split(" ").slice(0, -1).join(" "))}&chapter=${verseRef.split(" ").pop()?.split(":")[0]}`;
 
@@ -622,10 +640,18 @@ export default function VerseImageGenerator() {
 
         {/* Action buttons */}
         <div className="grid grid-cols-2 gap-4 mb-4">
+          {/* Download */}
+          <motion.button whileTap={{ scale: 0.96 }} onClick={downloadImage}
+            className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
+            style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.08))", border: "1px solid rgba(251,191,36,0.35)", color: "#fbbf24" }}>
+            <Download className="w-5 h-5" />
+            Download
+          </motion.button>
+          {/* Share */}
           <div className="relative">
             <motion.button whileTap={{ scale: 0.96 }} onClick={nativeShare}
               className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
-              style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(251,191,36,0.08))", border: "1px solid rgba(251,191,36,0.3)", color: "#fbbf24" }}>
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.65)" }}>
               <Share2 className="w-5 h-5" />
               {t.share}
             </motion.button>
@@ -652,20 +678,21 @@ export default function VerseImageGenerator() {
               )}
             </AnimatePresence>
           </div>
+          {/* Copy */}
           <motion.button whileTap={{ scale: 0.96 }} onClick={copyText}
             className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
             style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
             {copied ? <Check className="w-5 h-5" style={{ color: "#34d399" }} /> : <Copy className="w-5 h-5" />}
             {copied ? "Copied!" : "Copy"}
           </motion.button>
+          {/* QR */}
+          <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowQR(true)}
+            className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
+            style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)", color: "#00f5ff" }}>
+            <QrCode className="w-5 h-5" />
+            QR Code
+          </motion.button>
         </div>
-
-        <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowQR(true)}
-          className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
-          style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)", color: "#00f5ff" }}>
-          <QrCode className="w-5 h-5" />
-          Share QR Code
-        </motion.button>
       </div>
 
       <AnimatePresence>
