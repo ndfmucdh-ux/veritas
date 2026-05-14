@@ -4,7 +4,7 @@ import {
   Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote, Image,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Star, Award, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail
+  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail, Sparkles
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
@@ -26,6 +26,9 @@ import AccountSettings from "@/components/profile/AccountSettings";
 import ReadingGoals from "@/components/profile/ReadingGoals";
 import DailySummaryCard from "@/components/profile/DailySummaryCard";
 import ProfileInsights from "@/components/profile/ProfileInsights";
+import ReadingStatsOverview from "@/components/profile/ReadingStatsOverview";
+import CalendarSyncPanel from "@/components/profile/CalendarSyncPanel";
+import PersonalizedDevotionalPanel from "@/components/profile/PersonalizedDevotionalPanel";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -462,6 +465,21 @@ export default function Profile() {
           {/* ── STATS TAB ── */}
           {activeTab === "stats" && (
             <div className="px-5 space-y-5">
+              {/* Reading Stats Overview */}
+              <Section label="Reading Stats & Streaks" icon={TrendingUp}>
+                <ReadingStatsOverview />
+              </Section>
+
+              {/* Calendar Sync */}
+              <Section label="Sync with Calendar" icon={Calendar}>
+                <CalendarSyncPanel />
+              </Section>
+
+              {/* Personalized Devotional */}
+              <Section label="AI Personalized Devotional" icon={Sparkles}>
+                <PersonalizedDevotionalPanel />
+              </Section>
+
               {/* Dashboard Summary */}
               <Section label="My Progress Summary" icon={TrendingUp}>
                 <DashboardSummary xpData={xpData} readingProgress={plans.length} />
