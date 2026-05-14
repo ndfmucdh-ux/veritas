@@ -2,16 +2,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, BookOpen, Loader2, LayoutGrid, Shield, Heart, Zap, Star, Gem, Sprout } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
 
-const CATEGORIES = [
-  { id: "general", label: "All", Icon: LayoutGrid },
-  { id: "men", label: "For Men", Icon: Shield },
-  { id: "women", label: "For Women", Icon: Heart },
-  { id: "youth", label: "For Youth", Icon: Zap },
-  { id: "kids", label: "For Kids", Icon: Star },
-  { id: "marriage", label: "Marriage", Icon: Gem },
-  { id: "new_believer", label: "New Believer", Icon: Sprout },
-];
+// CATEGORIES built inside component using t/lang — see component body
 
 const CATEGORY_VERSES = {
   men: [
@@ -48,6 +41,16 @@ const CATEGORY_VERSES = {
 };
 
 export default function Discover() {
+  const { t, lang } = useLang();
+  const CATEGORIES = [
+    { id: "general", label: lang === "es" ? "Todo" : "All", Icon: LayoutGrid },
+    { id: "men", label: t.men, Icon: Shield },
+    { id: "women", label: t.women, Icon: Heart },
+    { id: "youth", label: t.youth, Icon: Zap },
+    { id: "kids", label: t.kids, Icon: Star },
+    { id: "marriage", label: t.marriage, Icon: Gem },
+    { id: "new_believer", label: t.newBeliever, Icon: Sprout },
+  ];
   const params = new URLSearchParams(window.location.search);
   const [category, setCategory] = useState(params.get("category") || "general");
   const [devotional, setDevotional] = useState(null);
@@ -82,8 +85,8 @@ export default function Discover() {
   return (
     <div className="md:ml-16 min-h-screen px-4 pt-6">
       <div className="mb-6">
-        <h1 className="font-cinzel text-2xl font-bold mb-1">Discover</h1>
-        <p className="text-muted-foreground text-sm">Curated verses and devotionals for your journey</p>
+        <h1 className="font-cinzel text-2xl font-bold mb-1">{t.discover}</h1>
+        <p className="text-muted-foreground text-sm">{t.curatedVerses}</p>
       </div>
 
       {/* Category Filter */}
@@ -110,7 +113,7 @@ export default function Discover() {
       {/* Verses Grid */}
       <div className="space-y-3 mb-8">
         <h3 className="text-xs font-cinzel tracking-widest text-muted-foreground uppercase">
-          {CATEGORIES.find(c => c.id === category)?.label} Verses
+          {CATEGORIES.find(c => c.id === category)?.label} {lang === "es" ? "Versículos" : "Verses"}
         </h3>
         {verses.map((v, i) => (
           <motion.div
@@ -133,14 +136,14 @@ export default function Discover() {
                 className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-purple/20 text-purple hover:bg-purple/30 transition-colors"
               >
                 <Sparkles className="w-3 h-3" />
-                Devotional
+                {t.devotional || "Devotional"}
               </button>
               <a
                 href={`/read?book=${v.ref.split(' ').slice(0,-1).join(' ')}&chapter=${v.ref.split(' ').pop()?.split(':')[0]}`}
                 className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-cyan/10 text-cyan hover:bg-cyan/20 transition-colors"
               >
                 <BookOpen className="w-3 h-3" />
-                Read
+                {t.readBtn}
               </a>
             </div>
           </motion.div>

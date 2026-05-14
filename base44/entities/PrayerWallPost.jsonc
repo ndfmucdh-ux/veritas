@@ -11,6 +11,11 @@
       "default": 0,
       "description": "Number of people praying for this request"
     },
+    "amen_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of Amen responses"
+    },
     "prayed_by": {
       "type": "array",
       "items": {

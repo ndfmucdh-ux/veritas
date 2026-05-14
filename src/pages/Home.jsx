@@ -7,6 +7,7 @@ import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import MorningReminder from "@/components/home/MorningReminder.jsx";
+import DailyReflectionCard from "@/components/home/DailyReflectionCard.jsx";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
 
@@ -91,6 +92,9 @@ export default function Home() {
 
         {/* Morning Reminder */}
         <MorningReminder />
+
+        {/* Daily Reflection Card */}
+        <DailyReflectionCard />
 
         {/* Hero Verse Slider */}
         <HeroVerseSlider />

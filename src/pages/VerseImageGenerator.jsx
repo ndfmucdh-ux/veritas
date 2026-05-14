@@ -6,6 +6,7 @@ import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { base44 } from "@/api/base44Client";
 
 const TEMPLATES = [
+  // Original gradients
   { id: "dark_gold",  label: "Gold",      bg: "linear-gradient(135deg, #0a0f1e 0%, #1a1400 100%)",             textColor: "#fbbf24",             refColor: "#f59e0b",              font: "'Cinzel', serif" },
   { id: "midnight",   label: "Midnight",  bg: "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)", textColor: "#e0e7ff",             refColor: "#a78bfa",              font: "'Playfair Display', serif" },
   { id: "sunrise",    label: "Sunrise",   bg: "linear-gradient(135deg, #f83600 0%, #f9d423 100%)",              textColor: "#fff7ed",             refColor: "rgba(255,255,255,0.85)", font: "'Cinzel', serif" },
@@ -14,6 +15,82 @@ const TEMPLATES = [
   { id: "rose",       label: "Rose",      bg: "linear-gradient(135deg, #f43f5e 0%, #fda4af 100%)",              textColor: "#fff1f2",             refColor: "rgba(255,255,255,0.8)", font: "'Playfair Display', serif" },
   { id: "parchment",  label: "Parchment", bg: "linear-gradient(135deg, #fdf6e3 0%, #f5e6c8 100%)",              textColor: "#5c3d11",             refColor: "#92400e",              font: "'Playfair Display', serif" },
   { id: "cosmic",     label: "Cosmic",    bg: "linear-gradient(135deg, #1a0533 0%, #0d1b4b 50%, #1a0533 100%)", textColor: "#e9d5ff",             refColor: "#c084fc",              font: "'Cinzel', serif" },
+];
+
+// Pre-designed elegant themes — each bundles bg mode + image + gradient + font
+const ELEGANT_THEMES = [
+  {
+    id: "holy_light",
+    label: "Holy Light",
+    emoji: "☀️",
+    preview: "linear-gradient(135deg, #fff8e7 0%, #fde68a 100%)",
+    bgMode: "image",
+    imageUrl: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800&q=80",
+    template: { bg: "", textColor: "#fffbeb", refColor: "#fbbf24", font: "'Cinzel', serif" },
+  },
+  {
+    id: "deep_prayer",
+    label: "Deep Prayer",
+    emoji: "🙏",
+    preview: "linear-gradient(135deg, #0f0c29 0%, #302b63 100%)",
+    bgMode: "gradient",
+    imageUrl: null,
+    template: { bg: "linear-gradient(160deg, #0d0a20 0%, #1a1040 50%, #0d0a20 100%)", textColor: "#e9d5ff", refColor: "#a78bfa", font: "'Playfair Display', serif" },
+  },
+  {
+    id: "mountain_faith",
+    label: "Mountain Faith",
+    emoji: "⛰️",
+    preview: "linear-gradient(135deg, #1a2540 0%, #4a6fa5 100%)",
+    bgMode: "image",
+    imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    template: { bg: "", textColor: "#f0f9ff", refColor: "#93c5fd", font: "'Cinzel', serif" },
+  },
+  {
+    id: "ancient_scroll",
+    label: "Ancient Scroll",
+    emoji: "📜",
+    preview: "linear-gradient(135deg, #fdf6e3 0%, #d4a96a 100%)",
+    bgMode: "gradient",
+    imageUrl: null,
+    template: { bg: "linear-gradient(160deg, #fdf6e3 0%, #f5e6c8 60%, #e8d5a3 100%)", textColor: "#4a2c0a", refColor: "#92400e", font: "'Playfair Display', serif" },
+  },
+  {
+    id: "still_waters",
+    label: "Still Waters",
+    emoji: "🌊",
+    preview: "linear-gradient(135deg, #0369a1 0%, #38bdf8 100%)",
+    bgMode: "image",
+    imageUrl: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=800&q=80",
+    template: { bg: "", textColor: "#f0f9ff", refColor: "#7dd3fc", font: "'Playfair Display', serif" },
+  },
+  {
+    id: "evening_peace",
+    label: "Evening Peace",
+    emoji: "🌙",
+    preview: "linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%)",
+    bgMode: "image",
+    imageUrl: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80",
+    template: { bg: "", textColor: "#ede9fe", refColor: "#c084fc", font: "'Cinzel', serif" },
+  },
+  {
+    id: "garden_hope",
+    label: "Garden Hope",
+    emoji: "🌸",
+    preview: "linear-gradient(135deg, #134e5e 0%, #71b280 100%)",
+    bgMode: "image",
+    imageUrl: "https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=800&q=80",
+    template: { bg: "", textColor: "#f0fdf4", refColor: "#86efac", font: "'Playfair Display', serif" },
+  },
+  {
+    id: "fire_spirit",
+    label: "Holy Fire",
+    emoji: "🔥",
+    preview: "linear-gradient(135deg, #7c1010 0%, #ef4444 50%, #f97316 100%)",
+    bgMode: "gradient",
+    imageUrl: null,
+    template: { bg: "linear-gradient(160deg, #1c0505 0%, #7c1010 40%, #3d0c0c 100%)", textColor: "#fef2f2", refColor: "#fca5a5", font: "'Cinzel', serif" },
+  },
 ];
 
 const SEMANTIC_IMAGES = [
@@ -233,6 +310,7 @@ export default function VerseImageGenerator() {
   const [bgMode, setBgMode] = useState("gradient"); // "gradient" | "image" | "upload"
   const [selectedImage, setSelectedImage] = useState(null); // url string
   const [uploadedImage, setUploadedImage] = useState(null); // user uploaded url
+  const [activeThemeId, setActiveThemeId] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const uploadRef = useRef(null);
 
@@ -368,9 +446,54 @@ export default function VerseImageGenerator() {
           </div>
         </div>
 
+        {/* Elegant Pre-designed Themes */}
+        <div className="mb-5">
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+            {lang === "es" ? "✦ Temas Elegantes" : "✦ Elegant Themes"}
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {ELEGANT_THEMES.map(theme => (
+              <motion.button key={theme.id} whileTap={{ scale: 0.92 }}
+                onClick={() => {
+                  setActiveThemeId(theme.id);
+                  setTemplate(theme.template);
+                  if (theme.bgMode === "image" && theme.imageUrl) {
+                    setBgMode("image");
+                    setSelectedImage(theme.imageUrl);
+                  } else {
+                    setBgMode("gradient");
+                    setSelectedImage(null);
+                  }
+                }}
+                className="flex flex-col items-center gap-1.5">
+                <div className="w-full rounded-2xl flex items-end justify-center pb-1.5"
+                  style={{
+                    aspectRatio: "1/1.1",
+                    background: theme.preview,
+                    border: activeThemeId === theme.id ? "2px solid #fbbf24" : "2px solid transparent",
+                    boxShadow: activeThemeId === theme.id ? "0 0 16px rgba(251,191,36,0.4)" : "none",
+                    overflow: "hidden",
+                    position: "relative",
+                  }}>
+                  {theme.imageUrl && (
+                    <img src={theme.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                  )}
+                  <span className="relative z-10 text-base">{theme.emoji}</span>
+                </div>
+                <span className="text-[8px] font-cinzel text-center leading-tight"
+                  style={{ color: activeThemeId === theme.id ? "#fbbf24" : "rgba(255,255,255,0.4)" }}>
+                  {theme.label}
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
         {/* Background mode tabs */}
         <div className="mb-4">
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>Background</p>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+            {lang === "es" ? "Personalizar Fondo" : "Customize Background"}
+          </p>
           <div className="flex gap-2 mb-4">
             {[["gradient","🎨 Colors"],["image","🖼️ Images"],["upload","📷 Upload"]].map(([mode, label]) => (
               <button key={mode} onClick={() => setBgMode(mode)}

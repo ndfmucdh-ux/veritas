@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Tag, Loader2, Sparkles, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import AIStudyPartner from "@/components/study/AIStudyPartner";
 
-const TABS = ["commentary", "crossRefs", "topical", "dictionary"];
+const TABS = ["commentary", "crossRefs", "topical", "dictionary", "aiPartner"];
 
-const TAB_LABELS_EN = { commentary: "Commentary", crossRefs: "Cross-Refs", topical: "Topical", dictionary: "Dictionary" };
-const TAB_LABELS_ES = { commentary: "Comentario", crossRefs: "Referencias", topical: "Temático", dictionary: "Diccionario" };
+const TAB_LABELS_EN = { commentary: "Commentary", crossRefs: "Cross-Refs", topical: "Topical", dictionary: "Dictionary", aiPartner: "AI Partner" };
+const TAB_LABELS_ES = { commentary: "Comentario", crossRefs: "Referencias", topical: "Temático", dictionary: "Diccionario", aiPartner: "Compañero IA" };
 
 const TOPICAL_TAGS_EN = [
   "faith", "love", "prayer", "hope", "salvation", "grace", "forgiveness",
@@ -233,8 +234,11 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
       </div>
 
       <div className="px-4 space-y-4">
-        {/* Search bar (not for topical) */}
-        {tab !== "topical" && (
+        {/* AI Study Partner tab */}
+        {tab === "aiPartner" && <AIStudyPartner />}
+
+        {/* Search bar (not for topical or aiPartner) */}
+        {tab !== "topical" && tab !== "aiPartner" && (
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />
             <input
@@ -260,7 +264,7 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
         )}
 
         {/* Topical tag grid */}
-        {tab === "topical" && (
+        {tab !== "aiPartner" && tab === "topical" && (
           <div>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{lang === "es" ? "Elige un Tema" : "Choose a Topic"}</p>
             <div className="flex flex-wrap gap-2">
@@ -280,8 +284,8 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
           </div>
         )}
 
-        {/* Loading */}
-        {loading && (
+        {/* Loading (not aiPartner — it handles its own) */}
+        {tab !== "aiPartner" && loading && (
           <div className="flex items-center gap-3 py-8 justify-center">
             <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
             <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>{lang === "es" ? "Buscando en las Escrituras…" : "Searching scripture…"}</p>
@@ -290,7 +294,7 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
 
         {/* Results */}
         <AnimatePresence>
-          {result && !loading && (
+          {tab !== "aiPartner" && result && !loading && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 pb-4">
               {result.type === "commentary" && <CommentaryResult data={result.data} />}
               {result.type === "crossRefs" && <CrossRefsResult data={result.data} />}

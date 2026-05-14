@@ -35,6 +35,9 @@ export default function PrayerWall() {
   const [prayedPosts, setPrayedPosts] = useState(() => {
     try { return JSON.parse(localStorage.getItem("veritas_prayed_posts") || "[]"); } catch { return []; }
   });
+  const [amenPosts, setAmenPosts] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("veritas_amen_posts") || "[]"); } catch { return []; }
+  });
   const [userEmail, setUserEmail] = useState(null);
 
   useEffect(() => {
@@ -80,6 +83,16 @@ export default function PrayerWall() {
       prayer_count: (post.prayer_count || 0) + 1,
       prayed_by: userEmail ? [...prayedBy, userEmail] : prayedBy,
     });
+  };
+
+  const handleAmen = async (post) => {
+    const alreadyAmened = amenPosts.includes(post.id);
+    if (alreadyAmened) return;
+    setPosts(prev => prev.map(p => p.id === post.id ? { ...p, amen_count: (p.amen_count || 0) + 1 } : p));
+    const updated = [...amenPosts, post.id];
+    setAmenPosts(updated);
+    localStorage.setItem("veritas_amen_posts", JSON.stringify(updated));
+    await base44.entities.PrayerWallPost.update(post.id, { amen_count: (post.amen_count || 0) + 1 });
   };
 
   const filtered = activeCategory === "all" ? posts : posts.filter(p => p.category === activeCategory);
@@ -202,22 +215,38 @@ export default function PrayerWall() {
                   <div className="flex items-center justify-between mt-3 pt-3"
                     style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                     <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>
-                      {post.prayer_count || 0} {(post.prayer_count || 0) === 1 ? "person" : "people"} praying
+                      {post.prayer_count || 0} 🙏 · {post.amen_count || 0} 🕊️
                     </span>
-                    <motion.button
-                      whileTap={{ scale: hasPrayed ? 1 : 0.88 }}
-                      onClick={() => handlePray(post)}
-                      disabled={hasPrayed}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
-                      style={{
-                        background: hasPrayed ? "rgba(167,139,250,0.15)" : "rgba(255,255,255,0.05)",
-                        color: hasPrayed ? "#a78bfa" : "rgba(255,255,255,0.5)",
-                        border: hasPrayed ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgba(255,255,255,0.08)",
-                      }}>
-                      {hasPrayed
-                        ? <><CheckCircle2 className="w-3 h-3" /> Praying</>
-                        : <><Heart className="w-3 h-3" /> I'm Praying</>}
-                    </motion.button>
+                    <div className="flex items-center gap-1.5">
+                      {/* Amen button */}
+                      <motion.button
+                        whileTap={{ scale: amenPosts.includes(post.id) ? 1 : 0.88 }}
+                        onClick={() => handleAmen(post)}
+                        disabled={amenPosts.includes(post.id)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
+                        style={{
+                          background: amenPosts.includes(post.id) ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.04)",
+                          color: amenPosts.includes(post.id) ? "#fbbf24" : "rgba(255,255,255,0.45)",
+                          border: amenPosts.includes(post.id) ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.07)",
+                        }}>
+                        🕊️ Amen
+                      </motion.button>
+                      {/* Praying button */}
+                      <motion.button
+                        whileTap={{ scale: hasPrayed ? 1 : 0.88 }}
+                        onClick={() => handlePray(post)}
+                        disabled={hasPrayed}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
+                        style={{
+                          background: hasPrayed ? "rgba(167,139,250,0.15)" : "rgba(255,255,255,0.05)",
+                          color: hasPrayed ? "#a78bfa" : "rgba(255,255,255,0.5)",
+                          border: hasPrayed ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgba(255,255,255,0.08)",
+                        }}>
+                        {hasPrayed
+                          ? <><CheckCircle2 className="w-3 h-3" /> Praying</>
+                          : <><Heart className="w-3 h-3" /> Pray</>}
+                      </motion.button>
+                    </div>
                   </div>
                 </motion.div>
               );

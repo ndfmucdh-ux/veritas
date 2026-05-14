@@ -42,6 +42,19 @@ const T = {
     // General
     save: "Save", cancel: "Cancel", close: "Close", open: "Open", loading: "Loading…",
     noResults: "No results found",
+    // Search
+    exploreTopic: "Explore Topics", popularVerses: "Popular Verses",
+    scripture: "Scripture", myNotes: "My Notes", prayerJournalTab: "Prayers",
+    searchingAll: "Searching scripture, notes & prayers...",
+    // Discover
+    curatedVerses: "Curated verses and devotionals for your journey",
+    devotional: "Devotional",
+    // Plans
+    readingPlansTitle: "Reading Plans", structuredJourneys: "Structured journeys through Scripture",
+    customPlans: "My Custom Plans", buildPlan: "Build Plan", curatedPlans: "Curated Plans",
+    daysComplete: "days complete",
+    // Profile
+    dailyReflection: "Daily Reflection", personalizedHighlights: "Personalized from your highlights",
     featuredVerses: null,
   },
   es: {
@@ -85,6 +98,19 @@ const T = {
     // General
     save: "Guardar", cancel: "Cancelar", close: "Cerrar", open: "Abrir", loading: "Cargando…",
     noResults: "No se encontraron resultados",
+    // Search
+    exploreTopic: "Explorar Temas", popularVerses: "Versículos Populares",
+    scripture: "Escritura", myNotes: "Mis Notas", prayerJournalTab: "Oraciones",
+    searchingAll: "Buscando escritura, notas y oraciones...",
+    // Discover
+    curatedVerses: "Versículos y devocionales para tu camino",
+    devotional: "Devocional",
+    // Plans
+    readingPlansTitle: "Planes de Lectura", structuredJourneys: "Recorridos estructurados por las Escrituras",
+    customPlans: "Mis Planes Personalizados", buildPlan: "Crear Plan", curatedPlans: "Planes Seleccionados",
+    daysComplete: "días completados",
+    // Profile
+    dailyReflection: "Reflexión Diaria", personalizedHighlights: "Personalizada según tus versículos",
     featuredVerses: [
       { ref: "Juan 3:16", text: "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna.", theme: "amor" },
       { ref: "Salmo 23:1", text: "El Señor es mi pastor; nada me faltará.", theme: "confianza" },

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List, Plus, Trash2, Target, Check, LayoutGrid, Shield, Flower2, Zap, Star, Gem, Sprout } from "lucide-react";
+import { useLang } from "@/lib/LanguageContext";
 import PlanTimeline from "@/components/plans/PlanTimeline";
 import ReadingCalendar from "@/components/plans/ReadingCalendar";
 import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
@@ -145,6 +146,7 @@ const PRESET_PLANS = [
 const LANG_FILTER = ["all", "en", "es"];
 
 export default function Plans() {
+  const { t, lang } = useLang();
   const urlParams = new URLSearchParams(window.location.search);
   const urlCat = urlParams.get("cat") || "all";
 
@@ -544,8 +546,8 @@ export default function Plans() {
         <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80" alt="Reading Plans" className="w-full h-full object-cover" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(8,12,24,0.95))" }} />
         <div className="absolute bottom-0 px-5 pb-5">
-          <h1 className="font-cinzel text-2xl font-bold text-white">Reading Plans</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Structured journeys through Scripture</p>
+          <h1 className="font-cinzel text-2xl font-bold text-white">{t.readingPlansTitle}</h1>
+          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{t.structuredJourneys}</p>
         </div>
       </div>
 
@@ -591,11 +593,11 @@ export default function Plans() {
       {/* Custom Plans */}
       <div className="px-4 pt-2 pb-1">
         <div className="flex items-center justify-between mb-3">
-          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>My Custom Plans</p>
+          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>{t.customPlans}</p>
           <button onClick={() => setShowBuilder(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-cinzel text-xs transition-all"
             style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
-            <Plus className="w-3.5 h-3.5" /> Build Plan
+            <Plus className="w-3.5 h-3.5" /> {t.buildPlan}
           </button>
         </div>
 
@@ -656,7 +658,7 @@ export default function Plans() {
       {/* Divider */}
       <div className="flex items-center gap-3 px-4 mb-3">
         <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>Curated Plans</p>
+        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>{t.curatedPlans}</p>
         <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
       </div>
 
