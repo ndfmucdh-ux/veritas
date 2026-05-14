@@ -8,7 +8,7 @@ import { useLang } from "@/lib/LanguageContext";
 const CATEGORIES = [
   { id: "law",        label: "Law",        labelEs: "Ley",        color: "#f59e0b", image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&q=80", books: ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy"] },
   { id: "history",   label: "History",    labelEs: "Historia",   color: "#ef4444", image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80", books: ["Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther"] },
-  { id: "poetry",    label: "Poetry",     labelEs: "Poesía",     color: "#a78bfa", image: "https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=600&q=80", books: ["Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon"] },
+  { id: "poetry",    label: "Poetry",     labelEs: "Poesía",     color: "#a78bfa", image: "https://images.unsplash.com/photo-1507842072343-583f20270319?w=600&q=80", books: ["Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon"] },
   { id: "prophecy",  label: "Prophecy",   labelEs: "Profecía",   color: "#06b6d4", image: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=600&q=80", books: ["Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi"] },
   { id: "gospels",   label: "Gospels",    labelEs: "Evangelios", color: "#fbbf24", image: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=600&q=80", books: ["Matthew","Mark","Luke","John"] },
   { id: "acts",      label: "Acts",       labelEs: "Hechos",     color: "#34d399", image: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80", books: ["Acts"] },
@@ -157,7 +157,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   </div>
 
                   {/* Scrollable body */}
-                  <div style={{ flex: 1, overflowY: "auto", padding: "14px", minHeight: 0 }}>
+                  <div style={{ flex: 1, overflowY: "auto", padding: "14px", minHeight: 0, display: "flex", flexDirection: "column" }}>
 
                     {/* CATEGORY GRID */}
                     {modal === "books" && !selectedCategory && (
