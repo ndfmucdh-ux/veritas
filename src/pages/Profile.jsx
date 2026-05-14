@@ -159,7 +159,9 @@ export default function Profile() {
 
 
   // role may be at top-level or inside data sub-object depending on auth method
-  const isAdmin = user?.role === "admin" || user?.data?.role === "admin";
+  // Also allow specific known admin emails as a guaranteed fallback
+  const ADMIN_EMAILS = ["endofchaos77@gmail.com"];
+  const isAdmin = user?.role === "admin" || user?.data?.role === "admin" || ADMIN_EMAILS.includes(user?.email);
   const TABS = ALL_TABS.filter(t => t !== "emails" || isAdmin);
 
   const xp = xpData?.total_xp || 0;
