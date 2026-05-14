@@ -110,10 +110,12 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   exit={{ opacity: 0, scale: 0.7 }}
                   transition={{ type: "spring", stiffness: 500, damping: 35 }}
                   style={{
-                    position: "fixed", top: "16px", left: "16px", right: "16px", bottom: "16px", margin: "auto",
+                    position: "fixed", left: "50%", top: "50%",
+                    transform: "translate(-50%, -50%)",
                     zIndex: 99999,
-                    width: "480px", maxWidth: "calc(100% - 32px)",
-                    maxHeight: "calc(100% - 32px)",
+                    width: "100%",
+                    maxWidth: "480px",
+                    maxHeight: "85vh",
                     padding: "0",
                     background: "rgba(14,18,32,0.97)",
                     backdropFilter: "blur(24px)",
@@ -122,6 +124,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                     boxShadow: "0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(251,191,36,0.08)",
                     display: "flex", flexDirection: "column",
                     overflow: "hidden",
+                    margin: "0 16px",
                   }}
                 >
                   {/* Header */}
@@ -272,10 +275,12 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                 exit={{ opacity: 0, scale: 0.7 }}
                 transition={{ type: "spring", stiffness: 500, damping: 35 }}
                 style={{
-                  position: "fixed", top: "16px", left: "16px", right: "16px", bottom: "16px", margin: "auto",
+                  position: "fixed", left: "50%", top: "50%",
+                  transform: "translate(-50%, -50%)",
                   zIndex: 99998,
-                  width: "420px", maxWidth: "calc(100% - 32px)",
-                  maxHeight: "calc(100% - 32px)",
+                  width: "100%",
+                  maxWidth: "420px",
+                  maxHeight: "85vh",
                   padding: "0",
                   background: "rgba(14,18,32,0.98)",
                   backdropFilter: "blur(24px)",
@@ -284,6 +289,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   boxShadow: "0 20px 60px rgba(0,0,0,0.75), 0 0 50px rgba(251,191,36,0.12)",
                   display: "flex", flexDirection: "column",
                   overflow: "hidden",
+                  margin: "0 16px",
                 }}
                 >
                   {/* Header */}
