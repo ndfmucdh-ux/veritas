@@ -112,7 +112,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99999,
-                    width: "min(calc(100vw - 32px), 480px)", maxHeight: "min(calc(100vh - 32px), 80vh)",
+                    width: "calc(100vw - 32px)", maxWidth: "480px",
+                    height: "calc(100vh - 32px)", maxHeight: "80vh",
                     padding: "0",
                     background: "rgba(14,18,32,0.97)",
                     backdropFilter: "blur(24px)",
@@ -273,16 +274,17 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                 style={{
                   position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                   zIndex: 99998,
-                  width: "min(calc(100vw - 32px), 420px)", maxHeight: "min(calc(100vh - 32px), 80vh)",
-                    padding: "0",
-                    background: "rgba(14,18,32,0.98)",
-                    backdropFilter: "blur(24px)",
-                    borderRadius: "20px",
-                    border: "1.5px solid rgba(251,191,36,0.15)",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.75), 0 0 50px rgba(251,191,36,0.12)",
-                    display: "flex", flexDirection: "column",
-                    overflow: "hidden",
-                  }}
+                  width: "calc(100vw - 32px)", maxWidth: "420px",
+                  height: "calc(100vh - 32px)", maxHeight: "80vh",
+                  padding: "0",
+                  background: "rgba(14,18,32,0.98)",
+                  backdropFilter: "blur(24px)",
+                  borderRadius: "20px",
+                  border: "1.5px solid rgba(251,191,36,0.15)",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.75), 0 0 50px rgba(251,191,36,0.12)",
+                  display: "flex", flexDirection: "column",
+                  overflow: "hidden",
+                }}
                 >
                   {/* Header */}
                   <div style={{
