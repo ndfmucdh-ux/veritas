@@ -23,6 +23,7 @@ import SharedReadingPlan from "@/components/community/SharedReadingPlan";
 import EmailEngagementDashboard from "@/components/profile/EmailEngagementDashboard";
 import HighlightImageShare from "@/components/verse/HighlightImageShare";
 import AccountSettings from "@/components/profile/AccountSettings";
+import ReadingGoals from "@/components/profile/ReadingGoals";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -324,6 +325,11 @@ export default function Profile() {
                 <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.location.href = "/plans"}>
                   <DailyReadingRing chaptersReadToday={0} />
                 </motion.div>
+              </Section>
+
+              {/* Reading Goals */}
+              <Section label="Reading Goals" icon={Target}>
+                <ReadingGoals />
               </Section>
 
               {/* Reading Calendar */}

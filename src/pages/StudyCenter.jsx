@@ -11,6 +11,7 @@ import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import StudyDropdown from "@/components/reader/StudyDropdown";
+import NotesArchive from "@/components/study/NotesArchive";
 
 export default function StudyCenter() {
   const { lang } = useLang();
@@ -166,6 +167,7 @@ export default function StudyCenter() {
              { id: "templates", label: "My Templates", icon: "📝" },
              { id: "memorize", label: "Memorize", icon: "🎯" },
            { id: "flashcards", label: "Flashcards", icon: "🃏" },
+           { id: "notes", label: "My Notes", icon: "📓" },
            ].map(tab => (
             <motion.button key={tab.id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
@@ -212,6 +214,11 @@ export default function StudyCenter() {
         {/* ── SIDE BY SIDE TAB ── */}
         {activeTab === "sidebyside" && (
           <TranslationSplitView book={selectedBook} chapter={selectedChapter} />
+        )}
+
+        {/* ── NOTES ARCHIVE TAB ── */}
+        {activeTab === "notes" && (
+          <NotesArchive />
         )}
 
         {/* ── ANALYSIS TAB ── */}
