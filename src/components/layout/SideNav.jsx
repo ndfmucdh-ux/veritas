@@ -19,7 +19,7 @@ export default function SideNav() {
 
   return (
     <nav
-      className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 flex-col items-center py-6 gap-1 w-16"
+      className="hidden md:flex fixed left-0 top-[57px] bottom-0 z-40 flex-col items-center py-6 gap-1 w-16"
       style={{
         background: "rgba(6,10,20,0.92)",
         backdropFilter: "blur(28px)",
