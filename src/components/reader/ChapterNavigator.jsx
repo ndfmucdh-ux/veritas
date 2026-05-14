@@ -157,7 +157,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   </div>
 
                   {/* Scrollable body */}
-                  <div style={{ flex: 1, overflowY: "auto", padding: "14px", minHeight: 0, display: "flex", flexDirection: "column" }}>
+                  <div style={{ flex: 1, overflowY: "auto", padding: "14px", minHeight: 0 }}>
 
                     {/* CATEGORY GRID */}
                     {modal === "books" && !selectedCategory && (
