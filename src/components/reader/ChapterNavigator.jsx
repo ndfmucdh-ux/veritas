@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, ChevronDown, X, Check, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactDOM from "react-dom";
 import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleData";
@@ -32,13 +32,9 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
   const displayBook = getTranslatedBookName(book, lang);
   const activeCategory = CATEGORIES.find(c => c.books.includes(book));
 
-  // Lock body scroll when modal open
   useEffect(() => {
-    if (modal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (modal) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
     return () => { document.body.style.overflow = ""; };
   }, [modal]);
 
@@ -57,9 +53,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
   const atStart = bookIdx === 0 && chapter === 1;
   const atEnd = bookIdx === BIBLE_BOOKS.length - 1 && chapter === totalChapters;
 
+  const modalTitle = modal === "translation" ? "Bible Version"
+    : selectedBook ? `${getTranslatedBookName(selectedBook.name, lang)} — Select Chapter`
+    : selectedCategory ? selectedCategory.label
+    : "Select Book";
+
   return (
     <>
-      {/* ── Nav bar ── */}
+      {/* Nav bar */}
       <div className="flex items-center gap-2">
         <button onClick={prevChapter} disabled={atStart}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -87,184 +88,217 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
         </button>
       </div>
 
-      {/* ── Modals via portal ── */}
+      {/* Modal portal */}
       {typeof document !== "undefined" && ReactDOM.createPortal(
         <AnimatePresence>
           {modal && (
-            <motion.div
-              key={modal}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              style={{
-                position: "fixed", inset: 0, zIndex: 99999,
-                background: "rgba(4,6,16,0.97)",
-                backdropFilter: "blur(20px)",
-                display: "flex", flexDirection: "column",
-              }}
-            >
-              {/* Header */}
-              <div style={{ borderBottom: "1px solid rgba(255,215,0,0.1)", padding: "18px 20px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  {selectedBook && (
-                    <button onClick={() => setSelectedBook(null)}
-                      style={{ fontFamily: "'Cinzel', serif", fontSize: 11, color: "#fbbf24", display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer" }}>
-                      <ChevronLeft style={{ width: 14, height: 14 }} /> Back
-                    </button>
-                  )}
-                  {selectedCategory && !selectedBook && (
-                    <button onClick={() => setSelectedCategory(null)}
-                      style={{ fontFamily: "'Cinzel', serif", fontSize: 11, color: "#fbbf24", display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer" }}>
-                      <ChevronLeft style={{ width: 14, height: 14 }} /> Back
-                    </button>
-                  )}
-                  <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 16, fontWeight: 700, color: "#fff", margin: 0 }}>
-                    {modal === "translation" ? "Bible Version" :
-                     selectedBook ? getTranslatedBookName(selectedBook.name, lang) + " — Chapter" :
-                     selectedCategory ? selectedCategory.label :
-                     "Select Book"}
-                  </h2>
+            <>
+              {/* Backdrop — dims app behind, still visible */}
+              <motion.div
+                key="backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={close}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 99990,
+                  background: "rgba(0,0,0,0.65)",
+                  backdropFilter: "blur(4px)",
+                }}
+              />
+
+              {/* Modal card — slides up from bottom */}
+              <motion.div
+                key={modal + (selectedCategory?.id || "") + (selectedBook?.name || "")}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "100%", opacity: 0 }}
+                transition={{ type: "spring", stiffness: 340, damping: 36 }}
+                style={{
+                  position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 99999,
+                  maxHeight: "82vh",
+                  display: "flex", flexDirection: "column",
+                  background: "rgba(14,18,32,0.98)",
+                  backdropFilter: "blur(24px)",
+                  borderRadius: "24px 24px 0 0",
+                  border: "1px solid rgba(255,215,0,0.12)",
+                  borderBottom: "none",
+                  boxShadow: "0 -12px 48px rgba(0,0,0,0.6)",
+                }}
+              >
+                {/* Drag handle */}
+                <div style={{ display: "flex", justifyContent: "center", padding: "10px 0 0" }}>
+                  <div style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.18)" }} />
                 </div>
-                <button onClick={close}
-                  style={{ width: 36, height: 36, borderRadius: 12, background: "rgba(255,255,255,0.07)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)" }}>
-                  <X style={{ width: 16, height: 16 }} />
-                </button>
-              </div>
 
-              {/* Body */}
-              <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px 32px" }}>
+                {/* Header */}
+                <div style={{
+                  padding: "12px 20px 14px",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  borderBottom: "1px solid rgba(255,215,0,0.08)",
+                  flexShrink: 0,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    {(selectedBook || selectedCategory) && (
+                      <button
+                        onClick={() => selectedBook ? setSelectedBook(null) : setSelectedCategory(null)}
+                        style={{ fontFamily: "'Cinzel', serif", fontSize: 11, color: "#fbbf24", display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                        <ChevronLeft style={{ width: 14, height: 14 }} />
+                        {lang === "es" ? "Volver" : "Back"}
+                      </button>
+                    )}
+                    <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 15, fontWeight: 700, color: "#fff", margin: 0 }}>
+                      {modalTitle}
+                    </h2>
+                  </div>
+                  <button onClick={close}
+                    style={{
+                      fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 600,
+                      color: "rgba(255,255,255,0.55)", background: "rgba(255,255,255,0.07)",
+                      border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20,
+                      padding: "5px 14px", cursor: "pointer",
+                    }}>
+                    {lang === "es" ? "Cerrar" : "Close"}
+                  </button>
+                </div>
 
-                {/* ── CATEGORY GRID ── */}
-                {modal === "books" && !selectedCategory && !selectedBook && (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, maxWidth: 560, margin: "0 auto" }}>
-                    {CATEGORIES.map(cat => {
-                      const isActive = activeCategory?.id === cat.id;
-                      return (
-                        <button key={cat.id} onClick={() => setSelectedCategory(cat)}
-                          style={{
-                            position: "relative", height: 120, borderRadius: 20, overflow: "hidden", cursor: "pointer",
-                            border: isActive ? `2px solid ${cat.color}` : "2px solid rgba(255,215,0,0.08)",
-                            boxShadow: isActive ? `0 0 24px ${cat.color}55` : "0 4px 20px rgba(0,0,0,0.4)",
-                            padding: 0, background: "transparent", textAlign: "left",
-                          }}>
-                          <img src={cat.image} alt={cat.label}
-                            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.78) 100%)" }} />
-                          {/* Gold shimmer border top */}
-                          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${cat.color}99, transparent)` }} />
-                          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 14px" }}>
-                            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 13, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.2 }}>
-                              {lang === "es" ? cat.labelEs : cat.label}
-                            </p>
-                            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: cat.color, margin: "3px 0 0" }}>
-                              {cat.books.length} {cat.books.length === 1 ? "book" : "books"}
-                            </p>
-                          </div>
-                          {isActive && (
-                            <div style={{ position: "absolute", top: 8, right: 8, width: 20, height: 20, borderRadius: "50%", background: cat.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              <Check style={{ width: 11, height: 11, color: "#000" }} />
+                {/* Scrollable body */}
+                <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px 40px" }}>
+
+                  {/* CATEGORY GRID */}
+                  {modal === "books" && !selectedCategory && !selectedBook && (
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                      {CATEGORIES.map(cat => {
+                        const isActive = activeCategory?.id === cat.id;
+                        return (
+                          <button key={cat.id} onClick={() => setSelectedCategory(cat)}
+                            style={{
+                              position: "relative", height: 120, borderRadius: 20, overflow: "hidden", cursor: "pointer",
+                              border: isActive ? `2px solid ${cat.color}` : "2px solid rgba(255,215,0,0.08)",
+                              boxShadow: isActive ? `0 0 24px ${cat.color}55` : "0 4px 20px rgba(0,0,0,0.4)",
+                              padding: 0, background: "transparent", textAlign: "left",
+                            }}>
+                            <img src={cat.image} alt={cat.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.78) 100%)" }} />
+                            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${cat.color}99, transparent)` }} />
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 14px" }}>
+                              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 13, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.2 }}>
+                                {lang === "es" ? cat.labelEs : cat.label}
+                              </p>
+                              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: cat.color, margin: "3px 0 0" }}>
+                                {cat.books.length} {cat.books.length === 1 ? "book" : "books"}
+                              </p>
                             </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                            {isActive && (
+                              <div style={{ position: "absolute", top: 8, right: 8, width: 20, height: 20, borderRadius: "50%", background: cat.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Check style={{ width: 11, height: 11, color: "#000" }} />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                {/* ── BOOK GRID ── */}
-                {modal === "books" && selectedCategory && !selectedBook && (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, maxWidth: 560, margin: "0 auto" }}>
-                    {selectedCategory.books.map(bname => {
-                      const bData = BIBLE_BOOKS.find(b => b.name === bname);
-                      const isActive = bname === book;
-                      const img = BOOK_IMAGES[bname] || selectedCategory.image;
-                      return (
-                        <button key={bname}
-                          onClick={() => {
-                            if (!bData) return;
-                            if (bData.chapters === 1) { onNavigate(bname, 1); close(); }
-                            else setSelectedBook(bData);
-                          }}
-                          style={{
-                            position: "relative", height: 110, borderRadius: 20, overflow: "hidden", cursor: "pointer",
-                            border: isActive ? `2px solid ${selectedCategory.color}` : "2px solid rgba(255,215,0,0.08)",
-                            boxShadow: isActive ? `0 0 20px ${selectedCategory.color}55` : "0 4px 16px rgba(0,0,0,0.4)",
-                            padding: 0, background: "transparent", textAlign: "left",
-                          }}>
-                          <img src={img} alt={bname}
-                            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-                          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.8) 100%)" }} />
-                          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${selectedCategory.color}77, transparent)` }} />
-                          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 12px" }}>
-                            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.2 }}>
-                              {getTranslatedBookName(bname, lang)}
-                            </p>
-                            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 9, color: "rgba(255,255,255,0.4)", margin: "2px 0 0" }}>
-                              {bData?.chapters} ch.
-                            </p>
-                          </div>
-                          {isActive && (
-                            <div style={{ position: "absolute", top: 7, right: 7, width: 18, height: 18, borderRadius: "50%", background: selectedCategory.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                              <Check style={{ width: 10, height: 10, color: "#000" }} />
+                  {/* BOOK GRID */}
+                  {modal === "books" && selectedCategory && !selectedBook && (
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                      {selectedCategory.books.map(bname => {
+                        const bData = BIBLE_BOOKS.find(b => b.name === bname);
+                        const isActive = bname === book;
+                        const img = BOOK_IMAGES[bname] || selectedCategory.image;
+                        return (
+                          <button key={bname}
+                            onClick={() => {
+                              if (!bData) return;
+                              if (bData.chapters === 1) { onNavigate(bname, 1); close(); }
+                              else setSelectedBook(bData);
+                            }}
+                            style={{
+                              position: "relative", height: 110, borderRadius: 20, overflow: "hidden", cursor: "pointer",
+                              border: isActive ? `2px solid ${selectedCategory.color}` : "2px solid rgba(255,215,0,0.08)",
+                              boxShadow: isActive ? `0 0 20px ${selectedCategory.color}55` : "0 4px 16px rgba(0,0,0,0.4)",
+                              padding: 0, background: "transparent", textAlign: "left",
+                            }}>
+                            <img src={img} alt={bname} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.8) 100%)" }} />
+                            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${selectedCategory.color}77, transparent)` }} />
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 12px" }}>
+                              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.2 }}>
+                                {getTranslatedBookName(bname, lang)}
+                              </p>
+                              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 9, color: "rgba(255,255,255,0.45)", margin: "2px 0 0" }}>
+                                {bData?.chapters} {lang === "es" ? "cap." : "ch."}
+                              </p>
                             </div>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                            {isActive && (
+                              <div style={{ position: "absolute", top: 7, right: 7, width: 18, height: 18, borderRadius: "50%", background: selectedCategory.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Check style={{ width: 10, height: 10, color: "#000" }} />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                {/* ── CHAPTER GRID ── */}
-                {modal === "books" && selectedBook && (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 8, maxWidth: 560, margin: "0 auto" }}>
-                    {Array.from({ length: selectedBook.chapters }, (_, i) => i + 1).map(ch => {
-                      const isActive = selectedBook.name === book && ch === chapter;
-                      return (
-                        <button key={ch}
-                          onClick={() => { onNavigate(selectedBook.name, ch); close(); }}
-                          style={{
-                            aspectRatio: "1/1", borderRadius: 14, border: isActive ? "1.5px solid rgba(251,191,36,0.8)" : "1px solid rgba(255,215,0,0.12)",
-                            background: isActive ? "rgba(251,191,36,0.18)" : "rgba(255,215,0,0.04)",
-                            color: isActive ? "#fbbf24" : "rgba(255,255,255,0.6)",
-                            fontFamily: "'Cinzel', serif", fontSize: 13, fontWeight: isActive ? 700 : 400,
-                            cursor: "pointer", boxShadow: isActive ? "0 0 14px rgba(251,191,36,0.3)" : "none",
-                          }}>
-                          {ch}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                  {/* CHAPTER GRID — shows "Ch. N" in each square */}
+                  {modal === "books" && selectedBook && (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
+                      {Array.from({ length: selectedBook.chapters }, (_, i) => i + 1).map(ch => {
+                        const isActive = selectedBook.name === book && ch === chapter;
+                        return (
+                          <button key={ch}
+                            onClick={() => { onNavigate(selectedBook.name, ch); close(); }}
+                            style={{
+                              aspectRatio: "1/1", borderRadius: 16, cursor: "pointer",
+                              border: isActive ? "1.5px solid rgba(251,191,36,0.9)" : "1px solid rgba(255,215,0,0.12)",
+                              background: isActive ? "rgba(251,191,36,0.18)" : "rgba(255,255,255,0.04)",
+                              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                              boxShadow: isActive ? "0 0 14px rgba(251,191,36,0.35)" : "none",
+                            }}>
+                            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 8, color: isActive ? "rgba(251,191,36,0.7)" : "rgba(255,255,255,0.3)", letterSpacing: "0.05em", lineHeight: 1 }}>
+                              {lang === "es" ? "Cap." : "Ch."}
+                            </span>
+                            <span style={{ fontFamily: "'Cinzel', serif", fontSize: 15, fontWeight: isActive ? 700 : 500, color: isActive ? "#fbbf24" : "rgba(255,255,255,0.75)", lineHeight: 1.2 }}>
+                              {ch}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                {/* ── TRANSLATION LIST ── */}
-                {modal === "translation" && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 500, margin: "0 auto" }}>
-                    {TRANSLATIONS.map(tr => {
-                      const isActive = tr.code === translation;
-                      return (
-                        <button key={tr.code}
-                          onClick={() => { onTranslationChange?.(tr.code); close(); }}
-                          style={{
-                            display: "flex", alignItems: "center", gap: 16, padding: "14px 16px", borderRadius: 16, cursor: "pointer",
-                            background: isActive ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.03)",
-                            border: isActive ? "1.5px solid rgba(251,191,36,0.45)" : "1px solid rgba(255,215,0,0.08)",
-                            textAlign: "left",
-                          }}>
-                          <span style={{ fontFamily: "'Cinzel', serif", fontSize: 13, fontWeight: 700, color: isActive ? "#fbbf24" : "rgba(255,255,255,0.85)", minWidth: 56 }}>
-                            {tr.code}
-                          </span>
-                          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.35)", flex: 1 }}>
-                            {tr.name}
-                          </span>
-                          {isActive && <Check style={{ width: 14, height: 14, color: "#fbbf24", flexShrink: 0 }} />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </motion.div>
+                  {/* TRANSLATION LIST */}
+                  {modal === "translation" && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                      {TRANSLATIONS.map(tr => {
+                        const isActive = tr.code === translation;
+                        return (
+                          <button key={tr.code}
+                            onClick={() => { onTranslationChange?.(tr.code); close(); }}
+                            style={{
+                              display: "flex", alignItems: "center", gap: 16, padding: "14px 16px", borderRadius: 16, cursor: "pointer",
+                              background: isActive ? "rgba(251,191,36,0.1)" : "rgba(255,255,255,0.03)",
+                              border: isActive ? "1.5px solid rgba(251,191,36,0.45)" : "1px solid rgba(255,215,0,0.08)",
+                              textAlign: "left",
+                            }}>
+                            <span style={{ fontFamily: "'Cinzel', serif", fontSize: 13, fontWeight: 700, color: isActive ? "#fbbf24" : "rgba(255,255,255,0.85)", minWidth: 56 }}>
+                              {tr.code}
+                            </span>
+                            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.35)", flex: 1 }}>
+                              {tr.name}
+                            </span>
+                            {isActive && <Check style={{ width: 14, height: 14, color: "#fbbf24", flexShrink: 0 }} />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>,
         document.body
