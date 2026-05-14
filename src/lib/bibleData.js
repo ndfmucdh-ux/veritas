@@ -151,50 +151,67 @@ export const getTranslatedBookName = (englishName, lang) => {
 };
 
 export const TRANSLATIONS = [
-  // English (42 versions)
-  { code: "KJV",    name: "King James Version",           lang: "en", source: "cdn" },
-  { code: "NKJV",   name: "New King James Version",       lang: "en", source: "cdn" },
-  { code: "NIV",    name: "New International Version",    lang: "en", source: "cdn" },
-  { code: "ESV",    name: "English Standard Version",     lang: "en", source: "cdn" },
-  { code: "NLT",    name: "New Living Translation",       lang: "en", source: "cdn" },
-  { code: "NASB",   name: "New American Standard Bible",  lang: "en", source: "cdn" },
-  { code: "AMP",    name: "Amplified Bible",              lang: "en", source: "cdn" },
-  { code: "CSB",    name: "Christian Standard Bible",     lang: "en", source: "cdn" },
-  { code: "MSG",    name: "The Message",                  lang: "en", source: "cdn" },
-  { code: "ASV",    name: "American Standard Version",    lang: "en", source: "cdn" },
-  { code: "BBE",    name: "Bible in Basic English",       lang: "en", source: "cdn" },
-  { code: "WEB",    name: "World English Bible",          lang: "en", source: "cdn" },
-  { code: "BSB",    name: "Berean Standard Bible",        lang: "en", source: "cdn" },
-  { code: "YLT",    name: "Young's Literal Translation",  lang: "en", source: "cdn" },
-  { code: "DARBY",  name: "Darby Translation",            lang: "en", source: "cdn" },
-  { code: "WNT",    name: "Weymouth New Testament",       lang: "en", source: "cdn" },
-  { code: "ERV",    name: "English Revised Version",      lang: "en", source: "cdn" },
-  { code: "RV",     name: "Revised Version",              lang: "en", source: "cdn" },
-  { code: "NRSV",   name: "New Revised Standard Version", lang: "en", source: "cdn" },
-  { code: "ISV",    name: "International Standard Version",lang: "en", source: "cdn" },
-  { code: "TCG",    name: "The Christian Gospels",        lang: "en", source: "cdn" },
-  { code: "DHE",    name: "Douay-Heims Edition",          lang: "en", source: "cdn" },
-  { code: "RGT",    name: "Rotherham Translation",        lang: "en", source: "cdn" },
-  { code: "VW",     name: "Vincent Word Studies",         lang: "en", source: "cdn" },
-  // Spanish (7+ versions)
-  { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", source: "cdn" },
-  { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", source: "cdn" },
-  { code: "PDDPT",  name: "Palabra de Dios para Ti",      lang: "es", source: "cdn" },
-  { code: "BTX3",   name: "Biblia Textual",               lang: "es", source: "cdn" },
-  { code: "RVA2015",name: "Reina Valera Actualizada 2015",lang: "es", source: "cdn" },
-  { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", source: "cdn" },
-  { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", source: "cdn" },
-  // Portuguese
-  { code: "ARA",    name: "Almeida Revisada Atualizada",  lang: "pt", source: "cdn" },
-  { code: "ARC",    name: "Almeida Revisada Clássica",    lang: "pt", source: "cdn" },
-  { code: "NVT",    name: "Nova Versão Transformadora",   lang: "pt", source: "cdn" },
-  // French
-  { code: "LSG",    name: "Louis Segond 1910",            lang: "fr", source: "cdn" },
-  { code: "NEG1979",name: "Nouvelle Edition Genève 1979",  lang: "fr", source: "cdn" },
-  { code: "BDS",    name: "Bible du Semeur",              lang: "fr", source: "cdn" },
-  // Italian
-  { code: "DIOD",   name: "Bibbia Diodati",               lang: "it", source: "cdn" },
-  { code: "NRV",    name: "Nuova Riveduta 2006",          lang: "it", source: "cdn" },
+  // English (YouVersion API IDs + CDN fallbacks)
+  { code: "KJV",    name: "King James Version",           lang: "en", youVersionId: 1,    source: "youversion" },
+  { code: "NKJV",   name: "New King James Version",       lang: "en", youVersionId: 114,  source: "youversion" },
+  { code: "NIV",    name: "New International Version",    lang: "en", youVersionId: 111,  source: "youversion" },
+  { code: "ESV",    name: "English Standard Version",     lang: "en", youVersionId: 59,   source: "youversion" },
+  { code: "NLT",    name: "New Living Translation",       lang: "en", youVersionId: 89,   source: "youversion" },
+  { code: "NASB",   name: "New American Standard Bible",  lang: "en", youVersionId: 12,   source: "youversion" },
+  { code: "AMP",    name: "Amplified Bible",              lang: "en", youVersionId: 23,   source: "youversion" },
+  { code: "CSB",    name: "Christian Standard Bible",     lang: "en", youVersionId: 206,  source: "youversion" },
+  { code: "MSG",    name: "The Message",                  lang: "en", youVersionId: 67,   source: "youversion" },
+  { code: "NRSV",   name: "New Revised Standard Version", lang: "en", youVersionId: 76,   source: "youversion" },
+  { code: "ASV",    name: "American Standard Version",    lang: "en", youVersionId: 10,   source: "youversion" },
+  { code: "WEB",    name: "World English Bible",          lang: "en", youVersionId: 206,  source: "youversion" },
+  { code: "BSB",    name: "Berean Standard Bible",        lang: "en", youVersionId: 3034, source: "youversion" },
+  { code: "YLT",    name: "Young's Literal Translation",  lang: "en", youVersionId: 157,  source: "youversion" },
+  { code: "ERV",    name: "English Revised Version",      lang: "en", youVersionId: 20,   source: "youversion" },
+  { code: "GNV",    name: "Geneva Bible",                 lang: "en", youVersionId: 22,   source: "youversion" },
+  { code: "AKJV",   name: "American King James Version",  lang: "en", youVersionId: 8,    source: "youversion" },
+  { code: "HCSB",   name: "Holman CSB",                   lang: "en", youVersionId: 39,   source: "youversion" },
+  { code: "ICB",    name: "Interlinear Code Bible",       lang: "en", youVersionId: 24,   source: "youversion" },
+  { code: "OEB",    name: "Open English Bible",           lang: "en", youVersionId: 300,  source: "youversion" },
+  
+  // Spanish (YouVersion)
+  { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", youVersionId: 149,  source: "youversion" },
+  { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", youVersionId: 199,  source: "youversion" },
+  { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", youVersionId: 143,  source: "youversion" },
+  { code: "TLA",    name: "Traducción en Lenguaje Actual", lang: "es", youVersionId: 193,  source: "youversion" },
+  { code: "DHH",    name: "Dios Habla Hoy",               lang: "es", youVersionId: 173,  source: "youversion" },
+  { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", youVersionId: 167,  source: "youversion" },
+  { code: "BLS",    name: "Biblia en Lenguaje Sencillo",  lang: "es", youVersionId: 156,  source: "youversion" },
+  { code: "RVR2020",name: "Reina-Valera 2020",            lang: "es", youVersionId: 3624, source: "youversion" },
+  { code: "PDT",    name: "Palabra de Dios para Ti",      lang: "es", youVersionId: 182,  source: "youversion" },
+  { code: "PDDPT",  name: "Palabra de Dios para Todos",   lang: "es", youVersionId: 187,  source: "youversion" },
+  
+  // Portuguese (YouVersion)
+  { code: "ARA",    name: "Almeida Revisada Atualizada",  lang: "pt", youVersionId: 15,   source: "youversion" },
+  { code: "ARC",    name: "Almeida Revisada Clássica",    lang: "pt", youVersionId: 5,    source: "youversion" },
+  { code: "NVT",    name: "Nova Versão Transformadora",   lang: "pt", youVersionId: 230,  source: "youversion" },
+  { code: "BPT",    name: "Bíblia Português",             lang: "pt", youVersionId: 54,   source: "youversion" },
+  { code: "BRA",    name: "Biblia Reina-Valera Atualizada", lang: "pt", youVersionId: 52,  source: "youversion" },
+  
+  // French (YouVersion)
+  { code: "LSG",    name: "Louis Segond 1910",            lang: "fr", youVersionId: 14,   source: "youversion" },
+  { code: "NEG1979",name: "Nouvelle Edition Genève 1979",  lang: "fr", youVersionId: 63,   source: "youversion" },
+  { code: "BDS",    name: "Bible du Semeur",              lang: "fr", youVersionId: 179,  source: "youversion" },
+  { code: "SG21",   name: "Segond 21",                    lang: "fr", youVersionId: 212,  source: "youversion" },
+  { code: "FC97",   name: "Français Courant 1997",        lang: "fr", youVersionId: 27,   source: "youversion" },
+  { code: "PdV",    name: "Parole de Vie",                lang: "fr", youVersionId: 35,   source: "youversion" },
+  
+  // Italian (YouVersion)
+  { code: "DIOD",   name: "Bibbia Diodati",               lang: "it", youVersionId: 65,   source: "youversion" },
+  { code: "NRV",    name: "Nuova Riveduta 2006",          lang: "it", youVersionId: 73,   source: "youversion" },
+  { code: "CEI",    name: "CEI Conferenza Episcopale",    lang: "it", youVersionId: 7,    source: "youversion" },
+  { code: "NBDC",   name: "Nuova Bibbia dei Commentari",  lang: "it", youVersionId: 68,   source: "youversion" },
+  
+  // German (YouVersion)
+  { code: "LUT",    name: "Lutherbibel 2017",             lang: "de", youVersionId: 131,  source: "youversion" },
+  { code: "ELB",    name: "Elberfelder Bibel",            lang: "de", youVersionId: 18,   source: "youversion" },
+  { code: "ZB",     name: "Zürcher Bibel",                lang: "de", youVersionId: 185,  source: "youversion" },
+  { code: "HFA",    name: "Hoffnung für Alle",            lang: "de", youVersionId: 154,  source: "youversion" },
+  { code: "SCH2000",name: "Schlachter 2000",              lang: "de", youVersionId: 69,   source: "youversion" },
 ];
 
 export const LEVELS = [

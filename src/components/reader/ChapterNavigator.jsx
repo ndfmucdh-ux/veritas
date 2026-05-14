@@ -307,13 +307,15 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                     {modal === "translation" && !selectedLanguage && (
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                         {[
-                          { lang: "en", label: "English", icon: "🇬🇧", count: TRANSLATIONS.filter(t => t.language === "en").length },
-                          { lang: "es", label: "Spanish", icon: "🇪🇸", count: TRANSLATIONS.filter(t => t.language === "es").length },
-                          { lang: "pt", label: "Portuguese", icon: "🇧🇷", count: TRANSLATIONS.filter(t => t.language === "pt").length },
-                          { lang: "fr", label: "French", icon: "🇫🇷", count: TRANSLATIONS.filter(t => t.language === "fr").length },
-                          { lang: "it", label: "Italian", icon: "🇮🇹", count: TRANSLATIONS.filter(t => t.language === "it").length },
-                        ].map(({ lang, label, icon, count }) => (
-                          count > 0 && (
+                          { lang: "en", label: "English", icon: "🇬🇧" },
+                          { lang: "es", label: "Spanish", icon: "🇪🇸" },
+                          { lang: "pt", label: "Portuguese", icon: "🇧🇷" },
+                          { lang: "fr", label: "French", icon: "🇫🇷" },
+                          { lang: "it", label: "Italian", icon: "🇮🇹" },
+                          { lang: "de", label: "German", icon: "🇩🇪" },
+                        ].map(({ lang, label, icon }) => {
+                          const count = TRANSLATIONS.filter(t => t.lang === lang).length;
+                          return count > 0 ? (
                             <button key={lang} onClick={() => setSelectedLanguage(lang)}
                               style={{
                                 position: "relative", height: 110, borderRadius: 16, overflow: "hidden", cursor: "pointer",
@@ -325,8 +327,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                               <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: "#fff", margin: "6px 0 0" }}>{label}</p>
                               <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 9, color: "#fbbf24", margin: "2px 0 0" }}>{count} versions</p>
                             </button>
-                          )
-                        ))}
+                          ) : null;
+                        })}
                       </div>
                     )}
 
@@ -338,7 +340,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                           <ChevronLeft style={{ width: 14, height: 14 }} />
                           {lang === "es" ? "Atrás" : "Back"}
                         </button>
-                        {TRANSLATIONS.filter(t => t.language === selectedLanguage).map(tr => {
+                        {TRANSLATIONS.filter(t => t.lang === selectedLanguage).map(tr => {
                           const isActive = tr.code === translation;
                           return (
                             <button key={tr.code}
