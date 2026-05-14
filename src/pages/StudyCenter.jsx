@@ -12,6 +12,7 @@ import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import StudyDropdown from "@/components/reader/StudyDropdown";
 import NotesArchive from "@/components/study/NotesArchive";
+import StudyProgressMap from "@/components/study/StudyProgressMap.jsx";
 
 export default function StudyCenter() {
   const { lang } = useLang();
@@ -168,6 +169,7 @@ export default function StudyCenter() {
              { id: "memorize", label: "Memorize", icon: "🎯" },
            { id: "flashcards", label: "Flashcards", icon: "🃏" },
            { id: "notes", label: "My Notes", icon: "📓" },
+           { id: "journey", label: "Journey", icon: "🗺️" },
            ].map(tab => (
             <motion.button key={tab.id} whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
@@ -219,6 +221,11 @@ export default function StudyCenter() {
         {/* ── NOTES ARCHIVE TAB ── */}
         {activeTab === "notes" && (
           <NotesArchive />
+        )}
+
+        {/* ── JOURNEY TAB ── */}
+        {activeTab === "journey" && (
+          <StudyProgressMap />
         )}
 
         {/* ── ANALYSIS TAB ── */}
