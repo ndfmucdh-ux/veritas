@@ -12,7 +12,7 @@ import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import StudyDropdown from "@/components/reader/StudyDropdown";
 import NotesArchive from "@/components/study/NotesArchive";
-import StudyProgressMap from "@/components/study/StudyProgressMap.jsx";
+import StudyProgressMap from "@/components/study/StudyProgressMap";
 
 export default function StudyCenter() {
   const { lang } = useLang();

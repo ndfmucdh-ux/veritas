@@ -24,6 +24,7 @@ import EmailEngagementDashboard from "@/components/profile/EmailEngagementDashbo
 import HighlightImageShare from "@/components/verse/HighlightImageShare";
 import AccountSettings from "@/components/profile/AccountSettings";
 import ReadingGoals from "@/components/profile/ReadingGoals";
+import DailySummaryCard from "@/components/profile/DailySummaryCard";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
@@ -320,6 +321,9 @@ export default function Profile() {
           {/* ── OVERVIEW TAB ── */}
           {activeTab === "overview" && (
             <div className="px-5 space-y-5">
+              {/* Daily Summary */}
+              <DailySummaryCard />
+
               {/* Daily Reading Ring */}
               <Section label="Today's Reading Goal" icon={Target}>
                 <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.location.href = "/plans"}>
