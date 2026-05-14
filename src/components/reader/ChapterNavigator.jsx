@@ -113,8 +113,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99999,
-                    width: "calc(90vw - 32px)", maxWidth: "480px", maxHeight: "calc(80vh - 32px)",
-                    margin: "auto", padding: "0",
+                    width: "min(calc(100vw - 48px), 480px)", height: "min(calc(100vh - 48px), auto)",
+                    maxHeight: "80vh", padding: "0",
                     background: "rgba(14,18,32,0.97)",
                     backdropFilter: "blur(24px)",
                     borderRadius: "20px",
@@ -274,8 +274,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99998,
-                    width: "calc(90vw - 32px)", maxWidth: "420px", maxHeight: "calc(75vh - 32px)",
-                    margin: "auto", padding: "0",
+                    width: "min(calc(100vw - 48px), 420px)", height: "min(calc(100vh - 48px), auto)",
+                    maxHeight: "75vh", padding: "0",
                     background: "rgba(14,18,32,0.98)",
                     backdropFilter: "blur(24px)",
                     borderRadius: "20px",
