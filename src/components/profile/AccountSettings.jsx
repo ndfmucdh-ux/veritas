@@ -42,7 +42,7 @@ const THEMES = [
 ];
 const TRANSLATIONS = [
   // English
-  "KJV", "NIV", "ESV", "NKJV", "NLT", "AMP", "MSG",
+  "KJV", "NIV", "ESV", "NKJV", "NLT", "AMP", "MSG", "BTX3",
   // Spanish
   "RVR60", "NVI", "LBLA", "TLA", "DHH",
 ];
