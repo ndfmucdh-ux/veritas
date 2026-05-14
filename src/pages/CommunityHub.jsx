@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, MessageCircle, Heart, Shield, Loader2, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import PrayerWall from "@/components/community/PrayerWall";
 
 export default function CommunityHub() {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("study_group");
+  const [activeTab, setActiveTab] = useState("groups");
 
   useEffect(() => {
     loadGroups();
@@ -46,6 +48,26 @@ export default function CommunityHub() {
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Main tabs */}
+        <div className="flex gap-2">
+          {[["groups", "👥 Groups"], ["prayer_wall", "🙏 Prayer Wall"]].map(([id, label]) => (
+            <button key={id} onClick={() => setActiveTab(id)}
+              className="flex-1 py-2.5 rounded-xl font-cinzel text-xs transition-all"
+              style={{
+                background: activeTab === id ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
+                color: activeTab === id ? "#00f5ff" : "rgba(255,255,255,0.4)",
+                border: activeTab === id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)"
+              }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Prayer Wall tab */}
+        {activeTab === "prayer_wall" && <PrayerWall />}
+
+        {/* Groups tab */}
+        {activeTab === "groups" && <>
         {/* Category tabs */}
         <div className="flex overflow-x-auto gap-2 pb-2">
           {categories.map(cat => (
@@ -127,6 +149,7 @@ export default function CommunityHub() {
             </AnimatePresence>
           </div>
         )}
+        </>}
       </div>
     </div>
   );

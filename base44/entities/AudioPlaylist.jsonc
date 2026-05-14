@@ -1,0 +1,72 @@
+{
+  "name": "AudioPlaylist",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Playlist name e.g. 'Morning Worship', 'Evening Peace'"
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "default": "\ud83c\udfb5"
+    },
+    "color": {
+      "type": "string",
+      "default": "#00f5ff"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "chapter",
+              "verse"
+            ]
+          },
+          "book": {
+            "type": "string"
+          },
+          "chapter": {
+            "type": "number"
+          },
+          "verse": {
+            "type": "number"
+          },
+          "verse_ref": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "translation": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Ordered list of chapters/verses in the playlist"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

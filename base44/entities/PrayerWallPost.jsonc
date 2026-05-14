@@ -1,0 +1,42 @@
+{
+  "name": "PrayerWallPost",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "string",
+      "description": "The anonymous prayer request text"
+    },
+    "prayer_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of people praying for this request"
+    },
+    "prayed_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of user emails who have prayed (for dedup only \u2014 display stays anonymous)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "healing",
+        "family",
+        "guidance",
+        "gratitude",
+        "strength",
+        "peace",
+        "other"
+      ],
+      "default": "other"
+    },
+    "is_answered": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "request"
+  ]
+}

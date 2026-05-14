@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import jsPDF from "jspdf";
+import AudioPlaylists from "@/components/audio/AudioPlaylists";
 
 const SLEEP_TIMER_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
 const SPEED_OPTIONS = [0.5, 1, 1.5, 2];
@@ -277,6 +278,7 @@ export default function AudioDashboard() {
           ["dashboard", "📊 Overview"],
           ["history", "📖 History"],
           ["bookmarks", "🔖 Bookmarks"],
+          ["playlists", "🎵 Playlists"],
           ["settings", "⚙️ Settings"],
         ].map(([id, label]) => (
           <button key={id} onClick={() => setActiveTab(id)}
@@ -502,6 +504,9 @@ export default function AudioDashboard() {
             )}
           </div>
         )}
+
+        {/* ── PLAYLISTS TAB ── */}
+        {activeTab === "playlists" && <AudioPlaylists />}
 
         {/* ── SETTINGS TAB ── */}
         {activeTab === "settings" && (
