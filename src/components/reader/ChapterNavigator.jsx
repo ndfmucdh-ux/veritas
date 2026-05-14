@@ -17,7 +17,72 @@ const CATEGORIES = [
 ];
 
 const BOOK_IMAGES = {
-  "Genesis":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","Exodus":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70","Leviticus":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70","Numbers":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","Deuteronomy":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70","Joshua":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","Judges":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70","Ruth":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","1 Samuel":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70","2 Samuel":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70","1 Kings":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70","2 Kings":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70","1 Chronicles":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","2 Chronicles":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","Ezra":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Nehemiah":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Esther":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","Job":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70","Psalms":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70","Proverbs":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Ecclesiastes":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","Song of Solomon":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","Isaiah":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70","Jeremiah":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","Lamentations":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","Ezekiel":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70","Daniel":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70","Hosea":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","Joel":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70","Amos":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","Obadiah":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","Jonah":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","Micah":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70","Nahum":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70","Habakkuk":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70","Zephaniah":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70","Haggai":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","Zechariah":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70","Malachi":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70","Matthew":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70","Mark":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Luke":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","John":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","Acts":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Romans":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70","1 Corinthians":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70","2 Corinthians":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70","Galatians":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Ephesians":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70","Philippians":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","Colossians":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","1 Thessalonians":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","2 Thessalonians":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","1 Timothy":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70","2 Timothy":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70","Titus":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70","Philemon":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","Hebrews":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70","James":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70","1 Peter":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","2 Peter":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70","1 John":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","2 John":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","3 John":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70","Jude":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70","Revelation":"https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=400&q=70",
+  "Genesis":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70",
+  "Exodus":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70",
+  "Leviticus":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70",
+  "Numbers":"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=70",
+  "Deuteronomy":"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=70",
+  "Joshua":"https://images.unsplash.com/photo-1553424731-e0dcd3b47cfd?w=400&q=70",
+  "Judges":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70",
+  "Ruth":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70",
+  "1 Samuel":"https://images.unsplash.com/photo-1516911591291-94fcce94588d?w=400&q=70",
+  "2 Samuel":"https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=70",
+  "1 Kings":"https://images.unsplash.com/photo-1533531173927-5a96da1a3570?w=400&q=70",
+  "2 Kings":"https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?w=400&q=70",
+  "1 Chronicles":"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=70",
+  "2 Chronicles":"https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=400&q=70",
+  "Ezra":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70",
+  "Nehemiah":"https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=70",
+  "Esther":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70",
+  "Job":"https://images.unsplash.com/photo-1507842072343-583f20270319?w=400&q=70",
+  "Psalms":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70",
+  "Proverbs":"https://images.unsplash.com/photo-1455849318169-8149e8e495b3?w=400&q=70",
+  "Ecclesiastes":"https://images.unsplash.com/photo-1465014849318-4eb905e82e13?w=400&q=70",
+  "Song of Solomon":"https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=70",
+  "Isaiah":"https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=70",
+  "Jeremiah":"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=70",
+  "Lamentations":"https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=400&q=70",
+  "Ezekiel":"https://images.unsplash.com/photo-1507842072343-583f20270319?w=400&q=70",
+  "Daniel":"https://images.unsplash.com/photo-1478251143081-fcc80a50ecf6?w=400&q=70",
+  "Hosea":"https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400&q=70",
+  "Joel":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70",
+  "Amos":"https://images.unsplash.com/photo-1504680869696-d977e534101f?w=400&q=70",
+  "Obadiah":"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=70",
+  "Jonah":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70",
+  "Micah":"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400&q=70",
+  "Nahum":"https://images.unsplash.com/photo-1457269822836-e755db1371a5?w=400&q=70",
+  "Habakkuk":"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=70",
+  "Zephaniah":"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=70",
+  "Haggai":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70",
+  "Zechariah":"https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400&q=70",
+  "Malachi":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70",
+  "Matthew":"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=400&q=70",
+  "Mark":"https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70",
+  "Luke":"https://images.unsplash.com/photo-1490750967868-88df5691cc3c?w=400&q=70",
+  "John":"https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&q=70",
+  "Acts":"https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=70",
+  "Romans":"https://images.unsplash.com/photo-1559386484-97dfc0e15539?w=400&q=70",
+  "1 Corinthians":"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=70",
+  "2 Corinthians":"https://images.unsplash.com/photo-1557804506-669714d2e9d8?w=400&q=70",
+  "Galatians":"https://images.unsplash.com/photo-1455849318169-8149e8e495b3?w=400&q=70",
+  "Ephesians":"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&q=70",
+  "Philippians":"https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=70",
+  "Colossians":"https://images.unsplash.com/photo-1507842072343-583f20270319?w=400&q=70",
+  "1 Thessalonians":"https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=400&q=70",
+  "2 Thessalonians":"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=70",
+  "1 Timothy":"https://images.unsplash.com/photo-1478251143081-fcc80a50ecf6?w=400&q=70",
+  "2 Timothy":"https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400&q=70",
+  "Titus":"https://images.unsplash.com/photo-1504680869696-d977e534101f?w=400&q=70",
+  "Philemon":"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=70",
+  "Hebrews":"https://images.unsplash.com/photo-1519750157634-b6d493a0f77c?w=400&q=70",
+  "James":"https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=70",
+  "1 Peter":"https://images.unsplash.com/photo-1516911591291-94fcce94588d?w=400&q=70",
+  "2 Peter":"https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&q=70",
+  "1 John":"https://images.unsplash.com/photo-1533531173927-5a96da1a3570?w=400&q=70",
+  "2 John":"https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?w=400&q=70",
+  "3 John":"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=70",
+  "Jude":"https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=400&q=70",
+  "Revelation":"https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=400&q=70",
 };
 
 export default function ChapterNavigator({ book, chapter, translation, onNavigate, onTranslationChange }) {
@@ -25,6 +90,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
   const [modal, setModal] = useState(null); // null | "books" | "chapters" | "translation"
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
   const bookIdx = BIBLE_BOOKS.findIndex(b => b.name === book);
@@ -48,7 +114,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
     else if (bookIdx < BIBLE_BOOKS.length - 1) onNavigate(BIBLE_BOOKS[bookIdx + 1].name, 1);
   };
 
-  const close = () => { setModal(null); setSelectedCategory(null); setSelectedBook(null); };
+  const close = () => { setModal(null); setSelectedCategory(null); setSelectedBook(null); setSelectedLanguage(null); };
   const atStart = bookIdx === 0 && chapter === 1;
   const atEnd = bookIdx === BIBLE_BOOKS.length - 1 && chapter === totalChapters;
 
@@ -69,7 +135,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
           <ChevronDown className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
         </button>
 
-        <button onClick={() => setModal("translation")}
+        <button onClick={() => { setSelectedLanguage(null); setModal("translation"); }}
           className="px-3 py-2 rounded-xl font-cinzel text-xs font-bold flex-shrink-0"
           style={{ background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.3)", color: "#fbbf24" }}>
           {translation}
@@ -237,10 +303,42 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                       </div>
                     )}
 
-                    {/* TRANSLATION LIST */}
-                    {modal === "translation" && (
+                    {/* TRANSLATION LANGUAGES */}
+                    {modal === "translation" && !selectedLanguage && (
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                        {[
+                          { lang: "en", label: "English", icon: "🇬🇧", count: TRANSLATIONS.filter(t => t.language === "en").length },
+                          { lang: "es", label: "Spanish", icon: "🇪🇸", count: TRANSLATIONS.filter(t => t.language === "es").length },
+                          { lang: "pt", label: "Portuguese", icon: "🇧🇷", count: TRANSLATIONS.filter(t => t.language === "pt").length },
+                          { lang: "fr", label: "French", icon: "🇫🇷", count: TRANSLATIONS.filter(t => t.language === "fr").length },
+                          { lang: "it", label: "Italian", icon: "🇮🇹", count: TRANSLATIONS.filter(t => t.language === "it").length },
+                        ].map(({ lang, label, icon, count }) => (
+                          count > 0 && (
+                            <button key={lang} onClick={() => setSelectedLanguage(lang)}
+                              style={{
+                                position: "relative", height: 110, borderRadius: 16, overflow: "hidden", cursor: "pointer",
+                                border: "1.5px solid rgba(255,215,0,0.08)",
+                                boxShadow: "0 2px 12px rgba(0,0,0,0.3)",
+                                padding: 0, background: "rgba(255,255,255,0.03)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
+                              }}>
+                              <span style={{ fontSize: 28 }}>{icon}</span>
+                              <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: "#fff", margin: "6px 0 0" }}>{label}</p>
+                              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 9, color: "#fbbf24", margin: "2px 0 0" }}>{count} versions</p>
+                            </button>
+                          )
+                        ))}
+                      </div>
+                    )}
+
+                    {/* TRANSLATION LIST BY LANGUAGE */}
+                    {modal === "translation" && selectedLanguage && (
                       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                        {TRANSLATIONS.map(tr => {
+                        <button onClick={() => setSelectedLanguage(null)}
+                          style={{ fontFamily: "'Cinzel', serif", fontSize: 11, color: "#fbbf24", display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", padding: 0, marginBottom: 8 }}>
+                          <ChevronLeft style={{ width: 14, height: 14 }} />
+                          {lang === "es" ? "Atrás" : "Back"}
+                        </button>
+                        {TRANSLATIONS.filter(t => t.language === selectedLanguage).map(tr => {
                           const isActive = tr.code === translation;
                           return (
                             <button key={tr.code}
