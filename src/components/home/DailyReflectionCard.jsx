@@ -79,77 +79,58 @@ export default function DailyReflectionCard() {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, rgba(167,139,250,0.1) 0%, rgba(0,245,255,0.07) 100%)",
-          border: "1px solid rgba(167,139,250,0.25)",
-          boxShadow: "0 0 40px rgba(167,139,250,0.08)"
+          background: "linear-gradient(135deg, rgba(167,139,250,0.09) 0%, rgba(0,245,255,0.05) 100%)",
+          border: "1px solid rgba(167,139,250,0.2)",
         }}
       >
-        {/* Dismiss */}
-        <button onClick={() => setDismissed(true)}
-          className="absolute top-3 right-3 w-6 h-6 rounded-lg flex items-center justify-center z-10"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.35)" }}>
-          <X className="w-3.5 h-3.5" />
-        </button>
-
-        <div className="p-4">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(167,139,250,0.2)", border: "1px solid rgba(167,139,250,0.35)" }}>
-              <Sparkles className="w-3.5 h-3.5" style={{ color: "#a78bfa" }} />
+        <div className="p-3">
+          {/* Header row — compact */}
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{ background: "rgba(167,139,250,0.2)", border: "1px solid rgba(167,139,250,0.3)" }}>
+              <Sparkles className="w-3 h-3" style={{ color: "#a78bfa" }} />
             </div>
-            <div>
-              <p className="font-cinzel text-xs font-semibold" style={{ color: "#a78bfa" }}>
-                {lang === "es" ? "Reflexión Diaria" : "Daily Reflection"}
-              </p>
-              <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>
-                {lang === "es" ? "Personalizada según tus versículos" : "Personalized from your highlights"}
-              </p>
+            <p className="font-cinzel text-xs font-semibold flex-1" style={{ color: "#a78bfa" }}>
+              {lang === "es" ? "Reflexión Diaria" : "Daily Reflection"}
+            </p>
+            {/* Refresh + Dismiss side by side */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <button onClick={generateReflection} disabled={loading}
+                className="w-6 h-6 rounded-lg flex items-center justify-center"
+                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)" }}>
+                <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+              </button>
+              <button onClick={() => setDismissed(true)}
+                className="w-6 h-6 rounded-lg flex items-center justify-center"
+                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)" }}>
+                <X className="w-3 h-3" />
+              </button>
             </div>
-            <button onClick={generateReflection} disabled={loading}
-              className="ml-auto w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>
-              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
-            </button>
           </div>
 
           {loading && (
-            <div className="flex items-center gap-2 py-3">
-              <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#a78bfa" }} />
+            <div className="flex items-center gap-2 pt-2">
+              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#a78bfa" }} />
               <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
-                {lang === "es" ? "Generando tu reflexión…" : "Crafting your reflection…"}
+                {lang === "es" ? "Generando…" : "Crafting your reflection…"}
               </p>
             </div>
           )}
 
           {error && !loading && (
-            <p className="text-xs font-inter py-2" style={{ color: "rgba(255,255,255,0.4)" }}>
-              {lang === "es" ? "Añade más notas y versículos para obtener tu reflexión personal." : "Add more highlights and notes to get your personal reflection."}
+            <p className="text-xs font-inter pt-2" style={{ color: "rgba(255,255,255,0.4)" }}>
+              {lang === "es" ? "Añade notas y versículos para tu reflexión personal." : "Add highlights and notes to get your personal reflection."}
             </p>
           )}
 
           {reflection && !loading && (
-            <div className="space-y-3">
-              {/* Today's prompt */}
-              <div className="rounded-xl px-3 py-2.5"
-                style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.15)" }}>
-                <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1" style={{ color: "rgba(167,139,250,0.7)" }}>
-                  {lang === "es" ? "✦ Reflexiona Hoy" : "✦ Today's Prompt"}
-                </p>
-                <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgba(255,255,255,0.88)" }}>
-                  {reflection.prompt}
-                </p>
-              </div>
-
-              {/* Reflection */}
-              <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
-                {reflection.reflection}
+            <div className="mt-2.5 space-y-2">
+              <p className="text-xs font-playfair italic leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.82)" }}>
+                "{reflection.prompt}"
               </p>
-
-              {/* Key verse + theme */}
               <div className="flex items-center justify-between">
                 <a href={`/read?book=${encodeURIComponent(reflection.key_verse?.split(" ").slice(0,-1).join(" "))}&chapter=${reflection.key_verse?.split(" ").pop()?.split(":")[0]}`}
-                  className="font-cinzel text-xs font-semibold"
+                  className="font-cinzel text-[10px] font-semibold"
                   style={{ color: "#fbbf24" }}>
                   {reflection.key_verse}
                 </a>

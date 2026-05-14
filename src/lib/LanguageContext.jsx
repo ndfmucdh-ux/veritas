@@ -125,8 +125,12 @@ const LangCtx = createContext({ lang: "en", t: T.en, setLang: () => {} });
 
 export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => localStorage.getItem("veritas_lang") || "en");
-  const changeLang = (l) => { setLang(l); localStorage.setItem("veritas_lang", l); };
-  return <LangCtx.Provider value={{ lang, t: T[lang] || T.en, setLang: changeLang }}>{children}</LangCtx.Provider>;
+  const changeLang = (l) => {
+    localStorage.setItem("veritas_lang", l);
+    setLang(l);
+  };
+  const value = { lang, t: T[lang] || T.en, setLang: changeLang };
+  return <LangCtx.Provider value={value}>{children}</LangCtx.Provider>;
 }
 
 export const useLang = () => useContext(LangCtx);

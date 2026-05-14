@@ -351,7 +351,7 @@ export default function VerseImageGenerator() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const shareVia = (channel) => {
+  const shareVia = async (channel) => {
     const encoded = encodeURIComponent(shareText);
     const urls = {
       whatsapp: `https://wa.me/?text=${encoded}`,
@@ -364,16 +364,33 @@ export default function VerseImageGenerator() {
     setShowShareMenu(false);
   };
 
-  const nativeShare = () => {
+  const nativeShare = async () => {
+    // Try to share the actual background image if one is selected
+    const imgUrl = bgMode === "image" && selectedImage ? selectedImage
+      : bgMode === "upload" && uploadedImage ? uploadedImage
+      : null;
+
     if (navigator.share) {
-      navigator.share({ title: `Verse: ${verseRef}`, text: shareText, url: verseUrl });
+      const shareData = { title: `Verse: ${verseRef}`, text: shareText };
+      if (imgUrl) {
+        try {
+          const resp = await fetch(imgUrl);
+          const blob = await resp.blob();
+          const file = new File([blob], "verse-art.jpg", { type: blob.type || "image/jpeg" });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ ...shareData, files: [file] });
+            return;
+          }
+        } catch {}
+      }
+      await navigator.share(shareData);
     } else {
       setShowShareMenu(v => !v);
     }
   };
 
   return (
-    <div className="md:ml-16 min-h-screen pb-28 px-4 pt-6">
+    <div className="md:ml-16 min-h-screen pb-28 px-4 pt-6 block">
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="flex items-center gap-2 mb-6">
@@ -549,22 +566,35 @@ export default function VerseImageGenerator() {
 
           {/* Upload */}
           {bgMode === "upload" && (
-            <div className="flex flex-col items-center gap-3">
-              {uploadedImage && (
-                <div className="relative rounded-2xl overflow-hidden w-full" style={{ aspectRatio: "16/9" }}>
-                  <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
-                </div>
-              )}
+            <div className="space-y-3">
               <input ref={uploadRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-              <motion.button whileTap={{ scale: 0.96 }} onClick={() => uploadRef.current?.click()}
-                disabled={uploadingImage}
-                className="flex items-center gap-2.5 px-6 py-3 rounded-2xl font-cinzel text-sm"
-                style={{ background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)", color: "#fbbf24" }}>
-                {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                {uploadedImage ? (lang === "es" ? "Cambiar Imagen" : "Change Image") : (lang === "es" ? "Subir Imagen" : "Upload Image")}
-              </motion.button>
-              <p className="text-[10px] font-inter text-center" style={{ color: "rgba(255,255,255,0.25)" }}>
-                {lang === "es" ? "Tu imagen se usará como fondo del arte" : "Your image will be used as the art background"}
+              {/* Uploaded image in same grid style as semantic images */}
+              <div className="grid grid-cols-4 gap-2">
+                {uploadedImage && (
+                  <button onClick={() => { setBgMode("upload"); setSelectedImage(null); }}
+                    className="relative rounded-2xl overflow-hidden col-span-2"
+                    style={{ aspectRatio: "1/1", border: "2px solid #fbbf24", boxShadow: "0 0 14px rgba(251,191,36,0.4)" }}>
+                    <img src={uploadedImage} alt="Uploaded" className="w-full h-full object-cover" />
+                    <div className="absolute top-1 right-1 w-4 h-4 rounded-full flex items-center justify-center"
+                      style={{ background: "#fbbf24" }}>
+                      <Check className="w-2.5 h-2.5 text-black" />
+                    </div>
+                    <p className="absolute bottom-1 left-0 right-0 text-center font-cinzel"
+                      style={{ fontSize: "7px", color: "rgba(255,255,255,0.9)" }}>My Image</p>
+                  </button>
+                )}
+                <motion.button whileTap={{ scale: 0.96 }} onClick={() => uploadRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="relative rounded-2xl flex flex-col items-center justify-center gap-1"
+                  style={{ aspectRatio: "1/1", background: "rgba(251,191,36,0.07)", border: "1px dashed rgba(251,191,36,0.35)" }}>
+                  {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#fbbf24" }} /> : <Upload className="w-4 h-4" style={{ color: "#fbbf24" }} />}
+                  <span className="font-cinzel text-[8px]" style={{ color: "#fbbf24" }}>
+                    {uploadedImage ? (lang === "es" ? "Cambiar" : "Change") : (lang === "es" ? "Subir" : "Upload")}
+                  </span>
+                </motion.button>
+              </div>
+              <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>
+                {lang === "es" ? "Tu imagen se usará como fondo" : "Your image will be used as the background"}
               </p>
             </div>
           )}
