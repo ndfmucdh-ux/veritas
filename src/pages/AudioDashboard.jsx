@@ -9,6 +9,7 @@ import { base44 } from "@/api/base44Client";
 import jsPDF from "jspdf";
 
 const SLEEP_TIMER_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
+const SPEED_OPTIONS = [0.5, 1, 1.5, 2];
 
 export default function AudioDashboard() {
   const [audioHistory, setAudioHistory] = useState([]);
@@ -23,6 +24,7 @@ export default function AudioDashboard() {
   const [sleepCountdown, setSleepCountdown] = useState(null);
   const [showSleepPicker, setShowSleepPicker] = useState(false);
   const [notifPrefs, setNotifPrefs] = useState({ enabled: true, time: "20:00", goal: 1 });
+  const [playbackSpeed, setPlaybackSpeed] = useState(() => parseFloat(localStorage.getItem("veritas_audio_speed") || "1"));
   const [savingPrefs, setSavingPrefs] = useState(false);
   const [savedPrefs, setSavedPrefs] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -550,6 +552,68 @@ export default function AudioDashboard() {
                 style={{ background: savedPrefs ? "rgba(52,211,153,0.2)" : "rgba(0,245,255,0.12)", color: savedPrefs ? "#34d399" : "#00f5ff", border: savedPrefs ? "1px solid rgba(52,211,153,0.3)" : "1px solid rgba(0,245,255,0.25)" }}>
                 {savedPrefs ? "✓ Saved!" : savingPrefs ? "Saving…" : "Save Preferences"}
               </motion.button>
+            </div>
+
+            {/* Playback Speed */}
+            <div className="rounded-2xl p-5 space-y-4"
+              style={{
+                background: "linear-gradient(135deg, rgba(201,168,76,0.08), rgba(0,0,0,0.3))",
+                border: "1px solid rgba(201,168,76,0.25)",
+                boxShadow: "0 0 32px rgba(201,168,76,0.06)",
+              }}>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)" }}>
+                  <span className="text-base">⚡</span>
+                </div>
+                <div>
+                  <p className="font-cinzel text-sm font-bold" style={{ color: "#c9a84c" }}>Playback Speed</p>
+                  <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Adjust listening pace</p>
+                </div>
+                <div className="ml-auto px-3 py-1 rounded-full font-cinzel text-sm font-bold"
+                  style={{ background: "rgba(201,168,76,0.15)", color: "#c9a84c", border: "1px solid rgba(201,168,76,0.3)" }}>
+                  {playbackSpeed}x
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2">
+                {SPEED_OPTIONS.map(speed => {
+                  const isActive = playbackSpeed === speed;
+                  return (
+                    <motion.button
+                      key={speed}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        setPlaybackSpeed(speed);
+                        localStorage.setItem("veritas_audio_speed", String(speed));
+                        // Apply to any currently playing audio elements on the page
+                        document.querySelectorAll("audio, video").forEach(el => { el.playbackRate = speed; });
+                      }}
+                      className="py-3 rounded-xl font-cinzel font-bold text-sm transition-all relative overflow-hidden"
+                      style={{
+                        background: isActive
+                          ? "linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.15))"
+                          : "rgba(255,255,255,0.04)",
+                        color: isActive ? "#c9a84c" : "rgba(255,255,255,0.4)",
+                        border: isActive ? "1px solid rgba(201,168,76,0.5)" : "1px solid rgba(255,255,255,0.08)",
+                        boxShadow: isActive ? "0 0 18px rgba(201,168,76,0.2), inset 0 1px 0 rgba(201,168,76,0.2)" : "none",
+                      }}>
+                      {isActive && (
+                        <motion.div
+                          layoutId="speed-glow"
+                          className="absolute inset-0 rounded-xl"
+                          style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.2), transparent 70%)" }}
+                        />
+                      )}
+                      <span className="relative z-10">{speed}x</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              <p className="text-[10px] font-inter text-center" style={{ color: "rgba(255,255,255,0.25)" }}>
+                Speed is saved and applied to all audio playback
+              </p>
             </div>
 
             {/* Sleep timer settings */}
