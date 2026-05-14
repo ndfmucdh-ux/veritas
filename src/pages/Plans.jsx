@@ -161,10 +161,14 @@ export default function Plans() {
   const [activeCustomPlan, setActiveCustomPlan] = useState(null);
 
   useEffect(() => {
-    base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } })
-      .then(p => setProgress(p || [])).catch(() => {});
-    base44.entities.CustomPlan.list("-created_date", 20)
-      .then(p => setCustomPlans(p || [])).catch(() => {});
+    // Load all reading progress (plans + regular chapters) for the calendar
+    Promise.all([
+      base44.entities.ReadingProgress.list("-created_date", 500).catch(() => []),
+      base44.entities.CustomPlan.list("-created_date", 20).catch(() => []),
+    ]).then(([p, cp]) => {
+      setProgress(p || []);
+      setCustomPlans(cp || []);
+    });
   }, []);
 
   const getCompletedDays = (planTitle) => progress.filter(p => p.plan_id === planTitle).length;
