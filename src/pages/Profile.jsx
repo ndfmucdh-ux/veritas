@@ -25,13 +25,14 @@ import HighlightImageShare from "@/components/verse/HighlightImageShare";
 import AccountSettings from "@/components/profile/AccountSettings";
 import ReadingGoals from "@/components/profile/ReadingGoals";
 import DailySummaryCard from "@/components/profile/DailySummaryCard";
+import ProfileInsights from "@/components/profile/ProfileInsights";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
 
-const ALL_TABS = ["overview", "library", "stats", "emails", "settings"];
-const TAB_LABELS = { overview: "Overview", library: "Library", stats: "Growth", emails: "Emails", settings: "Settings" };
-const TAB_ICONS = { overview: Award, library: BookMarked, stats: BarChart3, emails: Mail, settings: Shield };
+const ALL_TABS = ["overview", "library", "insights", "stats", "emails", "settings"];
+const TAB_LABELS = { overview: "Overview", library: "Library", insights: "Insights", stats: "Growth", emails: "Emails", settings: "Settings" };
+const TAB_ICONS = { overview: Award, library: BookMarked, insights: TrendingUp, stats: BarChart3, emails: Mail, settings: Shield };
 
 // Fake reading data for the chart (last 7 days)
 const buildChartData = (chapters) => {
@@ -443,6 +444,18 @@ export default function Profile() {
                 }
                 {notes.length > 4 && <SeeAll to="/library" />}
               </Section>
+            </div>
+          )}
+
+          {/* ── INSIGHTS TAB ── */}
+          {activeTab === "insights" && (
+            <div className="px-5 space-y-5">
+              <ProfileInsights
+                highlights={highlights}
+                bookmarks={bookmarks}
+                notes={notes}
+                readingProgress={plans}
+              />
             </div>
           )}
 
