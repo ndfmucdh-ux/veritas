@@ -23,23 +23,11 @@ const POPULAR_VERSES = [
   { ref: "Jeremiah 29:11",  text: "For I know the plans I have for you, declares the LORD, plans to prosper you and not to harm you." },
 ];
 
-function QRCodeDisplay({ url, onClose }) {
-  const canvasRef = useRef(null);
+const LOGO_URL = "https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/6a1ac5ac1_IMG_1831.jpeg";
 
-  useEffect(() => {
-    // Simple QR-like placeholder — real QR via a free API
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, 200, 200);
-    ctx.fillStyle = "#000";
-    ctx.font = "10px monospace";
-    ctx.fillText("Scan to open verse", 16, 120);
-    ctx.fillText(url.slice(0, 28), 16, 135);
-  }, [url]);
-
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}&bgcolor=0a0f1e&color=fbbf24&margin=10`;
+function QRCodeDisplay({ url, verseRef, onClose }) {
+  // Black QR with gold modules — elegant dark theme
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}&bgcolor=0a0d1a&color=c9a84c&margin=12&qzone=2`;
 
   return (
     <motion.div
@@ -47,7 +35,7 @@ function QRCodeDisplay({ url, onClose }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center px-6"
-      style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(12px)" }}
+      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(16px)" }}
       onClick={onClose}
     >
       <motion.div
@@ -55,24 +43,54 @@ function QRCodeDisplay({ url, onClose }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.85, opacity: 0 }}
         transition={{ type: "spring", stiffness: 360, damping: 28 }}
-        className="rounded-3xl p-6 flex flex-col items-center gap-4 max-w-xs w-full"
-        style={{ background: "rgba(10,15,30,0.98)", border: "1px solid rgba(255,255,255,0.1)" }}
+        className="rounded-3xl p-6 flex flex-col items-center gap-5 max-w-xs w-full"
+        style={{
+          background: "linear-gradient(160deg, #0d1120 0%, #080c18 100%)",
+          border: "1px solid rgba(201,168,76,0.25)",
+          boxShadow: "0 0 60px rgba(201,168,76,0.1), 0 24px 80px rgba(0,0,0,0.8)"
+        }}
         onClick={e => e.stopPropagation()}
       >
-        <p className="font-cinzel text-sm font-semibold text-white/80">Scan to Open Verse</p>
-        <img
-          src={qrUrl}
-          alt="QR Code"
-          width={200}
-          height={200}
-          className="rounded-2xl"
-        />
-        <p className="text-xs font-inter text-center" style={{ color: "rgba(255,255,255,0.35)" }}>
-          Scan with any camera to open this verse in Veritas
+        {/* Logo + title */}
+        <div className="flex flex-col items-center gap-2">
+          <img src={LOGO_URL} alt="Veritas" width={44} height={44}
+            className="rounded-xl" style={{ border: "1.5px solid rgba(201,168,76,0.4)" }} />
+          <p className="font-cinzel text-xs font-semibold tracking-[0.2em] uppercase"
+            style={{ color: "rgba(201,168,76,0.7)" }}>Veritas · The Word</p>
+        </div>
+
+        {/* QR code with dark bg and gold dots */}
+        <div className="relative rounded-2xl overflow-hidden p-1"
+          style={{ background: "#0a0d1a", border: "1.5px solid rgba(201,168,76,0.3)", boxShadow: "0 0 24px rgba(201,168,76,0.12)" }}>
+          <img
+            src={qrUrl}
+            alt="QR Code"
+            width={220}
+            height={220}
+            className="block rounded-xl"
+          />
+          {/* Center logo overlay on QR */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="rounded-lg overflow-hidden"
+              style={{ width: 44, height: 44, border: "2px solid #0a0d1a", background: "#0a0d1a" }}>
+              <img src={LOGO_URL} alt="" width={44} height={44} style={{ borderRadius: 8, objectFit: "cover" }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Verse ref */}
+        {verseRef && (
+          <p className="font-cinzel text-sm font-bold tracking-wider" style={{ color: "#c9a84c" }}>
+            — {verseRef} —
+          </p>
+        )}
+
+        <p className="text-[11px] font-inter text-center" style={{ color: "rgba(255,255,255,0.3)" }}>
+          Scan with any camera to open in Veritas
         </p>
         <button onClick={onClose}
-          className="flex items-center gap-2 text-xs px-4 py-2 rounded-xl font-cinzel"
-          style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)" }}>
+          className="flex items-center gap-2 text-xs px-5 py-2.5 rounded-xl font-cinzel transition-all"
+          style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.25)", color: "rgba(201,168,76,0.7)" }}>
           <X className="w-3.5 h-3.5" /> Close
         </button>
       </motion.div>
@@ -284,7 +302,7 @@ export default function VerseImageGenerator() {
 
       {/* QR Modal */}
       <AnimatePresence>
-        {showQR && <QRCodeDisplay url={verseUrl} onClose={() => setShowQR(false)} />}
+        {showQR && <QRCodeDisplay url={verseUrl} verseRef={verseRef} onClose={() => setShowQR(false)} />}
       </AnimatePresence>
     </div>
   );

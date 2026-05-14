@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Headphones, Download, Share2, Timer, Flame, BarChart2,
   CheckCircle2, BookOpen, Clock, Target, Trophy, ChevronLeft,
-  X, Play, Pause, Settings, Bell, BellOff
+  X, Play, Pause, Settings, Bell, BellOff, Bookmark, Trash2
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import jsPDF from "jspdf";
@@ -15,6 +15,10 @@ export default function AudioDashboard() {
   const [xpData, setXpData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [timestampBookmarks, setTimestampBookmarks] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("veritas_audio_bookmarks") || "[]"); } catch { return []; }
+  });
+  const [bookmarkSaved, setBookmarkSaved] = useState(false);
   const [sleepTimer, setSleepTimer] = useState(null);
   const [sleepCountdown, setSleepCountdown] = useState(null);
   const [showSleepPicker, setShowSleepPicker] = useState(false);
@@ -91,6 +95,36 @@ export default function AudioDashboard() {
 
   const formatCountdown = (secs) => {
     if (!secs) return "";
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
+
+  const saveTimestampBookmark = (audioEntry) => {
+    const bookmark = {
+      id: Date.now(),
+      book: audioEntry.book,
+      chapter: audioEntry.chapter,
+      translation: audioEntry.translation,
+      timestamp_seconds: audioEntry.timestamp_seconds || 0,
+      saved_at: new Date().toISOString(),
+      label: `${audioEntry.book} ${audioEntry.chapter}`,
+    };
+    const updated = [bookmark, ...timestampBookmarks].slice(0, 50);
+    setTimestampBookmarks(updated);
+    localStorage.setItem("veritas_audio_bookmarks", JSON.stringify(updated));
+    setBookmarkSaved(audioEntry.id);
+    setTimeout(() => setBookmarkSaved(null), 2000);
+  };
+
+  const deleteTimestampBookmark = (id) => {
+    const updated = timestampBookmarks.filter(b => b.id !== id);
+    setTimestampBookmarks(updated);
+    localStorage.setItem("veritas_audio_bookmarks", JSON.stringify(updated));
+  };
+
+  const formatTimestamp = (secs) => {
+    if (!secs) return "0:00";
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return `${m}:${String(s).padStart(2, "0")}`;
@@ -240,6 +274,7 @@ export default function AudioDashboard() {
         {[
           ["dashboard", "📊 Overview"],
           ["history", "📖 History"],
+          ["bookmarks", "🔖 Bookmarks"],
           ["settings", "⚙️ Settings"],
         ].map(([id, label]) => (
           <button key={id} onClick={() => setActiveTab(id)}
@@ -389,13 +424,80 @@ export default function AudioDashboard() {
                     {a.translation} · {(a.updated_date || a.created_date)?.slice(0, 10)}
                   </p>
                 </div>
-                {a.timestamp_seconds > 0 && (
-                  <span className="text-[10px] font-inter flex-shrink-0" style={{ color: "#00f5ff" }}>
-                    {Math.round(a.timestamp_seconds / 60)}m
-                  </span>
-                )}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {a.timestamp_seconds > 0 && (
+                    <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full"
+                      style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}>
+                      {formatTimestamp(a.timestamp_seconds)}
+                    </span>
+                  )}
+                  <motion.button
+                    whileTap={{ scale: 0.85 }}
+                    onClick={() => saveTimestampBookmark(a)}
+                    title="Save this spot"
+                    className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                    style={{
+                      background: bookmarkSaved === a.id ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.05)",
+                      border: bookmarkSaved === a.id ? "1px solid rgba(251,191,36,0.35)" : "1px solid rgba(255,255,255,0.08)",
+                    }}>
+                    <Bookmark className="w-3.5 h-3.5"
+                      style={{ color: bookmarkSaved === a.id ? "#fbbf24" : "rgba(255,255,255,0.35)" }} />
+                  </motion.button>
+                </div>
               </motion.div>
             ))}
+          </div>
+        )}
+
+        {/* ── BOOKMARKS TAB ── */}
+        {activeTab === "bookmarks" && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
+                {timestampBookmarks.length} saved spot{timestampBookmarks.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+            {timestampBookmarks.length === 0 ? (
+              <div className="py-16 flex flex-col items-center gap-3">
+                <Bookmark className="w-12 h-12" style={{ color: "rgba(255,255,255,0.1)" }} />
+                <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>No spots saved yet</p>
+                <p className="text-xs font-inter text-center px-8" style={{ color: "rgba(255,255,255,0.2)" }}>
+                  Tap the 🔖 button on any chapter in History to save your exact listening spot
+                </p>
+              </div>
+            ) : (
+              timestampBookmarks.map((bm, i) => (
+                <motion.div key={bm.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                  className="flex items-center gap-3 px-4 py-3.5 rounded-2xl"
+                  style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.18)" }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: "rgba(251,191,36,0.12)", border: "1px solid rgba(251,191,36,0.25)" }}>
+                    <Bookmark className="w-4.5 h-4.5" style={{ color: "#fbbf24" }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-cinzel text-sm font-semibold text-white">{bm.label}</p>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+                      {bm.translation} · at {formatTimestamp(bm.timestamp_seconds)}
+                    </p>
+                    <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.2)" }}>
+                      Saved {new Date(bm.saved_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <a href={`/read?book=${encodeURIComponent(bm.book)}&chapter=${bm.chapter}`}
+                      className="text-[10px] font-cinzel px-3 py-1.5 rounded-xl"
+                      style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}>
+                      Resume →
+                    </a>
+                    <button onClick={() => deleteTimestampBookmark(bm.id)}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center"
+                      style={{ background: "rgba(248,113,113,0.08)", color: "#f87171" }}>
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         )}
 

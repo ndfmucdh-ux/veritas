@@ -130,7 +130,7 @@ export default function VerseRow({
         />
       )}
       <motion.div
-        className="rounded-lg px-2 py-1.5 cursor-pointer transition-all flex items-start gap-2"
+        className="rounded-lg px-2 py-3 cursor-pointer transition-all flex items-start gap-2"
         animate={isJumped ? { boxShadow: ["0 0 0px rgba(0,245,255,0)", "0 0 18px rgba(0,245,255,0.45)", "0 0 0px rgba(0,245,255,0)"] } : {}}
         transition={{ duration: 1.8, ease: "easeInOut" }}
         style={{ ...hlStyle, background: isJumped ? "rgba(0,245,255,0.1)" : isSelected ? "rgba(0,245,255,0.08)" : hlStyle.background, outline: isSelected ? "1px solid rgba(0,245,255,0.3)" : isJumped ? "1px solid rgba(0,245,255,0.4)" : "none" }}
@@ -154,7 +154,8 @@ export default function VerseRow({
             transition: "text-shadow 0.3s ease",
           }}>
           {showNumbers && (
-            <span className="text-xs mr-2 font-cinzel select-none" style={{ color: "rgba(255,255,255,0.25)", verticalAlign: "super", fontSize: "10px" }}>
+            <span className="font-cinzel font-bold select-none mr-2.5 inline-block"
+              style={{ color: "rgba(0,245,255,0.6)", fontSize: "clamp(13px, 3vw, 16px)", verticalAlign: "top", lineHeight: "1.4", minWidth: "1.8em", display: "inline-block" }}>
               {verseNum}
             </span>
           )}

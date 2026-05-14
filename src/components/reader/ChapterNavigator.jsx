@@ -109,32 +109,33 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
         {/* Prev */}
         <button
           onClick={prevChapter}
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors active:scale-90"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}
+          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors active:scale-90"
+          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
 
         {/* Book + Chapter pill */}
         <button
           onClick={() => open ? setOpen(false) : openTab("book")}
-          className="flex-1 flex items-center justify-center gap-2 h-9 rounded-xl font-cinzel text-sm font-semibold transition-all"
+          className="flex-1 flex items-center justify-center gap-2.5 h-12 rounded-xl font-cinzel font-bold transition-all"
           style={{
             background: open ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.06)",
-            color: open ? "#00f5ff" : "rgba(255,255,255,0.85)",
+            color: open ? "#00f5ff" : "rgba(255,255,255,0.9)",
             border: open ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
+            fontSize: "clamp(14px, 3.5vw, 17px)",
           }}
         >
           <span>{displayBook}</span>
-          <span style={{ color: "rgba(255,255,255,0.4)" }}>{chapter}</span>
-          <ChevronDown className="w-3.5 h-3.5 transition-transform" style={{ color: "rgba(255,255,255,0.35)", transform: open ? "rotate(180deg)" : "rotate(0deg)" }} />
+          <span style={{ color: open ? "rgba(0,245,255,0.6)" : "rgba(255,255,255,0.45)", fontSize: "0.85em" }}>{chapter}</span>
+          <ChevronDown className="w-4 h-4 transition-transform flex-shrink-0" style={{ color: "rgba(255,255,255,0.35)", transform: open ? "rotate(180deg)" : "rotate(0deg)" }} />
         </button>
 
         {/* Translation badge */}
         {onTranslationChange && (
           <button
             onClick={() => openTab("translation")}
-            className="px-3 h-9 rounded-xl font-cinzel text-xs font-semibold flex-shrink-0 transition-all"
+            className="px-3.5 h-12 rounded-xl font-cinzel text-sm font-bold flex-shrink-0 transition-all"
             style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}
           >
             {translation}
@@ -144,10 +145,10 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
         {/* Next */}
         <button
           onClick={nextChapter}
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors active:scale-90"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}
+          className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors active:scale-90"
+          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 
@@ -237,13 +238,13 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                             <button
                               key={b.name}
                               onClick={() => { setSelBook(b.name); setTab("chapter"); setBookSearch(""); }}
-                              className="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg transition-all"
+                              className="w-full text-left flex items-center justify-between px-3 py-3 rounded-lg transition-all"
                               style={{
                                 background: selBook === b.name ? "rgba(0,245,255,0.12)" : "transparent",
                                 color: selBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.6)",
                               }}
                             >
-                              <span className="text-xs font-inter">{getTranslatedBookName(b.name, lang)}</span>
+                              <span className="font-inter font-medium" style={{ fontSize: "clamp(13px, 3.5vw, 15px)" }}>{getTranslatedBookName(b.name, lang)}</span>
                               <span className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.2)" }}>{b.chapters} ch</span>
                             </button>
                           ))}
@@ -269,14 +270,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                     <button
                       key={ch}
                       onClick={() => goTo(selBook, ch)}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all"
+                      className="w-full flex items-center justify-between px-3 py-3.5 rounded-lg text-left transition-all"
                       style={{
                         background: isActive ? "rgba(0,245,255,0.12)" : "transparent",
                         color: isActive ? "#00f5ff" : "rgba(255,255,255,0.65)",
                         borderLeft: isActive ? "3px solid #00f5ff" : "3px solid transparent",
                       }}
                     >
-                      <span className="text-sm font-inter">Chapter {ch}</span>
+                      <span className="font-inter font-medium" style={{ fontSize: "clamp(14px, 3.5vw, 16px)" }}>Chapter {ch}</span>
                       {isActive && <Check className="w-3.5 h-3.5" style={{ color: "#00f5ff" }} />}
                     </button>
                   );

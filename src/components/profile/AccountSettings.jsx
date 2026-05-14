@@ -40,7 +40,12 @@ const THEMES = [
   { id: "midnight", label: "Midnight", icon: Zap, color: "#00f5ff" },
   { id: "light", label: "Light", icon: Sun, color: "#fbbf24" },
 ];
-const TRANSLATIONS = ["KJV", "NIV", "ESV", "NKJV", "NLT", "AMP", "MSG"];
+const TRANSLATIONS = [
+  // English
+  "KJV", "NIV", "ESV", "NKJV", "NLT", "AMP", "MSG",
+  // Spanish
+  "RVR60", "NVI", "LBLA", "TLA", "DHH",
+];
 const LANGUAGES = ["English", "Español", "Français", "Português", "Deutsch"];
 
 export default function AccountSettings({ user }) {
@@ -80,6 +85,11 @@ export default function AccountSettings({ user }) {
   const [morningTime, setMorningTime] = useState(() => localStorage.getItem("veritas_notif_morning") || "07:00");
   const [eveningTime, setEveningTime] = useState(() => localStorage.getItem("veritas_notif_evening") || "20:00");
   const [devotionalTime, setDevotionalTime] = useState(() => localStorage.getItem("veritas_notif_devotional_reminder_time") || "19:00");
+
+  // Save feedback states
+  const [readingSaved, setReadingSaved] = useState(false);
+  const [langSaved, setLangSaved] = useState(false);
+  const [notifSaved, setNotifSaved] = useState(false);
 
   const toggle = (id) => setOpenSection(s => s === id ? null : id);
 
@@ -129,16 +139,22 @@ export default function AccountSettings({ user }) {
     localStorage.setItem("veritas_red_letter", String(redLetterOn));
     localStorage.setItem("veritas_verse_numbers", String(verseNumbers));
     localStorage.setItem("veritas_audio_autoplay", String(audioAutoplay));
+    setReadingSaved(true);
+    setTimeout(() => setReadingSaved(false), 2500);
   };
 
   const saveLanguage = () => {
     localStorage.setItem("veritas_app_language", appLanguage);
+    setLangSaved(true);
+    setTimeout(() => setLangSaved(false), 2500);
   };
 
   const saveNotifications = () => {
     localStorage.setItem("veritas_notif_morning", morningTime);
     localStorage.setItem("veritas_notif_evening", eveningTime);
     localStorage.setItem("veritas_notif_devotional_reminder_time", devotionalTime);
+    setNotifSaved(true);
+    setTimeout(() => setNotifSaved(false), 2500);
   };
 
   const pwdStrength = newPassword.length === 0 ? 0 : newPassword.length < 6 ? 1 : newPassword.length < 10 ? 2 : /[A-Z]/.test(newPassword) && /[0-9]/.test(newPassword) ? 4 : 3;
@@ -314,9 +330,9 @@ export default function AccountSettings({ user }) {
                               ))}
                             </div>
                             <button onClick={saveReadingPrefs}
-                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2"
-                              style={{ background: "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}>
-                              <Check className="w-4 h-4" /> Save Reading Preferences
+                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2 transition-all"
+                              style={{ background: readingSaved ? "rgba(52,211,153,0.2)" : "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}>
+                              <Check className="w-4 h-4" /> {readingSaved ? "Saved!" : "Save Reading Preferences"}
                             </button>
                           </div>
                         )}
@@ -342,9 +358,9 @@ export default function AccountSettings({ user }) {
                               </div>
                             </div>
                             <button onClick={saveLanguage}
-                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2"
-                              style={{ background: "rgba(96,165,250,0.1)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)" }}>
-                              <Check className="w-4 h-4" /> Save Language
+                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2 transition-all"
+                              style={{ background: langSaved ? "rgba(96,165,250,0.2)" : "rgba(96,165,250,0.1)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)" }}>
+                              <Check className="w-4 h-4" /> {langSaved ? "Saved!" : "Save Language"}
                             </button>
                           </div>
                         )}
@@ -369,9 +385,9 @@ export default function AccountSettings({ user }) {
                               </div>
                             ))}
                             <button onClick={saveNotifications}
-                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2"
-                              style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
-                              <Check className="w-4 h-4" /> Save Schedule
+                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2 transition-all"
+                              style={{ background: notifSaved ? "rgba(52,211,153,0.2)" : "rgba(0,245,255,0.1)", color: notifSaved ? "#34d399" : "#00f5ff", border: notifSaved ? "1px solid rgba(52,211,153,0.3)" : "1px solid rgba(0,245,255,0.25)" }}>
+                              <Check className="w-4 h-4" /> {notifSaved ? "Saved!" : "Save Schedule"}
                             </button>
                           </div>
                         )}
