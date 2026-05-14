@@ -20,7 +20,7 @@ function openDB() {
 }
 
 export const DOWNLOADABLE_TRANSLATIONS = [
-  // English (most popular)
+  // English (20 versions)
   { code: "KJV",    name: "King James Version",           lang: "en", flag: "🇬🇧" },
   { code: "NKJV",   name: "New King James Version",       lang: "en", flag: "🇬🇧" },
   { code: "NIV",    name: "New International Version",    lang: "en", flag: "🇬🇧" },
@@ -30,32 +30,57 @@ export const DOWNLOADABLE_TRANSLATIONS = [
   { code: "AMP",    name: "Amplified Bible",              lang: "en", flag: "🇬🇧" },
   { code: "CSB",    name: "Christian Standard Bible",     lang: "en", flag: "🇬🇧" },
   { code: "MSG",    name: "The Message",                  lang: "en", flag: "🇬🇧" },
-  { code: "ASV",    name: "American Standard Version",    lang: "en", flag: "🇺🇸" },
-  { code: "BBE",    name: "Bible in Basic English",       lang: "en", flag: "🇦🇺" },
-  { code: "WEB",    name: "World English Bible",          lang: "en", flag: "🇺🇸" },
+  { code: "NRSV",   name: "New Revised Standard Version", lang: "en", flag: "🇬🇧" },
+  { code: "ASV",    name: "American Standard Version",    lang: "en", flag: "🇬🇧" },
+  { code: "WEB",    name: "World English Bible",          lang: "en", flag: "🇬🇧" },
   { code: "BSB",    name: "Berean Standard Bible",        lang: "en", flag: "🇬🇧" },
   { code: "YLT",    name: "Young's Literal Translation",  lang: "en", flag: "🇬🇧" },
-  { code: "DARBY",  name: "Darby Translation",            lang: "en", flag: "🇬🇧" },
-  { code: "WNT",    name: "Weymouth New Testament",       lang: "en", flag: "🇬🇧" },
-  // Spanish
-  { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", flag: "🇲🇽" },
-  { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", flag: "🇲🇽" },
-  { code: "PDDPT",  name: "Palabra de Dios para Ti",      lang: "es", flag: "🇲🇽" },
-  { code: "BTX3",   name: "Biblia Textual",               lang: "es", flag: "🇲🇽" },
-  { code: "RVA2015",name: "Reina Valera Actualizada 2015",lang: "es", flag: "🇲🇽" },
-  { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", flag: "🇲🇽" },
-  { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", flag: "🇲🇽" },
-  // Portuguese
+  { code: "ERV",    name: "English Revised Version",      lang: "en", flag: "🇬🇧" },
+  { code: "GNV",    name: "Geneva Bible",                 lang: "en", flag: "🇬🇧" },
+  { code: "AKJV",   name: "American King James Version",  lang: "en", flag: "🇬🇧" },
+  { code: "HCSB",   name: "Holman CSB",                   lang: "en", flag: "🇬🇧" },
+  { code: "ICB",    name: "Interlinear Code Bible",       lang: "en", flag: "🇬🇧" },
+  { code: "OEB",    name: "Open English Bible",           lang: "en", flag: "🇬🇧" },
+  
+  // Spanish (10 versions)
+  { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", flag: "🇪🇸" },
+  { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", flag: "🇪🇸" },
+  { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", flag: "🇪🇸" },
+  { code: "TLA",    name: "Traducción en Lenguaje Actual",lang: "es", flag: "🇪🇸" },
+  { code: "DHH",    name: "Dios Habla Hoy",               lang: "es", flag: "🇪🇸" },
+  { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", flag: "🇪🇸" },
+  { code: "BLS",    name: "Biblia en Lenguaje Sencillo",  lang: "es", flag: "🇪🇸" },
+  { code: "RVR2020",name: "Reina-Valera 2020",            lang: "es", flag: "🇪🇸" },
+  { code: "PDT",    name: "Palabra de Dios para Ti",      lang: "es", flag: "🇪🇸" },
+  { code: "PDDPT",  name: "Palabra de Dios para Todos",   lang: "es", flag: "🇪🇸" },
+  
+  // Portuguese (5 versions)
   { code: "ARA",    name: "Almeida Revisada Atualizada",  lang: "pt", flag: "🇧🇷" },
   { code: "ARC",    name: "Almeida Revisada Clássica",    lang: "pt", flag: "🇧🇷" },
   { code: "NVT",    name: "Nova Versão Transformadora",   lang: "pt", flag: "🇧🇷" },
-  // French
+  { code: "BPT",    name: "Bíblia Português",             lang: "pt", flag: "🇧🇷" },
+  { code: "BRA",    name: "Biblia Reina-Valera Atualizada", lang: "pt", flag: "🇧🇷" },
+  
+  // French (6 versions)
   { code: "LSG",    name: "Louis Segond 1910",            lang: "fr", flag: "🇫🇷" },
-  { code: "NEG1979",name: "Nouvelle Edition Genève 1979", lang: "fr", flag: "🇫🇷" },
+  { code: "NEG1979",name: "Nouvelle Edition Genève 1979",  lang: "fr", flag: "🇫🇷" },
   { code: "BDS",    name: "Bible du Semeur",              lang: "fr", flag: "🇫🇷" },
-  // Italian
+  { code: "SG21",   name: "Segond 21",                    lang: "fr", flag: "🇫🇷" },
+  { code: "FC97",   name: "Français Courant 1997",        lang: "fr", flag: "🇫🇷" },
+  { code: "PdV",    name: "Parole de Vie",                lang: "fr", flag: "🇫🇷" },
+  
+  // Italian (4 versions)
   { code: "DIOD",   name: "Bibbia Diodati",               lang: "it", flag: "🇮🇹" },
   { code: "NRV",    name: "Nuova Riveduta 2006",          lang: "it", flag: "🇮🇹" },
+  { code: "CEI",    name: "CEI Conferenza Episcopale",    lang: "it", flag: "🇮🇹" },
+  { code: "NBDC",   name: "Nuova Bibbia dei Commentari",  lang: "it", flag: "🇮🇹" },
+  
+  // German (5 versions)
+  { code: "LUT",    name: "Lutherbibel 2017",             lang: "de", flag: "🇩🇪" },
+  { code: "ELB",    name: "Elberfelder Bibel",            lang: "de", flag: "🇩🇪" },
+  { code: "ZB",     name: "Zürcher Bibel",                lang: "de", flag: "🇩🇪" },
+  { code: "HFA",    name: "Hoffnung für Alle",            lang: "de", flag: "🇩🇪" },
+  { code: "SCH2000",name: "Schlachter 2000",              lang: "de", flag: "🇩🇪" },
 ];
 
 // ── Async IndexedDB operations ────────────────────────────────────────────
