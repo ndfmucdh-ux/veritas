@@ -113,7 +113,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99999,
-                    maxWidth: 480, width: "90vw", maxHeight: "80vh",
+                    width: "calc(90vw - 32px)", maxWidth: "480px", maxHeight: "calc(80vh - 32px)",
+                    margin: "auto", padding: "0",
                     background: "rgba(14,18,32,0.97)",
                     backdropFilter: "blur(24px)",
                     borderRadius: "20px",
@@ -153,7 +154,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   </div>
 
                   {/* Scrollable body */}
-                  <div style={{ flex: 1, overflowY: "auto", padding: "14px" }}>
+                  <div style={{ flex: 1, overflowY: "auto", padding: "14px", minHeight: 0 }}>
 
                     {/* CATEGORY GRID */}
                     {modal === "books" && !selectedCategory && (
@@ -273,7 +274,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   style={{
                     position: "fixed", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                     zIndex: 99998,
-                    maxWidth: 420, width: "90vw", maxHeight: "75vh",
+                    width: "calc(90vw - 32px)", maxWidth: "420px", maxHeight: "calc(75vh - 32px)",
+                    margin: "auto", padding: "0",
                     background: "rgba(14,18,32,0.98)",
                     backdropFilter: "blur(24px)",
                     borderRadius: "20px",
@@ -311,8 +313,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                   </div>
 
                   {/* Chapters grid */}
-                  <div style={{ flex: 1, overflowY: "auto", padding: "12px" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
+                  <div style={{ flex: 1, overflowY: "auto", padding: "12px", minHeight: 0 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, width: "100%" }}>
                       {Array.from({ length: selectedBook.chapters }, (_, i) => i + 1).map(ch => {
                         const isActive = selectedBook.name === book && ch === chapter;
                         return (
