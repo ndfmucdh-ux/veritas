@@ -42,10 +42,11 @@ export const DOWNLOADABLE_TRANSLATIONS = [
   { code: "ICB",    name: "Interlinear Code Bible",       lang: "en", flag: "🇬🇧" },
   { code: "OEB",    name: "Open English Bible",           lang: "en", flag: "🇬🇧" },
   
-  // Spanish (10 versions)
+  // Spanish (11 versions)
   { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", flag: "🇪🇸" },
   { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", flag: "🇪🇸" },
   { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", flag: "🇪🇸" },
+  { code: "BTX3",   name: "Biblia Textual",               lang: "es", flag: "🇪🇸" },
   { code: "TLA",    name: "Traducción en Lenguaje Actual",lang: "es", flag: "🇪🇸" },
   { code: "DHH",    name: "Dios Habla Hoy",               lang: "es", flag: "🇪🇸" },
   { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", flag: "🇪🇸" },
