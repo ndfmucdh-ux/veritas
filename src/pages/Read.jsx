@@ -35,6 +35,7 @@ export default function Read() {
   const [fontSize, setFontSize] = useState(18);
   const [fontFamily, setFontFamily] = useState("playfair");
   const [showNumbers, setShowNumbers] = useState(true);
+  const [oledMode, setOledMode] = useState(() => localStorage.getItem("veritas_oled_mode") === "true");
   const [highlights, setHighlights] = useState({});
   const [bookmarks, setBookmarks] = useState({});
   const [notes, setNotes] = useState({});
@@ -181,14 +182,14 @@ export default function Read() {
   return (
     <motion.div {...pageTransition}
       className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen"}`}
-      style={{ background: immersive ? "#06080f" : undefined }}
+      style={{ background: oledMode ? "#000000" : immersive ? "#06080f" : undefined }}
     >
       {/* Reader top bar */}
       <div
         className="sticky z-30 px-4 py-3 space-y-3"
         style={{
           top: immersive ? 0 : "57px",
-          background: "rgba(6,10,20,0.9)",
+          background: oledMode ? "rgba(0,0,0,0.97)" : "rgba(6,10,20,0.9)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           overflow: "visible",
@@ -258,6 +259,13 @@ export default function Read() {
                 </SettingRow>
                 <SettingRow label="Verse Numbers">
                   <Toggle value={showNumbers} onChange={() => setShowNumbers(v => !v)} />
+                </SettingRow>
+                <SettingRow label="OLED Dark Mode">
+                  <Toggle value={oledMode} onChange={() => {
+                    const next = !oledMode;
+                    setOledMode(next);
+                    localStorage.setItem("veritas_oled_mode", String(next));
+                  }} />
                 </SettingRow>
               </div>
             </motion.div>

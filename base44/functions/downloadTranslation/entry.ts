@@ -1,17 +1,24 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
-// Map from app translation codes → bolls.life short_name codes (MUST match getChapter function)
+// Map from app translation codes → bolls.life short_name codes
 const BOLLS_CODE_MAP = {
-  KJV:"KJV", NKJV:"NKJV", NIV:"NIV", ESV:"ESV", NLT:"NLT",
-  NASB:"NASB", AMP:"AMP", CSB:"CSB17", MSG:"MSG", ASV:"ASV",
-  BBE:"BBE", WEB:"WEB", BSB:"BSB", YLT:"YLT", DARBY:"DARBY",
-  WNT:"WNT", ERV:"ERV", NRSV:"NRSVCE", ISV:"ISV",
-  // Spanish — corrected codes
-  NVI:"NVI", RVR1960:"RV1960", PDDPT:"PDT", BTX3:"LBLA", LBLA:"LBLA", NTV:"NTV",
+  // English
+  KJV: "KJV", NKJV: "NKJV", NIV: "NIV", ESV: "ESV", NLT: "NLT",
+  NASB: "NASB", AMP: "AMP", CSB: "CSB17", MSG: "MSG", ASV: "ASV",
+  BBE: "BBE", WEB: "WEB", BSB: "BSB", YLT: "YLT", DARBY: "DARBY",
+  WNT: "WNT", ERV: "ERV", NRSV: "NRSVCE", ISV: "ISV", DRA: "DRA",
+  WYC: "WYC", GNV: "GNV",
+  // Spanish
+  NVI: "NVI", RVR1960: "RV1960", LBLA: "LBLA", NTV: "NTV",
+  RVA: "RVA2015", TLA: "TLA", DHH: "DHH",
   // Portuguese
-  ARA:"ARA",
+  ARA: "ARA", ARC: "ARC",
   // French
-  BDS:"BDS",
+  LSG: "LSG1910", BDS: "BDS", NEG1979: "NEG1979",
+  // Italian
+  DIOD: "Diodati", NRV: "NR2006",
+  // German
+  LUT: "Luther2017", ELB: "ELB",
 };
 
 const TRANSLATION_MAP = {
@@ -31,21 +38,28 @@ const TRANSLATION_MAP = {
   YLT: { name: "Young's Literal Translation", lang: "en" },
   DARBY: { name: "Darby Translation", lang: "en" },
   WNT: { name: "Weymouth New Testament", lang: "en" },
+  ERV: { name: "English Revised Version", lang: "en" },
+  NRSV: { name: "New Revised Standard Version", lang: "en" },
+  ISV: { name: "International Standard Version", lang: "en" },
+  DRA: { name: "Douay-Rheims American", lang: "en" },
+  WYC: { name: "Wycliffe Bible", lang: "en" },
+  GNV: { name: "Geneva Bible", lang: "en" },
   RVR1960: { name: "Reina-Valera 1960", lang: "es" },
   NVI: { name: "Nueva Versión Internacional", lang: "es" },
-  PDDPT: { name: "Palabra de Dios para Ti", lang: "es" },
-  BTX3: { name: "Biblia Textual", lang: "es" },
-  RVA2015: { name: "Reina Valera Actualizada 2015", lang: "es" },
   LBLA: { name: "Biblia de las Américas", lang: "es" },
   NTV: { name: "Nueva Traducción Viviente", lang: "es" },
+  RVA: { name: "Reina Valera Actualizada 2015", lang: "es" },
+  TLA: { name: "Traducción en Lenguaje Actual", lang: "es" },
+  DHH: { name: "Dios Habla Hoy", lang: "es" },
   ARA: { name: "Almeida Revisada Atualizada", lang: "pt" },
   ARC: { name: "Almeida Revisada Clássica", lang: "pt" },
-  NVT: { name: "Nova Versão Transformadora", lang: "pt" },
   LSG: { name: "Louis Segond 1910", lang: "fr" },
-  NEG1979: { name: "Nouvelle Edition Genève 1979", lang: "fr" },
   BDS: { name: "Bible du Semeur", lang: "fr" },
+  NEG1979: { name: "Nouvelle Edition Genève 1979", lang: "fr" },
   DIOD: { name: "Bibbia Diodati", lang: "it" },
   NRV: { name: "Nuova Riveduta 2006", lang: "it" },
+  LUT: { name: "Lutherbibel 2017", lang: "de" },
+  ELB: { name: "Elberfelder Bibel", lang: "de" },
 };
 
 const BOOK_NUM = {
@@ -94,36 +108,40 @@ function cleanBollsText(raw) {
   return text.trim();
 }
 
-// Fetch a chapter directly from bolls.life API (no nested function call)
-async function fetchChapterDirect(translation, bookName, chapter) {
+// Fetch a chapter from bolls.life with one retry on failure
+async function fetchChapterDirect(bollsCode, bookName, chapter) {
   const bookNum = BOOK_NUM[bookName];
   if (!bookNum) return [];
-  const url = `https://bolls.life/get-chapter/${translation}/${bookNum}/${chapter}/`;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return [];
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) return [];
-    const verses = [];
-    for (const v of data) {
-      const num = parseInt(v.verse);
-      if (isNaN(num) || !v.text) continue;
-      const text = cleanBollsText(v.text.trim());
-      if (text) verses.push({ verse: num, text });
-    }
-    verses.sort((a, b) => a.verse - b.verse);
-    return verses;
-  } catch {
-    return [];
-  }
-}
+  const url = `https://bolls.life/get-chapter/${bollsCode}/${bookNum}/${chapter}/`;
 
-// Fetch multiple chapters concurrently in batches
-async function fetchBatch(translation, tasks) {
-  const results = await Promise.all(
-    tasks.map(({ bookName, chapter }) => fetchChapterDirect(translation, bookName, chapter))
-  );
-  return results;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) {
+        if (attempt === 0) {
+          await new Promise(r => setTimeout(r, 500));
+          continue;
+        }
+        return [];
+      }
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) return [];
+      const verses = [];
+      for (const v of data) {
+        const num = parseInt(v.verse);
+        if (isNaN(num) || !v.text) continue;
+        const text = cleanBollsText(v.text.trim());
+        if (text) verses.push({ verse: num, text });
+      }
+      verses.sort((a, b) => a.verse - b.verse);
+      return verses;
+    } catch {
+      if (attempt === 0) {
+        await new Promise(r => setTimeout(r, 600));
+      }
+    }
+  }
+  return [];
 }
 
 Deno.serve(async (req) => {
@@ -132,7 +150,7 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { translation, pack = "quick" } = await req.json();
+    const { translation } = await req.json();
     if (!translation) return Response.json({ error: 'Missing translation' }, { status: 400 });
 
     const tCode = translation.toUpperCase();
@@ -148,7 +166,7 @@ Deno.serve(async (req) => {
     const result = {};
     let totalChapters = 0;
 
-    // Build all fetch tasks — use bollsCode for API calls, store under tCode
+    // Build all fetch tasks
     const allTasks = [];
     for (const book of books) {
       result[book.name] = {};
@@ -157,12 +175,14 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Process in batches of 10 concurrent requests
-    const BATCH_SIZE = 10;
+    // Process in batches of 8 — gentle on the API
+    const BATCH_SIZE = 8;
     for (let i = 0; i < allTasks.length; i += BATCH_SIZE) {
       const batch = allTasks.slice(i, i + BATCH_SIZE);
-      const batchResults = await fetchBatch(bollsCode, batch);
-      
+      const batchResults = await Promise.all(
+        batch.map(({ bookName, chapter }) => fetchChapterDirect(bollsCode, bookName, chapter))
+      );
+
       for (let j = 0; j < batch.length; j++) {
         const { bookName, chapter } = batch[j];
         const verses = batchResults[j];
@@ -171,18 +191,22 @@ Deno.serve(async (req) => {
           totalChapters++;
         }
       }
-      
-      // Small delay between batches to be polite to the API
+
+      // Polite delay between batches
       if (i + BATCH_SIZE < allTasks.length) {
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 150));
       }
+    }
+
+    if (totalChapters === 0) {
+      return Response.json({ error: `No chapters could be fetched for ${tCode}. The translation may not be available on bolls.life.` }, { status: 422 });
     }
 
     return Response.json({
       translation: tCode,
       name: trans.name,
       lang: trans.lang,
-      pack,
+      pack: "quick",
       totalChapters,
       data: result,
     });
