@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2 } from "lucide-react";
+import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2, Sparkles } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 
@@ -29,6 +29,8 @@ export default function VerseRow({
   const [recording, setRecording] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [recSaved, setRecSaved] = useState(false);
+  const [reflecting, setReflecting] = useState(false);
+  const [reflection, setReflection] = useState(null);
   const mediaRecRef = useRef(null);
   const chunksRef = useRef([]);
 
@@ -116,6 +118,19 @@ export default function VerseRow({
       mediaRecRef.current.stop();
       setRecording(false);
     }
+  };
+
+  const fetchReflection = async () => {
+    setReflecting(true);
+    setReflection(null);
+    try {
+      const res = await base44.functions.invoke("getVerseReflection", {
+        verseRef: `${book} ${chapter}:${verseNum} ${translation}`,
+        verseText: text,
+      });
+      setReflection(res.data);
+    } catch {}
+    setReflecting(false);
   };
 
   const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
@@ -240,12 +255,44 @@ export default function VerseRow({
                 style={{ background: "rgba(0,245,255,0.07)", color: "#00f5ff" }}>
                 <FolderPlus className="w-3.5 h-3.5" />
               </button>
+              <button
+                onClick={() => { fetchReflection(); }}
+                disabled={reflecting}
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
+                style={{ background: "rgba(167,139,250,0.12)", color: "#c084fc", border: "1px solid rgba(167,139,250,0.2)" }}>
+                {reflecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                Reflect
+              </button>
               <button onClick={() => setMenuOpen(false)}
                 className="ml-auto flex items-center justify-center w-9 h-9 rounded-xl"
                 style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
+
+            {/* AI Reflection result */}
+            <AnimatePresence>
+              {reflection && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 pt-3 border-t" style={{ borderColor: "rgba(167,139,250,0.15)" }}>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Sparkles className="w-3 h-3" style={{ color: "#c084fc" }} />
+                      <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "#c084fc" }}>
+                        {reflection.type === "prayer" ? "A Prayer for You" : "For Reflection"}
+                      </p>
+                    </div>
+                    <p className="text-sm font-inter leading-relaxed italic" style={{ color: "rgba(255,255,255,0.75)" }}>
+                      {reflection.reflection}
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Note input */}
             <AnimatePresence>
