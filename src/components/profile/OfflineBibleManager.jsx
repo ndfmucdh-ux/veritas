@@ -138,13 +138,27 @@ export default function OfflineBibleManager() {
     inFlight.add(code);
 
     setStatuses(s => ({ ...s, [code]: "downloading" }));
-    setMessages(m => ({ ...m, [code]: "Connecting to YouVersion…" }));
+    setMessages(m => ({ ...m, [code]: "Connecting…" }));
+
+    // Progress message cycling so the UI doesn't look hung
+    const progressMessages = [
+      "Fetching chapters…",
+      "Downloading scriptures…",
+      "Almost there…",
+      "Still downloading, please wait…",
+    ];
+    let msgIdx = 0;
+    const progressTimer = setInterval(() => {
+      msgIdx = (msgIdx + 1) % progressMessages.length;
+      setMessages(m => m[code] && m[code] !== "" ? { ...m, [code]: progressMessages[msgIdx] } : m);
+    }, 5000);
 
     try {
       const res = await base44.functions.invoke("downloadBibleVersionOffline", { translation: code });
       const payload = res?.data;
 
       if (payload?.data && payload.totalChapters > 0) {
+        clearInterval(progressTimer);
         setMessages(m => ({ ...m, [code]: `Saving ${payload.totalChapters} chapters…` }));
         const saved = await saveTranslationAsync(code, payload);
         if (saved) {
@@ -157,10 +171,12 @@ export default function OfflineBibleManager() {
           setMessages(m => ({ ...m, [code]: "Storage full. Free space and retry." }));
         }
       } else {
+        clearInterval(progressTimer);
         setStatuses(s => ({ ...s, [code]: "error" }));
         setMessages(m => ({ ...m, [code]: payload?.error || "Download failed. Try again." }));
       }
     } catch (err) {
+      clearInterval(progressTimer);
       setStatuses(s => ({ ...s, [code]: "error" }));
       const msg = err?.response?.status === 429
         ? "Rate limited. Wait a moment and retry."
