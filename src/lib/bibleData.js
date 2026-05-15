@@ -238,7 +238,7 @@ export const TRANSLATIONS = [
   { code: "RVR1960",name: "Reina-Valera 1960",            lang: "es", youVersionId: 149,  source: "youversion" },
   { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", youVersionId: 199,  source: "youversion" },
   { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", youVersionId: 143,  source: "youversion" },
-  { code: "BTX3",   name: "Biblia Textual",               lang: "es", youVersionId: 168,  source: "youversion" },
+  { code: "BTX3",   name: "Biblia Textual",               lang: "es", youVersionId: 168,  source: "youversion", featured: true },
   { code: "TLA",    name: "Traducción en Lenguaje Actual", lang: "es", youVersionId: 193,  source: "youversion" },
   { code: "DHH",    name: "Dios Habla Hoy",               lang: "es", youVersionId: 173,  source: "youversion" },
   { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", youVersionId: 167,  source: "youversion" },
