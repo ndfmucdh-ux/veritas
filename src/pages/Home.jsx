@@ -7,6 +7,7 @@ import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import MorningReminder from "@/components/home/MorningReminder.jsx";
+import DailyGoalBar from "@/components/home/DailyGoalBar.jsx";
 import DailyReflectionCard from "@/components/home/DailyReflectionCard.jsx";
 import WeeklyGoalsRing from "@/components/home/WeeklyGoalsRing.jsx";
 import { base44 } from "@/api/base44Client";
@@ -93,6 +94,9 @@ export default function Home() {
 
         {/* Morning Reminder */}
         <MorningReminder />
+
+        {/* Daily Reading Goal */}
+        <DailyGoalBar />
 
         {/* Weekly Goals Ring */}
         <WeeklyGoalsRing />

@@ -3,98 +3,143 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Download, Trash2, Check, Loader2, WifiOff, ChevronDown, ChevronUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import {
-  DOWNLOADABLE_TRANSLATIONS,
-  isTranslationDownloaded,
-  saveTranslation,
-  removeTranslation,
-  getTranslationMeta,
+  isTranslationDownloadedAsync,
+  saveTranslationAsync,
+  removeTranslationAsync,
+  getTranslationMetaAsync,
 } from "@/lib/offlineBible";
 
-export default function OfflineBibleManager() {
-  const [statuses, setStatuses] = useState({});       // code → "idle"|"downloading"|"done"|"error"
-  const [progress, setProgress] = useState({});       // code → message string
-  const [metas, setMetas] = useState({});             // code → meta info
-  const [expanded, setExpanded] = useState(false);
-  const [downloadingSet] = useState(new Set());       // track in-flight requests to prevent duplicates
+// Only translations with confirmed working IDs in Scripture API + bolls.life
+const OFFLINE_TRANSLATIONS = [
+  // English
+  { code: "KJV",    name: "King James Version",           lang: "en", flag: "🇬🇧" },
+  { code: "NKJV",   name: "New King James Version",       lang: "en", flag: "🇬🇧" },
+  { code: "NIV",    name: "New International Version",    lang: "en", flag: "🇬🇧" },
+  { code: "ESV",    name: "English Standard Version",     lang: "en", flag: "🇬🇧" },
+  { code: "NLT",    name: "New Living Translation",       lang: "en", flag: "🇬🇧" },
+  { code: "NASB",   name: "New American Standard Bible",  lang: "en", flag: "🇬🇧" },
+  { code: "AMP",    name: "Amplified Bible",              lang: "en", flag: "🇬🇧" },
+  { code: "ASV",    name: "American Standard Version",    lang: "en", flag: "🇬🇧" },
+  { code: "WEB",    name: "World English Bible",          lang: "en", flag: "🇬🇧" },
+  { code: "BSB",    name: "Berean Standard Bible",        lang: "en", flag: "🇬🇧" },
+  { code: "YLT",    name: "Young's Literal Translation",  lang: "en", flag: "🇬🇧" },
+  { code: "DARBY",  name: "Darby Translation",            lang: "en", flag: "🇬🇧" },
+  { code: "ERV",    name: "English Revised Version",      lang: "en", flag: "🇬🇧" },
+  { code: "DRA",    name: "Douay-Rheims American",        lang: "en", flag: "🇬🇧" },
+  { code: "MSG",    name: "The Message",                  lang: "en", flag: "🇬🇧" },
+  { code: "ISV",    name: "International Standard Version", lang: "en", flag: "🇬🇧" },
+  // Spanish
+  { code: "RVR1960", name: "Reina-Valera 1960",           lang: "es", flag: "🇪🇸" },
+  { code: "NVI",    name: "Nueva Versión Internacional",  lang: "es", flag: "🇪🇸" },
+  { code: "LBLA",   name: "Biblia de las Américas",       lang: "es", flag: "🇪🇸" },
+  { code: "NTV",    name: "Nueva Traducción Viviente",    lang: "es", flag: "🇪🇸" },
+  { code: "TLA",    name: "Traducción en Lenguaje Actual",lang: "es", flag: "🇪🇸" },
+  { code: "DHH",    name: "Dios Habla Hoy",               lang: "es", flag: "🇪🇸" },
+  { code: "RVA",    name: "Reina Valera Actualizada",     lang: "es", flag: "🇪🇸" },
+  // Portuguese
+  { code: "ARA",    name: "Almeida Revisada Atualizada",  lang: "pt", flag: "🇧🇷" },
+  { code: "ARC",    name: "Almeida Revisada Clássica",    lang: "pt", flag: "🇧🇷" },
+  // French
+  { code: "LSG",    name: "Louis Segond 1910",            lang: "fr", flag: "🇫🇷" },
+  { code: "NEG1979",name: "Nouvelle Edition Genève 1979", lang: "fr", flag: "🇫🇷" },
+  { code: "BDS",    name: "Bible du Semeur",              lang: "fr", flag: "🇫🇷" },
+  // Italian
+  { code: "DIOD",   name: "Bibbia Diodati",               lang: "it", flag: "🇮🇹" },
+  { code: "NRV",    name: "Nuova Riveduta 2006",          lang: "it", flag: "🇮🇹" },
+  // German
+  { code: "LUT",    name: "Lutherbibel 2017",             lang: "de", flag: "🇩🇪" },
+  { code: "ELB",    name: "Elberfelder Bibel",            lang: "de", flag: "🇩🇪" },
+];
 
+const LANG_GROUPS = [
+  { lang: "en", label: "🇬🇧 English" },
+  { lang: "es", label: "🇪🇸 Español" },
+  { lang: "pt", label: "🇧🇷 Português" },
+  { lang: "fr", label: "🇫🇷 Français" },
+  { lang: "it", label: "🇮🇹 Italiano" },
+  { lang: "de", label: "🇩🇪 Deutsch" },
+];
+
+export default function OfflineBibleManager() {
+  const [statuses, setStatuses] = useState({});   // code → "idle"|"downloading"|"done"|"error"
+  const [messages, setMessages] = useState({});   // code → string
+  const [metas, setMetas]       = useState({});   // code → meta
+  const [expanded, setExpanded] = useState(false);
+  const [inFlight] = useState(new Set());
+
+  // Load statuses from IndexedDB on mount (reliable, not mem-cache dependent)
   useEffect(() => {
-    const initial = {};
-    const m = {};
-    DOWNLOADABLE_TRANSLATIONS.forEach(t => {
-      initial[t.code] = isTranslationDownloaded(t.code) ? "done" : "idle";
-      if (isTranslationDownloaded(t.code)) {
-        m[t.code] = getTranslationMeta(t.code);
-      }
-    });
-    setStatuses(initial);
-    setMetas(m);
+    async function loadStatuses() {
+      const newStatuses = {};
+      const newMetas = {};
+      await Promise.all(
+        OFFLINE_TRANSLATIONS.map(async (t) => {
+          const downloaded = await isTranslationDownloadedAsync(t.code);
+          newStatuses[t.code] = downloaded ? "done" : "idle";
+          if (downloaded) {
+            newMetas[t.code] = await getTranslationMetaAsync(t.code);
+          }
+        })
+      );
+      setStatuses(newStatuses);
+      setMetas(newMetas);
+    }
+    loadStatuses();
   }, []);
 
   const download = async (code) => {
-    // Prevent duplicate downloads if one is already in-flight
-    if (downloadingSet.has(code)) return;
-    downloadingSet.add(code);
+    if (inFlight.has(code)) return;
+    inFlight.add(code);
+
+    setStatuses(s => ({ ...s, [code]: "downloading" }));
+    setMessages(m => ({ ...m, [code]: "Fetching from Scripture API…" }));
 
     try {
-      setStatuses(s => ({ ...s, [code]: "downloading" }));
-      setProgress(p => ({ ...p, [code]: "Connecting to server…" }));
+      const res = await base44.functions.invoke("downloadBibleVersionOffline", { translation: code });
+      const payload = res?.data;
 
-      const t = DOWNLOADABLE_TRANSLATIONS.find(t => t.code === code);
-      if (!t) {
-        setStatuses(s => ({ ...s, [code]: "error" }));
-        setProgress(p => ({ ...p, [code]: "Translation not found." }));
-        return;
-      }
-
-      setProgress(p => ({ ...p, [code]: `Downloading ${t.name}…` }));
-
-      const res = await base44.functions.invoke("downloadTranslation", { translation: code, pack: "quick" });
-
-      if (res?.data?.data) {
-        const saved = saveTranslation(code, res.data);
+      if (payload?.data && payload.totalChapters > 0) {
+        setMessages(m => ({ ...m, [code]: "Saving to device…" }));
+        const saved = await saveTranslationAsync(code, payload);
         if (saved) {
           setStatuses(s => ({ ...s, [code]: "done" }));
-          setMetas(m => ({ ...m, [code]: getTranslationMeta(code) }));
-          setProgress(p => ({ ...p, [code]: "" }));
+          const meta = await getTranslationMetaAsync(code);
+          setMetas(m2 => ({ ...m2, [code]: meta }));
+          setMessages(m => ({ ...m, [code]: "" }));
         } else {
           setStatuses(s => ({ ...s, [code]: "error" }));
-          setProgress(p => ({ ...p, [code]: "Storage full — free up space and retry." }));
+          setMessages(m => ({ ...m, [code]: "Storage full. Free space and retry." }));
         }
       } else {
         setStatuses(s => ({ ...s, [code]: "error" }));
-        setProgress(p => ({ ...p, [code]: res?.data?.error || "Download failed. Try again." }));
+        setMessages(m => ({ ...m, [code]: payload?.error || "Download failed. Try again." }));
       }
     } catch (err) {
       setStatuses(s => ({ ...s, [code]: "error" }));
-      if (err?.response?.status === 429) {
-        setProgress(p => ({ ...p, [code]: "Too many downloads. Please wait and try again." }));
-      } else if (err?.message?.includes("QuotaExceededError")) {
-        setProgress(p => ({ ...p, [code]: "Storage full — clear cache and retry." }));
-      } else {
-        setProgress(p => ({ ...p, [code]: "Download failed. Try again." }));
-      }
+      const msg = err?.response?.status === 429
+        ? "Too many requests. Wait a moment and retry."
+        : err?.message?.includes("Quota")
+          ? "Storage full. Clear cache and retry."
+          : "Download failed. Try again.";
+      setMessages(m => ({ ...m, [code]: msg }));
     } finally {
-      downloadingSet.delete(code);
+      inFlight.delete(code);
     }
   };
 
-  const remove = (code) => {
-    removeTranslation(code);
+  const remove = async (code) => {
+    await removeTranslationAsync(code);
+    // Also clear mem cache
     setStatuses(s => ({ ...s, [code]: "idle" }));
     setMetas(m => { const n = { ...m }; delete n[code]; return n; });
   };
 
-  const enTranslations = DOWNLOADABLE_TRANSLATIONS.filter(t => t.lang === "en");
-  const esTranslations = DOWNLOADABLE_TRANSLATIONS.filter(t => t.lang === "es");
   const downloadedCount = Object.values(statuses).filter(s => s === "done").length;
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.12)" }}>
       {/* Header */}
-      <button
-        onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center gap-3 px-4 py-3.5"
-      >
+      <button onClick={() => setExpanded(v => !v)} className="w-full flex items-center gap-3 px-4 py-3.5">
         <WifiOff className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
         <div className="flex-1 text-left">
           <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.8)" }}>Offline Bible Library</p>
@@ -116,44 +161,31 @@ export default function OfflineBibleManager() {
           >
             <div className="px-4 pb-4 space-y-4 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
               <p className="text-[10px] font-inter pt-3" style={{ color: "rgba(255,255,255,0.3)" }}>
-                Downloads the most-read books (Psalms, Proverbs, John, Matthew, Romans + more) for seamless offline reading.
+                Downloads key books (Psalms, Proverbs, John, Matthew, Romans + more) via Scripture API for seamless offline reading.
               </p>
 
-              {/* English */}
-              <div>
-                <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.2)" }}>🇺🇸 English</p>
-                <div className="space-y-2">
-                  {enTranslations.map(t => (
-                    <TranslationRow
-                      key={t.code}
-                      translation={t}
-                      status={statuses[t.code] || "idle"}
-                      progressMsg={progress[t.code]}
-                      meta={metas[t.code]}
-                      onDownload={() => download(t.code)}
-                      onRemove={() => remove(t.code)}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Spanish */}
-              <div>
-                <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.2)" }}>🇲🇽 Español</p>
-                <div className="space-y-2">
-                  {esTranslations.map(t => (
-                    <TranslationRow
-                      key={t.code}
-                      translation={t}
-                      status={statuses[t.code] || "idle"}
-                      progressMsg={progress[t.code]}
-                      meta={metas[t.code]}
-                      onDownload={() => download(t.code)}
-                      onRemove={() => remove(t.code)}
-                    />
-                  ))}
-                </div>
-              </div>
+              {LANG_GROUPS.map(group => {
+                const list = OFFLINE_TRANSLATIONS.filter(t => t.lang === group.lang);
+                if (!list.length) return null;
+                return (
+                  <div key={group.lang}>
+                    <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.2)" }}>{group.label}</p>
+                    <div className="space-y-2">
+                      {list.map(t => (
+                        <TranslationRow
+                          key={t.code}
+                          translation={t}
+                          status={statuses[t.code] || "idle"}
+                          message={messages[t.code]}
+                          meta={metas[t.code]}
+                          onDownload={() => download(t.code)}
+                          onRemove={() => remove(t.code)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -162,45 +194,52 @@ export default function OfflineBibleManager() {
   );
 }
 
-function TranslationRow({ translation, status, progressMsg, meta, onDownload, onRemove }) {
+function TranslationRow({ translation, status, message, meta, onDownload, onRemove }) {
   const isDone = status === "done";
   const isDownloading = status === "downloading";
   const isError = status === "error";
 
   return (
     <div className="flex items-center gap-3 rounded-xl px-3 py-2.5"
-      style={{ background: isDone ? "rgba(52,211,153,0.05)" : "rgba(255,255,255,0.03)", border: isDone ? "1px solid rgba(52,211,153,0.15)" : "1px solid rgba(255,255,255,0.06)" }}>
-      <span className="text-base">{translation.flag}</span>
+      style={{
+        background: isDone ? "rgba(52,211,153,0.05)" : "rgba(255,255,255,0.03)",
+        border: isDone ? "1px solid rgba(52,211,153,0.15)" : "1px solid rgba(255,255,255,0.06)"
+      }}>
+      <span className="text-base flex-shrink-0">{translation.flag}</span>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-cinzel font-semibold" style={{ color: isDone ? "#34d399" : "rgba(255,255,255,0.75)" }}>
+        <p className="text-xs font-cinzel font-semibold truncate" style={{ color: isDone ? "#34d399" : "rgba(255,255,255,0.75)" }}>
           {translation.code} · {translation.name}
         </p>
-        {isDownloading && progressMsg && (
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "#00f5ff" }}>{progressMsg}</p>
+        {isDownloading && message && (
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "#00f5ff" }}>{message}</p>
         )}
         {isDone && meta && (
           <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-            {meta.totalChapters} chapters · Saved {new Date(meta.downloadedAt).toLocaleDateString()}
+            {meta.totalChapters} chapters · {new Date(meta.downloadedAt).toLocaleDateString()}
           </p>
         )}
-        {isError && progressMsg && (
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "#f87171" }}>{progressMsg}</p>
+        {isError && message && (
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "#f87171" }}>{message}</p>
         )}
       </div>
 
       {isDownloading ? (
         <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: "#00f5ff" }} />
       ) : isDone ? (
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           <Check className="w-3.5 h-3.5" style={{ color: "#34d399" }} />
-          <button onClick={onRemove} className="p-1 rounded-lg transition-colors hover:bg-red-500/10">
+          <button onClick={onRemove} className="p-1 rounded-lg hover:bg-red-500/10 transition-colors">
             <Trash2 className="w-3.5 h-3.5" style={{ color: "rgba(248,113,113,0.6)" }} />
           </button>
         </div>
       ) : (
         <button onClick={onDownload}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold transition-colors"
-          style={{ background: isError ? "rgba(248,113,113,0.1)" : "rgba(0,245,255,0.1)", color: isError ? "#f87171" : "#00f5ff", border: isError ? "1px solid rgba(248,113,113,0.2)" : "1px solid rgba(0,245,255,0.2)" }}>
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold transition-colors flex-shrink-0"
+          style={{
+            background: isError ? "rgba(248,113,113,0.1)" : "rgba(0,245,255,0.1)",
+            color: isError ? "#f87171" : "#00f5ff",
+            border: isError ? "1px solid rgba(248,113,113,0.2)" : "1px solid rgba(0,245,255,0.2)"
+          }}>
           <Download className="w-3 h-3" />
           {isError ? "Retry" : "Save"}
         </button>
