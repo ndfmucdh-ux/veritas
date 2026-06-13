@@ -16,23 +16,25 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
   const verseRef = `${book} ${chapter}:${verse?.verse} ${translation}`;
 
   useEffect(() => {
-    if (verse) {
-      setNoteText("");
-      setSaved(false);
-      setShowAudioRecorder(false);
-      setAudioReflections([]);
-      // Load existing note
-      base44.entities.UserNote.filter({ verse_ref: verseRef })
-        .then(notes => { if (notes?.[0]) setNoteText(notes[0].note_text); })
-        .catch(() => {});
-      // Load audio reflections
-      base44.entities.VerseAudioReflection.filter({ verse_ref: verseRef })
-        .then(reflections => setAudioReflections(reflections || []))
-        .catch(() => {});
-      // Focus textarea after animation
-      setTimeout(() => textareaRef.current?.focus(), 350);
-    }
-  }, [verse?.verse]);
+    if (!verse) return;
+    setNoteText("");
+    setSaved(false);
+    setShowAudioRecorder(false);
+    setAudioReflections([]);
+
+    // Load note and audio reflections in parallel
+    const ref = `${book} ${chapter}:${verse.verse} ${translation}`;
+    Promise.all([
+      base44.entities.UserNote.filter({ verse_ref: ref }),
+      base44.entities.VerseAudioReflection.filter({ verse_ref: ref }),
+    ]).then(([notes, reflections]) => {
+      if (notes?.[0]) setNoteText(notes[0].note_text);
+      setAudioReflections(reflections || []);
+    }).catch(() => {});
+
+    // Focus textarea after animation
+    setTimeout(() => textareaRef.current?.focus(), 350);
+  }, [verse?.verse, book, chapter, translation]);
 
   const handleSave = async () => {
     if (!noteText.trim()) return;

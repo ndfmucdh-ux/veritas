@@ -37,11 +37,11 @@ const ALL_TABS = ["overview", "library", "insights", "stats", "emails", "setting
 const TAB_LABELS = { overview: "Overview", library: "Library", insights: "Insights", stats: "Growth", emails: "Emails", settings: "Settings" };
 const TAB_ICONS = { overview: Award, library: BookMarked, insights: TrendingUp, stats: BarChart3, emails: Mail, settings: Shield };
 
-// Fake reading data for the chart (last 7 days)
-const buildChartData = (chapters) => {
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  return days.map((d, i) => ({ day: d, chapters: Math.max(0, Math.floor(Math.random() * 4) + (i === 6 ? 3 : 0)) }));
-};
+// Stable placeholder chart data — random values cause infinite re-renders
+const PLACEHOLDER_CHART_DATA = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => ({
+  day: d, chapters: [1, 2, 0, 3, 1, 2, 4][i],
+}));
+const buildChartData = () => PLACEHOLDER_CHART_DATA;
 
 export default function Profile() {
   const { t } = useLang();
@@ -173,7 +173,7 @@ export default function Profile() {
   const nextLevel = LEVELS.find(l => l.minXP > xp);
   const progress = nextLevel ? ((xp - level.minXP) / (nextLevel.minXP - level.minXP)) * 100 : 100;
   const earnedBadges = xpData?.badges || [];
-  const chartData = buildChartData(xpData?.chapters_read || 0);
+  const chartData = buildChartData();
 
   if (loading) {
     return (

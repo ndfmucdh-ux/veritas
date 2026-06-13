@@ -44,28 +44,30 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
         verse: verses[startIdx]?.verse,
       });
 
-      if (res.data?.audio_url) {
-        if (audioRef.current) {
-          audioRef.current.src = res.data.audio_url;
-          audioRef.current.playbackRate = speed;
-          audioRef.current.volume = muted ? 0 : 1;
-          
-          audioRef.current.onended = () => {
-            if (!stoppedRef.current && startIdx + 1 < verses.length) {
-              playFromVerse(startIdx + 1);
-            } else {
-              setPlaying(false);
-              setCurrentVerse(0);
-            }
-          };
+      // Guard: if user stopped while awaiting, abort silently
+      if (stoppedRef.current) return;
 
-          audioRef.current.play();
-          setPlaying(true);
-          setVoiceName(res.data.narrator || "YouVersion Audio");
-        }
+      if (res.data?.audio_url && audioRef.current) {
+        audioRef.current.src = res.data.audio_url;
+        audioRef.current.playbackRate = speed;
+        audioRef.current.volume = muted ? 0 : 1;
+
+        audioRef.current.onended = () => {
+          if (!stoppedRef.current && startIdx + 1 < verses.length) {
+            playFromVerse(startIdx + 1);
+          } else {
+            setPlaying(false);
+            setCurrentVerse(0);
+          }
+        };
+
+        await audioRef.current.play();
+        setPlaying(true);
+        setVoiceName(res.data.narrator || "YouVersion Audio");
       }
     } catch (error) {
-      console.error("Failed to load audio:", error);
+      if (!stoppedRef.current) console.error("Failed to load audio:", error);
+      setPlaying(false);
     } finally {
       setLoading(false);
     }

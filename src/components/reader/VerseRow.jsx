@@ -40,38 +40,47 @@ export default function VerseRow({
     paddingLeft: "10px",
   } : {};
 
+  // verseRef must be computed before it's used — moved above these handlers
+  const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
+
   const applyHighlight = async (color) => {
+    // Optimistic UI update immediately
     if (highlight?.color === color) {
+      onUpdate({ type: "highlight", verseNum, data: null });
       const existing = await base44.entities.UserHighlight.filter({ verse_ref: verseRef });
       if (existing?.[0]) await base44.entities.UserHighlight.delete(existing[0].id);
-      onUpdate({ type: "highlight", verseNum, data: null });
     } else {
+      onUpdate({ type: "highlight", verseNum, data: { color } });
       const existing = await base44.entities.UserHighlight.filter({ verse_ref: verseRef });
       if (existing?.[0]) {
         await base44.entities.UserHighlight.update(existing[0].id, { color });
       } else {
         await base44.entities.UserHighlight.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation, color });
+        base44.functions.invoke("updateXP", { action: "ADD_HIGHLIGHT", xp_amount: 5 }).catch(() => {});
       }
-      onUpdate({ type: "highlight", verseNum, data: { color } });
     }
     setMenuOpen(false);
   };
 
   const toggleBookmark = async () => {
+    // Optimistic UI update
+    onUpdate({ type: "bookmark", verseNum, data: !isBookmarked });
+    setMenuOpen(false);
     if (isBookmarked) {
       const existing = await base44.entities.Bookmark.filter({ verse_ref: verseRef });
       if (existing?.[0]) await base44.entities.Bookmark.delete(existing[0].id);
-      onUpdate({ type: "bookmark", verseNum, data: false });
     } else {
       await base44.entities.Bookmark.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation });
-      onUpdate({ type: "bookmark", verseNum, data: true });
       base44.functions.invoke("updateXP", { action: "ADD_BOOKMARK", xp_amount: 5 }).catch(() => {});
     }
-    setMenuOpen(false);
   };
 
   const saveNote = async () => {
     if (!noteText.trim()) return;
+    // Optimistic UI update
+    onUpdate({ type: "note", verseNum, data: noteText });
+    setNoteMode(false);
+    setMenuOpen(false);
     const existing = await base44.entities.UserNote.filter({ verse_ref: verseRef });
     if (existing?.[0]) {
       await base44.entities.UserNote.update(existing[0].id, { note_text: noteText });
@@ -79,9 +88,6 @@ export default function VerseRow({
       await base44.entities.UserNote.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation, note_text: noteText });
       base44.functions.invoke("updateXP", { action: "ADD_NOTE", xp_amount: 15 }).catch(() => {});
     }
-    onUpdate({ type: "note", verseNum, data: noteText });
-    setNoteMode(false);
-    setMenuOpen(false);
   };
 
   // Inline quick voice note
@@ -132,8 +138,6 @@ export default function VerseRow({
     } catch {}
     setReflecting(false);
   };
-
-  const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
 
   return (
     <div className="relative">
