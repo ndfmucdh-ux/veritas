@@ -201,17 +201,21 @@ export const DOWNLOADABLE_TRANSLATIONS = [
 
 export async function saveTranslationAsync(code, payload) {
   try {
+    const record = {
+      code: code.toUpperCase(),
+      ...payload,
+      downloadedAt: new Date().toISOString(),
+    };
     const db = await openDB();
-    return new Promise((resolve) => {
+    const saved = await new Promise((resolve) => {
       const tx = db.transaction(STORE, "readwrite");
-      tx.objectStore(STORE).put({
-        code: code.toUpperCase(),
-        ...payload,
-        downloadedAt: new Date().toISOString(),
-      });
+      tx.objectStore(STORE).put(record);
       tx.oncomplete = () => resolve(true);
       tx.onerror = () => resolve(false);
     });
+    // Keep memory cache in sync so getOfflineVerse() works immediately after download
+    if (saved) _memCache[record.code] = record;
+    return saved;
   } catch (e) {
     console.warn("IndexedDB save failed:", e);
     return false;

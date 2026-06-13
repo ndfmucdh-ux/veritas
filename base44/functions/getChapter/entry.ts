@@ -12,7 +12,7 @@ const BOLLS_CODE_MAP = {
   BBE:"BBE", WEB:"WEB", BSB:"BSB", YLT:"YLT", DARBY:"DARBY",
   WNT:"WNT", ERV:"ERV", NRSV:"NRSVCE", ISV:"ISV",
   // Spanish — verified codes on bolls.life
-  NVI:"NVI", RVR1960:"RV1960", PDDPT:"PDT", BTX3:"LBLA", LBLA:"LBLA", NTV:"NTV",
+  NVI:"NVI", RVR1960:"RV1960", PDDPT:"PDT", BTX3:"BTX3", LBLA:"LBLA", NTV:"NTV",
   // Portuguese
   ARA:"ARA",
   // French
@@ -249,6 +249,12 @@ Deno.serve(async (req) => {
       return Response.json({ verses: dbVerses, source: 'database' });
     }
 
+    // Helper: write-back fetched verses to DB cache (fire-and-forget)
+    const cacheVerses = (verseRows) => {
+      if (!verseRows || verseRows.length === 0) return;
+      base44.asServiceRole.entities.Verse.bulkCreate(verseRows).catch(() => {});
+    };
+
     // 2. bolls.life — primary source, no auth needed, covers most translations
     const bollsCode = BOLLS_CODE_MAP[tCode];
     const bookNum = BOOK_NUM[book];
@@ -256,6 +262,7 @@ Deno.serve(async (req) => {
       const verses = await fetchFromBolls(bollsCode, bookNum, chapter);
       if (verses && verses.length > 0) {
         const result = verses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
+        cacheVerses(result);
         return Response.json({ verses: result, source: 'bolls' });
       }
     }
@@ -267,15 +274,16 @@ Deno.serve(async (req) => {
       const verses = await fetchFromHelloAO(helloaoId, bookId, chapter);
       if (verses && verses.length > 0) {
         const result = verses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
+        cacheVerses(result);
         return Response.json({ verses: result, source: 'helloao' });
       }
     }
 
     // 4. LLM fallback — for translations not available on CDNs (ARC, NVT, LSG, NEG1979, DIOD, NRV, RVA2015...)
-    // base44.asServiceRole.integrations works WITHOUT user auth
     const llmVerses = await fetchFromLLM(base44, tCode, book, chapter);
     if (llmVerses && llmVerses.length > 0) {
       const result = llmVerses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
+      cacheVerses(result);
       return Response.json({ verses: result, source: 'llm' });
     }
 

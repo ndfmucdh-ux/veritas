@@ -18,5 +18,9 @@
       "type": "string",
       "description": "User hero banner image URL. Defaults to deep-space starfield."
     }
-  }
+  },
+  "required": [
+    "avatar_url",
+    "hero_url"
+  ]
 }

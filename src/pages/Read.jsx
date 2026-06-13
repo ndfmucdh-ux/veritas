@@ -93,7 +93,7 @@ export default function Read() {
     if (offline) {
       setVerses(offline);
       setLoading(false);
-      trackReading();
+      trackReading(offline);
       return;
     }
 
@@ -102,17 +102,18 @@ export default function Read() {
     if (translation === "KJV" && SAMPLE_VERSES[key]) {
       setVerses(SAMPLE_VERSES[key]);
       setLoading(false);
-      trackReading();
+      trackReading(SAMPLE_VERSES[key]);
       return;
     }
 
     // 3. Backend API (with timeout safety)
+    let fetchedVerses = [];
     try {
       const res = await base44.functions.invoke("getChapter", { translation, book, chapter });
       if (res.data?.verses?.length > 0) {
-        setVerses(res.data.verses);
+        fetchedVerses = res.data.verses;
+        setVerses(fetchedVerses);
       } else if (translation === "KJV") {
-        // KJV-only public fallback
         await fetchKjvFallback(book, chapter);
       }
     } catch {
@@ -121,7 +122,7 @@ export default function Read() {
       }
     } finally {
       setLoading(false);
-      trackReading();
+      trackReading(fetchedVerses);
     }
   };
 
@@ -136,7 +137,8 @@ export default function Read() {
     } catch {}
   };
 
-  const trackReading = () => {
+  const trackReading = (versesLoaded) => {
+    if (!versesLoaded || versesLoaded.length === 0) return;
     base44.entities.ReadingProgress.create({ book, chapter, translation, completed_at: new Date().toISOString() }).catch(() => {});
     base44.functions.invoke("updateXP", { action: "READ_CHAPTER", xp_amount: 10 }).catch(() => {});
     // Show guided reflection after reading
