@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Highlighter, StickyNote, Image,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
-  TrendingUp, Calendar, Heart, Target,
-  BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail, Sparkles
+  TrendingUp, Calendar, Target,
+  BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail, Sparkles
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
@@ -26,13 +26,11 @@ import ProfileInsights from "@/components/profile/ProfileInsights";
 import ReadingStatsOverview from "@/components/profile/ReadingStatsOverview";
 import CalendarSyncPanel from "@/components/profile/CalendarSyncPanel";
 import PersonalizedDevotionalPanel from "@/components/profile/PersonalizedDevotionalPanel";
+import ProfileStatsRow from "@/components/profile/ProfileStatsRow";
+import ProfileTabBar from "@/components/profile/ProfileTabBar";
 
 // Default hero: beautiful deep-space starfield — keep this as the permanent default
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
-
-const ALL_TABS = ["overview", "library", "insights", "stats", "emails", "settings"];
-const TAB_LABELS = { overview: "Overview", library: "Library", insights: "Insights", stats: "Reading", emails: "Emails", settings: "Settings" };
-const TAB_ICONS = { overview: BookOpen, library: BookMarked, insights: TrendingUp, stats: BarChart3, emails: Mail, settings: Shield };
 
 // Stable placeholder chart data — random values cause infinite re-renders
 const PLACEHOLDER_CHART_DATA = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => ({
@@ -143,7 +141,6 @@ export default function Profile() {
   // Also allow specific known admin emails as a guaranteed fallback
   const ADMIN_EMAILS = ["endofchaos77@gmail.com"];
   const isAdmin = user?.role === "admin" || user?.data?.role === "admin" || ADMIN_EMAILS.includes(user?.email);
-  const TABS = ALL_TABS.filter(t => t !== "emails" || isAdmin);
 
   const chartData = buildChartData();
 
@@ -238,39 +235,15 @@ export default function Profile() {
 
 
       {/* ── Quick Stats Row ── */}
-      <div className="grid grid-cols-4 gap-3 px-5 mb-4">
-        {[
-          { label: "Sessions", value: plans.length, icon: BookOpen, color: "#00f5ff" },
-          { label: "Highlights", value: highlights.length, icon: Highlighter, color: "#fbbf24" },
-          { label: "Notes", value: notes.length, icon: StickyNote, color: "#a78bfa" },
-          { label: "Saved", value: bookmarks.length, icon: Heart, color: "#f472b6" },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="rounded-2xl p-4 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <Icon className="w-5 h-5 mx-auto mb-1.5" style={{ color }} />
-            <p className="font-cinzel text-lg font-bold text-white">{value}</p>
-            <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</p>
-          </div>
-        ))}
-      </div>
+      <ProfileStatsRow
+        sessions={plans.length}
+        highlights={highlights.length}
+        notes={notes.length}
+        saved={bookmarks.length}
+      />
 
       {/* ── Tab Bar ── */}
-      <div className="flex gap-2 px-5 mb-5">
-        {TABS.map(tab => {
-          const Icon = TAB_ICONS[tab];
-          return (
-            <button key={tab} onClick={() => setActiveTab(tab)}
-              className="flex-1 flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all min-h-14"
-              style={{
-                background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.03)",
-                color: activeTab === tab ? "#00f5ff" : "rgba(255,255,255,0.35)",
-                border: activeTab === tab ? "1px solid rgba(0,245,255,0.2)" : "1px solid rgba(255,255,255,0.06)",
-              }}>
-              <Icon className="w-5 h-5" />
-              {TAB_LABELS[tab]}
-            </button>
-          );
-        })}
-      </div>
+      <ProfileTabBar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} />
 
       <AnimatePresence mode="wait">
         <motion.div key={activeTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}>
