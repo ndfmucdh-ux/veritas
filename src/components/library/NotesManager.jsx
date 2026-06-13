@@ -7,6 +7,8 @@ const FOLDER_COLORS = ["#00f5ff", "#fbbf24", "#a78bfa", "#34d399", "#f87171", "#
 const FOLDER_ICONS = ["📁", "✝️", "🙏", "📖", "⭐", "🔥", "💎", "🌿", "🕊️"];
 
 export default function NotesManager({ notes, onNotesChange }) {
+  // NOTE: folders are stored in localStorage only — not synced to the DB.
+  // This means they are device-local. Acceptable for a personal organizer feature.
   const [folders, setFolders] = useState(() => {
     try { return JSON.parse(localStorage.getItem("veritas_note_folders") || "[]"); } catch { return []; }
   });
@@ -25,7 +27,11 @@ export default function NotesManager({ notes, onNotesChange }) {
 
   const createFolder = () => {
     if (!newName.trim()) return;
-    const folder = { id: Date.now().toString(), name: newName.trim(), icon: newIcon, color: newColor, noteIds: [], createdAt: new Date().toISOString() };
+    // Use crypto.randomUUID if available, fall back to timestamp+random for uniqueness
+    const id = typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const folder = { id, name: newName.trim(), icon: newIcon, color: newColor, noteIds: [], createdAt: new Date().toISOString() };
     saveFolders([folder, ...folders]);
     setNewName(""); setNewIcon("📁"); setNewColor("#00f5ff");
     setShowCreate(false);

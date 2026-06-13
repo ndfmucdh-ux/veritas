@@ -51,26 +51,31 @@ export default function Library() {
       const a = document.createElement("a");
       a.href = url;
       a.download = `veritas-biblioteca-${new Date().toISOString().slice(0, 10)}.txt`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (e) {}
-    setExporting(false);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const exportPdf = async () => {
     setExportingPdf(true);
     try {
       const res = await base44.functions.invoke("exportLibraryPDF", {});
-      // response is raw PDF bytes via axios arraybuffer
       const blob = new Blob([res.data], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `veritas-biblioteca-${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (e) {}
-    setExportingPdf(false);
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   useEffect(() => {
@@ -81,17 +86,18 @@ export default function Library() {
     setLoading(true);
     try {
       const [bm, hl, nt, fl] = await Promise.all([
-        base44.entities.Bookmark.list("-created_date", 50),
-        base44.entities.UserHighlight.list("-created_date", 50),
-        base44.entities.UserNote.list("-created_date", 50),
+        base44.entities.Bookmark.list("-created_date", 50).catch(() => []),
+        base44.entities.UserHighlight.list("-created_date", 50).catch(() => []),
+        base44.entities.UserNote.list("-created_date", 50).catch(() => []),
         base44.entities.VerseFolder.list("-created_date", 30).catch(() => []),
       ]);
       setBookmarks(bm || []);
       setHighlights(hl || []);
       setNotes(nt || []);
       setFolders(fl || []);
-    } catch (e) {}
-    setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const deleteBookmark = async (id) => {
@@ -184,11 +190,15 @@ export default function Library() {
   const generateHighlightDevotional = async (hl) => {
     setHlDevLoading(true);
     setHlDevotional({ ref: hl.verse_ref, text: null });
-    const res = await base44.integrations.Core.InvokeLLM({
-      prompt: `Write a short, personal devotional for the Bible verse "${hl.verse_ref}". Include: 1) A warm 2-sentence reflection, 2) A short first-person prayer, 3) One practical "living it today" application. Be intimate, not generic. Format with clear sections.`,
-    });
-    setHlDevotional({ ref: hl.verse_ref, text: typeof res === "string" ? res : res?.text || "" });
-    setHlDevLoading(false);
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({
+        prompt: `Write a short, personal devotional for the Bible verse "${hl.verse_ref}". Include: 1) A warm 2-sentence reflection, 2) A short first-person prayer, 3) One practical "living it today" application. Be intimate, not generic. Format with clear sections.`,
+      });
+      // InvokeLLM returns a string when no response_json_schema is given
+      setHlDevotional({ ref: hl.verse_ref, text: typeof res === "string" ? res : (res?.text || String(res)) });
+    } finally {
+      setHlDevLoading(false);
+    }
   };
 
   const renderHighlights = () => (

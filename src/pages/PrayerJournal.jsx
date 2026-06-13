@@ -44,20 +44,26 @@ export default function PrayerJournal() {
   };
 
   const handleDelete = async (id) => {
-    await base44.entities.PrayerJournal.delete(id);
+    // Optimistic remove — feels instant
     setPrayers(p => p.filter(pr => pr.id !== id));
+    await base44.entities.PrayerJournal.delete(id);
   };
 
   const markAnswered = async (prayer) => {
     const note = answerNote.trim() || "Prayer answered! 🙏";
+    const answeredDate = new Date().toISOString();
+    // Optimistic update first
+    setPrayers(p => p.map(pr => pr.id === prayer.id
+      ? { ...pr, answered: true, answered_note: note, answered_date: answeredDate }
+      : pr
+    ));
+    setAnsweringId(null);
+    setAnswerNote("");
     await base44.entities.PrayerJournal.update(prayer.id, {
       answered: true,
       answered_note: note,
-      answered_date: new Date().toISOString(),
+      answered_date: answeredDate,
     });
-    setPrayers(p => p.map(pr => pr.id === prayer.id ? { ...pr, answered: true, answered_note: note, answered_date: new Date().toISOString() } : pr));
-    setAnsweringId(null);
-    setAnswerNote("");
   };
 
   const activePrayers = prayers.filter(p => !p.answered);
