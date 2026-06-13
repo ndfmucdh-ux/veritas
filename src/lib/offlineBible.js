@@ -2,8 +2,9 @@
 // Falls back to localStorage for metadata only.
 
 const DB_NAME = "veritas_offline_bible";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE = "translations";
+const CHAPTER_STORE = "chapters";
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -12,6 +13,11 @@ function openDB() {
       const db = e.target.result;
       if (!db.objectStoreNames.contains(STORE)) {
         db.createObjectStore(STORE, { keyPath: "code" });
+      }
+      if (!db.objectStoreNames.contains(CHAPTER_STORE)) {
+        const chapters = db.createObjectStore(CHAPTER_STORE, { keyPath: "id" });
+        chapters.createIndex("code", "code", { unique: false });
+        chapters.createIndex("book", "book", { unique: false });
       }
     };
     req.onsuccess = (e) => resolve(e.target.result);
@@ -199,22 +205,45 @@ export const DOWNLOADABLE_TRANSLATIONS = [
 
 // ── Async IndexedDB operations ────────────────────────────────────────────
 
+const chapterKey = (code, book, chapter) => `${code?.toUpperCase()}|${book}|${Number(chapter)}`;
+
+function splitTranslationPayload(code, payload) {
+  const upperCode = code.toUpperCase();
+  const downloadedAt = new Date().toISOString();
+  const { data, ...metaPayload } = payload || {};
+  const meta = { code: upperCode, ...metaPayload, downloadedAt, storageVersion: 2 };
+  const chapters = [];
+
+  Object.entries(data || {}).forEach(([book, chapterMap]) => {
+    Object.entries(chapterMap || {}).forEach(([chapter, verses]) => {
+      if (Array.isArray(verses) && verses.length > 0) {
+        chapters.push({ id: chapterKey(upperCode, book, chapter), code: upperCode, book, chapter: Number(chapter), verses });
+      }
+    });
+  });
+
+  return { meta, chapters };
+}
+
+function cacheTranslation(meta, chapters = []) {
+  _memCache[meta.code] = meta;
+  chapters.forEach(chapter => { _chapterCache[chapter.id] = chapter.verses; });
+}
+
 export async function saveTranslationAsync(code, payload) {
   try {
-    const record = {
-      code: code.toUpperCase(),
-      ...payload,
-      downloadedAt: new Date().toISOString(),
-    };
+    const { meta, chapters } = splitTranslationPayload(code, payload);
     const db = await openDB();
     const saved = await new Promise((resolve) => {
-      const tx = db.transaction(STORE, "readwrite");
-      tx.objectStore(STORE).put(record);
+      const tx = db.transaction([STORE, CHAPTER_STORE], "readwrite");
+      const metaStore = tx.objectStore(STORE);
+      const chapterStore = tx.objectStore(CHAPTER_STORE);
+      metaStore.put(meta);
+      chapters.forEach(chapter => chapterStore.put(chapter));
       tx.oncomplete = () => resolve(true);
       tx.onerror = () => resolve(false);
     });
-    // Keep memory cache in sync so getOfflineVerse() works immediately after download
-    if (saved) _memCache[record.code] = record;
+    if (saved) cacheTranslation(meta, chapters);
     return saved;
   } catch (e) {
     console.warn("IndexedDB save failed:", e);
@@ -224,10 +253,14 @@ export async function saveTranslationAsync(code, payload) {
 
 export async function removeTranslationAsync(code) {
   try {
+    const upperCode = code.toUpperCase();
     const db = await openDB();
     return new Promise((resolve) => {
-      const tx = db.transaction(STORE, "readwrite");
-      tx.objectStore(STORE).delete(code.toUpperCase());
+      const tx = db.transaction([STORE, CHAPTER_STORE], "readwrite");
+      tx.objectStore(STORE).delete(upperCode);
+      const chapterStore = tx.objectStore(CHAPTER_STORE);
+      const req = chapterStore.index("code").getAllKeys(upperCode);
+      req.onsuccess = () => (req.result || []).forEach(key => chapterStore.delete(key));
       tx.oncomplete = () => resolve();
       tx.onerror = () => resolve();
     });
@@ -236,15 +269,18 @@ export async function removeTranslationAsync(code) {
 
 export async function getOfflineVerseAsync(code, book, chapter) {
   try {
+    const id = chapterKey(code, book, chapter);
     const db = await openDB();
     return new Promise((resolve) => {
-      const tx = db.transaction(STORE, "readonly");
-      const req = tx.objectStore(STORE).get(code.toUpperCase());
-      req.onsuccess = () => {
-        const record = req.result;
-        resolve(record?.data?.[book]?.[chapter] || null);
+      const tx = db.transaction([CHAPTER_STORE, STORE], "readonly");
+      const chapterReq = tx.objectStore(CHAPTER_STORE).get(id);
+      chapterReq.onsuccess = () => {
+        if (chapterReq.result?.verses) return resolve(chapterReq.result.verses);
+        const legacyReq = tx.objectStore(STORE).get(code.toUpperCase());
+        legacyReq.onsuccess = () => resolve(legacyReq.result?.data?.[book]?.[chapter] || null);
+        legacyReq.onerror = () => resolve(null);
       };
-      req.onerror = () => resolve(null);
+      chapterReq.onerror = () => resolve(null);
     });
   } catch {
     return null;
@@ -297,28 +333,64 @@ export async function getAllDownloadedCodesAsync() {
   }
 }
 
+export async function getAllTranslationMetasAsync() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () => {
+        const metas = {};
+        (req.result || []).forEach(r => {
+          metas[r.code] = { name: r.name, lang: r.lang, totalChapters: r.totalChapters, downloadedAt: r.downloadedAt };
+        });
+        resolve(metas);
+      };
+      req.onerror = () => resolve({});
+    });
+  } catch {
+    return {};
+  }
+}
+
 // ── Sync shims for backward compatibility (used in Read.jsx) ──────────────
 // These are kept synchronous but delegate to a cached in-memory map seeded at startup.
 
-const _memCache = {}; // code → { data, name, lang, totalChapters, downloadedAt }
+const _memCache = {}; // code → { name, lang, totalChapters, downloadedAt }
+const _chapterCache = {}; // code|book|chapter → verses[]
 
 // Call once on app boot to warm the memory cache from IDB
 export async function warmOfflineCache() {
   try {
     const db = await openDB();
-    const all = await new Promise((resolve) => {
-      const tx = db.transaction(STORE, "readonly");
-      const req = tx.objectStore(STORE).getAll();
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = () => resolve([]);
+    const [translations, chapters] = await new Promise((resolve) => {
+      const tx = db.transaction([STORE, CHAPTER_STORE], "readonly");
+      const metaReq = tx.objectStore(STORE).getAll();
+      const chapterReq = tx.objectStore(CHAPTER_STORE).getAll();
+      let meta = [];
+      let chapterRows = [];
+      metaReq.onsuccess = () => { meta = metaReq.result || []; };
+      chapterReq.onsuccess = () => { chapterRows = chapterReq.result || []; };
+      tx.oncomplete = () => resolve([meta, chapterRows]);
+      tx.onerror = () => resolve([[], []]);
     });
-    all.forEach(r => { _memCache[r.code] = r; });
+
+    translations.forEach(record => {
+      const { data, ...meta } = record;
+      _memCache[record.code] = meta;
+      if (data) {
+        const legacy = splitTranslationPayload(record.code, record);
+        cacheTranslation(legacy.meta, legacy.chapters);
+        saveTranslationAsync(record.code, record);
+      }
+    });
+    chapters.forEach(chapter => { _chapterCache[chapter.id] = chapter.verses; });
   } catch {}
 }
 
 export function getOfflineVerse(code, book, chapter) {
-  const r = _memCache[code?.toUpperCase()];
-  return r?.data?.[book]?.[chapter] || null;
+  const upperCode = code?.toUpperCase();
+  return _chapterCache[chapterKey(upperCode, book, chapter)] || _memCache[upperCode]?.data?.[book]?.[chapter] || null;
 }
 
 export function isTranslationDownloaded(code) {
@@ -333,14 +405,17 @@ export function getTranslationMeta(code) {
 
 // Alias for components that still import the old sync save
 export function saveTranslation(code, payload) {
-  // Fire-and-forget async save; also update mem cache immediately
-  const record = { code: code.toUpperCase(), ...payload, downloadedAt: new Date().toISOString() };
-  _memCache[code.toUpperCase()] = record;
+  const { meta, chapters } = splitTranslationPayload(code, payload);
+  cacheTranslation(meta, chapters);
   saveTranslationAsync(code, payload);
-  return true; // always optimistic
+  return true;
 }
 
 export function removeTranslation(code) {
-  delete _memCache[code?.toUpperCase()];
-  removeTranslationAsync(code);
+  const upperCode = code?.toUpperCase();
+  delete _memCache[upperCode];
+  Object.keys(_chapterCache).forEach(key => {
+    if (key.startsWith(`${upperCode}|`)) delete _chapterCache[key];
+  });
+  removeTranslationAsync(upperCode);
 }

@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Download, Trash2, Check, Loader2, WifiOff, ChevronDown, ChevronUp, Star } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import {
-  isTranslationDownloadedAsync,
   saveTranslationAsync,
   removeTranslationAsync,
   getTranslationMetaAsync,
+  getAllTranslationMetasAsync,
 } from "@/lib/offlineBible";
 
 // Full list of downloadable translations via YouVersion / Scripture API
@@ -116,19 +116,13 @@ export default function OfflineBibleManager() {
 
   useEffect(() => {
     async function loadStatuses() {
+      const downloadedMetas = await getAllTranslationMetasAsync();
       const newStatuses = {};
-      const newMetas = {};
-      await Promise.all(
-        OFFLINE_TRANSLATIONS.map(async (t) => {
-          const downloaded = await isTranslationDownloadedAsync(t.code);
-          newStatuses[t.code] = downloaded ? "done" : "idle";
-          if (downloaded) {
-            newMetas[t.code] = await getTranslationMetaAsync(t.code);
-          }
-        })
-      );
+      OFFLINE_TRANSLATIONS.forEach((t) => {
+        newStatuses[t.code] = downloadedMetas[t.code] ? "done" : "idle";
+      });
       setStatuses(newStatuses);
-      setMetas(newMetas);
+      setMetas(downloadedMetas);
     }
     loadStatuses();
   }, []);

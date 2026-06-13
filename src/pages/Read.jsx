@@ -5,7 +5,7 @@ import { Settings, Maximize2, Minimize2, Loader2, ChevronUp, Copy, Check, Column
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 import { base44 } from "@/api/base44Client";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
-import { getOfflineVerse } from "@/lib/offlineBible";
+import { getOfflineVerse, getOfflineVerseAsync } from "@/lib/offlineBible";
 import { BIBLE_BOOKS, TRANSLATIONS } from "@/lib/bibleData";
 import VerseRow from "@/components/reader/VerseRow.jsx";
 import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
@@ -94,6 +94,15 @@ export default function Read() {
       setVerses(offline);
       setLoading(false);
       trackReading(offline);
+      return;
+    }
+
+    const indexedOffline = await getOfflineVerseAsync(translation, book, chapter)
+      || (translation === "KJV" ? await getOfflineVerseAsync("PLAN_CACHE", book, chapter) : null);
+    if (indexedOffline) {
+      setVerses(indexedOffline);
+      setLoading(false);
+      trackReading(indexedOffline);
       return;
     }
 
