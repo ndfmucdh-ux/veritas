@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 Deno.serve(async (req) => {
   try {
@@ -7,13 +7,15 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { query, translation = 'KJV' } = await req.json();
-    if (!query) return Response.json({ error: 'Missing query' }, { status: 400 });
+    const safeQuery = String(query || '').trim().slice(0, 120);
+    const safeTranslation = String(translation || 'KJV').trim().toUpperCase().slice(0, 12);
+    if (!safeQuery) return Response.json({ error: 'Missing query' }, { status: 400 });
 
-    // Use AI to find relevant verses
+    // Use AI to find relevant verses. Query is length-limited to control cost and prompt injection surface.
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are a Bible search engine. Given this search query: "${query}"
+      prompt: `You are a Bible search engine. Given this search query: "${safeQuery}"
       
-      Return the top 10 most relevant Bible verses (KJV translation) as JSON.
+      Return the top 10 most relevant Bible verses (${safeTranslation} translation) as JSON.
       Include verses about the topic, key words, or themes mentioned.
       
       Response format:
@@ -25,7 +27,7 @@ Deno.serve(async (req) => {
             "chapter": 3,
             "verse": 16,
             "text": "For God so loved...",
-            "translation": "KJV",
+            "translation": "${safeTranslation}",
             "relevance": "Why this verse relates to the query"
           }
         ]
@@ -52,7 +54,7 @@ Deno.serve(async (req) => {
       }
     });
 
-    return Response.json({ results: result.verses || [], query });
+    return Response.json({ results: result.verses || [], query: safeQuery, translation: safeTranslation });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

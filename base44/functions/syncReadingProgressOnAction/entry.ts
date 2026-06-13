@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // Called by entity automation on UserHighlight or Bookmark create/update.
 // Ensures ReadingProgress is up-to-date for the relevant book+chapter.
@@ -8,11 +8,19 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { data, event } = body;
 
+    // If invoked directly by a signed-in user, prevent spoofing another user's progress.
+    // Entity automations may run without a normal app-user session, so only enforce when a user exists.
+    let caller = null;
+    try { caller = await base44.auth.me(); } catch (_) { caller = null; }
+
     if (!data) return Response.json({ skipped: true });
 
     const { book, chapter, created_by, translation } = data;
     if (!book || !chapter || !created_by) {
       return Response.json({ skipped: "missing fields" });
+    }
+    if (caller?.email && caller.email !== created_by) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Upsert a ReadingProgress record for this book+chapter

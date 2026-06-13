@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 const LEVEL_THRESHOLDS = [
   { name: "Seeker", minXP: 0 },
@@ -21,7 +21,21 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { action, xp_amount } = await req.json();
+    const { action } = await req.json();
+
+    // Never trust client-provided XP. Award only fixed server-side values.
+    const XP_BY_ACTION = {
+      READ_CHAPTER: 10,
+      ADD_HIGHLIGHT: 5,
+      ADD_BOOKMARK: 5,
+      ADD_NOTE: 15,
+      COMPLETE_PLAN_DAY: 25,
+      AUDIO_STREAK: 10,
+    };
+    const xp_amount = XP_BY_ACTION[action] || 0;
+    if (xp_amount <= 0) {
+      return Response.json({ error: 'Invalid XP action' }, { status: 400 });
+    }
 
     // Get or create XP record for user
     const existing = await base44.entities.UserXP.filter({ created_by: user.email });

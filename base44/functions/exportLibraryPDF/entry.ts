@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { jsPDF } from 'npm:jspdf@4.0.0';
 
 Deno.serve(async (req) => {
@@ -88,8 +88,11 @@ Deno.serve(async (req) => {
     };
 
     const itemBox = (lines, accentR, accentG, accentB) => {
-      const lineH = 6;
-      const boxH = lines.length * lineH + 8;
+      const lineH = 5.5;
+      const wrappedLines = lines.flatMap((line, index) =>
+        doc.splitTextToSize(String(line || ''), contentW - 10).map(text => ({ text, first: index === 0 }))
+      );
+      const boxH = wrappedLines.length * lineH + 8;
       checkPage(boxH + 4);
       doc.setFillColor(15, 20, 40);
       doc.roundedRect(margin, y, contentW, boxH, 2, 2, 'F');
@@ -97,12 +100,10 @@ Deno.serve(async (req) => {
       doc.setLineWidth(0.5);
       doc.line(margin, y, margin, y + boxH);
       doc.setFontSize(9);
-      lines.forEach((line, li) => {
-        const isFirst = li === 0;
-        doc.setFont('helvetica', isFirst ? 'bold' : 'normal');
-        doc.setTextColor(isFirst ? accentR : 190, isFirst ? accentG : 190, isFirst ? accentB : 200);
-        const wrapped = doc.splitTextToSize(line, contentW - 10);
-        doc.text(wrapped, margin + 5, y + 6 + li * lineH);
+      wrappedLines.forEach((line, li) => {
+        doc.setFont('helvetica', line.first ? 'bold' : 'normal');
+        doc.setTextColor(line.first ? accentR : 190, line.first ? accentG : 190, line.first ? accentB : 200);
+        doc.text(line.text, margin + 5, y + 6 + li * lineH);
       });
       y += boxH + 3;
     };
