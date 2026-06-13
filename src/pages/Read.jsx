@@ -140,7 +140,6 @@ export default function Read() {
   const trackReading = (versesLoaded) => {
     if (!versesLoaded || versesLoaded.length === 0) return;
     base44.entities.ReadingProgress.create({ book, chapter, translation, completed_at: new Date().toISOString() }).catch(() => {});
-    base44.functions.invoke("updateXP", { action: "READ_CHAPTER", xp_amount: 10 }).catch(() => {});
     // Show guided reflection after reading
     setTimeout(() => setShowReflection(true), 1500);
   };

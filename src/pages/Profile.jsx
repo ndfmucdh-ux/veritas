@@ -1,22 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Trophy, Flame, Zap, BookOpen, Highlighter, StickyNote, Image,
+  BookOpen, Highlighter, StickyNote, Image,
   LogOut, ChevronRight, Bell, Moon, Shield, Download,
-  TrendingUp, Calendar, Star, Award, Heart, Target,
+  TrendingUp, Calendar, Heart, Target,
   BarChart3, BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail, Sparkles
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { getLevelForXP, LEVELS, BADGES } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
 import ReadingPlanCacheSettings from "@/components/profile/ReadingPlanCacheSettings";
-import LevelUpAnimation from "@/components/profile/LevelUpAnimation";
 import AudioSummary from "@/components/profile/AudioSummary";
 import DashboardSummary from "@/components/profile/DashboardSummary";
 import DailyReadingRing from "@/components/profile/DailyReadingRing";
-import EmblemBadges from "@/components/profile/EmblemBadges";
 import MonthlyProgressChart from "@/components/profile/MonthlyProgressChart";
 import ReadingCalendar from "@/components/profile/ReadingCalendar";
 import SharedReadingPlan from "@/components/community/SharedReadingPlan";
@@ -34,8 +31,8 @@ import PersonalizedDevotionalPanel from "@/components/profile/PersonalizedDevoti
 const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
 
 const ALL_TABS = ["overview", "library", "insights", "stats", "emails", "settings"];
-const TAB_LABELS = { overview: "Overview", library: "Library", insights: "Insights", stats: "Growth", emails: "Emails", settings: "Settings" };
-const TAB_ICONS = { overview: Award, library: BookMarked, insights: TrendingUp, stats: BarChart3, emails: Mail, settings: Shield };
+const TAB_LABELS = { overview: "Overview", library: "Library", insights: "Insights", stats: "Reading", emails: "Emails", settings: "Settings" };
+const TAB_ICONS = { overview: BookOpen, library: BookMarked, insights: TrendingUp, stats: BarChart3, emails: Mail, settings: Shield };
 
 // Stable placeholder chart data — random values cause infinite re-renders
 const PLACEHOLDER_CHART_DATA = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => ({
@@ -46,7 +43,6 @@ const buildChartData = () => PLACEHOLDER_CHART_DATA;
 export default function Profile() {
   const { t } = useLang();
   const [user, setUser] = useState(null);
-  const [xpData, setXpData] = useState(null);
   const [bookmarks, setBookmarks] = useState([]);
   const [highlights, setHighlights] = useState([]);
   const [notes, setNotes] = useState([]);
@@ -55,8 +51,6 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("overview");
   const [notifEnabled, setNotifEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
-  const [showLevelUp, setShowLevelUp] = useState(false);
-  const [levelUpData, setLevelUpData] = useState(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -71,29 +65,12 @@ export default function Profile() {
   useEffect(() => {
     Promise.all([
       base44.auth.me().catch(() => null),
-      base44.entities.UserXP.list("-updated_date", 1).catch(() => []),
       base44.entities.Bookmark.list("-created_date", 20).catch(() => []),
       base44.entities.UserHighlight.list("-created_date", 20).catch(() => []),
       base44.entities.UserNote.list("-created_date", 20).catch(() => []),
       base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
-    ]).then(([u, xp, bm, hl, nt, rp]) => {
+    ]).then(([u, bm, hl, nt, rp]) => {
       setUser(u);
-      const xpRecord = xp?.[0] || null;
-      setXpData(xpRecord);
-      // Check for level-up since last visit
-      const lastXP = parseInt(sessionStorage.getItem("veritas_last_xp") || "0");
-      const currentXP = xpRecord?.total_xp || 0;
-      if (currentXP > lastXP) {
-        sessionStorage.setItem("veritas_last_xp", String(currentXP));
-        base44.functions.invoke("checkXPMilestones", { previous_xp: lastXP, current_xp: currentXP }).catch(() => {});
-        // Show level-up animation if level changed
-        const prevLevel = getLevelForXP(lastXP);
-        const currLevel = getLevelForXP(currentXP);
-        if (prevLevel.name !== currLevel.name && lastXP > 0) {
-          setLevelUpData(currLevel);
-          setShowLevelUp(true);
-        }
-      }
       setBookmarks(bm || []);
       setHighlights(hl || []);
       setNotes(nt || []);
@@ -168,11 +145,6 @@ export default function Profile() {
   const isAdmin = user?.role === "admin" || user?.data?.role === "admin" || ADMIN_EMAILS.includes(user?.email);
   const TABS = ALL_TABS.filter(t => t !== "emails" || isAdmin);
 
-  const xp = xpData?.total_xp || 0;
-  const level = getLevelForXP(xp);
-  const nextLevel = LEVELS.find(l => l.minXP > xp);
-  const progress = nextLevel ? ((xp - level.minXP) / (nextLevel.minXP - level.minXP)) * 100 : 100;
-  const earnedBadges = xpData?.badges || [];
   const chartData = buildChartData();
 
   if (loading) {
@@ -185,7 +157,6 @@ export default function Profile() {
 
   return (
     <div className="md:ml-16 min-h-screen pb-28">
-      <LevelUpAnimation level={levelUpData} show={showLevelUp} onComplete={() => setShowLevelUp(false)} />
       <AnimatePresence>
         {shareHighlight && <HighlightImageShare highlight={shareHighlight} onClose={() => setShareHighlight(null)} />}
       </AnimatePresence>
@@ -219,11 +190,11 @@ export default function Profile() {
           >
             {avatarUrl ? (
               <img src={avatarUrl} alt="avatar" className="w-20 h-20 rounded-2xl object-cover"
-                style={{ border: `2px solid ${level.color}55`, boxShadow: `0 0 24px ${level.color}33` }} />
+                style={{ border: "2px solid rgba(251,191,36,0.35)", boxShadow: "0 0 24px rgba(251,191,36,0.12)" }} />
             ) : (
               <div
                 className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold"
-                style={{ background: `linear-gradient(135deg, ${level.color}44, ${level.color}11)`, border: `2px solid ${level.color}55`, boxShadow: `0 0 24px ${level.color}33` }}
+                style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(251,191,36,0.05))", border: "2px solid rgba(251,191,36,0.35)", boxShadow: "0 0 24px rgba(251,191,36,0.12)" }}
               >
                 {user?.full_name?.[0]?.toUpperCase() || "✝"}
               </div>
@@ -232,13 +203,10 @@ export default function Profile() {
             <button
               onClick={() => avatarInputRef.current?.click()}
               className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl flex items-center justify-center z-10"
-              style={{ background: "rgba(10,15,30,0.95)", border: `1.5px solid ${level.color}55`, boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+              style={{ background: "rgba(10,15,30,0.95)", border: "1.5px solid rgba(251,191,36,0.35)", boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
             >
-              {uploadingAvatar ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Camera className="w-3.5 h-3.5" style={{ color: level.color }} />}
+              {uploadingAvatar ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Camera className="w-3.5 h-3.5" style={{ color: "#fbbf24" }} />}
             </button>
-            <div className="absolute -top-1 -left-1 w-6 h-6 rounded-full flex items-center justify-center text-sm bg-background border-2 border-background">
-              {level.icon}
-            </div>
           </motion.div>
           <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
 
@@ -264,33 +232,16 @@ export default function Profile() {
               </div>
             )}
             <p className="text-xs font-inter truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{user?.email}</p>
-            <p className="font-cinzel text-xs font-semibold mt-0.5" style={{ color: level.color }}>{level.icon} {level.name}</p>
           </div>
         </div>
       </div>
 
-      {/* ── XP Bar ── */}
-      <div className="px-5 pt-4 pb-3">
-        <div className="flex justify-between text-[11px] mb-1.5" style={{ color: "rgba(255,255,255,0.35)" }}>
-          <span className="font-inter">{xp.toLocaleString()} XP</span>
-          {nextLevel && <span className="font-inter">{nextLevel.minXP.toLocaleString()} → <span style={{ color: level.color }}>{nextLevel.name}</span></span>}
-        </div>
-        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className="h-full rounded-full"
-            style={{ background: `linear-gradient(90deg, ${level.color}, ${nextLevel?.color || "#fbbf24"})` }}
-          />
-        </div>
-      </div>
 
       {/* ── Quick Stats Row ── */}
       <div className="grid grid-cols-4 gap-3 px-5 mb-4">
         {[
-          { label: "Streak", value: `${xpData?.streak_days || 0}d`, icon: Flame, color: "#f97316" },
-          { label: "Chapters", value: xpData?.chapters_read || 0, icon: BookOpen, color: "#00f5ff" },
+          { label: "Sessions", value: plans.length, icon: BookOpen, color: "#00f5ff" },
+          { label: "Highlights", value: highlights.length, icon: Highlighter, color: "#fbbf24" },
           { label: "Notes", value: notes.length, icon: StickyNote, color: "#a78bfa" },
           { label: "Saved", value: bookmarks.length, icon: Heart, color: "#f472b6" },
         ].map(({ label, value, icon: Icon, color }) => (
@@ -352,55 +303,6 @@ export default function Profile() {
               <Section label="Join the Community" icon={Users}>
                 <SharedReadingPlan />
               </Section>
-
-              {/* Emblem Badges */}
-              <Section label="Emblems & Honours" icon={Star}>
-                <EmblemBadges
-                  streak={xpData?.streak_days || 0}
-                  highlightCount={highlights.length}
-                  noteCount={notes.length}
-                />
-              </Section>
-
-              {/* Badges */}
-              <Section label="Achievements" icon={Trophy}>
-                <div className="grid grid-cols-4 gap-2.5">
-                  {BADGES.map(badge => {
-                    const earned = earnedBadges.includes(badge.id);
-                    return (
-                      <motion.div key={badge.id} whileTap={{ scale: 0.93 }}
-                        className="rounded-2xl p-3 flex flex-col items-center gap-1.5 transition-all"
-                        style={{ background: earned ? `rgba(251,191,36,0.07)` : "rgba(255,255,255,0.03)", border: earned ? "1px solid rgba(251,191,36,0.2)" : "1px solid rgba(255,255,255,0.06)", opacity: earned ? 1 : 0.38 }}
-                        title={badge.desc}>
-                        <span className="text-2xl">{badge.icon}</span>
-                        <span className="text-[9px] font-inter text-center leading-tight" style={{ color: earned ? "#fbbf24" : "rgba(255,255,255,0.3)" }}>{badge.name}</span>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </Section>
-
-              {/* Level journey */}
-              <Section label="Level Journey" icon={Target}>
-                <div className="space-y-2">
-                  {LEVELS.map((l) => {
-                    const isCurrent = l.name === level.name;
-                    const isPast = LEVELS.indexOf(l) < LEVELS.indexOf(level);
-                    return (
-                      <div key={l.name} className="flex items-center gap-3 rounded-xl px-3 py-2.5"
-                        style={{ background: isCurrent ? `${l.color}0d` : "rgba(255,255,255,0.025)", border: isCurrent ? `1px solid ${l.color}33` : "1px solid transparent" }}>
-                        <span className="text-xl w-8 text-center">{l.icon}</span>
-                        <div className="flex-1">
-                          <p className="font-cinzel text-sm font-semibold" style={{ color: l.color }}>{l.name}</p>
-                          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{l.minXP.toLocaleString()}+ XP</p>
-                        </div>
-                        {isCurrent && <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full" style={{ background: `${l.color}22`, color: l.color }}>Current</span>}
-                        {isPast && <Check className="w-3.5 h-3.5" style={{ color: "#34d399" }} />}
-                      </div>
-                    );
-                  })}
-                </div>
-              </Section>
             </div>
           )}
 
@@ -427,7 +329,7 @@ export default function Profile() {
                         className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center"
                         style={{ background: "rgba(0,245,255,0.07)", border: "1px solid rgba(0,245,255,0.15)" }}
                         title="Create verse art">
-                        <Zap className="w-3.5 h-3.5" style={{ color: "#00f5ff" }} />
+                        <Image className="w-3.5 h-3.5" style={{ color: "#00f5ff" }} />
                       </button>
                     </div>
                   ))
@@ -466,7 +368,7 @@ export default function Profile() {
           {activeTab === "stats" && (
             <div className="px-5 space-y-5">
               {/* Reading Stats Overview */}
-              <Section label="Reading Stats & Streaks" icon={TrendingUp}>
+              <Section label="Reading Stats & Activity" icon={TrendingUp}>
                 <ReadingStatsOverview />
               </Section>
 
@@ -481,8 +383,8 @@ export default function Profile() {
               </Section>
 
               {/* Dashboard Summary */}
-              <Section label="My Progress Summary" icon={TrendingUp}>
-                <DashboardSummary xpData={xpData} readingProgress={plans.length} />
+              <Section label="Reading Summary" icon={TrendingUp}>
+                <DashboardSummary readingProgress={plans.length} notesCount={notes.length} highlightsCount={highlights.length} />
               </Section>
 
               {/* Audio Summary */}
@@ -515,13 +417,11 @@ export default function Profile() {
               </Section>
 
               {/* Detailed stats */}
-              <Section label="All-Time Stats" icon={Star}>
+              <Section label="Library Metrics" icon={BookOpen}>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: "Total XP", value: xp.toLocaleString(), color: "#fbbf24", icon: "⚡" },
-                    { label: "Day Streak", value: `${xpData?.streak_days || 0}`, color: "#f97316", icon: "🔥" },
-                    { label: "Longest Streak", value: `${xpData?.longest_streak || 0}d`, color: "#f472b6", icon: "📈" },
-                    { label: "Chapters Read", value: xpData?.chapters_read || 0, color: "#00f5ff", icon: "📖" },
+                    { label: "Reading Sessions", value: plans.length, color: "#00f5ff", icon: "📖" },
+                    { label: "Bookmarks", value: bookmarks.length, color: "#f472b6", icon: "🔖" },
                     { label: "Verses Highlighted", value: highlights.length, color: "#a78bfa", icon: "✨" },
                     { label: "Notes Written", value: notes.length, color: "#34d399", icon: "✍️" },
                   ].map(s => (

@@ -1,49 +1,44 @@
 import { motion } from "framer-motion";
-import { Flame, BookOpen, Clock, TrendingUp } from "lucide-react";
+import { BookOpen, Clock, Highlighter, StickyNote } from "lucide-react";
 
-export default function DashboardSummary({ xpData, readingProgress }) {
-  // Estimate time spent: ~3 min per chapter read
-  const chaptersRead = xpData?.chapters_read || 0;
-  const estimatedMinutes = chaptersRead * 3;
+export default function DashboardSummary({ readingProgress = 0, notesCount = 0, highlightsCount = 0 }) {
+  const estimatedMinutes = readingProgress * 3;
   const hours = Math.floor(estimatedMinutes / 60);
   const mins = estimatedMinutes % 60;
   const timeLabel = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-
-  const streak = xpData?.streak_days || 0;
-  const longestStreak = xpData?.longest_streak || 0;
 
   const stats = [
     {
       icon: BookOpen,
       color: "#00f5ff",
-      value: chaptersRead,
-      label: "Chapters Read",
-      sub: `${readingProgress} sessions`,
-      glow: "rgba(0,245,255,0.15)",
-    },
-    {
-      icon: Flame,
-      color: "#f97316",
-      value: `${streak}d`,
-      label: "Current Streak",
-      sub: `Best: ${longestStreak}d`,
-      glow: "rgba(249,115,22,0.15)",
+      value: readingProgress,
+      label: "Reading Sessions",
+      sub: "Saved chapter activity",
+      glow: "rgba(0,245,255,0.12)",
     },
     {
       icon: Clock,
       color: "#a78bfa",
       value: timeLabel,
-      label: "Time in Word",
-      sub: "Est. reading time",
-      glow: "rgba(167,139,250,0.15)",
+      label: "Estimated Time",
+      sub: "Based on sessions",
+      glow: "rgba(167,139,250,0.12)",
     },
     {
-      icon: TrendingUp,
+      icon: Highlighter,
+      color: "#fbbf24",
+      value: highlightsCount,
+      label: "Highlights",
+      sub: "Verses marked for study",
+      glow: "rgba(251,191,36,0.1)",
+    },
+    {
+      icon: StickyNote,
       color: "#34d399",
-      value: xpData?.total_xp?.toLocaleString() || "0",
-      label: "Total XP",
-      sub: "Keep going!",
-      glow: "rgba(52,211,153,0.15)",
+      value: notesCount,
+      label: "Notes",
+      sub: "Personal reflections",
+      glow: "rgba(52,211,153,0.1)",
     },
   ];
 
@@ -54,12 +49,9 @@ export default function DashboardSummary({ xpData, readingProgress }) {
           key={s.label}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.07 }}
+          transition={{ delay: i * 0.05 }}
           className="rounded-2xl p-4"
-          style={{
-            background: s.glow,
-            border: `1px solid ${s.color}25`,
-          }}
+          style={{ background: s.glow, border: `1px solid ${s.color}25` }}
         >
           <div className="flex items-center gap-2 mb-2">
             <s.icon className="w-4 h-4" style={{ color: s.color }} />

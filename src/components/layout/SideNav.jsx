@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, Zap, Map, Compass, GraduationCap, Image } from "lucide-react";
+import { Home, BookOpen, Search, BookMarked, User, Map, Compass, GraduationCap, Image } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLang } from "@/lib/LanguageContext";
 
@@ -16,7 +16,7 @@ export default function SideNav() {
     { path: "/plans", icon: Map, label: t.plans },
     { path: "/discover", icon: Compass, label: t.discover },
     { path: "/verse-art", icon: Image, label: t.verseArt },
-    { path: "/profile", icon: Zap, label: t.profile },
+    { path: "/profile", icon: User, label: t.profile },
   ];
 
   return (

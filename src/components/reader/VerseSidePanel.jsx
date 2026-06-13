@@ -47,7 +47,6 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
         await base44.entities.UserNote.create({
           verse_ref: verseRef, book, chapter, verse: verse.verse, translation, note_text: noteText
         });
-        base44.functions.invoke("updateXP", { action: "ADD_NOTE", xp_amount: 15 }).catch(() => {});
       }
       setSaved(true);
       onNoteSaved?.(verse.verse, noteText);

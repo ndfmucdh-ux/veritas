@@ -181,7 +181,6 @@ export default function Plans() {
     await base44.entities.ReadingProgress.create({
       plan_id: planTitle, book: "Plan", chapter: day, translation: "KJV", completed_at: new Date().toISOString()
     }).catch(() => {});
-    base44.functions.invoke("updateXP", { action: "COMPLETE_PLAN_DAY", xp_amount: 25 }).catch(() => {});
     setProgress(prev => [...prev, { plan_id: planTitle, chapter: day }]);
   };
 

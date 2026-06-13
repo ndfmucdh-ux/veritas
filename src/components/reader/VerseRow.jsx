@@ -56,7 +56,6 @@ export default function VerseRow({
         await base44.entities.UserHighlight.update(existing[0].id, { color });
       } else {
         await base44.entities.UserHighlight.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation, color });
-        base44.functions.invoke("updateXP", { action: "ADD_HIGHLIGHT", xp_amount: 5 }).catch(() => {});
       }
     }
     setMenuOpen(false);
@@ -71,7 +70,6 @@ export default function VerseRow({
       if (existing?.[0]) await base44.entities.Bookmark.delete(existing[0].id);
     } else {
       await base44.entities.Bookmark.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation });
-      base44.functions.invoke("updateXP", { action: "ADD_BOOKMARK", xp_amount: 5 }).catch(() => {});
     }
   };
 
@@ -86,7 +84,6 @@ export default function VerseRow({
       await base44.entities.UserNote.update(existing[0].id, { note_text: noteText });
     } else {
       await base44.entities.UserNote.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation, note_text: noteText });
-      base44.functions.invoke("updateXP", { action: "ADD_NOTE", xp_amount: 15 }).catch(() => {});
     }
   };
 

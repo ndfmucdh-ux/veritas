@@ -3,17 +3,14 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { BookOpen, ChevronRight, GraduationCap, Map, Compass, Palette } from "lucide-react";
 import HeroVerseSlider from "@/components/home/HeroVerseSlider.jsx";
-import StreakCounter from "@/components/home/StreakCounter.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import MorningReminder from "@/components/home/MorningReminder.jsx";
 import DailyGoalBar from "@/components/home/DailyGoalBar.jsx";
 import DailyReflectionCard from "@/components/home/DailyReflectionCard.jsx";
-import WeeklyGoalsRing from "@/components/home/WeeklyGoalsRing.jsx";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
 
-import { getLevelForXP, LEVELS } from "@/lib/bibleData";
 import { pageTransition } from "@/hooks/useAnimations";
 import { useLang } from "@/lib/LanguageContext";
 
@@ -22,15 +19,10 @@ import { useLang } from "@/lib/LanguageContext";
 export default function Home() {
   const { t } = useLang();
   const [user, setUser] = useState(null);
-  const [xpData, setXpData] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      base44.auth.me().catch(() => null),
-      base44.entities.UserXP.list("-updated_date", 1).catch(() => []),
-    ]).then(([u, xp]) => {
+    base44.auth.me().catch(() => null).then((u) => {
       setUser(u);
-      setXpData(xp?.[0] || null);
       // Seed session if not already set
       if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
         sessionStorage.setItem("veritas_display_name", u.full_name);
@@ -49,9 +41,6 @@ export default function Home() {
   const displayAvatar = sessionStorage.getItem("veritas_avatar_url") || user?.avatar_url || null;
   const firstName = displayName.split(" ")[0];
 
-  const xp = xpData?.total_xp || 0;
-  const level = getLevelForXP(xp);
-  const nextLevel = LEVELS.find(l => l.minXP > xp);
 
   return (
     <motion.div {...pageTransition} className="md:ml-16 min-h-screen">
@@ -98,9 +87,6 @@ export default function Home() {
         {/* Daily Reading Goal */}
         <DailyGoalBar />
 
-        {/* Weekly Goals Ring */}
-        <WeeklyGoalsRing />
-
         {/* Daily Reflection Card */}
         <DailyReflectionCard />
 
@@ -125,12 +111,6 @@ export default function Home() {
               <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(0,245,255,0.5)" }} />
             </motion.div>
           </Link>
-        </motion.div>
-
-        {/* Streak + XP */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
-          <SectionHeader label={t.yourProgress} />
-          <StreakCounter streak={xpData?.streak_days || 0} xp={xp} level={level.name} nextLevelXp={nextLevel?.minXP || 5000} chapters={xpData?.chapters_read || 0} />
         </motion.div>
 
         {/* Category Cards */}

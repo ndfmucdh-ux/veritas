@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { motion } from "framer-motion";
-import { Flame, BookOpen, TrendingUp } from "lucide-react";
+import { CalendarDays, BookOpen, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 export default function ReadingStatsOverview() {
   const [stats, setStats] = useState(null);
-  const [streakDays, setStreakDays] = useState(0);
   const [monthlyData, setMonthlyData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,22 +22,11 @@ export default function ReadingStatsOverview() {
           50
         );
 
-        // Calculate streak
-        let streak = 0;
-        const today = new Date();
-        for (let i = 0; i < 365; i++) {
-          const checkDate = new Date(today);
-          checkDate.setDate(checkDate.getDate() - i);
-          const hasReading = progress.some(p => {
-            const pDate = new Date(p.created_date);
-            return pDate.toDateString() === checkDate.toDateString();
-          });
-          if (hasReading) streak++;
-          else break;
-        }
-        setStreakDays(streak);
+        const activeDays = new Set(
+          progress.map(p => new Date(p.created_date).toISOString().slice(0, 10))
+        ).size;
 
-        // Group by month for chart
+        // Group by date for chart
         const monthly = {};
         progress.forEach(p => {
           const date = new Date(p.created_date);
@@ -55,13 +43,13 @@ export default function ReadingStatsOverview() {
         // Calculate stats
         const totalChapters = progress.reduce((sum, p) => sum + (p.chapters_read || 1), 0);
         const uniqueBooks = new Set(progress.map(p => p.book)).size;
-        const avgChaptersPerDay = (totalChapters / Math.max(streak, 1)).toFixed(1);
+        const avgChaptersPerDay = (totalChapters / Math.max(activeDays, 1)).toFixed(1);
 
         setStats({
           totalChapters,
           uniqueBooks,
           avgChaptersPerDay,
-          currentStreak: streak,
+          activeDays,
         });
       } catch (error) {
         console.error("Failed to load reading stats:", error);
@@ -94,11 +82,11 @@ export default function ReadingStatsOverview() {
         >
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-lg" style={{ background: "rgba(0,245,255,0.2)" }}>
-              <Flame className="w-5 h-5 text-cyan" />
+              <CalendarDays className="w-5 h-5 text-cyan" />
             </div>
             <div>
-              <p className="text-xs font-inter text-muted-foreground">Reading Streak</p>
-              <p className="text-2xl font-cinzel font-bold text-white">{stats.currentStreak} days</p>
+              <p className="text-xs font-inter text-muted-foreground">Active Reading Days</p>
+              <p className="text-2xl font-cinzel font-bold text-white">{stats.activeDays} days</p>
             </div>
           </div>
         </motion.div>
@@ -176,7 +164,7 @@ export default function ReadingStatsOverview() {
       )}
 
       <p className="text-xs font-inter px-4 py-2 rounded-lg" style={{ background: "rgba(0,245,255,0.05)", color: "rgba(0,245,255,0.5)" }}>
-        💡 Keep your reading streak alive! Complete a chapter daily to maintain your momentum.
+        Your reading activity is tracked privately to help you review long-term study patterns.
       </p>
     </div>
   );
