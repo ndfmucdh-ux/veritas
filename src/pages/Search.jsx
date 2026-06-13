@@ -32,7 +32,7 @@ export default function Search() {
   }, []);
 
   const doSearch = useCallback(async (q) => {
-    const searchQuery = (q || query).trim();
+    const searchQuery = (q !== undefined ? q : query).trim();
     if (!searchQuery) return;
 
     setLoading(true);
@@ -58,7 +58,7 @@ export default function Search() {
         .then(prayers => (prayers || []).filter(p =>
           p.prayer_text?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.verse_ref?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+          p.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
         ))
         .catch(() => []),
     ]);

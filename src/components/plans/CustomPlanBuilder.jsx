@@ -89,26 +89,31 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
   const save = async () => {
     if (!title.trim() || totalChapters === 0) return;
     setSaving(true);
-    const selectionsArr = Object.entries(selections).map(([book, chapters]) => ({
-      book,
-      chapters: Array.from(chapters).sort((a, b) => a - b),
-    }));
-    await base44.entities.CustomPlan.create({
-      title: title.trim(),
-      description: description.trim(),
-      target_date: targetDate || null,
-      accent_color: accentColor,
-      icon,
-      selections: selectionsArr,
-      total_chapters: totalChapters,
-      completed_chapters: [],
-    });
-    // Store start date and daily goal in localStorage keyed by title
-    localStorage.setItem(`veritas_plan_start_${title.trim()}`, startDate);
-    localStorage.setItem(`veritas_plan_daily_${title.trim()}`, String(dailyGoal));
-    setSaving(false);
-    onSaved?.();
-    onClose();
+    try {
+      const trimmedTitle = title.trim();
+      const selectionsArr = Object.entries(selections).map(([book, chapters]) => ({
+        book,
+        chapters: Array.from(chapters).sort((a, b) => a - b),
+      }));
+      const plan = await base44.entities.CustomPlan.create({
+        title: trimmedTitle,
+        description: description.trim(),
+        target_date: targetDate || null,
+        accent_color: accentColor,
+        icon,
+        selections: selectionsArr,
+        total_chapters: totalChapters,
+        completed_chapters: [],
+      });
+      // Key by plan ID (not title) so renames/duplicates don't collide
+      const key = plan?.id || trimmedTitle;
+      localStorage.setItem(`veritas_plan_start_${key}`, startDate);
+      localStorage.setItem(`veritas_plan_daily_${key}`, String(dailyGoal));
+      onSaved?.();
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
 
   const minDate = new Date().toISOString().split("T")[0];

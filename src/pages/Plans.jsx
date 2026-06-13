@@ -186,15 +186,14 @@ export default function Plans() {
   };
 
   const generateAIDevo = async (day) => {
+    if (!day.verses?.[0]) return;
     setGenLoading(true);
     setGenDevo(null);
     try {
       const res = await base44.functions.invoke("generateDevotional", {
         verse_ref: day.verses[0], category: activePlan.category
       });
-      setGenDevo(res.data?.devotional);
-    } catch {
-      setGenDevo(null);
+      setGenDevo(res.data?.devotional || null);
     } finally {
       setGenLoading(false);
     }
@@ -232,7 +231,7 @@ export default function Plans() {
       ? Math.ceil((new Date(plan.target_date) - new Date()) / (1000 * 60 * 60 * 24))
       : null;
     const accent = plan.accent_color || "#00f5ff";
-    const dailyGoal = parseInt(localStorage.getItem(`veritas_plan_daily_${plan.title}`) || "1");
+    const dailyGoal = parseInt(localStorage.getItem(`veritas_plan_daily_${plan.id}`) || localStorage.getItem(`veritas_plan_daily_${plan.title}`) || "1");
     const remainingCh = totalCh - doneCh;
     const daysToFinish = dailyGoal > 0 ? Math.ceil(remainingCh / dailyGoal) : null;
 
@@ -502,7 +501,7 @@ export default function Plans() {
                               {genLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                               AI Devotional
                             </motion.button>
-                            <a href={`/read?book=${day.verses[0]?.split(' ')[0]}&chapter=1`}
+                            <a href={`/read?book=${encodeURIComponent(day.verses[0]?.split(' ').slice(0,-1).join(' ') || 'John')}&chapter=${day.verses[0]?.split(':')[0]?.split(' ').slice(-1)[0] || 1}`}
                               onClick={e => e.stopPropagation()}
                               className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-cinzel transition-colors"
                               style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}>
