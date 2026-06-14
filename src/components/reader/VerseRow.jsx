@@ -155,7 +155,7 @@ export default function VerseRow({
     longPressTimerRef.current = setTimeout(() => {
       longPressTriggeredRef.current = true;
       copyLongPressVerse();
-    }, 650);
+    }, 500);
   };
 
   const cancelLongPressCopy = () => clearTimeout(longPressTimerRef.current);
@@ -178,6 +178,11 @@ export default function VerseRow({
         onPointerUp={cancelLongPressCopy}
         onPointerCancel={cancelLongPressCopy}
         onPointerLeave={cancelLongPressCopy}
+        onTouchStart={startLongPressCopy}
+        onTouchEnd={cancelLongPressCopy}
+        onMouseDown={startLongPressCopy}
+        onMouseUp={cancelLongPressCopy}
+        onContextMenu={(e) => e.preventDefault()}
         onClick={(e) => {
           e.stopPropagation();
           if (longPressTriggeredRef.current) { longPressTriggeredRef.current = false; return; }
@@ -247,6 +252,15 @@ export default function VerseRow({
                 style={{ background: isBookmarked ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)", color: isBookmarked ? "#fbbf24" : "rgba(255,255,255,0.5)" }}>
                 <Bookmark className="w-3.5 h-3.5" />
                 {isBookmarked ? "Saved" : "Bookmark"}
+              </button>
+              <button onClick={() => {
+                  setMenuOpen(false);
+                  copyLongPressVerse();
+                }}
+                className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
+                style={{ background: "rgba(52,211,153,0.1)", color: "#34d399" }}>
+                <Copy className="w-3.5 h-3.5" />
+                Copy
               </button>
               <button onClick={() => {
                   setMenuOpen(false);
