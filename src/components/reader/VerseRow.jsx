@@ -143,8 +143,25 @@ export default function VerseRow({
     const now = new Date();
     const date = now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
     const time = now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-    const copyText = `Version: ${translation}\nBook: ${book}\nChapter: ${chapter}\nVerse: ${verseNum}\nDate: ${date}\nTime: ${time}\n\n${book} ${chapter}:${verseNum} (${translation})\n\"${text}\"`;
-    await navigator.clipboard?.writeText(copyText);
+    const reference = `${book} ${chapter}:${verseNum} · ${translation}`;
+    const plainText = `${reference}\n${date} at ${time}\n\n“${text}”`;
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #ffffff; background: #000000; line-height: 1.55;">
+        <p style="margin: 0 0 10px; color: #ffffff; font-size: 18px; font-weight: 700; text-decoration: none;">${reference}</p>
+        <p style="margin: 0 0 18px; color: #d1d5db; font-size: 13px; text-decoration: none;">${date} · ${time}</p>
+        <p style="margin: 0; color: #ffffff; font-size: 20px; text-decoration: none;">“${text}”</p>
+      </div>`;
+
+    if (navigator.clipboard?.write && window.ClipboardItem) {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/plain": new Blob([plainText], { type: "text/plain" }),
+          "text/html": new Blob([html], { type: "text/html" }),
+        })
+      ]);
+    } else {
+      await navigator.clipboard?.writeText(plainText);
+    }
     setCopiedLongPress(true);
     setTimeout(() => setCopiedLongPress(false), 1800);
   };
