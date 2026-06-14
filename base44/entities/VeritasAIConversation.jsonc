@@ -1,0 +1,75 @@
+{
+  "name": "VeritasAIConversation",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short user-friendly title for the conversation"
+    },
+    "semantic_group": {
+      "type": "string",
+      "enum": [
+        "Prayer & Intercession",
+        "Bible Study",
+        "Reading Guidance",
+        "Encouragement",
+        "App Help",
+        "Daily Reflection"
+      ],
+      "default": "Daily Reflection",
+      "description": "Meaning-based category for easier browsing"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief summary of the conversation"
+    },
+    "conversation_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this conversation was started"
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this conversation was last updated"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "description": "Conversation messages between the user and Veritas Guide"
+    }
+  },
+  "required": [
+    "title",
+    "conversation_date",
+    "messages"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

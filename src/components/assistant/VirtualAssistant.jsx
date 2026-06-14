@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2, History } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import ReactMarkdown from "react-markdown";
 import VeritasLogo from "@/components/ui/VeritasLogo";
+import ConversationHistoryPanel from "@/components/assistant/ConversationHistoryPanel";
+import { getConversationSummary, getConversationTitle, getSemanticGroup, withTimestamps } from "@/components/assistant/conversationUtils";
 
 const ASSISTANT_NAME = "Veritas Guide";
 
@@ -66,6 +68,10 @@ export default function VirtualAssistant({ onClose }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [userContext, setUserContext] = useState(null);
+  const [conversations, setConversations] = useState([]);
+  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [initialGreeting, setInitialGreeting] = useState("");
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -84,6 +90,8 @@ export default function VirtualAssistant({ onClose }) {
 
         const ctx = { user, prayers: prayers || [], notes: notes || [], xp: xp?.[0] || null, highlights: highlights || [], reading: reading || [] };
         setUserContext(ctx);
+        const savedConversations = await base44.entities.VeritasAIConversation.list("-last_message_at", 50).catch(() => []);
+        setConversations(savedConversations || []);
 
         const firstName = user?.full_name?.split(" ")[0] || "beloved";
         const streakDays = ctx.xp?.streak_days || 0;
@@ -112,9 +120,12 @@ export default function VirtualAssistant({ onClose }) {
 
         greeting += `What is on your heart today?`;
 
-        setMessages([{ role: "assistant", content: greeting }]);
+        setInitialGreeting(greeting);
+        setMessages([{ role: "assistant", content: greeting, created_at: new Date().toISOString() }]);
       } catch {
-        setMessages([{ role: "assistant", content: `Peace be with you, beloved. I am your **Veritas Guide** — your faithful companion on this sacred journey.\n\nThe Father is with you. What is on your heart today? 🙏` }]);
+        const fallbackGreeting = `Peace be with you, beloved. I am your **Veritas Guide** — your faithful companion on this sacred journey.\n\nThe Father is with you. What is on your heart today? 🙏`;
+        setInitialGreeting(fallbackGreeting);
+        setMessages([{ role: "assistant", content: fallbackGreeting, created_at: new Date().toISOString() }]);
       }
     };
 
@@ -168,26 +179,71 @@ export default function VirtualAssistant({ onClose }) {
     return parts.length > 0 ? `\n\n## User's Personal Spiritual Data\n${parts.join("\n")}` : "";
   };
 
+  const persistConversation = async (nextMessages) => {
+    const now = new Date().toISOString();
+    const savedMessages = withTimestamps(nextMessages);
+    const currentConversation = conversations.find(c => c.id === activeConversationId);
+    const payload = {
+      title: getConversationTitle(savedMessages),
+      semantic_group: getSemanticGroup(savedMessages),
+      summary: getConversationSummary(savedMessages),
+      conversation_date: currentConversation?.conversation_date || now,
+      last_message_at: now,
+      messages: savedMessages,
+    };
+
+    if (activeConversationId) {
+      await base44.entities.VeritasAIConversation.update(activeConversationId, payload);
+      setConversations(prev => prev.map(c => c.id === activeConversationId ? { ...c, ...payload } : c));
+      return activeConversationId;
+    }
+
+    const created = await base44.entities.VeritasAIConversation.create(payload);
+    setActiveConversationId(created.id);
+    setConversations(prev => [created, ...prev]);
+    return created.id;
+  };
+
+  const startNewConversation = () => {
+    setActiveConversationId(null);
+    setMessages([{ role: "assistant", content: initialGreeting || "Peace be with you, beloved. What is on your heart today?", created_at: new Date().toISOString() }]);
+    setShowHistory(false);
+  };
+
+  const selectConversation = (conversation) => {
+    setActiveConversationId(conversation.id);
+    setMessages(conversation.messages?.length ? conversation.messages : [{ role: "assistant", content: conversation.summary || "Conversation restored." }]);
+    setShowHistory(false);
+  };
+
   const sendMessage = async (text) => {
     const userText = text || input.trim();
     if (!userText || loading || !messages) return;
     setInput("");
 
-    const newMessages = [...messages, { role: "user", content: userText }];
+    const userMessage = { role: "user", content: userText, created_at: new Date().toISOString() };
+    const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setLoading(true);
 
     try {
       const contextBlock = buildContextBlock();
+      const storedContext = conversations.length > 0
+        ? `\n\n--- PAST VERITAS GUIDE CONVERSATIONS ---\n${conversations.slice(0, 8).map(c => `${new Date(c.conversation_date || c.created_date).toLocaleDateString()} · ${c.semantic_group}: ${c.summary || c.title}`).join("\n")}`
+        : "";
       const history = newMessages.map(m => `${m.role === "user" ? "User" : "Veritas Guide"}: ${m.content}`).join("\n\n");
       const res = await base44.integrations.Core.InvokeLLM({
-        prompt: `${SYSTEM_PROMPT}${contextBlock}\n\n---\nConversation:\n${history}\n\nVeritas Guide:`,
+        prompt: `${SYSTEM_PROMPT}${contextBlock}${storedContext}\n\n---\nConversation:\n${history}\n\nVeritas Guide:`,
         model: "claude_sonnet_4_6",
       });
       const reply = typeof res === "string" ? res : (res?.text || "The Lord is with you, beloved. Please try again in a moment.");
-      setMessages(prev => [...prev, { role: "assistant", content: reply }]);
+      const finalMessages = [...newMessages, { role: "assistant", content: reply, created_at: new Date().toISOString() }];
+      setMessages(finalMessages);
+      await persistConversation(finalMessages);
     } catch {
-      setMessages(prev => [...prev, { role: "assistant", content: "Beloved, a small interruption crossed our path — please try once more. God's Word waits patiently for us. 🙏" }]);
+      const finalMessages = [...newMessages, { role: "assistant", content: "Beloved, a small interruption crossed our path — please try once more. God's Word waits patiently for us. 🙏", created_at: new Date().toISOString() }];
+      setMessages(finalMessages);
+      await persistConversation(finalMessages).catch(() => {});
     } finally {
       setLoading(false);
     }
@@ -201,7 +257,7 @@ export default function VirtualAssistant({ onClose }) {
       transition={{ type: "spring", stiffness: 340, damping: 28 }}
       className="fixed bottom-20 right-4 md:bottom-8 md:right-6 z-50 flex flex-col rounded-3xl overflow-hidden"
       style={{
-        width: "min(420px, calc(100vw - 24px))",
+        width: showHistory ? "min(640px, calc(100vw - 24px))" : "min(420px, calc(100vw - 24px))",
         height: "min(580px, calc(100vh - 160px))",
         background: "rgba(7,10,22,0.98)",
         backdropFilter: "blur(32px)",
@@ -229,6 +285,12 @@ export default function VirtualAssistant({ onClose }) {
             Your faithful spiritual companion
           </p>
         </div>
+        <button onClick={() => setShowHistory(v => !v)}
+          className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/10"
+          style={{ color: showHistory ? "#fbbf24" : "rgba(255,255,255,0.35)", background: showHistory ? "rgba(251,191,36,0.1)" : "transparent" }}
+          title="Conversation history">
+          <History className="w-4 h-4" />
+        </button>
         <button onClick={onClose}
           className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/10"
           style={{ color: "rgba(255,255,255,0.35)" }}>
@@ -236,6 +298,16 @@ export default function VirtualAssistant({ onClose }) {
         </button>
       </div>
 
+      <div className="flex flex-1 min-h-0">
+        {showHistory && (
+          <ConversationHistoryPanel
+            conversations={conversations}
+            activeId={activeConversationId}
+            onSelect={selectConversation}
+            onNew={startNewConversation}
+          />
+        )}
+        <div className="flex flex-col flex-1 min-w-0">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-4">
 
@@ -361,6 +433,8 @@ export default function VirtualAssistant({ onClose }) {
           >
             <Send className="w-4 h-4" />
           </motion.button>
+        </div>
+      </div>
         </div>
       </div>
     </motion.div>

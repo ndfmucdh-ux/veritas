@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2, Sparkles } from "lucide-react";
+import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2, Sparkles, Copy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 
@@ -31,8 +31,11 @@ export default function VerseRow({
   const [recSaved, setRecSaved] = useState(false);
   const [reflecting, setReflecting] = useState(false);
   const [reflection, setReflection] = useState(null);
+  const [copiedLongPress, setCopiedLongPress] = useState(false);
   const mediaRecRef = useRef(null);
   const chunksRef = useRef([]);
+  const longPressTimerRef = useRef(null);
+  const longPressTriggeredRef = useRef(false);
 
   const hlStyle = highlight ? {
     background: COLOR_STYLES[highlight.color]?.bg,
@@ -136,6 +139,27 @@ export default function VerseRow({
     setReflecting(false);
   };
 
+  const copyLongPressVerse = async () => {
+    const now = new Date();
+    const date = now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    const time = now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    const copyText = `Version: ${translation}\nBook: ${book}\nChapter: ${chapter}\nVerse: ${verseNum}\nDate: ${date}\nTime: ${time}\n\n${book} ${chapter}:${verseNum} (${translation})\n\"${text}\"`;
+    await navigator.clipboard?.writeText(copyText);
+    setCopiedLongPress(true);
+    setTimeout(() => setCopiedLongPress(false), 1800);
+  };
+
+  const startLongPressCopy = () => {
+    longPressTriggeredRef.current = false;
+    clearTimeout(longPressTimerRef.current);
+    longPressTimerRef.current = setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      copyLongPressVerse();
+    }, 650);
+  };
+
+  const cancelLongPressCopy = () => clearTimeout(longPressTimerRef.current);
+
   return (
     <div className="relative">
       {showFolderModal && (
@@ -150,8 +174,13 @@ export default function VerseRow({
         animate={isJumped ? { boxShadow: ["0 0 0px rgba(0,245,255,0)", "0 0 18px rgba(0,245,255,0.45)", "0 0 0px rgba(0,245,255,0)"] } : {}}
         transition={{ duration: 1.8, ease: "easeInOut" }}
         style={{ ...hlStyle, background: isJumped ? "rgba(0,245,255,0.1)" : isSelected ? "rgba(0,245,255,0.08)" : hlStyle.background, outline: isSelected ? "1px solid rgba(0,245,255,0.3)" : isJumped ? "1px solid rgba(0,245,255,0.4)" : "none" }}
+        onPointerDown={startLongPressCopy}
+        onPointerUp={cancelLongPressCopy}
+        onPointerCancel={cancelLongPressCopy}
+        onPointerLeave={cancelLongPressCopy}
         onClick={(e) => {
           e.stopPropagation();
+          if (longPressTriggeredRef.current) { longPressTriggeredRef.current = false; return; }
           if (selectionMode) { onToggleSelect?.(verseNum); return; }
           setMenuOpen(v => !v);
         }}
@@ -179,6 +208,7 @@ export default function VerseRow({
           {isBookmarked && <span className="ml-1.5 text-xs" style={{ color: "#fbbf24" }}>🔖</span>}
           {note && <span className="ml-1 text-xs" style={{ color: "#a78bfa" }}>✍</span>}
           {recSaved && <span className="ml-1 text-xs" style={{ color: "#00f5ff" }}>🎙</span>}
+          {copiedLongPress && <span className="ml-2 inline-flex items-center gap-1 text-xs" style={{ color: "#34d399" }}><Copy className="w-3 h-3" /> Copied</span>}
         </span>
       </motion.div>
 

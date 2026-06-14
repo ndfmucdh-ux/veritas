@@ -27,40 +27,37 @@ export default function AssistantButton() {
       </AnimatePresence>
 
       {/* FAB */}
-      <motion.button
-        onClick={() => setOpen(v => !v)}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.92 }}
-        transition={{ type: "spring", stiffness: 400, damping: 22 }}
-        className="fixed bottom-24 right-4 md:bottom-8 md:right-6 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center z-50"
-        style={{
-          background: open
-            ? "linear-gradient(135deg, rgba(251,191,36,0.3), rgba(167,139,250,0.2))"
-            : "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(167,139,250,0.1))",
-          border: "1.5px solid rgba(251,191,36,0.35)",
-          boxShadow: "0 8px 32px rgba(251,191,36,0.25), 0 0 0 1px rgba(251,191,36,0.1)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-        }}
-      >
-        <motion.div
-          animate={{ scale: open ? 0.92 : 1 }}
-          transition={{ type: "spring", stiffness: 380, damping: 22 }}
-          className="absolute inset-0 rounded-2xl overflow-hidden"
-        >
-          <VeritasLogo size={56} className="w-full h-full" />
-        </motion.div>
-
-        {/* Pulse ring */}
+      <AnimatePresence>
         {!open && (
-          <motion.div
-            className="absolute inset-0 rounded-2xl"
-            animate={{ scale: [1, 1.28, 1], opacity: [0.6, 0, 0.6] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-            style={{ border: "1.5px solid rgba(251,191,36,0.45)" }}
-          />
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            onClick={() => setOpen(true)}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 400, damping: 22 }}
+            className="fixed bottom-24 right-4 md:bottom-8 md:right-6 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center z-50"
+            style={{
+              background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(167,139,250,0.1))",
+              border: "1.5px solid rgba(251,191,36,0.35)",
+              boxShadow: "0 8px 32px rgba(251,191,36,0.25), 0 0 0 1px rgba(251,191,36,0.1)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+            }}
+          >
+            <div className="absolute inset-0 rounded-2xl overflow-hidden">
+              <VeritasLogo size={56} className="w-full h-full" />
+            </div>
+            <motion.div
+              className="absolute inset-0 rounded-2xl"
+              animate={{ scale: [1, 1.28, 1], opacity: [0.6, 0, 0.6] }}
+              transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+              style={{ border: "1.5px solid rgba(251,191,36,0.45)" }}
+            />
+          </motion.button>
         )}
-      </motion.button>
+      </AnimatePresence>
     </>
   );
 }
