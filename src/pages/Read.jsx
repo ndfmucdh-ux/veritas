@@ -47,6 +47,7 @@ export default function Read() {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedVerses, setSelectedVerses] = useState(new Set());
   const [showFolderModal, setShowFolderModal] = useState(false);
+  const [copiedSelection, setCopiedSelection] = useState(false);
   const [jumpedVerse, setJumpedVerse] = useState(null);
   const [devotionalVerse, setDevotionalVerse] = useState(null);
   const [showReflection, setShowReflection] = useState(false);
@@ -180,6 +181,47 @@ export default function Read() {
     navigator.clipboard?.writeText(header + text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copySelectedVerses = async () => {
+    const selectedNums = [...selectedVerses].sort((a, b) => a - b);
+    if (!selectedNums.length) return;
+
+    const selectedVerseData = selectedNums
+      .map(num => verses.find(v => v.verse === num))
+      .filter(Boolean);
+    const first = selectedNums[0];
+    const last = selectedNums[selectedNums.length - 1];
+    const isContiguous = selectedNums.every((num, index) => index === 0 || num === selectedNums[index - 1] + 1);
+    const verseLabel = selectedNums.length === 1
+      ? `${first}`
+      : isContiguous ? `${first}-${last}` : selectedNums.join(", ");
+    const reference = `${book} ${chapter}:${verseLabel} · ${translation}`;
+    const now = new Date();
+    const date = now.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+    const time = now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    const body = selectedVerseData.map(v => `${v.verse}. ${v.text}`).join("\n");
+    const plainText = `${reference}\n${date} at ${time}\n\n${body}`;
+    const escapeHtml = (value) => String(value).replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+    const htmlBody = selectedVerseData.map(v => `<p style="margin: 0 0 10px; color: #ffffff; font-size: 19px; text-decoration: none;"><span style="color: #fbbf24; font-weight: 700; margin-right: 8px; text-decoration: none;">${v.verse}</span>${escapeHtml(v.text)}</p>`).join("");
+    const html = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #ffffff; background: #000000; line-height: 1.55; text-decoration: none;">
+      <p style="margin: 0 0 8px; color: #ffffff; font-size: 18px; font-weight: 700; text-decoration: none;">${escapeHtml(reference)}</p>
+      <p style="margin: 0 0 18px; color: #d1d5db; font-size: 13px; text-decoration: none;">${escapeHtml(date)} · ${escapeHtml(time)}</p>
+      ${htmlBody}
+    </div>`;
+
+    if (navigator.clipboard?.write && window.ClipboardItem) {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/plain": new Blob([plainText], { type: "text/plain" }),
+          "text/html": new Blob([html], { type: "text/html" }),
+        })
+      ]);
+    } else {
+      await navigator.clipboard?.writeText(plainText);
+    }
+    setCopiedSelection(true);
+    setTimeout(() => setCopiedSelection(false), 1800);
   };
 
   const handleNavigate = (newBook, newChapter) => {
@@ -395,6 +437,11 @@ export default function Read() {
             style={{ background: "rgba(8,13,26,0.97)", border: "1px solid rgba(0,245,255,0.25)", boxShadow: "0 8px 32px rgba(0,0,0,0.6)", backdropFilter: "blur(20px)" }}
           >
             <span className="font-cinzel text-sm" style={{ color: "#00f5ff" }}>{selectedVerses.size} selected</span>
+            <button onClick={copySelectedVerses}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-cinzel"
+              style={{ background: copiedSelection ? "rgba(52,211,153,0.16)" : "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.28)" }}>
+              {copiedSelection ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />} {copiedSelection ? "Copied" : "Copy"}
+            </button>
             <button onClick={() => setShowFolderModal(true)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-cinzel"
               style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.3)" }}>
