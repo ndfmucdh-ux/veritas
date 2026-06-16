@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, BookOpen, ChevronRight } from "lucide-react";
@@ -12,10 +12,13 @@ export default function ForYouSection() {
 
   const section = SECTIONS[category];
 
-  if (!section) {
-    navigate("/");
-    return null;
-  }
+  // Redirect for an unknown category must happen in an effect, not during render
+  // (calling navigate() in the render body triggers a React update-during-render warning).
+  useEffect(() => {
+    if (!section) navigate("/", { replace: true });
+  }, [section, navigate]);
+
+  if (!section) return null;
 
   const SectionIcon = section.icon;
 
