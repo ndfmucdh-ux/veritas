@@ -1,0 +1,79 @@
+{
+  "name": "UserVerseInteraction",
+  "type": "object",
+  "properties": {
+    "verse_key": {
+      "type": "string",
+      "description": "Canonical key: TRANSLATION|Book|Chapter|Verse"
+    },
+    "verse_ref": {
+      "type": "string",
+      "description": "Display reference, e.g. John 3:16 KJV"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "is_bookmarked": {
+      "type": "boolean",
+      "default": false
+    },
+    "highlight_color": {
+      "type": "string",
+      "enum": [
+        "none",
+        "yellow",
+        "cyan",
+        "purple",
+        "green",
+        "red",
+        "orange",
+        "pink"
+      ],
+      "default": "none"
+    },
+    "note_text": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "last_interacted_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "verse_key",
+    "verse_ref",
+    "book",
+    "chapter",
+    "verse",
+    "translation"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

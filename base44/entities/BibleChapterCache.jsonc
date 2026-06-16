@@ -1,0 +1,80 @@
+{
+  "name": "BibleChapterCache",
+  "type": "object",
+  "properties": {
+    "translation": {
+      "type": "string",
+      "description": "Translation code, e.g. KJV"
+    },
+    "book": {
+      "type": "string"
+    },
+    "book_order": {
+      "type": "number",
+      "description": "Canonical book ordering for fast sorting"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "verse_count": {
+      "type": "number",
+      "default": 0
+    },
+    "verses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "verse": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          },
+          "red_letter": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "description": "Chapter-level verse payload; never store full Bible translation in one record"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "youversion",
+        "scripture_api",
+        "bolls",
+        "bundled",
+        "manual"
+      ],
+      "default": "youversion"
+    },
+    "checksum": {
+      "type": "string",
+      "description": "Content hash for cache validation and idempotent updates"
+    },
+    "fetched_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "translation",
+    "book",
+    "chapter",
+    "verses"
+  ],
+  "rls": {
+    "create": {
+      "role": "admin"
+    },
+    "read": {},
+    "update": {
+      "role": "admin"
+    },
+    "delete": {
+      "role": "admin"
+    }
+  }
+}

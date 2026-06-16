@@ -1,0 +1,60 @@
+{
+  "name": "DataMigrationRecord",
+  "type": "object",
+  "properties": {
+    "migration_key": {
+      "type": "string",
+      "description": "Unique migration identifier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "completed",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "records_read": {
+      "type": "number",
+      "default": 0
+    },
+    "records_written": {
+      "type": "number",
+      "default": 0
+    },
+    "details": {
+      "type": "object"
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "migration_key",
+    "status"
+  ],
+  "rls": {
+    "create": {
+      "role": "admin"
+    },
+    "read": {
+      "role": "admin"
+    },
+    "update": {
+      "role": "admin"
+    },
+    "delete": {
+      "role": "admin"
+    }
+  }
+}

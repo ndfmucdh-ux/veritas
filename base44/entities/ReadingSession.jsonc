@@ -1,0 +1,67 @@
+{
+  "name": "ReadingSession",
+  "type": "object",
+  "properties": {
+    "session_key": {
+      "type": "string",
+      "description": "Idempotency key: user-date-translation-book-chapter"
+    },
+    "plan_id": {
+      "type": "string"
+    },
+    "book": {
+      "type": "string"
+    },
+    "book_order": {
+      "type": "number"
+    },
+    "chapter": {
+      "type": "number"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reading_time_seconds": {
+      "type": "number",
+      "default": 0
+    },
+    "completion_source": {
+      "type": "string",
+      "enum": [
+        "reader",
+        "plan",
+        "audio",
+        "manual"
+      ],
+      "default": "reader"
+    }
+  },
+  "required": [
+    "session_key",
+    "book",
+    "chapter",
+    "translation"
+  ],
+  "rls": {
+    "create": {
+      "created_by": "{{user.email}}"
+    },
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

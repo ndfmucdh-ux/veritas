@@ -1,0 +1,75 @@
+{
+  "name": "BibleTranslation",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Stable translation code, e.g. KJV, RVR1960, BTX3"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human readable translation name"
+    },
+    "language": {
+      "type": "string",
+      "description": "ISO language code, e.g. en, es, pt"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "youversion",
+        "scripture_api",
+        "bolls",
+        "bundled",
+        "manual"
+      ],
+      "default": "youversion"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "deprecated"
+      ],
+      "default": "active"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "total_books": {
+      "type": "number",
+      "default": 66
+    },
+    "total_chapters": {
+      "type": "number",
+      "default": 0
+    },
+    "license_summary": {
+      "type": "string",
+      "description": "Short license or distribution note"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Provider IDs, version info, attribution, and locale metadata"
+    }
+  },
+  "required": [
+    "code",
+    "name",
+    "language"
+  ],
+  "rls": {
+    "create": {
+      "role": "admin"
+    },
+    "read": {},
+    "update": {
+      "role": "admin"
+    },
+    "delete": {
+      "role": "admin"
+    }
+  }
+}
