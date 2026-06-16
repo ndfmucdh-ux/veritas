@@ -7,7 +7,7 @@ import {
   BookMarked, Headphones, FileText, Users, Mail, Sparkles
 } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import WeeklyActivityChart from "@/components/profile/WeeklyActivityChart";
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
 import ReadingPlanCacheSettings from "@/components/profile/ReadingPlanCacheSettings";
 import AudioSummary from "@/components/profile/AudioSummary";
@@ -35,11 +35,6 @@ import {
 } from "@/components/profile/ProfileListItems";
 
 const ADMIN_EMAILS = ["endofchaos77@gmail.com"];
-
-// Stable placeholder chart data — random values cause infinite re-renders
-const CHART_DATA = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => ({
-  day: d, chapters: [1, 2, 0, 3, 1, 2, 4][i],
-}));
 
 export default function Profile() {
   const { t } = useLang();
@@ -204,26 +199,7 @@ export default function Profile() {
               </Section>
 
               <Section label="Reading Activity (Last 7 Days)" icon={TrendingUp}>
-                <div className="h-36">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={CHART_DATA} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#00f5ff" stopOpacity={0.35} />
-                          <stop offset="100%" stopColor="#00f5ff" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <XAxis dataKey="day" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
-                      <Tooltip
-                        contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
-                        labelStyle={{ color: "#00f5ff" }}
-                        itemStyle={{ color: "rgba(255,255,255,0.7)" }}
-                      />
-                      <Area type="monotone" dataKey="chapters" stroke="#00f5ff" strokeWidth={2} fill="url(#cg)" dot={{ fill: "#00f5ff", r: 3, strokeWidth: 0 }} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+                <WeeklyActivityChart />
               </Section>
 
               <Section label="Library Metrics" icon={BookOpen}>

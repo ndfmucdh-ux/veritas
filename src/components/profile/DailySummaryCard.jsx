@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Flame, BookOpen, Play, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { listReadingHistory } from "@/lib/dataAccess";
 
 export default function DailySummaryCard() {
   const [streak, setStreak] = useState(0);
@@ -12,7 +13,7 @@ export default function DailySummaryCard() {
   useEffect(() => {
     Promise.all([
       base44.entities.UserXP.list("-updated_date", 1).catch(() => []),
-      base44.entities.ReadingProgress.list("-completed_at", 1).catch(() => []),
+      listReadingHistory({ limit: 1 }).catch(() => []),
       base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
     ]).then(([xp, lastRead, planProgress]) => {
       const xpRecord = xp?.[0];
