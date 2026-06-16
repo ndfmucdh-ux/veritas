@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Loader2, History } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import ReactMarkdown from "react-markdown";
 import VeritasLogo from "@/components/ui/VeritasLogo";
+import AssistantMessage from "@/components/assistant/AssistantMessage";
 import ConversationHistoryPanel from "@/components/assistant/ConversationHistoryPanel";
 import { getConversationSummary, getConversationTitle, getSemanticGroup, withTimestamps } from "@/components/assistant/conversationUtils";
 
@@ -326,46 +326,7 @@ export default function VirtualAssistant({ onClose }) {
         )}
 
         {messages && messages.map((msg, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.28 }}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} gap-2.5`}
-          >
-            {msg.role === "assistant" && (
-              <div className="rounded-xl overflow-hidden flex-shrink-0 mt-0.5" style={{ boxShadow: "0 0 10px rgba(251,191,36,0.2)" }}>
-                <VeritasLogo size={28} />
-              </div>
-            )}
-            <div
-              className="max-w-[82%] rounded-2xl px-4 py-3"
-              style={msg.role === "user"
-                ? { background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.18)" }
-                : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }
-              }
-            >
-              {msg.role === "user" ? (
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.9)" }}>{msg.content}</p>
-              ) : (
-                <ReactMarkdown
-                  components={{
-                    p: ({ children }) => <p className="text-sm font-inter leading-relaxed mb-2 last:mb-0" style={{ color: "rgba(255,255,255,0.85)" }}>{children}</p>,
-                    strong: ({ children }) => <strong style={{ color: "#fbbf24" }}>{children}</strong>,
-                    em: ({ children }) => <em style={{ color: "rgba(255,255,255,0.6)" }}>{children}</em>,
-                    a: ({ children, href }) => <a href={href} className="underline" style={{ color: "#00f5ff" }} target="_blank" rel="noopener noreferrer">{children}</a>,
-                    ul: ({ children }) => <ul className="ml-4 list-disc space-y-1 my-2">{children}</ul>,
-                    li: ({ children }) => <li className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.78)" }}>{children}</li>,
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-2 pl-3 my-2 italic" style={{ borderColor: "#fbbf24", color: "rgba(255,255,255,0.6)" }}>{children}</blockquote>
-                    ),
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
-              )}
-            </div>
-          </motion.div>
+          <AssistantMessage key={i} role={msg.role} content={msg.content} />
         ))}
 
         {loading && (

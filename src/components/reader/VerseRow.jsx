@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2, Sparkles, Copy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -18,7 +18,7 @@ const COLOR_STYLES = {
 };
 const COLOR_HEX = { yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa", green: "#34d399", red: "#f87171", orange: "#fb923c", pink: "#f472b6" };
 
-export default function VerseRow({
+function VerseRow({
   verseNum, text, redLetter, book, chapter, translation,
   highlight, isBookmarked, note, showNumbers, fontSize, onUpdate, onOpenNote,
   isSelected, onToggleSelect, selectionMode, isJumped
@@ -372,3 +372,29 @@ export default function VerseRow({
     </div>
   );
 }
+
+// Memoized: a chapter renders 30–150 VerseRows. Without this, any parent state
+// change (highlight/bookmark/note edit, scroll-driven isJumped, selection) would
+// re-render every verse. We compare only the props that affect this row's output;
+// callback props from Read are intentionally ignored (their identity changes each
+// render but their behavior is stable).
+function areEqual(prev, next) {
+  return (
+    prev.text === next.text &&
+    prev.redLetter === next.redLetter &&
+    prev.showNumbers === next.showNumbers &&
+    prev.fontSize === next.fontSize &&
+    prev.isBookmarked === next.isBookmarked &&
+    prev.note === next.note &&
+    prev.isSelected === next.isSelected &&
+    prev.selectionMode === next.selectionMode &&
+    prev.isJumped === next.isJumped &&
+    prev.highlight?.color === next.highlight?.color &&
+    prev.book === next.book &&
+    prev.chapter === next.chapter &&
+    prev.translation === next.translation &&
+    prev.verseNum === next.verseNum
+  );
+}
+
+export default memo(VerseRow, areEqual);

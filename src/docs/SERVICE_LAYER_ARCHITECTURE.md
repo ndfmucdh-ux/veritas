@@ -70,3 +70,25 @@ Persistence (entities/ via @/api/base44Client)
 
 All additions are additive and default-valued, so existing records and the live
 migration remain valid (zero-breakage rollout).
+
+## Frontend render-performance sweeps
+
+Targeted at speed, memory, and scalability across the hottest render paths:
+
+1. **`VerseRow` memoization (biggest win)** — a chapter renders 30–150 rows.
+   `VerseRow` is now `memo()`'d with a custom comparator that ignores unstable
+   callback props from `Read` and compares only output-affecting props
+   (text, highlight color, bookmark/note flags, selection, isJumped). Editing one
+   verse or a scroll-driven glow no longer re-renders the whole chapter.
+2. **`HeroVerseSlider`** — `THEME_PHOTOS` / `FALLBACK_PHOTO_POOL` / `BOOK_MAP`
+   hoisted to module constants (were rebuilt inside `useEffect` per language
+   change); read-URL parsing wrapped in `useMemo` keyed on the verse ref so the
+   7-second auto-advance no longer re-parses strings each render.
+3. **`VersePreviewCard`** — `memo()`'d (5 instances on Home) so language toggles
+   and parent re-renders skip unchanged cards; `bookMap` hoisted to a constant.
+4. **Assistant chat** — extracted `AssistantMessage` (memoized) so prior messages
+   no longer re-parse their markdown on every keystroke / scroll effect. Markdown
+   component map hoisted to a module constant (one allocation instead of per-row).
+
+All changes are render-only; no business logic, data flow, or query behavior was
+altered.

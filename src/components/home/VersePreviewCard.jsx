@@ -1,14 +1,16 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function VersePreviewCard({ verse }) {
+const BOOK_MAP = { Psalm: "Psalms" };
+
+function VersePreviewCard({ verse }) {
   const lastSpace = verse.ref.lastIndexOf(" ");
   const rawBook = verse.ref.substring(0, lastSpace);
   const chapterVerse = verse.ref.substring(lastSpace + 1);
   const chapter = chapterVerse.split(":")[0];
   const verseNum = chapterVerse.split(":")[1]?.split("-")[0];
-  const bookMap = { Psalm: "Psalms" };
-  const book = bookMap[rawBook] || rawBook;
+  const book = BOOK_MAP[rawBook] || rawBook;
   const readUrl = `/read?book=${encodeURIComponent(book)}&chapter=${chapter}${verseNum ? `&verse=${verseNum}` : ""}`;
 
   return (
@@ -30,3 +32,5 @@ export default function VersePreviewCard({ verse }) {
     </Link>
   );
 }
+
+export default memo(VersePreviewCard);

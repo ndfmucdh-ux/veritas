@@ -1,8 +1,30 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share2, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+
+// Hoisted to module scope — these were previously rebuilt inside useEffect on
+// every language change. They're pure constants, so allocate them once.
+const THEME_PHOTOS = {
+  hope:     "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
+  faith:    "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80",
+  love:     "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&q=80",
+  peace:    "https://images.unsplash.com/photo-1439405328-88d5d2a8f36d?w=1200&q=80",
+  strength: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
+  wisdom:   "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
+  grace:    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80",
+  joy:      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1200&q=80",
+  courage:  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80",
+  purpose:  "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80",
+  default:  "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
+};
+const FALLBACK_PHOTO_POOL = [
+  "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
+  "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
+];
+const BOOK_MAP = { "Psalm": "Psalms", "Song of Solomon": "Song of Solomon" };
 
 const FALLBACK_VERSES = {
   en: [
@@ -72,28 +94,8 @@ export default function HeroVerseSlider() {
       } catch {}
     }
 
-    // Generate 3 unique daily verses from AI using the date as seed
-    // Each theme maps to a UNIQUE photo to ensure all 3 slides look different
-    const THEME_PHOTOS = {
-      hope:     "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",  // sunrise mist
-      faith:    "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80",  // aerial valley
-      love:     "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&q=80",  // warm forest path
-      peace:    "https://images.unsplash.com/photo-1439405328-88d5d2a8f36d?w=1200&q=80",     // still lake
-      strength: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80", // mountain peak
-      wisdom:   "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80", // starry night
-      grace:    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80", // alpine meadow
-      joy:      "https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=1200&q=80", // wildflowers
-      courage:  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80", // sunlit forest
-      purpose:  "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80", // forest dawn rays
-      default:  "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80",
-    };
-    // Fallback photos list used to guarantee 3 different photos even if themes collide
-    const FALLBACK_PHOTO_POOL = [
-      "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&q=80",
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80",
-      "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=1200&q=80",
-    ];
-
+    // Generate 3 unique daily verses from AI using the date as seed.
+    // THEME_PHOTOS / FALLBACK_PHOTO_POOL are module constants (see top of file).
     const langLabel = lang === "es" ? "Spanish" : "English";
     base44.integrations.Core.InvokeLLM({
       prompt: `Today is ${today}. Generate exactly 3 different, meaningful Bible verses for a daily slider in ${langLabel}. 
@@ -150,15 +152,16 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
   };
 
   const verse = slides[current] || slides[0] || FALLBACK_VERSES.en[0];
-  const ref = verse.verse_ref || "";
-  const lastSpace = ref.lastIndexOf(" ");
-  const rawBook = ref.substring(0, lastSpace);
-  const chapterVerse = ref.substring(lastSpace + 1) || "1:1";
-  const chapterNum = chapterVerse.split(":")[0];
-  const verseNum = chapterVerse.split(":")[1];
-  const BOOK_MAP = { "Psalm": "Psalms", "Song of Solomon": "Song of Solomon" };
-  const bookName = BOOK_MAP[rawBook] || rawBook;
-  const readUrl = `/read?book=${encodeURIComponent(bookName)}&chapter=${chapterNum}${verseNum ? `&verse=${verseNum}` : ""}`;
+  const readUrl = useMemo(() => {
+    const ref = verse.verse_ref || "";
+    const lastSpace = ref.lastIndexOf(" ");
+    const rawBook = ref.substring(0, lastSpace);
+    const chapterVerse = ref.substring(lastSpace + 1) || "1:1";
+    const chapterNum = chapterVerse.split(":")[0];
+    const verseNum = chapterVerse.split(":")[1];
+    const bookName = BOOK_MAP[rawBook] || rawBook;
+    return `/read?book=${encodeURIComponent(bookName)}&chapter=${chapterNum}${verseNum ? `&verse=${verseNum}` : ""}`;
+  }, [verse.verse_ref]);
 
   return (
     <div className="relative rounded-3xl overflow-hidden" style={{ minHeight: 260 }}>
