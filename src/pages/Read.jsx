@@ -19,7 +19,9 @@ import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
 import ChapterAudioPlayer from "@/components/reader/ChapterAudioPlayer";
 import GuidedReflection from "@/components/prayer/GuidedReflection";
 import MultiSelectActionBar from "@/components/reader/MultiSelectActionBar.jsx";
-import { copyVerseSelection } from "@/lib/verseCopy";
+import ReaderSettingsPanel from "@/components/reader/ReaderSettingsPanel.jsx";
+import IconBtn from "@/components/reader/ReaderIconButton.jsx";
+import useVerseSelection from "@/hooks/useVerseSelection";
 
 
 export default function Read() {
@@ -46,10 +48,7 @@ export default function Read() {
   const [showParallel, setShowParallel] = useState(false);
   const [selectedVerse, setSelectedVerse] = useState(null);
   const [sidePanelVerse, setSidePanelVerse] = useState(null);
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedVerses, setSelectedVerses] = useState(new Set());
   const [showFolderModal, setShowFolderModal] = useState(false);
-  const [copiedSelection, setCopiedSelection] = useState(false);
   const [jumpedVerse, setJumpedVerse] = useState(null);
   const [devotionalVerse, setDevotionalVerse] = useState(null);
   const [showReflection, setShowReflection] = useState(false);
@@ -58,6 +57,16 @@ export default function Read() {
   const glowTimerRef = useRef(null);
 
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
+  const {
+    selectionMode,
+    selectedVerses,
+    copiedSelection,
+    selectedVerseRefs,
+    clearSelection,
+    toggleSelectionMode,
+    toggleVerseSelection,
+    copySelectedVerses,
+  } = useVerseSelection({ verses, book, chapter, translation });
 
   useEffect(() => {
     loadChapter();
@@ -185,15 +194,6 @@ export default function Read() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const copySelectedVerses = async () => {
-    const selectedNums = [...selectedVerses].sort((a, b) => a - b);
-    if (!selectedNums.length) return;
-
-    await copyVerseSelection({ selectedNums, verses, book, chapter, translation });
-    setCopiedSelection(true);
-    setTimeout(() => setCopiedSelection(false), 1800);
-  };
-
   const handleNavigate = (newBook, newChapter) => {
     setBook(newBook);
     setChapter(newChapter);
@@ -231,7 +231,7 @@ export default function Read() {
 
         <div className="flex items-center gap-2">
           <div className="flex-1" />
-          <IconBtn onClick={() => { setSelectionMode(v => !v); setSelectedVerses(new Set()); }} active={selectionMode} title="Multi-select verses">
+          <IconBtn onClick={toggleSelectionMode} active={selectionMode} title="Multi-select verses">
             <CheckSquare className="w-4 h-4" />
           </IconBtn>
           <IconBtn onClick={() => copyChapter()} title="Copy chapter">
@@ -239,60 +239,24 @@ export default function Read() {
           </IconBtn>
           <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title="AI Devotional">✨</IconBtn>
-          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings}><Settings className="w-4 h-4" /></IconBtn>
-          <IconBtn onClick={() => setImmersive(v => !v)}>
+          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title="Reader settings"><Settings className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={() => setImmersive(v => !v)} title={immersive ? "Exit immersive mode" : "Enter immersive mode"}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </IconBtn>
         </div>
 
         {/* Settings panel */}
-        <AnimatePresence>
-          {showSettings && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden"
-            >
-              <div className="rounded-2xl p-4 space-y-4"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <SettingRow label="Font Size">
-                  <div className="flex items-center gap-2">
-                    <Stepper onClick={() => setFontSize(f => Math.max(12, f - 2))}>−</Stepper>
-                    <span className="text-sm text-white/70 w-7 text-center font-inter">{fontSize}</span>
-                    <Stepper onClick={() => setFontSize(f => Math.min(32, f + 2))}>+</Stepper>
-                  </div>
-                </SettingRow>
-                <SettingRow label="Font">
-                  <div className="flex gap-2">
-                    {[["inter", "Sans"], ["playfair", "Serif"], ["cinzel", "Classic"]].map(([f, l]) => (
-                      <button key={f} onClick={() => setFontFamily(f)}
-                        className="text-xs px-3 py-1 rounded-lg font-inter transition-all"
-                        style={{
-                          background: fontFamily === f ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                          color: fontFamily === f ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                          border: fontFamily === f ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
-                        }}>
-                        {l}
-                      </button>
-                    ))}
-                  </div>
-                </SettingRow>
-                <SettingRow label="Verse Numbers">
-                  <Toggle value={showNumbers} onChange={() => setShowNumbers(v => !v)} />
-                </SettingRow>
-                <SettingRow label="OLED Dark Mode">
-                  <Toggle value={oledMode} onChange={() => {
-                    const next = !oledMode;
-                    setOledMode(next);
-                    localStorage.setItem("veritas_oled_mode", String(next));
-                  }} />
-                </SettingRow>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <ReaderSettingsPanel
+          open={showSettings}
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          fontFamily={fontFamily}
+          setFontFamily={setFontFamily}
+          showNumbers={showNumbers}
+          setShowNumbers={setShowNumbers}
+          oledMode={oledMode}
+          setOledMode={setOledMode}
+        />
       </div>
 
       {/* Scrollable reading area */}
@@ -362,11 +326,7 @@ export default function Read() {
                     selectionMode={selectionMode}
                     isSelected={selectedVerses.has(v.verse)}
                     isJumped={jumpedVerse === v.verse}
-                    onToggleSelect={(vn) => setSelectedVerses(prev => {
-                      const next = new Set(prev);
-                      next.has(vn) ? next.delete(vn) : next.add(vn);
-                      return next;
-                    })}
+                    onToggleSelect={toggleVerseSelection}
                   />
                 </div>
               ))}
@@ -404,16 +364,16 @@ export default function Read() {
             copied={copiedSelection}
             onCopy={copySelectedVerses}
             onSave={() => setShowFolderModal(true)}
-            onCancel={() => { setSelectionMode(false); setSelectedVerses(new Set()); }}
+            onCancel={clearSelection}
           />
         )}
       </AnimatePresence>
 
       {showFolderModal && (
         <FolderSaveModal
-          verseRefs={[...selectedVerses].map(vn => `${book} ${chapter}:${vn} ${translation}`)}
+          verseRefs={selectedVerseRefs}
           onClose={() => setShowFolderModal(false)}
-          onSaved={() => { setSelectionMode(false); setSelectedVerses(new Set()); setShowFolderModal(false); }}
+          onSaved={() => { clearSelection(); setShowFolderModal(false); }}
         />
       )}
 
@@ -483,58 +443,5 @@ export default function Read() {
         )}
       </AnimatePresence>
     </motion.div>
-  );
-}
-
-// ── Sub-components ──────────────────────────────────────────────
-function IconBtn({ children, onClick, active }) {
-  return (
-    <motion.button
-      whileTap={{ scale: 0.9 }}
-      onClick={onClick}
-      className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
-      style={{
-        background: active ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)",
-        color: active ? "#00f5ff" : "rgba(255,255,255,0.4)",
-        border: active ? "1px solid rgba(0,245,255,0.2)" : "1px solid transparent",
-      }}
-    >
-      {children}
-    </motion.button>
-  );
-}
-
-function Stepper({ children, onClick }) {
-  return (
-    <motion.button whileTap={{ scale: 0.88 }} onClick={onClick}
-      className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold font-inter"
-      style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.6)" }}>
-      {children}
-    </motion.button>
-  );
-}
-
-function SettingRow({ label, children }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{label}</span>
-      {children}
-    </div>
-  );
-}
-
-function Toggle({ value, onChange }) {
-  return (
-    <motion.button
-      onClick={onChange}
-      className="w-11 h-6 rounded-full relative flex items-center px-1 transition-colors"
-      style={{ background: value ? "rgba(0,245,255,0.3)" : "rgba(255,255,255,0.08)" }}
-    >
-      <motion.span
-        animate={{ x: value ? 18 : 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 24 }}
-        className="w-4 h-4 rounded-full bg-white shadow-sm"
-      />
-    </motion.button>
   );
 }
