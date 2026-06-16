@@ -16,6 +16,14 @@ export default class PageErrorBoundary extends React.Component {
     return { hasError: true, message: error?.message || "Something went wrong" };
   }
 
+  componentDidUpdate(prevProps) {
+    // When the route changes, clear the error so a single crashing page can't
+    // hold the rest of the app hostage — navigating away recovers automatically.
+    if (this.state.hasError && prevProps.resetKey !== this.props.resetKey) {
+      this.setState({ hasError: false, message: "" });
+    }
+  }
+
   componentDidCatch(error, info) {
     // Surface the real cause in the console for debugging.
     console.error("PageErrorBoundary caught:", error, info);

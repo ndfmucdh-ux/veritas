@@ -23,14 +23,19 @@ export default function DailyReadingRing({ chaptersReadToday: initialCount }) {
     };
     refresh();
 
-    // Subscribe to both sources so the ring updates live regardless of which one is active
-    const unsubSession = base44.entities.ReadingSession.subscribe((event) => {
-      if (event.type === "create") refresh();
-    });
-    const unsubProgress = base44.entities.ReadingProgress.subscribe((event) => {
-      if (event.type === "create") refresh();
-    });
-    return () => { unsubSession?.(); unsubProgress?.(); };
+    // Subscribe to both sources so the ring updates live regardless of which one
+    // is active. Guarded so a failed/unavailable subscription (e.g. flaky mobile
+    // connection) can never throw and crash the whole Profile page.
+    let unsubSession, unsubProgress;
+    try {
+      unsubSession = base44.entities.ReadingSession.subscribe((event) => {
+        if (event.type === "create") refresh();
+      });
+      unsubProgress = base44.entities.ReadingProgress.subscribe((event) => {
+        if (event.type === "create") refresh();
+      });
+    } catch { /* live updates are best-effort */ }
+    return () => { try { unsubSession?.(); unsubProgress?.(); } catch { /* noop */ } };
   }, []);
 
   const progress = Math.min(count / DAILY_GOAL, 1);
