@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Search as SearchIcon, Loader2, BookOpen, StickyNote, Heart } from "lucide-react";
+import { Search as SearchIcon, BookOpen, StickyNote, Heart } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 import ThemeFilterTags from "@/components/search/ThemeFilterTags";
 import SearchInput from "@/components/search/SearchInput.jsx";
 import SourceFilterTabs from "@/components/search/SourceFilterTabs.jsx";
@@ -148,21 +149,13 @@ export default function Search() {
       )}
 
       {/* Loading */}
-      {loading && (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="w-8 h-8 text-cyan animate-spin" />
-          <p className="text-muted-foreground text-sm font-cinzel">{t.searchingAll}</p>
-        </div>
-      )}
+      {loading && <LoadingState label={t.searchingAll} size="xl" minHeight={240} />}
 
       {/* Results */}
       {searched && !loading && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 pb-8">
           {totalResults === 0 && (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground">No results found for "{query}"</p>
-              <p className="text-sm text-muted-foreground/60 mt-1">Try a different keyword</p>
-            </div>
+            <EmptyState icon={SearchIcon} title={`No results found for "${query}"`} description="Try a different keyword" />
           )}
 
           {/* Scripture Results */}

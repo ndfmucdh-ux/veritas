@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Loader2, CheckCircle2, Clock, History } from "lucide-react";
+import { Heart, Plus, CheckCircle2, Clock, History } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 import PrayerModal from "@/components/prayer/PrayerModal";
 import PrayerStreakTracker from "@/components/prayer/PrayerStreakTracker";
 import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
@@ -152,16 +153,9 @@ export default function PrayerJournal() {
           <TestimoniesArchive prayers={answeredPrayers} />
         )}
 
-        {view !== "testimonies" && loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-cyan" />
-          </div>
-        )}
+        {view !== "testimonies" && loading && <LoadingState label="Loading your prayers…" size="lg" />}
         {view !== "testimonies" && !loading && filteredPrayers.length === 0 && (
-          <div className="text-center py-12">
-            <Heart className="w-8 h-8 mx-auto text-white/20 mb-2" />
-            <p className="text-white/40">No prayers yet. Start journaling...</p>
-          </div>
+          <EmptyState icon={Heart} title="No prayers yet" description="Tap the + button to start journaling your conversations with God" />
         )}
         {view !== "testimonies" && !loading && filteredPrayers.length > 0 && (
           <div className="space-y-3">

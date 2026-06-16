@@ -6,6 +6,7 @@ import {
   Loader2, Check, Sparkles, Calendar, BarChart3, Zap, BellOff
 } from "lucide-react";
 import QuietModeSettings from "@/components/notifications/QuietModeSettings";
+import { LoadingState } from "@/components/ui/states";
 
 const TABS = [
   { id: "push", label: "Push Notifications", icon: Smartphone },
@@ -365,11 +366,7 @@ export default function NotificationStudio() {
                 </div>
               </div>
 
-              {loading && !previewHtml && (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 animate-spin" style={{ color: "#fbbf24" }} />
-                </div>
-              )}
+              {loading && !previewHtml && <LoadingState label="Building email preview…" color="#fbbf24" />}
 
               {previewHtml && (
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
@@ -407,11 +404,7 @@ export default function NotificationStudio() {
                 </button>
               </div>
 
-              {loading && !previewHtml && (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 animate-spin" style={{ color: "#a78bfa" }} />
-                </div>
-              )}
+              {loading && !previewHtml && <LoadingState label="Building email preview…" color="#a78bfa" />}
 
               {previewHtml && (
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>

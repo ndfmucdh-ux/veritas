@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Clock, Loader2, ChevronRight } from "lucide-react";
+import { BookOpen, Clock, ChevronRight } from "lucide-react";
 import { listReadingHistory } from "@/lib/dataAccess";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 export default function ReadingHistory() {
   const [history, setHistory] = useState([]);
@@ -14,26 +15,22 @@ export default function ReadingHistory() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-6 h-6 animate-spin text-cyan" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading your reading history…" size="lg" />;
 
   if (history.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <Clock className="w-10 h-10 text-white/20" />
-        <p className="font-cinzel text-white/50 text-sm">No reading history yet</p>
-        <p className="text-xs text-white/30 text-center max-w-xs">Start reading chapters and they'll appear here so you can pick up where you left off</p>
-        <a href="/read"
-          className="mt-2 flex items-center gap-2 px-4 py-2.5 rounded-xl font-cinzel text-sm transition-all"
-          style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}>
-          <BookOpen className="w-4 h-4" /> Start Reading
-        </a>
-      </div>
+      <EmptyState
+        icon={Clock}
+        title="No reading history yet"
+        description="Start reading chapters and they'll appear here so you can pick up where you left off"
+        action={
+          <a href="/read"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-cinzel text-sm min-h-10 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+            style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}>
+            <BookOpen className="w-4 h-4" /> Start Reading
+          </a>
+        }
+      />
     );
   }
 

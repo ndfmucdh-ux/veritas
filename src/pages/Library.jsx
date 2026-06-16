@@ -11,9 +11,9 @@ import LibraryCollections from "@/components/library/LibraryCollections";
 import LibraryAssistant from "@/components/library/LibraryAssistant";
 import LibraryHeaderActions from "@/components/library/LibraryHeaderActions.jsx";
 import LibraryTabs from "@/components/library/LibraryTabs.jsx";
-import EmptyState from "@/components/library/EmptyLibraryState.jsx";
 import TagFilterBar from "@/components/library/TagFilterBar.jsx";
 import useLibraryData from "@/hooks/useLibraryData";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const HIGHLIGHT_COLOR_HEX = {
   yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa",
@@ -104,7 +104,7 @@ export default function Library() {
       <div className="space-y-3">
         <TagFilterBar tags={allTags} activeTag={activeTagFilter} onSelect={setActiveTagFilter} />
         {filtered.length === 0 && !loading && (
-          <EmptyState icon="🔖" text={activeTagFilter ? `No bookmarks tagged "${activeTagFilter}"` : "No bookmarks yet"} sub="Tap any verse while reading to bookmark it" />
+          <EmptyState icon="🔖" title={activeTagFilter ? `No bookmarks tagged "${activeTagFilter}"` : "No bookmarks yet"} description="Tap any verse while reading to bookmark it" />
         )}
         {filtered.map((bm, i) => (
           <motion.div key={bm.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
@@ -167,7 +167,7 @@ export default function Library() {
   const renderHighlights = () => (
     <div className="space-y-3">
       {highlights.length === 0 && !loading && (
-        <EmptyState icon="✨" text="No highlights yet" sub="Tap any verse to highlight it in your favourite color" />
+        <EmptyState icon="✨" title="No highlights yet" description="Tap any verse to highlight it in your favourite color" />
       )}
 
       {/* Devotional panel */}
@@ -232,7 +232,7 @@ export default function Library() {
       <div className="space-y-3">
         <TagFilterBar tags={allTags} activeTag={activeTagFilter} onSelect={setActiveTagFilter} />
         {filtered.length === 0 && !loading && (
-          <EmptyState icon="✍️" text={activeTagFilter ? `No notes tagged "${activeTagFilter}"` : "No notes yet"} sub="Tap any verse and add a personal note or reflection" />
+          <EmptyState icon="✍️" title={activeTagFilter ? `No notes tagged "${activeTagFilter}"` : "No notes yet"} description="Tap any verse and add a personal note or reflection" />
         )}
         {filtered.map((note, i) => (
           <motion.div key={note.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
@@ -303,6 +303,9 @@ export default function Library() {
 
       {/* Content */}
       <div className="pb-8">
+        {loading && ["bookmarks", "highlights", "notes"].includes(activeTab) && (
+          <LoadingState label="Loading your library…" size="lg" />
+        )}
         {activeTab === "bookmarks" && renderBookmarks()}
         {activeTab === "highlights" && renderHighlights()}
         {activeTab === "notes" && renderNotes()}

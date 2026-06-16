@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronDown, AlertCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import { LoadingState, ErrorState } from "@/components/ui/states";
 import TranslationSplitView from "@/components/study/TranslationSplitView";
 import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
 import CrossReferencePanel from "@/components/study/CrossReferencePanel";
@@ -326,27 +327,17 @@ export default function StudyCenter() {
 
             {/* Outline */}
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-cyan mb-3" />
-                <p className="text-sm text-white/60">Analyzing {getTranslatedBookName(selectedBook, lang)}...</p>
-                <p className="text-xs text-white/30 mt-2">This may take a moment</p>
-              </div>
+              <LoadingState
+                label={`Analyzing ${getTranslatedBookName(selectedBook, lang)}…`}
+                size="xl"
+                minHeight={240}
+              />
             ) : error ? (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="rounded-2xl p-6 flex items-start gap-3"
-                style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)" }}
-              >
-                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-cinzel text-red-400">Analysis Failed</p>
-                  <p className="text-xs text-white/50 mt-1">{error}</p>
-                  <motion.button whileTap={{ scale: 0.95 }} onClick={() => loadOutline(selectedBook)}
-                    className="text-xs font-cinzel mt-3 px-3 py-1.5 rounded-lg"
-                    style={{ background: "rgba(248,113,113,0.15)", color: "#f87171" }}>
-                    Try Again
-                  </motion.button>
-                </div>
-              </motion.div>
+              <ErrorState
+                title="Analysis Failed"
+                description={error}
+                onRetry={() => loadOutline(selectedBook)}
+              />
             ) : outline && typeof outline === "object" ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                 <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.15)" }}>

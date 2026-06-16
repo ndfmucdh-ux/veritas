@@ -30,6 +30,7 @@ import ProfileTabBar from "@/components/profile/ProfileTabBar";
 import ProfileHeroHeader from "@/components/profile/ProfileHeroHeader";
 import { base44 } from "@/api/base44Client";
 import useProfileData from "@/hooks/useProfileData";
+import { LoadingState } from "@/components/ui/states";
 import {
   Section, LibraryRow, ToggleRow, SettingLink, NotifTimeRow, EmptyMsg, SeeAll,
 } from "@/components/profile/ProfileListItems";
@@ -57,7 +58,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="md:ml-16 min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-cyan/30 border-t-cyan rounded-full animate-spin" />
+        <LoadingState label="Loading your profile…" size="xl" minHeight={0} />
       </div>
     );
   }

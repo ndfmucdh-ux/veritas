@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Sparkles, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 import AIStudyPartner from "@/components/study/AIStudyPartner";
 import { CommentaryResult, CrossRefsResult, DictionaryResult, TopicalResult } from "@/components/study/StudyResults.jsx";
 import StudyTabs from "@/components/study/StudyTabs.jsx";
@@ -263,10 +264,7 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
 
         {/* Loading (not aiPartner — it handles its own) */}
         {tab !== "aiPartner" && loading && (
-          <div className="flex items-center gap-3 py-8 justify-center">
-            <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
-            <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>{lang === "es" ? "Buscando en las Escrituras…" : "Searching scripture…"}</p>
-          </div>
+          <LoadingState label={lang === "es" ? "Buscando en las Escrituras…" : "Searching scripture…"} />
         )}
 
         {/* Results */}

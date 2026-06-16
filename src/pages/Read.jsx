@@ -13,6 +13,7 @@ import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
 import ChapterNavigator from "@/components/reader/ChapterNavigator.jsx";
 import StudyDropdown from "@/components/reader/StudyDropdown.jsx";
 import { SkeletonVerse } from "@/components/ui/SkeletonPulse.jsx";
+import { EmptyState } from "@/components/ui/states";
 import { pageTransition } from "@/hooks/useAnimations";
 import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
@@ -292,6 +293,12 @@ export default function Read() {
             <div className="space-y-1">
               {Array.from({ length: 12 }).map((_, i) => <SkeletonVerse key={i} />)}
             </div>
+          ) : verses.length === 0 ? (
+            <EmptyState
+              icon="📖"
+              title={`${book} ${chapter} isn't available offline`}
+              description="This translation isn't downloaded yet. Connect to the internet, or switch to KJV which works offline."
+            />
           ) : (
             <motion.div
               key={`${book}-${chapter}-${translation}`}
