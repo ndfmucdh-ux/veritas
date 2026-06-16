@@ -45,6 +45,18 @@ Persistence (entities/ via @/api/base44Client)
 
   File uploads (`Core.UploadFile`) and AI calls (`functions.invoke`) intentionally
   remain inline — they are integrations, not database domains.
+
+## Production-readiness sweep
+
+- **Bounded queries** — every service read is sorted + capped. The previously
+  unbounded plan-session filters (`listPlanSessions`, `listPlanProgress`) and the
+  legacy chapter-annotation fallback are now limited (500 / 200 rows).
+- **Notes archive** — `NotesArchive` reads through new
+  `libraryService.listNotesArchive()` (consolidated `has_note` first, legacy
+  `UserNote` fallback) instead of a legacy-only `base44.entities.UserNote.list`,
+  so it now surfaces consolidated notes too.
+- **Resilience** — async entity reads in `NotesArchive` and `AudioSummary` now
+  `.catch()` so a failed fetch resolves the loading state instead of hanging.
 - **Single source of consolidated-vs-legacy logic** — only the library/reading
   services know about the migration fallback shape.
 

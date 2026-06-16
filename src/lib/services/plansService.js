@@ -7,9 +7,9 @@
 import { base44 } from "@/api/base44Client";
 import { listPlanSessions } from "@/lib/services/readingService";
 
-// Sessions linked to a plan (consolidated-first via readingService).
-export async function listPlanProgress() {
-  return listPlanSessions();
+// Sessions linked to a plan (consolidated-first via readingService). Bounded.
+export async function listPlanProgress({ limit = 500 } = {}) {
+  return listPlanSessions({ limit });
 }
 
 // User-authored custom plans, bounded + sorted.

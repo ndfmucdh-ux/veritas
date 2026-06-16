@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, StickyNote, BookOpen, X, ChevronRight } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { listNotesArchive } from "@/lib/services/libraryService";
 import { LoadingState, EmptyState } from "@/components/ui/states";
 
 export default function NotesArchive() {
@@ -11,8 +11,9 @@ export default function NotesArchive() {
   const [bookFilter, setBookFilter] = useState("");
 
   useEffect(() => {
-    base44.entities.UserNote.list("-created_date", 100)
+    listNotesArchive({ limit: 100 })
       .then(n => setNotes(n || []))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

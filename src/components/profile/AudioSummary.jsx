@@ -10,6 +10,7 @@ export default function AudioSummary() {
   useEffect(() => {
     base44.entities.BibleAudioProgress.list("-updated_date", 500)
       .then(d => setAudioHistory(d || []))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

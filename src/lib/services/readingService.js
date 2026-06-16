@@ -29,11 +29,13 @@ export async function listReadingHistory({ limit = 20 } = {}) {
   return base44.entities.ReadingProgress.list("-completed_at", limit).catch(() => []);
 }
 
-// Plan-linked sessions for the profile (consolidated first).
-export async function listPlanSessions() {
-  const sessions = await base44.entities.ReadingSession.filter({ plan_id: { $exists: true } }).catch(() => []);
+// Plan-linked sessions for the profile (consolidated first). Bounded + sorted.
+export async function listPlanSessions({ limit = 500 } = {}) {
+  const sessions = await base44.entities.ReadingSession
+    .filter({ plan_id: { $exists: true } }, "-completed_at", limit).catch(() => []);
   if (sessions && sessions.length > 0) return sessions;
-  return base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []);
+  return base44.entities.ReadingProgress
+    .filter({ plan_id: { $exists: true } }, "-created_date", limit).catch(() => []);
 }
 
 // Reading activity for stats (consolidated ReadingSession first, legacy fallback).

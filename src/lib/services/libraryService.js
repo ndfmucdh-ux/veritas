@@ -103,9 +103,9 @@ export async function loadChapterAnnotations({ book, chapter }) {
   }
 
   const [hl, bm, nt] = await Promise.all([
-    base44.entities.UserHighlight.filter({ book, chapter }).catch(() => []),
-    base44.entities.Bookmark.filter({ book, chapter }).catch(() => []),
-    base44.entities.UserNote.filter({ book, chapter }).catch(() => []),
+    base44.entities.UserHighlight.filter({ book, chapter }, "-created_date", 200).catch(() => []),
+    base44.entities.Bookmark.filter({ book, chapter }, "-created_date", 200).catch(() => []),
+    base44.entities.UserNote.filter({ book, chapter }, "-created_date", 200).catch(() => []),
   ]);
   const highlights = {}; (hl || []).forEach(h => { highlights[h.verse] = { color: h.color }; });
   const bookmarks = {}; (bm || []).forEach(b => { bookmarks[b.verse] = true; });
@@ -133,6 +133,23 @@ export async function listRecentLibrary({ limit = 20 } = {}) {
     base44.entities.UserNote.list("-created_date", limit).catch(() => []),
   ]);
   return { bookmarks: bm || [], highlights: hl || [], notes: nt || [] };
+}
+
+// Full notes archive for the study Notes view (consolidated-first, bounded).
+// Returns a flat list of { id, verse_ref, book, chapter, verse, translation,
+// note_text, tags, created_date, _interaction } sorted by recency.
+export async function listNotesArchive({ limit = 100 } = {}) {
+  const interactions = await base44.entities.UserVerseInteraction
+    .filter({ has_note: true }, "-last_interacted_at", limit).catch(() => []);
+  if (interactions && interactions.length > 0) {
+    return interactions.map(i => ({
+      id: i.id, verse_ref: i.verse_ref, book: i.book, chapter: i.chapter,
+      verse: i.verse, translation: i.translation, note_text: i.note_text,
+      tags: i.tags || [], created_date: i.last_interacted_at || i.created_date,
+      _interaction: true,
+    }));
+  }
+  return base44.entities.UserNote.list("-created_date", limit).catch(() => []);
 }
 
 // Consolidated-aware note delete (used by note managers).
