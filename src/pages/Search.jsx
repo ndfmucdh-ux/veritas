@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search as SearchIcon, Loader2, BookOpen, Sparkles, X, StickyNote, Heart, FileText, Filter } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search as SearchIcon, Loader2, BookOpen, StickyNote, Heart } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
 import ThemeFilterTags from "@/components/search/ThemeFilterTags";
+import SearchInput from "@/components/search/SearchInput.jsx";
+import SourceFilterTabs from "@/components/search/SourceFilterTabs.jsx";
+import ResultSection from "@/components/search/SearchResultSection.jsx";
+import Highlight from "@/components/search/HighlightMatch.jsx";
 import { useLang } from "@/lib/LanguageContext";
 
 const SUGGESTED_TOPICS_EN = ["faith", "love", "peace", "hope", "fear not", "strength", "forgiveness", "prayer", "wisdom", "grace", "purpose", "joy"];
@@ -25,7 +29,6 @@ export default function Search() {
   const [activeSource, setActiveSource] = useState("all");
   const [selectedTheme, setSelectedTheme] = useState(null);
   const inputRef = useRef(null);
-  const debounceRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -67,10 +70,6 @@ export default function Search() {
     setLoading(false);
   }, [query]);
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") doSearch();
-  };
-
   const clearSearch = () => {
     setQuery("");
     setResults({ bible: [], notes: [], prayers: [] });
@@ -92,53 +91,24 @@ export default function Search() {
         <p className="text-muted-foreground text-sm">{t.scripture} · {t.myNotes} · {t.prayerJournalTab}</p>
       </div>
 
-      {/* Search Input */}
-      <div className="relative mb-3">
-        <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={t.searchPlaceholder}
-          className="w-full glass rounded-xl pl-12 pr-12 py-4 text-sm font-inter placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan/50 transition-all"
-        />
-        {query && (
-          <button onClick={clearSearch} className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-            <X className="w-4 h-4" />
-          </button>
-        )}
-        <button onClick={() => doSearch()} disabled={loading || !query.trim()}
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-cyan/20 hover:bg-cyan/30 text-cyan flex items-center justify-center transition-colors disabled:opacity-50">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <SearchIcon className="w-4 h-4" />}
-        </button>
-      </div>
+      <SearchInput
+        inputRef={inputRef}
+        query={query}
+        onQueryChange={setQuery}
+        onClear={clearSearch}
+        onSearch={doSearch}
+        loading={loading}
+        placeholder={t.searchPlaceholder}
+      />
 
-      {/* Source Filter Tabs */}
       {searched && !loading && (
-        <div className="flex gap-1.5 mb-5 overflow-x-auto scrollbar-hide">
-          {SOURCE_TABS.map(tab => {
-            const count = tab.id === "all" ? totalResults : tab.id === "bible" ? results.bible.length : tab.id === "notes" ? results.notes.length : results.prayers.length;
-            const Icon = tab.icon;
-            return (
-              <button key={tab.id} onClick={() => setActiveSource(tab.id)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-cinzel whitespace-nowrap flex-shrink-0 transition-all"
-                style={{
-                  background: activeSource === tab.id ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.04)",
-                  color: activeSource === tab.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                  border: activeSource === tab.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)",
-                }}>
-                <Icon className="w-3 h-3" />
-                {tab.label}
-                <span className="px-1.5 py-0.5 rounded-full text-[9px]"
-                  style={{ background: activeSource === tab.id ? "rgba(0,245,255,0.2)" : "rgba(255,255,255,0.08)", color: activeSource === tab.id ? "#00f5ff" : "rgba(255,255,255,0.4)" }}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <SourceFilterTabs
+          tabs={SOURCE_TABS}
+          activeSource={activeSource}
+          onChange={setActiveSource}
+          results={results}
+          totalResults={totalResults}
+        />
       )}
 
       {/* Theme filter — always visible */}
@@ -264,29 +234,5 @@ export default function Search() {
         </motion.div>
       )}
     </div>
-  );
-}
-
-function ResultSection({ title, icon: Icon, count, color, children }) {
-  return (
-    <div>
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="w-3.5 h-3.5" style={{ color }} />
-        <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.3)" }}>{title}</p>
-        <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full" style={{ background: `${color}15`, color }}>{count}</span>
-      </div>
-      <div className="space-y-3">{children}</div>
-    </div>
-  );
-}
-
-// Highlight matched query text
-function Highlight({ text, query }) {
-  if (!query || !text) return text;
-  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi"));
-  return parts.map((part, i) =>
-    part.toLowerCase() === query.toLowerCase()
-      ? <mark key={i} style={{ background: "rgba(0,245,255,0.2)", color: "#00f5ff", borderRadius: "3px", padding: "0 2px" }}>{part}</mark>
-      : part
   );
 }

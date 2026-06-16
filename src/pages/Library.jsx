@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bookmark, StickyNote, Highlighter, BookOpen, Trash2, Sparkles, Loader2, X, Folder, Headphones, Download, Library as LibraryIcon, FileText, Share2, Tag, Clock, Bot } from "lucide-react";
+import { Bookmark, BookOpen, Trash2, Sparkles, Loader2, X, Share2, Tag } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import AudioStreakChart from "@/components/library/AudioStreakChart";
 import VerseNoteFolderManager from "@/components/library/VerseNoteFolderManager";
@@ -9,16 +9,11 @@ import TagManager from "@/components/library/TagManager";
 import ReadingHistory from "@/components/library/ReadingHistory";
 import LibraryCollections from "@/components/library/LibraryCollections";
 import LibraryAssistant from "@/components/library/LibraryAssistant";
-
-const TABS = [
-  { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
-  { id: "highlights", label: "Highlights", icon: Highlighter },
-  { id: "notes", label: "Notes", icon: StickyNote },
-  { id: "collections", label: "Collections", icon: LibraryIcon },
-  { id: "history", label: "History", icon: Clock },
-  { id: "folders", label: "Folders", icon: Folder },
-  { id: "audio", label: "Audio", icon: Headphones },
-];
+import LibraryHeaderActions from "@/components/library/LibraryHeaderActions.jsx";
+import LibraryTabs from "@/components/library/LibraryTabs.jsx";
+import EmptyState from "@/components/library/EmptyLibraryState.jsx";
+import TagFilterBar from "@/components/library/TagFilterBar.jsx";
+import useLibraryData from "@/hooks/useLibraryData";
 
 const HIGHLIGHT_COLOR_HEX = {
   yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa",
@@ -27,11 +22,17 @@ const HIGHLIGHT_COLOR_HEX = {
 
 export default function Library() {
   const [activeTab, setActiveTab] = useState("bookmarks");
-  const [bookmarks, setBookmarks] = useState([]);
-  const [highlights, setHighlights] = useState([]);
-  const [notes, setNotes] = useState([]);
-  const [folders, setFolders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    bookmarks,
+    highlights,
+    notes,
+    loading,
+    deleteBookmark,
+    deleteHighlight,
+    deleteNote,
+    updateBookmarkTags,
+    updateNoteTags,
+  } = useLibraryData();
   const [hlDevotional, setHlDevotional] = useState(null);
   const [hlDevLoading, setHlDevLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -78,52 +79,14 @@ export default function Library() {
     }
   };
 
-  useEffect(() => {
-    loadAll();
-  }, []);
-
-  const loadAll = async () => {
-    setLoading(true);
-    try {
-      const [bm, hl, nt, fl] = await Promise.all([
-        base44.entities.Bookmark.list("-created_date", 50).catch(() => []),
-        base44.entities.UserHighlight.list("-created_date", 50).catch(() => []),
-        base44.entities.UserNote.list("-created_date", 50).catch(() => []),
-        base44.entities.VerseFolder.list("-created_date", 30).catch(() => []),
-      ]);
-      setBookmarks(bm || []);
-      setHighlights(hl || []);
-      setNotes(nt || []);
-      setFolders(fl || []);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteBookmark = async (id) => {
-    await base44.entities.Bookmark.delete(id);
-    setBookmarks(prev => prev.filter(b => b.id !== id));
-  };
-
-  const deleteHighlight = async (id) => {
-    await base44.entities.UserHighlight.delete(id);
-    setHighlights(prev => prev.filter(h => h.id !== id));
-  };
-
-  const deleteNote = async (id) => {
-    await base44.entities.UserNote.delete(id);
-    setNotes(prev => prev.filter(n => n.id !== id));
-  };
 
   const saveItemTags = async (tags) => {
     if (!tagManagerItem) return;
     const { id, type } = tagManagerItem;
     if (type === "bookmark") {
-      await base44.entities.Bookmark.update(id, { tags });
-      setBookmarks(prev => prev.map(b => b.id === id ? { ...b, tags } : b));
+      await updateBookmarkTags(id, tags);
     } else if (type === "note") {
-      await base44.entities.UserNote.update(id, { tags });
-      setNotes(prev => prev.map(n => n.id === id ? { ...n, tags } : n));
+      await updateNoteTags(id, tags);
     }
   };
 
@@ -326,49 +289,17 @@ export default function Library() {
           <h1 className="font-cinzel text-2xl font-bold mb-1">My Library</h1>
           <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setShowAI(v => !v)}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
-            style={{ background: showAI ? "rgba(167,139,250,0.18)" : "rgba(167,139,250,0.08)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.25)" }}>
-            <Sparkles className="w-4 h-4" />
-            <span className="hidden sm:inline">AI</span>
-          </button>
-          <button
-            onClick={exportPdf}
-            disabled={exportingPdf}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
-            style={{ background: "rgba(167,139,250,0.08)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.2)" }}
-          >
-            {exportingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-            <span className="hidden sm:inline">PDF</span>
-          </button>
-          <button
-            onClick={exportLibrary}
-            disabled={exporting}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-cinzel flex-shrink-0 transition-all"
-            style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}
-          >
-            {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            <span className="hidden sm:inline">Texto</span>
-          </button>
-        </div>
+        <LibraryHeaderActions
+          showAI={showAI}
+          onToggleAI={() => setShowAI(v => !v)}
+          exportingPdf={exportingPdf}
+          onExportPdf={exportPdf}
+          exporting={exporting}
+          onExportLibrary={exportLibrary}
+        />
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 glass rounded-xl p-1">
-        {TABS.map(({ id, label, icon: TabIcon }) => (
-          <button
-            key={id}
-            onClick={() => setActiveTab(id)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm transition-all ${
-              activeTab === id ? "bg-cyan/20 text-cyan font-medium" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <TabIcon className="w-4 h-4" />
-            <span className="hidden sm:inline">{label}</span>
-          </button>
-        ))}
-      </div>
+      <LibraryTabs activeTab={activeTab} onChange={setActiveTab} />
 
       {/* Content */}
       <div className="pb-8">
@@ -407,46 +338,6 @@ export default function Library() {
           />
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-function EmptyState({ icon, text, sub }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 gap-3">
-      <span className="text-5xl">{icon}</span>
-      <p className="font-cinzel text-foreground/60 text-sm">{text}</p>
-      <p className="text-xs text-muted-foreground text-center max-w-xs">{sub}</p>
-    </div>
-  );
-}
-
-function TagFilterBar({ tags, activeTag, onSelect }) {
-  if (tags.length === 0) return null;
-  return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 mb-2">
-      <button
-        onClick={() => onSelect(null)}
-        className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
-        style={{
-          background: !activeTag ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-          color: !activeTag ? "#00f5ff" : "rgba(255,255,255,0.4)",
-          border: !activeTag ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)"
-        }}>
-        All
-      </button>
-      {tags.map(tag => (
-        <button key={tag} onClick={() => onSelect(tag === activeTag ? null : tag)}
-          className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
-          style={{
-            background: activeTag === tag ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-            color: activeTag === tag ? "#00f5ff" : "rgba(255,255,255,0.4)",
-            border: activeTag === tag ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)"
-          }}>
-          <Tag className="w-3 h-3" />
-          {tag}
-        </button>
-      ))}
     </div>
   );
 }

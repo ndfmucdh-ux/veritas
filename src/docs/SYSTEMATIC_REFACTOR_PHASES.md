@@ -11,10 +11,13 @@ Move the whole app toward cleaner architecture without changing user-facing beha
 ## Phase 2 — Navigation + Route Surfaces — In Progress
 - Centralize navigation item definitions in `lib/navigationItems.jsx`.
 - Extract side and bottom nav item rendering into focused components.
-- Review top-level pages for inline components that should be extracted.
+- Search input, source tabs, result sections, and highlight matching moved into focused components.
+- Review remaining top-level pages for inline components that should be extracted.
 
-## Phase 3 — Library/Profile/Plans
+## Phase 3 — Library/Profile/Plans — Started
 - Split large dashboard pages into data hooks, presentational sections, and action components.
+- Library header actions, tabs, empty states, and tag filters moved into focused components.
+- Library data loading and mutations moved into `useLibraryData`.
 
 ## Phase 4 — Backend/Data Boundaries
 - Review backend functions for duplication, security checks, and entity access consistency.
