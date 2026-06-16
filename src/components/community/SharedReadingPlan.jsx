@@ -17,19 +17,7 @@ export default function SharedReadingPlan() {
   const loadPlans = async () => {
     try {
       const communityPlans = await base44.entities.CommunityGroup.filter({ category: "study_group" }).catch(() => []);
-      
-      // Mock member progress data
-      const plansWithProgress = (communityPlans || []).map(plan => ({
-        ...plan,
-        members: [
-          { name: "Sarah", progress: Math.floor(Math.random() * 100) },
-          { name: "Michael", progress: Math.floor(Math.random() * 100) },
-          { name: "Emma", progress: Math.floor(Math.random() * 100) },
-          { name: "David", progress: Math.floor(Math.random() * 100) },
-        ]
-      }));
-
-      setPlans(plansWithProgress);
+      setPlans(communityPlans || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -148,42 +136,10 @@ export default function SharedReadingPlan() {
                 </div>
               </div>
 
-              {/* Member progress */}
-              <div className="space-y-2.5">
-                {plan.members?.map(member => (
-                  <div key={member.name}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-inter text-white/70">{member.name}</span>
-                      <span className="text-[10px] font-cinzel font-bold" style={{ color: "#00f5ff" }}>
-                        {member.progress}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${member.progress}%` }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="h-full rounded-full"
-                        style={{ background: `linear-gradient(90deg, #00f5ff, ${member.progress > 50 ? "#34d399" : "#fbbf24"})` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Average progress */}
-              {plan.members && plan.members.length > 0 && (
-                <div className="mt-3 pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <TrendingUp className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
-                      <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>Group average</p>
-                    </div>
-                    <span className="font-cinzel text-sm font-bold" style={{ color: "#34d399" }}>
-                      {Math.round(plan.members.reduce((sum, m) => sum + m.progress, 0) / plan.members.length)}%
-                    </span>
-                  </div>
-                </div>
+              {plan.description && (
+                <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  {plan.description}
+                </p>
               )}
             </motion.div>
           ))
