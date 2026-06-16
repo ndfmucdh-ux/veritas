@@ -84,6 +84,11 @@ Deno.serve(async (req) => {
       base44.asServiceRole.functions.invoke('sendMilestoneEmail', {
         streakDays: newStreak,
         preview: false,
+        // Service role has no user context — pass the recipient explicitly so
+        // the milestone email actually reaches this user.
+        recipientEmail: user.email,
+        recipientName: user.full_name,
+        chaptersRead: updates.chapters_read ?? xpRecord.chapters_read ?? 0,
       }).catch(() => {});
     }
 

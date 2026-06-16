@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 const LOGO = "https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/6a1ac5ac1_IMG_1831.jpeg";
 const APP  = "https://veritas.base44.app";
@@ -135,15 +135,26 @@ function buildMilestoneEmail({ name, streakDays, chaptersRead }) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));
-    const { streakDays, preview } = body;
+    const { streakDays, preview, recipientEmail, recipientName, chaptersRead } = body;
 
-    const xpData = await base44.entities.UserXP.list('-updated_date', 1).catch(() => []);
+    // Resolve the recipient two ways:
+    // 1. An authenticated user (preview / direct UI calls) → use their identity.
+    // 2. A trusted service-role caller (e.g. updateXP) that has NO user context
+    //    → it must pass recipientEmail/recipientName explicitly.
+    const user = await base44.auth.me().catch(() => null);
+    const toEmail = user?.email || recipientEmail;
+    const toName = user?.full_name || recipientName;
+    if (!toEmail) {
+      return Response.json({ error: 'No recipient: provide recipientEmail or authenticate' }, { status: 400 });
+    }
+
+    const xpData = user
+      ? await base44.entities.UserXP.list('-updated_date', 1).catch(() => [])
+      : [];
     const streak = streakDays || xpData?.[0]?.streak_days || 0;
-    const chapters = xpData?.[0]?.chapters_read || 0;
+    const chapters = chaptersRead ?? xpData?.[0]?.chapters_read ?? 0;
 
     // Only send for known milestones unless preview mode
     const milestoneDays = [7, 14, 21, 30, 60, 100, 365];
@@ -151,7 +162,7 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: `${streak} is not a milestone day` });
     }
 
-    const html = buildMilestoneEmail({ name: user.full_name, streakDays: streak, chaptersRead: chapters });
+    const html = buildMilestoneEmail({ name: toName, streakDays: streak, chaptersRead: chapters });
 
     if (preview) {
       return Response.json({ html, streak, chapters });
@@ -159,8 +170,8 @@ Deno.serve(async (req) => {
 
     await base44.asServiceRole.integrations.Core.SendEmail({
       from_name: "Veritas · The Word",
-      to: user.email,
-      subject: `${streak >= 30 ? "👑" : "🔥"} ${streak}-Day Streak Achievement — Keep Going, ${user.full_name?.split(" ")[0] || "Beloved"}!`,
+      to: toEmail,
+      subject: `${streak >= 30 ? "👑" : "🔥"} ${streak}-Day Streak Achievement — Keep Going, ${toName?.split(" ")[0] || "Beloved"}!`,
       body: html,
     });
 
