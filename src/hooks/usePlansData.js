@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import {
+  listPresetProgress,
+  listCustomPlans,
+  completePresetDay,
+  updateCustomPlanChapters,
+  deleteCustomPlan as deleteCustomPlanSvc,
+} from "@/lib/services/plansService";
 
 export default function usePlansData() {
   const [progress, setProgress] = useState([]);
@@ -7,8 +13,8 @@ export default function usePlansData() {
 
   const loadPlansData = async () => {
     const [p, cp] = await Promise.all([
-      base44.entities.ReadingProgress.list("-created_date", 500).catch(() => []),
-      base44.entities.CustomPlan.list("-created_date", 20).catch(() => []),
+      listPresetProgress({ limit: 500 }),
+      listCustomPlans({ limit: 20 }),
     ]);
     setProgress(p || []);
     setCustomPlans(cp || []);
@@ -23,13 +29,7 @@ export default function usePlansData() {
 
   const completeDay = async (planTitle, day) => {
     if (isDayComplete(planTitle, day)) return;
-    await base44.entities.ReadingProgress.create({
-      plan_id: planTitle,
-      book: "Plan",
-      chapter: day,
-      translation: "KJV",
-      completed_at: new Date().toISOString(),
-    }).catch(() => {});
+    await completePresetDay(planTitle, day);
     setProgress(prev => [...prev, { plan_id: planTitle, chapter: day }]);
   };
 
@@ -40,15 +40,15 @@ export default function usePlansData() {
     else completed.add(key);
 
     const completedChapters = [...completed];
-    await base44.entities.CustomPlan.update(plan.id, { completed_chapters: completedChapters });
+    await updateCustomPlanChapters(plan.id, completedChapters);
 
-    const updatedPlan = { ...plan, completed_chapters: completedChapters };
+    const updatedPlan = { ...plan, completed_chapters: completedChapters, completed_count: completedChapters.length };
     setCustomPlans(prev => prev.map(p => p.id === plan.id ? updatedPlan : p));
     return updatedPlan;
   };
 
   const deleteCustomPlan = async (id) => {
-    await base44.entities.CustomPlan.delete(id);
+    await deleteCustomPlanSvc(id);
     setCustomPlans(prev => prev.filter(p => p.id !== id));
   };
 

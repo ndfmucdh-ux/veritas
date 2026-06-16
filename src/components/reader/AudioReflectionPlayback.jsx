@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Trash2, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { deleteReflection as deleteReflectionSvc } from "@/lib/services/audioReflectionService";
 
 export default function AudioReflectionPlayback({ reflections, onDeleted }) {
   const [playingId, setPlayingId] = useState(null);
@@ -26,7 +26,7 @@ export default function AudioReflectionPlayback({ reflections, onDeleted }) {
   const deleteReflection = async (id) => {
     setDeleting(id);
     try {
-      await base44.entities.VerseAudioReflection.delete(id);
+      await deleteReflectionSvc(id);
       onDeleted?.(id);
     } catch (err) {
       console.error("Delete failed:", err);

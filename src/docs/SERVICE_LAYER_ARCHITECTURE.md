@@ -15,9 +15,10 @@ Hooks (hooks/)                   ← stateful glue (useLibraryData, usePlansData
         ▼
 Services (lib/services/)         ← domain logic, the ONLY layer touching base44.entities
         │
-        ├─ libraryService.js     ← bookmarks / highlights / notes (UserVerseInteraction)
-        ├─ readingService.js     ← reading sessions, history, activity (ReadingSession)
-        └─ plansService.js       ← preset + custom plan progress (CustomPlan)
+        ├─ libraryService.js          ← bookmarks / highlights / notes (UserVerseInteraction)
+        ├─ readingService.js          ← reading sessions, history, activity (ReadingSession)
+        ├─ plansService.js            ← preset + custom plan progress (ReadingProgress/CustomPlan)
+        └─ audioReflectionService.js  ← per-verse voice reflections (VerseAudioReflection)
         │  imports key helpers
         ▼
 Domain helpers (lib/verseKeys.js)  ← canonical keys + book ordering
@@ -34,8 +35,16 @@ Persistence (entities/ via @/api/base44Client)
   barrel**. Every existing `@/lib/dataAccess` import keeps working unchanged.
   New code should import the specific service (e.g. `@/lib/services/plansService`).
 - **Reduced coupling** — components no longer call `base44.entities.*` directly
-  for these domains. Example: `StudyProgressMap` now calls
-  `loadPlanDashboard()` instead of two raw entity queries.
+  for these domains. Decoupled consumers:
+  - `StudyProgressMap` → `loadPlanDashboard()`
+  - `usePlansData` → `plansService` (preset progress reads + writes, custom-plan writes)
+  - `VerseRow`, `VerseSidePanel`, `AudioReflectionRecorder`, `AudioReflectionPlayback`
+    → `audioReflectionService` (the `VerseAudioReflection` shape now lives in one place)
+  - `usePlansData.toggleCustomChapter` now also maintains the denormalized
+    `completed_count` on `CustomPlan`.
+
+  File uploads (`Core.UploadFile`) and AI calls (`functions.invoke`) intentionally
+  remain inline — they are integrations, not database domains.
 - **Single source of consolidated-vs-legacy logic** — only the library/reading
   services know about the migration fallback shape.
 

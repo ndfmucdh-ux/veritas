@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, Square, Play, Trash2, Upload, Loader2, Check } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { createReflection } from "@/lib/services/audioReflectionService";
 
 export default function AudioReflectionRecorder({ verseRef, book, chapter, verse, translation, onSaved }) {
   const [recording, setRecording] = useState(false);
@@ -72,20 +73,14 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
     setUploading(true);
 
     try {
-      // Upload audio file
+      // Upload audio file (integration), then persist via the domain service
       const { file_url } = await base44.integrations.Core.UploadFile({ file: audioBlob });
 
-      // Create reflection record
-      await base44.entities.VerseAudioReflection.create({
-        verse_ref: verseRef,
-        book,
-        chapter,
-        verse,
-        translation,
-        audio_url: file_url,
-        duration_seconds: Math.round(audioBlob.size / 10000), // Rough estimate
+      await createReflection({
+        verseRef, book, chapter, verse, translation,
+        audioUrl: file_url,
+        durationSeconds: Math.round(audioBlob.size / 10000), // Rough estimate
         mood,
-        is_private: true,
       });
 
       setAudioBlob(null);

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2, Sparkles, Copy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { setBookmark, setHighlight, setNote } from "@/lib/dataAccess";
+import { createReflection } from "@/lib/services/audioReflectionService";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 
 const COLORS = ["yellow", "cyan", "purple", "green", "red", "orange", "pink"];
@@ -90,9 +91,9 @@ export default function VerseRow({
         setUploading(true);
         try {
           const { file_url } = await base44.integrations.Core.UploadFile({ file: blob });
-          await base44.entities.VerseAudioReflection.create({
-            verse_ref: verseRef, book, chapter, verse: verseNum, translation,
-            audio_url: file_url, mood: "grateful", is_private: true,
+          await createReflection({
+            verseRef, book, chapter, verse: verseNum, translation,
+            audioUrl: file_url, mood: "grateful",
           });
           setRecSaved(true);
           setTimeout(() => setRecSaved(false), 2500);
