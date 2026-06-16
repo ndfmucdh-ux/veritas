@@ -23,6 +23,7 @@ import GuidedReflection from "@/components/prayer/GuidedReflection";
 import MultiSelectActionBar from "@/components/reader/MultiSelectActionBar.jsx";
 import ReaderSettingsPanel from "@/components/reader/ReaderSettingsPanel.jsx";
 import IconBtn from "@/components/reader/ReaderIconButton.jsx";
+import ChapterDownloadButton from "@/components/reader/ChapterDownloadButton.jsx";
 import useVerseSelection from "@/hooks/useVerseSelection";
 
 
@@ -231,6 +232,7 @@ export default function Read() {
           <IconBtn onClick={() => copyChapter()} title="Copy chapter">
             {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
           </IconBtn>
+          <ChapterDownloadButton book={book} chapter={chapter} translation={translation} />
           <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title="AI Devotional">✨</IconBtn>
           <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title="Reader settings"><Settings className="w-4 h-4" /></IconBtn>

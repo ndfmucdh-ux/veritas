@@ -8,6 +8,7 @@ import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
 import ReadingStatsChart from "@/components/plans/ReadingStatsChart";
 import { base44 } from "@/api/base44Client";
 import PlanInvitePanel from "@/components/plans/PlanInvitePanel";
+import PlanDownloadButton from "@/components/plans/PlanDownloadButton";
 import usePlansData from "@/hooks/usePlansData";
 
 // Real-life Unsplash photo headers per plan
@@ -346,6 +347,11 @@ export default function Plans() {
               style={{ background: `linear-gradient(90deg, ${activePlan.accent}, ${activePlan.accent}88)` }}
             />
           </div>
+        </div>
+
+        {/* Offline download */}
+        <div className="px-5 mb-6">
+          <PlanDownloadButton plan={activePlan} accentColor={activePlan.accent} />
         </div>
 
         {/* Calendar or Timeline */}

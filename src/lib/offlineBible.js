@@ -207,6 +207,74 @@ export const DOWNLOADABLE_TRANSLATIONS = [
 
 const chapterKey = (code, book, chapter) => `${code?.toUpperCase()}|${book}|${Number(chapter)}`;
 
+// ── Individual chapter offline storage ────────────────────────────────────
+// Reuses the same CHAPTER_STORE so the Read page picks these up automatically
+// via getOfflineVerse / getOfflineVerseAsync (no other wiring needed).
+
+export async function saveOfflineChapter(code, book, chapter, verses) {
+  if (!Array.isArray(verses) || verses.length === 0) return false;
+  try {
+    const upperCode = code.toUpperCase();
+    const record = { id: chapterKey(upperCode, book, chapter), code: upperCode, book, chapter: Number(chapter), verses };
+    const db = await openDB();
+    const saved = await new Promise((resolve) => {
+      const tx = db.transaction(CHAPTER_STORE, "readwrite");
+      tx.objectStore(CHAPTER_STORE).put(record);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+    if (saved) _chapterCache[record.id] = verses;
+    return saved;
+  } catch (e) {
+    console.warn("Offline chapter save failed:", e);
+    return false;
+  }
+}
+
+export async function isChapterDownloadedAsync(code, book, chapter) {
+  const id = chapterKey(code, book, chapter);
+  if (_chapterCache[id]) return true;
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(CHAPTER_STORE, "readonly");
+      const req = tx.objectStore(CHAPTER_STORE).getKey(id);
+      req.onsuccess = () => resolve(!!req.result);
+      req.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
+
+export async function getDownloadedChapterIdsAsync() {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(CHAPTER_STORE, "readonly");
+      const req = tx.objectStore(CHAPTER_STORE).getAllKeys();
+      req.onsuccess = () => resolve(new Set(req.result || []));
+      req.onerror = () => resolve(new Set());
+    });
+  } catch {
+    return new Set();
+  }
+}
+
+export async function removeOfflineChapter(code, book, chapter) {
+  const id = chapterKey(code, book, chapter);
+  try {
+    const db = await openDB();
+    await new Promise((resolve) => {
+      const tx = db.transaction(CHAPTER_STORE, "readwrite");
+      tx.objectStore(CHAPTER_STORE).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    });
+  } catch {}
+  delete _chapterCache[id];
+}
+
 function splitTranslationPayload(code, payload) {
   const upperCode = code.toUpperCase();
   const downloadedAt = new Date().toISOString();
