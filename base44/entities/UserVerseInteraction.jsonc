@@ -13,6 +13,11 @@
     "book": {
       "type": "string"
     },
+    "book_order": {
+      "type": "number",
+      "description": "Canonical 1-66 book ordering for fast indexed sorting/range scans",
+      "default": 0
+    },
     "chapter": {
       "type": "number"
     },
@@ -48,6 +53,11 @@
       "items": {
         "type": "string"
       }
+    },
+    "has_note": {
+      "type": "boolean",
+      "default": false,
+      "description": "Denormalized flag for fast filtering of noted verses without scanning note_text"
     },
     "last_interacted_at": {
       "type": "string",
