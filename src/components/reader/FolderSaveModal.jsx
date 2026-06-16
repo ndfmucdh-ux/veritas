@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FolderPlus, X, Check, Plus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -20,12 +20,22 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
   const [newIcon, setNewIcon] = useState("📁");
   const [newColor, setNewColor] = useState("#00f5ff");
   const [creating, setCreating] = useState(false);
+  const titleId = useId();
+  const descriptionId = useId();
 
   useEffect(() => {
     base44.entities.VerseFolder.list("-created_date", 30)
       .then(f => setFolders(f || []))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   const saveToFolder = async (folder) => {
     setSaving(folder.id);
@@ -64,6 +74,10 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
         exit={{ y: 40, opacity: 0, scale: 0.97 }}
         transition={{ type: "spring", stiffness: 380, damping: 28 }}
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
         className="w-full max-w-sm rounded-3xl overflow-hidden"
         style={{ maxHeight: "85vh", display: "flex", flexDirection: "column", background: "rgba(8,13,26,0.99)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}
       >
@@ -71,8 +85,8 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
         <div className="flex items-center justify-between px-5 pt-5 pb-4"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
           <div>
-            <p className="font-cinzel text-base font-bold text-white">Save to Folder</p>
-            <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <p id={titleId} className="font-cinzel text-base font-bold text-white">Save to Folder</p>
+            <p id={descriptionId} className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
               {verseRefs.length} verse{verseRefs.length !== 1 ? "s" : ""} selected
             </p>
           </div>
