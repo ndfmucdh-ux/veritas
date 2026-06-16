@@ -1,42 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Flame } from "lucide-react";
+import { Calendar, Loader2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { listReadingActivity } from "@/lib/dataAccess";
 
-// Mock data: 30 days of reading activity
-const generateMockData = () => {
+// Build 30 days of REAL reading activity from consolidated reading sessions.
+// Each session = 1 chapter read; "chapters" mode counts unique chapters/day.
+const buildDays = (records) => {
   const days = [];
   const now = new Date();
+  // Map "YYYY-MM-DD" -> { chapters:Set, books:Set }
+  const byDay = {};
+  (records || []).forEach(r => {
+    const key = (r.created_date || "").slice(0, 10);
+    if (!key) return;
+    if (!byDay[key]) byDay[key] = { chapters: new Set(), books: new Set() };
+    byDay[key].chapters.add(`${r.book}:${r.chapter}`);
+    if (r.book) byDay[key].books.add(r.book);
+  });
+
   for (let i = 29; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(d.getDate() - i);
+    const key = d.toISOString().split("T")[0];
+    const entry = byDay[key];
     days.push({
       day: d.getDate(),
-      date: d.toISOString().split("T")[0],
-      versesRead: Math.floor(Math.random() * 8),
-      streakDays: Math.max(0, 25 - i + Math.floor(Math.random() * 3)),
-      books: ["John", "Psalms", "Romans", "Genesis"][Math.floor(Math.random() * 4)]
+      date: key,
+      chaptersRead: entry ? entry.chapters.size : 0,
+      books: entry && entry.books.size ? [...entry.books].slice(0, 3).join(", ") : "—",
     });
   }
   return days;
 };
 
 export default function MonthlyProgressChart() {
-  const [data] = useState(generateMockData());
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [displayMode, setDisplayMode] = useState("verses"); // verses | streak
+
+  useEffect(() => {
+    listReadingActivity({ limit: 200 })
+      .then(records => setData(buildDays(records)))
+      .catch(() => setData(buildDays([])))
+      .finally(() => setLoading(false));
+  }, []);
 
   const selectedData = selectedDay ? data.find(d => d.date === selectedDay) : null;
-  const totalVerses = data.reduce((sum, d) => sum + d.versesRead, 0);
-  const avgVerses = (totalVerses / data.length).toFixed(1);
-  const maxStreak = Math.max(...data.map(d => d.streakDays));
+  const totalChapters = data.reduce((sum, d) => sum + d.chaptersRead, 0);
+  const activeDays = data.filter(d => d.chaptersRead > 0).length;
+  const avgChapters = data.length ? (totalChapters / data.length).toFixed(1) : "0";
 
   const chartData = data.map(d => ({
     day: d.day.toString(),
-    value: displayMode === "verses" ? d.versesRead : d.streakDays,
+    value: d.chaptersRead,
     date: d.date,
     full: d
   }));
+
+  if (loading) {
+    return (
+      <div className="rounded-2xl p-5 flex items-center justify-center h-48"
+        style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
+        <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl p-5" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
@@ -45,22 +74,7 @@ export default function MonthlyProgressChart() {
           <Calendar className="w-4 h-4" style={{ color: "#00f5ff" }} />
           <p className="font-cinzel text-sm font-semibold text-white">Monthly Progress</p>
         </div>
-        <div className="flex gap-2">
-          {["verses", "streak"].map(mode => (
-            <button
-              key={mode}
-              onClick={() => setDisplayMode(mode)}
-              className="px-2.5 py-1 rounded-lg text-[10px] font-cinzel uppercase transition-all"
-              style={{
-                background: displayMode === mode ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                color: displayMode === mode ? "#00f5ff" : "rgba(255,255,255,0.3)",
-                border: displayMode === mode ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
-              }}
-            >
-              {mode === "verses" ? "Verses" : "Streak"}
-            </button>
-          ))}
-        </div>
+        <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>Last 30 days</span>
       </div>
 
       {/* Chart */}
@@ -98,7 +112,7 @@ export default function MonthlyProgressChart() {
               {chartData.map((entry, idx) => (
                 <Cell
                   key={`cell-${idx}`}
-                  fill={selectedDay === entry.date ? "#00f5ff" : displayMode === "verses" ? "rgba(52,211,153,0.6)" : "rgba(255,215,0,0.6)"}
+                  fill={selectedDay === entry.date ? "#00f5ff" : "rgba(52,211,153,0.6)"}
                 />
               ))}
             </Bar>
@@ -109,12 +123,12 @@ export default function MonthlyProgressChart() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>This Month</p>
-          <p className="font-cinzel text-lg font-bold text-white mt-1">{totalVerses} verses</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Chapters Read</p>
+          <p className="font-cinzel text-lg font-bold text-white mt-1">{totalChapters}</p>
         </div>
         <div className="rounded-xl p-3" style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Daily Avg</p>
-          <p className="font-cinzel text-lg font-bold" style={{ color: "#fbbf24" }} >{avgVerses}</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Active Days</p>
+          <p className="font-cinzel text-lg font-bold" style={{ color: "#fbbf24" }} >{activeDays}</p>
         </div>
       </div>
 
@@ -127,12 +141,12 @@ export default function MonthlyProgressChart() {
           style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)" }}
         >
           <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "#a78bfa" }}>
-            May {selectedData.day}
+            {new Date(selectedData.date + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" })}
           </p>
           <div className="space-y-1">
             <div className="flex justify-between">
-              <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>Verses read</span>
-              <span className="font-cinzel font-bold text-white">{selectedData.versesRead}</span>
+              <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>Chapters read</span>
+              <span className="font-cinzel font-bold text-white">{selectedData.chaptersRead}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>Focused on</span>
