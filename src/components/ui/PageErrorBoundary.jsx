@@ -40,9 +40,15 @@ export default class PageErrorBoundary extends React.Component {
               <AlertTriangle className="w-6 h-6" style={{ color: "#f87171" }} />
             </div>
             <h2 className="font-cinzel text-lg font-bold text-white mb-2">This page hit a snag</h2>
-            <p className="text-sm font-inter mb-5" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <p className="text-sm font-inter mb-4" style={{ color: "rgba(255,255,255,0.5)" }}>
               Please reload to try again. If it keeps happening, restart the app.
             </p>
+            {this.state.message && (
+              <p className="text-[11px] font-mono mb-5 px-3 py-2 rounded-lg break-words text-left"
+                style={{ background: "rgba(0,0,0,0.3)", color: "rgba(248,113,113,0.8)", border: "1px solid rgba(248,113,113,0.15)" }}>
+                {this.state.message}
+              </p>
+            )}
             <button
               onClick={() => window.location.reload()}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-cinzel font-semibold transition-all"
