@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Tag, Loader2, Sparkles, X } from "lucide-react";
+import { Loader2, Sparkles, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 import AIStudyPartner from "@/components/study/AIStudyPartner";
+import { CommentaryResult, CrossRefsResult, DictionaryResult, TopicalResult } from "@/components/study/StudyResults.jsx";
+import StudyTabs from "@/components/study/StudyTabs.jsx";
+import StudySearchBar from "@/components/study/StudySearchBar.jsx";
+import TopicalTagGrid from "@/components/study/TopicalTagGrid.jsx";
 
 const TABS = ["commentary", "crossRefs", "topical", "dictionary", "aiPartner"];
 
@@ -218,20 +222,12 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
         </AnimatePresence>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 px-4 pt-4 pb-2 overflow-x-auto scrollbar-hide">
-        {TABS.map(tb => (
-          <button key={tb} onClick={() => { setTab(tb); setResult(null); }}
-            className="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-cinzel uppercase tracking-wide transition-all"
-            style={{
-              background: tab === tb ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-              color: tab === tb ? "#00f5ff" : "rgba(255,255,255,0.4)",
-              border: tab === tb ? "1px solid rgba(0,245,255,0.28)" : "1px solid rgba(255,255,255,0.06)",
-            }}>
-            {TAB_LABELS[tb]}
-          </button>
-        ))}
-      </div>
+      <StudyTabs
+        tabs={TABS}
+        labels={TAB_LABELS}
+        activeTab={tab}
+        onChange={(nextTab) => { setTab(nextTab); setResult(null); }}
+      />
 
       <div className="px-4 space-y-4">
         {/* AI Study Partner tab */}
@@ -239,49 +235,30 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
 
         {/* Search bar (not for topical or aiPartner) */}
         {tab !== "topical" && tab !== "aiPartner" && (
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleSearch()}
-              placeholder={
-                tab === "commentary"
-                  ? (lang === "es" ? "ej. Juan 3:16 o Romanos 8:28" : "e.g. John 3:16 or Romans 8:28")
-                  : tab === "crossRefs"
-                  ? (lang === "es" ? "ej. Salmos 23:1" : "e.g. Psalm 23:1")
-                  : (lang === "es" ? "ej. gracia, expiación, santificación" : "e.g. grace, atonement, sanctification")
-              }
-              className="w-full pl-10 pr-12 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }}
-            />
-            <button onClick={handleSearch} disabled={loading || !query.trim()}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg text-xs font-cinzel transition-colors disabled:opacity-40"
-              style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff" }}>
-              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Go"}
-            </button>
-          </div>
+          <StudySearchBar
+            query={query}
+            onQueryChange={setQuery}
+            onSearch={handleSearch}
+            loading={loading}
+            placeholder={
+              tab === "commentary"
+                ? (lang === "es" ? "ej. Juan 3:16 o Romanos 8:28" : "e.g. John 3:16 or Romans 8:28")
+                : tab === "crossRefs"
+                ? (lang === "es" ? "ej. Salmos 23:1" : "e.g. Psalm 23:1")
+                : (lang === "es" ? "ej. gracia, expiación, santificación" : "e.g. grace, atonement, sanctification")
+            }
+          />
         )}
 
         {/* Topical tag grid */}
         {tab !== "aiPartner" && tab === "topical" && (
-          <div>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>{lang === "es" ? "Elige un Tema" : "Choose a Topic"}</p>
-            <div className="flex flex-wrap gap-2">
-              {TOPICAL_TAGS.map(tag => (
-                <button key={tag} onClick={() => runTopical(tag)}
-                  disabled={loading}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-inter capitalize transition-all"
-                  style={{
-                    background: selectedTag === tag ? "rgba(167,139,250,0.18)" : "rgba(255,255,255,0.05)",
-                    color: selectedTag === tag ? "#a78bfa" : "rgba(255,255,255,0.55)",
-                    border: selectedTag === tag ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgba(255,255,255,0.07)",
-                  }}>
-                  <Tag className="w-2.5 h-2.5" /> {tag}
-                </button>
-              ))}
-            </div>
-          </div>
+          <TopicalTagGrid
+            tags={TOPICAL_TAGS}
+            selectedTag={selectedTag}
+            loading={loading}
+            onSelect={runTopical}
+            title={lang === "es" ? "Elige un Tema" : "Choose a Topic"}
+          />
         )}
 
         {/* Loading (not aiPartner — it handles its own) */}
@@ -306,118 +283,5 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
         </AnimatePresence>
       </div>
     </div>
-  );
-}
-
-function Section({ label, color = "#00f5ff", children }) {
-  return (
-    <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-      <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color }}>{label}</p>
-      {children}
-    </div>
-  );
-}
-
-function CommentaryResult({ data }) {
-  return (
-    <>
-      <Section label="Historical Context" color="#fbbf24">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.context}</p>
-      </Section>
-      {data.key_words?.length > 0 && (
-        <Section label="Greek / Hebrew Words" color="#a78bfa">
-          <div className="space-y-2">
-            {data.key_words.map((w, i) => (
-              <div key={i} className="flex gap-3">
-                <span className="font-cinzel text-sm font-bold text-white/80">{w.word}</span>
-                <span className="text-xs font-inter italic" style={{ color: "#a78bfa" }}>{w.original}</span>
-                <span className="text-xs font-inter flex-1" style={{ color: "rgba(255,255,255,0.55)" }}>{w.meaning}</span>
-              </div>
-            ))}
-          </div>
-        </Section>
-      )}
-      <Section label="Theological Significance" color="#34d399">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.theology}</p>
-      </Section>
-      <Section label="Application" color="#00f5ff">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.application}</p>
-      </Section>
-      {data.cross_refs?.length > 0 && (
-        <Section label="See Also">
-          <div className="flex flex-wrap gap-2">
-            {data.cross_refs.map((ref, i) => (
-              <a key={i} href={`/study`} className="text-xs px-2.5 py-1 rounded-lg font-cinzel"
-                style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff" }}>{ref}</a>
-            ))}
-          </div>
-        </Section>
-      )}
-    </>
-  );
-}
-
-function CrossRefsResult({ data }) {
-  return (
-    <Section label="Cross References" color="#fbbf24">
-      <div className="space-y-3">
-        {data.map((r, i) => (
-          <div key={i} className="flex gap-3">
-            <a href={`/read?book=${r.reference?.split(" ").slice(0,-1).join(" ")}&chapter=${r.reference?.split(" ").pop()?.split(":")[0]}`}
-              className="font-cinzel text-xs font-semibold flex-shrink-0 pt-0.5" style={{ color: "#fbbf24" }}>
-              {r.reference}
-            </a>
-            <div>
-              <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.7)" }}>{r.connection}</p>
-              <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>{r.theme}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function TopicalResult({ tag, data }) {
-  return (
-    <Section label={`Verses on "${tag}"`} color="#a78bfa">
-      <div className="space-y-4">
-        {data.map((v, i) => (
-          <div key={i}>
-            <p className="font-playfair italic text-sm leading-relaxed mb-1.5" style={{ color: "rgba(255,255,255,0.82)" }}>"{v.text}"</p>
-            <p className="font-cinzel text-xs font-bold mb-1" style={{ color: "#fbbf24" }}>{v.ref}</p>
-            <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.45)" }}>{v.insight}</p>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function DictionaryResult({ data }) {
-  return (
-    <>
-      <Section label={`Definition: ${data.term}`} color="#fbbf24">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>{data.definition}</p>
-      </Section>
-      {data.greek_hebrew && (
-        <Section label="Greek / Hebrew" color="#a78bfa">
-          <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.7)" }}>{data.greek_hebrew}</p>
-          {data.etymology && <p className="text-xs mt-2 font-inter italic" style={{ color: "rgba(255,255,255,0.45)" }}>{data.etymology}</p>}
-        </Section>
-      )}
-      <Section label="Biblical Usage" color="#34d399">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.usage}</p>
-      </Section>
-      {data.key_verses?.length > 0 && (
-        <Section label="Key Verses">
-          <div className="flex flex-wrap gap-2">
-            {data.key_verses.map((v, i) => (
-              <span key={i} className="text-xs px-2.5 py-1 rounded-lg font-cinzel" style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff" }}>{v}</span>
-            ))}
-          </div>
-        </Section>
-      )}
-    </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List, Plus, Trash2, Target, Check, LayoutGrid, Shield, Flower2, Zap, Star, Gem, Sprout } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
@@ -8,6 +8,7 @@ import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
 import ReadingStatsChart from "@/components/plans/ReadingStatsChart";
 import { base44 } from "@/api/base44Client";
 import PlanInvitePanel from "@/components/plans/PlanInvitePanel";
+import usePlansData from "@/hooks/usePlansData";
 
 // Real-life Unsplash photo headers per plan
 const PRESET_PLANS = [
@@ -152,37 +153,24 @@ export default function Plans() {
 
   const [activePlan, setActivePlan] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [progress, setProgress] = useState([]);
   const [langFilter, setLangFilter] = useState("all");
   const [catFilter, setCatFilter] = useState(urlCat);
   const [genLoading, setGenLoading] = useState(false);
   const [genDevo, setGenDevo] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showBuilder, setShowBuilder] = useState(false);
-  const [customPlans, setCustomPlans] = useState([]);
   const [activeCustomPlan, setActiveCustomPlan] = useState(null);
+  const {
+    progress,
+    customPlans,
+    loadPlansData,
+    getCompletedDays,
+    isDayComplete,
+    completeDay,
+    toggleCustomChapter,
+    deleteCustomPlan,
+  } = usePlansData();
 
-  useEffect(() => {
-    // Load all reading progress (plans + regular chapters) for the calendar
-    Promise.all([
-      base44.entities.ReadingProgress.list("-created_date", 500).catch(() => []),
-      base44.entities.CustomPlan.list("-created_date", 20).catch(() => []),
-    ]).then(([p, cp]) => {
-      setProgress(p || []);
-      setCustomPlans(cp || []);
-    });
-  }, []);
-
-  const getCompletedDays = (planTitle) => progress.filter(p => p.plan_id === planTitle).length;
-  const isDayComplete = (planTitle, day) => progress.some(p => p.plan_id === planTitle && p.chapter === day);
-
-  const completeDay = async (planTitle, day) => {
-    if (isDayComplete(planTitle, day)) return;
-    await base44.entities.ReadingProgress.create({
-      plan_id: planTitle, book: "Plan", chapter: day, translation: "KJV", completed_at: new Date().toISOString()
-    }).catch(() => {});
-    setProgress(prev => [...prev, { plan_id: planTitle, chapter: day }]);
-  };
 
   const generateAIDevo = async (day) => {
     if (!day.verses?.[0]) return;
@@ -203,21 +191,9 @@ export default function Plans() {
     (catFilter === "all" || p.category === catFilter)
   );
 
-  const toggleCustomChapter = async (plan, bookName, ch) => {
-    const key = `${bookName}:${ch}`;
-    const completed = new Set(plan.completed_chapters || []);
-    if (completed.has(key)) completed.delete(key);
-    else completed.add(key);
-    const updatedArr = [...completed];
-    await base44.entities.CustomPlan.update(plan.id, { completed_chapters: updatedArr });
-    const updated = { ...plan, completed_chapters: updatedArr };
-    setCustomPlans(prev => prev.map(p => p.id === plan.id ? updated : p));
+  const handleToggleCustomChapter = async (plan, bookName, ch) => {
+    const updated = await toggleCustomChapter(plan, bookName, ch);
     setActiveCustomPlan(updated);
-  };
-
-  const deleteCustomPlan = async (id) => {
-    await base44.entities.CustomPlan.delete(id);
-    setCustomPlans(prev => prev.filter(p => p.id !== id));
   };
 
   // ── Custom Plan Detail View ────────────────────────────────────
@@ -290,7 +266,7 @@ export default function Plans() {
                     {sel.chapters.map(ch => {
                       const done = (plan.completed_chapters || []).includes(`${sel.book}:${ch}`);
                       return (
-                        <button key={ch} onClick={() => toggleCustomChapter(plan, sel.book, ch)}
+                        <button key={ch} onClick={() => handleToggleCustomChapter(plan, sel.book, ch)}
                           className="w-9 h-9 rounded-xl font-cinzel text-xs font-semibold flex items-center justify-center transition-all"
                           style={{
                             background: done ? "rgba(52,211,153,0.15)" : `${accent}10`,
@@ -664,9 +640,7 @@ export default function Plans() {
         {showBuilder && (
           <CustomPlanBuilder
             onClose={() => setShowBuilder(false)}
-            onSaved={() => {
-              base44.entities.CustomPlan.list("-created_date", 20).then(p => setCustomPlans(p || [])).catch(() => {});
-            }}
+            onSaved={loadPlansData}
           />
         )}
       </AnimatePresence>

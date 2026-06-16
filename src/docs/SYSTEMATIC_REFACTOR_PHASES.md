@@ -12,6 +12,7 @@ Move the whole app toward cleaner architecture without changing user-facing beha
 - Centralize navigation item definitions in `lib/navigationItems.jsx`.
 - Extract side and bottom nav item rendering into focused components.
 - Search input, source tabs, result sections, and highlight matching moved into focused components.
+- Discover category filter, verse cards, and devotional panel moved into focused components.
 - Review remaining top-level pages for inline components that should be extracted.
 
 ## Phase 3 — Library/Profile/Plans — Started

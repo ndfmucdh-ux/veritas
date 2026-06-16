@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, ChevronDown, AlertCircle, Columns, FileText, Lightbulb, Sparkles, X, Mic, Play, Pause } from "lucide-react";
+import { Loader2, ChevronDown, AlertCircle } from "lucide-react";
 import TranslationSplitView from "@/components/study/TranslationSplitView";
 import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
 import CrossReferencePanel from "@/components/study/CrossReferencePanel";
@@ -13,6 +13,10 @@ import { useLang } from "@/lib/LanguageContext";
 import StudyDropdown from "@/components/reader/StudyDropdown";
 import NotesArchive from "@/components/study/NotesArchive";
 import StudyProgressMap from "@/components/study/StudyProgressMap";
+import StudyCenterTabs from "@/components/study/StudyCenterTabs.jsx";
+import StudyDepthSelector from "@/components/study/StudyDepthSelector.jsx";
+import ExplainThisPanel from "@/components/study/ExplainThisPanel.jsx";
+import VoiceNotesPanel from "@/components/study/VoiceNotesPanel.jsx";
 
 export default function StudyCenter() {
   const { lang } = useLang();
@@ -147,11 +151,6 @@ export default function StudyCenter() {
     { id: "Revelation", name: "👑 Revelation", books: BIBLE_BOOKS.filter(b => b.num === 66) }
   ];
 
-  const depths = [
-    { id: "overview", label: "Overview", icon: "📄" },
-    { id: "detailed", label: "Detailed", icon: "📖" },
-    { id: "advanced", label: "Advanced", icon: "🎓" }
-  ];
 
   return (
     <div className="md:ml-16 min-h-screen pb-28 px-4 md:px-8">
@@ -160,40 +159,12 @@ export default function StudyCenter() {
         <h1 className="font-cinzel text-2xl font-bold text-white mb-1">Study Center</h1>
         <p className="text-sm text-white/50 mb-5">Deep dive into scripture with AI-powered analysis</p>
 
-        {/* Tabs + Cross-ref toggle */}
-         <div className="flex gap-2">
-           {[
-             { id: "analysis", label: "Analysis", icon: "📖" },
-             { id: "sidebyside", label: "Side by Side", icon: "⚡" },
-             { id: "templates", label: "My Templates", icon: "📝" },
-             { id: "memorize", label: "Memorize", icon: "🎯" },
-           { id: "flashcards", label: "Flashcards", icon: "🃏" },
-           { id: "notes", label: "My Notes", icon: "📓" },
-           { id: "journey", label: "Journey", icon: "🗺️" },
-           ].map(tab => (
-            <motion.button key={tab.id} whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveTab(tab.id)}
-              className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-cinzel text-xs font-semibold transition-all"
-              style={{
-                background: activeTab === tab.id ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-                color: activeTab === tab.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                border: activeTab === tab.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)",
-                }}>
-                <span>{tab.icon}</span>
-                <span className="hidden sm:inline">{tab.label}</span>
-                </motion.button>
-                ))}
-                <motion.button whileTap={{ scale: 0.95 }}
-                onClick={() => setShowCrossRef(!showCrossRef)}
-                className="px-3 py-3 rounded-xl font-cinzel text-xs font-semibold transition-all"
-                style={{
-                background: showCrossRef ? "rgba(124,58,237,0.12)" : "rgba(255,255,255,0.04)",
-                color: showCrossRef ? "#7c3aed" : "rgba(255,255,255,0.4)",
-                border: showCrossRef ? "1px solid rgba(124,58,237,0.25)" : "1px solid rgba(255,255,255,0.07)",
-                }} title="Related Verses Panel">
-                <Lightbulb className="w-4 h-4" />
-                </motion.button>
-                </div>
+        <StudyCenterTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          showCrossRef={showCrossRef}
+          onToggleCrossRef={() => setShowCrossRef(!showCrossRef)}
+        />
                 </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
@@ -309,24 +280,7 @@ export default function StudyCenter() {
               />
             )}
 
-            {/* Depth selector */}
-            <div className="flex gap-2">
-              {depths.map(d => (
-                <motion.button
-                  key={d.id}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setDepth(d.id)}
-                  className="flex-1 py-4 rounded-xl text-sm font-cinzel transition-all font-semibold"
-                  style={{
-                    background: depth === d.id ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                    color: depth === d.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                    border: depth === d.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
-                  }}
-                >
-                  {d.icon} {d.label}
-                </motion.button>
-              ))}
-            </div>
+            <StudyDepthSelector depth={depth} onChange={setDepth} />
 
             {/* Verse dropdown */}
             {selectedChapter && !loading && (
@@ -353,83 +307,22 @@ export default function StudyCenter() {
               />
             )}
 
-            {/* ── EXPLAIN THIS ── */}
-            <div className="rounded-2xl p-4" style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)" }}>
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-4 h-4" style={{ color: "#fbbf24" }} />
-                <p className="font-cinzel text-sm font-semibold text-white">Explain This</p>
-                <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>AI theological summary</p>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  value={explainVerse}
-                  onChange={e => setExplainVerse(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && explainPassage()}
-                  placeholder={`e.g. John 3:16, ${selectedBook} ${selectedChapter}:1-5`}
-                  className="flex-1 rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                  style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }}
-                />
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={explainPassage}
-                  disabled={!explainVerse.trim() || explainLoading}
-                  className="px-4 py-2.5 rounded-xl font-cinzel text-sm font-semibold transition-all"
-                  style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.3)", opacity: !explainVerse.trim() ? 0.5 : 1 }}
-                >
-                  {explainLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Explain"}
-                </motion.button>
-              </div>
-              <AnimatePresence>
-                {explainResult && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3 overflow-hidden">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>{explainResult}</p>
-                      <button onClick={() => setExplainResult(null)} className="flex-shrink-0"><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <ExplainThisPanel
+              value={explainVerse}
+              onChange={setExplainVerse}
+              onExplain={explainPassage}
+              loading={explainLoading}
+              result={explainResult}
+              onClearResult={() => setExplainResult(null)}
+              placeholder={`e.g. John 3:16, ${selectedBook} ${selectedChapter}:1-5`}
+            />
 
-            {/* ── VOICE NOTES ── */}
-            {audioNotes.length > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.12)" }}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Mic className="w-4 h-4" style={{ color: "#00f5ff" }} />
-                  <p className="font-cinzel text-sm font-semibold text-white">Voice Notes</p>
-                  <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{audioNotes.length} recordings</p>
-                </div>
-                <div className="space-y-2">
-                  {audioNotes.slice(0, 5).map(note => (
-                    <div key={note.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                      <button
-                        onClick={() => {
-                          if (playingAudioUrl === note.audio_url) {
-                            audioElRef.current?.pause();
-                            setPlayingAudioUrl(null);
-                          } else {
-                            if (audioElRef.current) {
-                              audioElRef.current.src = note.audio_url;
-                              audioElRef.current.play();
-                            }
-                            setPlayingAudioUrl(note.audio_url);
-                          }
-                        }}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff" }}
-                      >
-                        {playingAudioUrl === note.audio_url ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-cinzel text-xs text-white truncate">{note.verse_ref}</p>
-                        <p className="text-[10px] font-inter capitalize" style={{ color: "rgba(255,255,255,0.35)" }}>{note.mood} · {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <audio ref={audioElRef} onEnded={() => setPlayingAudioUrl(null)} className="hidden" />
-              </div>
-            )}
+            <VoiceNotesPanel
+              notes={audioNotes}
+              audioRef={audioElRef}
+              playingAudioUrl={playingAudioUrl}
+              onPlayingChange={setPlayingAudioUrl}
+            />
 
             {/* Outline */}
             {loading ? (
