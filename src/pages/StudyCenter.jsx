@@ -12,6 +12,7 @@ import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 import StudyDropdown from "@/components/reader/StudyDropdown";
+import { listRecentReflections } from "@/lib/services/audioReflectionService";
 import NotesArchive from "@/components/study/NotesArchive";
 import StudyProgressMap from "@/components/study/StudyProgressMap";
 import StudyCenterTabs from "@/components/study/StudyCenterTabs.jsx";
@@ -80,7 +81,7 @@ export default function StudyCenter() {
   const loadAudioNotes = async () => {
     setAudioLoading(true);
     try {
-      const notes = await base44.entities.VerseAudioReflection.list("-created_date", 20);
+      const notes = await listRecentReflections(20);
       setAudioNotes(notes || []);
     } finally {
       setAudioLoading(false);

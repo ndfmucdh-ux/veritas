@@ -35,8 +35,6 @@ import {
   Section, LibraryRow, ToggleRow, SettingLink, NotifTimeRow, EmptyMsg, SeeAll,
 } from "@/components/profile/ProfileListItems";
 
-const ADMIN_EMAILS = ["endofchaos77@gmail.com"];
-
 export default function Profile() {
   const { t } = useLang();
   const {
@@ -50,7 +48,7 @@ export default function Profile() {
   const [heroUrl, setHeroUrl] = useState(null);
   const [shareHighlight, setShareHighlight] = useState(null);
 
-  const isAdmin = user?.role === "admin" || user?.data?.role === "admin" || ADMIN_EMAILS.includes(user?.email);
+  const isAdmin = user?.role === "admin" || user?.data?.role === "admin";
 
   const handleAvatarFile = async (file) => setAvatarUrl(await uploadAvatar(file));
   const handleHeroFile = async (file) => setHeroUrl(await uploadHero(file));

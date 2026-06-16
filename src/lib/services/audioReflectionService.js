@@ -11,6 +11,11 @@ export async function listReflectionsForVerse(verseRef) {
   return base44.entities.VerseAudioReflection.filter({ verse_ref: verseRef }).catch(() => []);
 }
 
+// Most recent reflections across all verses (for archives / study panels).
+export async function listRecentReflections(limit = 20) {
+  return base44.entities.VerseAudioReflection.list("-created_date", limit).catch(() => []);
+}
+
 // Create a reflection record from an already-uploaded audio file url.
 export async function createReflection({ verseRef, book, chapter, verse, translation, audioUrl, durationSeconds, transcript, mood = "grateful", isPrivate = true }) {
   return base44.entities.VerseAudioReflection.create({
