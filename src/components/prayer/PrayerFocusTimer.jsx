@@ -21,6 +21,19 @@ export default function PrayerFocusTimer() {
     setPos({ x: 16, y: window.innerHeight - 220 });
   }, []);
 
+  // Keep the button on-screen when the viewport changes (rotate/resize) so the
+  // floating timer and its panel never end up anchored off the visible area.
+  useEffect(() => {
+    const onResize = () => {
+      setPos(p => p.x === null ? p : {
+        x: Math.max(0, Math.min(window.innerWidth - 52, p.x)),
+        y: Math.max(0, Math.min(window.innerHeight - 52, p.y)),
+      });
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   useEffect(() => {
     if (!isRunning) return;
     const interval = setInterval(() => {

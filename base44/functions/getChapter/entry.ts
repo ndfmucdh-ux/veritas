@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // ── bolls.life API ─────────────────────────────────────────────────────────
 const BOLLS_BASE = "https://bolls.life/get-chapter";
@@ -283,8 +283,12 @@ Deno.serve(async (req) => {
     const llmVerses = await fetchFromLLM(base44, tCode, book, chapter);
     if (llmVerses && llmVerses.length > 0) {
       const result = llmVerses.map(v => ({ translation: tCode, book, chapter: Number(chapter), ...v }));
-      cacheVerses(result);
-      return Response.json({ verses: result, source: 'llm' });
+      // Only permanently cache LLM output if it looks like a COMPLETE chapter
+      // (starts at verse 1). A truncated AI response would otherwise be cached
+      // forever and served to every user as authoritative "database" text.
+      const looksComplete = result.some(v => v.verse === 1) && result.length >= 3;
+      if (looksComplete) cacheVerses(result);
+      return Response.json({ verses: result, source: 'llm', cached: looksComplete });
     }
 
     return Response.json({ verses: [], source: 'empty' });
