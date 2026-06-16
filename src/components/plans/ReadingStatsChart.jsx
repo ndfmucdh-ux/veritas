@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { base44 } from "@/api/base44Client";
+import { listReadingHistory } from "@/lib/dataAccess";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -19,14 +19,15 @@ export default function ReadingStatsChart() {
       const today = new Date();
       const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      // Get reading progress for last 30 days
-      const progress = await base44.entities.ReadingProgress.list("-completed_at", 300)
-        .catch(() => []);
+      // Consolidated reading history (ReadingSession-first, legacy fallback)
+      const progress = await listReadingHistory({ limit: 300 }).catch(() => []);
 
       // Group by date and calculate time spent per day
       const dateMap = {};
       (progress || []).forEach(p => {
-        const date = new Date(p.completed_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const stamp = p.completed_at || p.created_date;
+        if (!stamp) return;
+        const date = new Date(stamp).toLocaleDateString("en-US", { month: "short", day: "numeric" });
         dateMap[date] = (dateMap[date] || 0) + (p.reading_time_seconds || 300) / 60; // Convert to minutes
       });
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Target, BookOpen, StickyNote, X, Check, ChevronDown } from "lucide-react";
+import { listReadingActivity, listInteractions } from "@/lib/dataAccess";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 
@@ -56,22 +57,28 @@ export default function WeeklyGoalsRing() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Count chapters completed this week and notes created this week
+    // Count chapters read this week and notes created this week — from REAL sessions
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     const weekAgoISO = weekAgo.toISOString();
     Promise.all([
-      base44.entities.BibleAudioProgress.filter({ completed: true }).catch(() => []),
-      base44.entities.UserNote.list("-created_date", 50).catch(() => []),
-    ]).then(([audio, notes]) => {
-      // Chapters this week from audio progress
-      const chWeek = (audio || []).filter(a => (a.updated_date || a.created_date) >= weekAgoISO).length;
-      // Notes this week
-      const nWeek = (notes || []).filter(n => (n.created_date || "") >= weekAgoISO).length;
-      setChaptersRead(chWeek);
+      listReadingActivity({ limit: 200 }),       // consolidated reading sessions
+      listInteractions({ limit: 200 }),          // consolidated verse interactions
+    ]).then(([reading, interactions]) => {
+      // Unique chapters read this week
+      const chSet = new Set(
+        (reading || [])
+          .filter(r => (r.created_date || "") >= weekAgoISO)
+          .map(r => `${r.book}:${r.chapter}`)
+      );
+      // Notes created this week (interaction has note + recent)
+      const nWeek = (interactions || []).filter(i =>
+        (i.has_note || i.note_text) && (i.last_interacted_at || i.created_date || "") >= weekAgoISO
+      ).length;
+      setChaptersRead(chSet.size);
       setNotesWritten(nWeek);
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, []);
 
   const chPct = Math.min(100, Math.round((chaptersRead / (goals.chapters || 1)) * 100));

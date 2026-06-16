@@ -1,39 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Loader2 } from "lucide-react";
+import { listReadingActivity } from "@/lib/dataAccess";
 
 export default function ReadingCalendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  
-  // Mock data: days where goal was met (e.g., [1, 3, 5, 7, 8, 10, ...])
-  const goalMetDays = [1, 2, 3, 5, 7, 8, 9, 11, 13, 15, 16, 17, 18, 20, 22, 25, 27, 28, 29, 30];
-  
+  const [activeDates, setActiveDates] = useState(new Set()); // "YYYY-MM-DD" with reading
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Real reading activity from consolidated reading sessions (legacy fallback inside)
+    listReadingActivity({ limit: 365 })
+      .then(records => {
+        const set = new Set();
+        (records || []).forEach(r => {
+          const key = (r.created_date || "").slice(0, 10);
+          if (key) set.add(key);
+        });
+        setActiveDates(set);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  
+
   const daysInMonth = getDaysInMonth(currentMonth);
   const firstDay = getFirstDayOfMonth(currentMonth);
   const days = [];
-  
+
   for (let i = 0; i < firstDay; i++) days.push(null);
   for (let i = 1; i <= daysInMonth; i++) days.push(i);
-  
+
+  const dateKey = (day) => {
+    const y = currentMonth.getFullYear();
+    const m = String(currentMonth.getMonth() + 1).padStart(2, "0");
+    const d = String(day).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+
   const monthName = currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-  const streakCount = goalMetDays.length;
-  const monthGoalPercentage = Math.round((streakCount / daysInMonth) * 100);
+  const metCount = days.filter(d => d && activeDates.has(dateKey(d))).length;
+  const monthGoalPercentage = Math.round((metCount / daysInMonth) * 100);
 
   const handlePrevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
   const handleNextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+
+  if (loading) {
+    return (
+      <div className="rounded-2xl p-5 flex items-center justify-center h-48"
+        style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
+        <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl p-5" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4" style={{ color: "#00f5ff" }} />
-          <p className="font-cinzel text-sm font-semibold text-white">Reading Streak Calendar</p>
+          <p className="font-cinzel text-sm font-semibold text-white">Reading Calendar</p>
         </div>
         <span className="text-[10px] font-cinzel px-2.5 py-1 rounded-full" style={{ background: "rgba(52,211,153,0.15)", color: "#34d399" }}>
-          {streakCount} / {daysInMonth}
+          {metCount} / {daysInMonth}
         </span>
       </div>
 
@@ -64,23 +95,25 @@ export default function ReadingCalendar() {
       {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-2">
         {days.map((day, idx) => {
-          const isMet = day && goalMetDays.includes(day);
-          const isToday = day === new Date().getDate() && currentMonth.getMonth() === new Date().getMonth();
-          
+          const isMet = day && activeDates.has(dateKey(day));
+          const isToday = day === new Date().getDate()
+            && currentMonth.getMonth() === new Date().getMonth()
+            && currentMonth.getFullYear() === new Date().getFullYear();
+
           return (
             <motion.div
               key={idx}
               whileHover={day ? { scale: 1.05 } : {}}
               className="aspect-square rounded-lg flex items-center justify-center text-xs font-cinzel cursor-pointer"
               style={{
-                background: isMet 
-                  ? "rgba(52,211,153,0.2)" 
-                  : day 
-                  ? "rgba(255,255,255,0.04)" 
+                background: isMet
+                  ? "rgba(52,211,153,0.2)"
+                  : day
+                  ? "rgba(255,255,255,0.04)"
                   : "transparent",
-                border: isToday 
-                  ? "1.5px solid #00f5ff" 
-                  : isMet 
+                border: isToday
+                  ? "1.5px solid #00f5ff"
+                  : isMet
                   ? "1px solid rgba(52,211,153,0.3)"
                   : "1px solid rgba(255,255,255,0.07)",
                 color: day ? (isMet ? "#34d399" : "rgba(255,255,255,0.4)") : "transparent"
@@ -100,7 +133,7 @@ export default function ReadingCalendar() {
       {/* Summary */}
       <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>This month goal achievement</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Days read this month</p>
           <span className="font-cinzel font-bold text-white">{monthGoalPercentage}%</span>
         </div>
         <div className="h-1.5 rounded-full overflow-hidden mt-2" style={{ background: "rgba(255,255,255,0.07)" }}>
