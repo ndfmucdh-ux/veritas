@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Lock, Star, Flame, Trophy, Zap, BookOpen, ChevronRight, Loader2, Map } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { loadPlanDashboard } from "@/lib/services/plansService";
 import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const MILESTONE_INTERVAL = 5;
@@ -35,12 +35,9 @@ export default function StudyProgressMap() {
   const [activePlan, setActivePlan] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
-      base44.entities.CustomPlan.list("-created_date", 10).catch(() => []),
-    ]).then(([prog, custom]) => {
-      setProgress(prog || []);
-      setCustomPlans(custom || []);
+    loadPlanDashboard().then(({ progress, customPlans }) => {
+      setProgress(progress);
+      setCustomPlans(customPlans);
       setLoading(false);
     });
   }, []);

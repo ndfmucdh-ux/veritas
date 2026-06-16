@@ -1,0 +1,51 @@
+# Service Layer Architecture
+
+A clean-architecture pass that strengthens the data/service layer, decouples
+components from the database SDK, and adds performance fields — **without
+changing behavior or breaking any import paths** (conservative refactor).
+
+## Layers
+
+```
+UI (pages/ + components/)        ← rendering only, no DB knowledge
+        │  imports hooks / services
+        ▼
+Hooks (hooks/)                   ← stateful glue (useLibraryData, usePlansData…)
+        │  imports services
+        ▼
+Services (lib/services/)         ← domain logic, the ONLY layer touching base44.entities
+        │
+        ├─ libraryService.js     ← bookmarks / highlights / notes (UserVerseInteraction)
+        ├─ readingService.js     ← reading sessions, history, activity (ReadingSession)
+        └─ plansService.js       ← preset + custom plan progress (CustomPlan)
+        │  imports key helpers
+        ▼
+Domain helpers (lib/verseKeys.js)  ← canonical keys + book ordering
+        ▼
+Persistence (entities/ via @/api/base44Client)
+```
+
+## Key decisions
+
+- **Separation of concerns** — `lib/dataAccess.js` was a flat grab-bag mixing
+  library, reading, plan, and stats logic. It is now split into three focused,
+  single-responsibility domain services.
+- **Backwards compatibility** — `lib/dataAccess.js` is now a thin **re-export
+  barrel**. Every existing `@/lib/dataAccess` import keeps working unchanged.
+  New code should import the specific service (e.g. `@/lib/services/plansService`).
+- **Reduced coupling** — components no longer call `base44.entities.*` directly
+  for these domains. Example: `StudyProgressMap` now calls
+  `loadPlanDashboard()` instead of two raw entity queries.
+- **Single source of consolidated-vs-legacy logic** — only the library/reading
+  services know about the migration fallback shape.
+
+## Database performance additions (additive only)
+
+| Entity | New field | Why |
+| --- | --- | --- |
+| `ReadingSession` | `reading_day` (date) | Indexed YYYY-MM-DD for fast day-range / streak queries without parsing `session_key`. |
+| `CustomPlan` | `completed_count` (number) | Denormalized progress count — read plan progress without loading the full `completed_chapters` array. |
+| `UserVerseInteraction` | `book_order`, `has_note` (pre-existing) | Indexed canonical ordering + fast noted-verse filtering. |
+
+All additions are additive and default-valued, so existing records and the live
+migration remain valid (zero-breakage rollout).

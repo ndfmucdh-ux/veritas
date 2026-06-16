@@ -50,6 +50,11 @@
         "type": "string"
       },
       "description": "Array of 'Book:chapter' strings that are done"
+    },
+    "completed_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Denormalized count of completed_chapters for fast progress reads without loading the full array"
     }
   },
   "required": [

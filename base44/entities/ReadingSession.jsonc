@@ -21,6 +21,11 @@
     "translation": {
       "type": "string"
     },
+    "reading_day": {
+      "type": "string",
+      "format": "date",
+      "description": "Denormalized YYYY-MM-DD of completion for fast indexed day-range and streak queries without parsing session_key"
+    },
     "started_at": {
       "type": "string",
       "format": "date-time"
