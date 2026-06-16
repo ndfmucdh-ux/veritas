@@ -1,0 +1,81 @@
+import { useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
+
+export default function useProfileData() {
+  const [user, setUser] = useState(null);
+  const [bookmarks, setBookmarks] = useState([]);
+  const [highlights, setHighlights] = useState([]);
+  const [notes, setNotes] = useState([]);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      base44.auth.me().catch(() => null),
+      base44.entities.Bookmark.list("-created_date", 20).catch(() => []),
+      base44.entities.UserHighlight.list("-created_date", 20).catch(() => []),
+      base44.entities.UserNote.list("-created_date", 20).catch(() => []),
+      base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
+    ]).then(([u, bm, hl, nt, rp]) => {
+      setUser(u);
+      setBookmarks(bm || []);
+      setHighlights(hl || []);
+      setNotes(nt || []);
+      setPlans(rp || []);
+      if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
+        sessionStorage.setItem("veritas_display_name", u.full_name);
+      }
+      if (u?.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
+        sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const saveName = async (name) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    await base44.auth.updateMe({ full_name: trimmed });
+    setUser(u => ({ ...u, full_name: trimmed }));
+    sessionStorage.setItem("veritas_display_name", trimmed);
+  };
+
+  const uploadAvatar = async (file) => {
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.auth.updateMe({ avatar_url: file_url });
+    sessionStorage.setItem("veritas_avatar_url", file_url);
+    return file_url;
+  };
+
+  const uploadHero = async (file) => {
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.auth.updateMe({ hero_url: file_url });
+    return file_url;
+  };
+
+  const downloadLibrary = async () => {
+    const res = await base44.functions.invoke("exportLibraryData", {});
+    const blob = new Blob([res.data], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `veritas-library-${new Date().toISOString().slice(0, 10)}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  return {
+    user,
+    bookmarks,
+    highlights,
+    notes,
+    plans,
+    loading,
+    saveName,
+    uploadAvatar,
+    uploadHero,
+    downloadLibrary,
+  };
+}

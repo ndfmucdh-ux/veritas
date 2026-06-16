@@ -1,12 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Highlighter, StickyNote, Image,
-  LogOut, ChevronRight, Bell, Moon, Shield, Download,
+  LogOut, Bell, Moon, Shield, Download,
   TrendingUp, Calendar, Target,
-  BookMarked, Edit3, Check, X, Camera, Loader2, Headphones, FileText, Users, Mail, Sparkles
+  BookMarked, Headphones, FileText, Users, Mail, Sparkles
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import OfflineBibleManager from "@/components/profile/OfflineBibleManager";
@@ -28,121 +27,37 @@ import CalendarSyncPanel from "@/components/profile/CalendarSyncPanel";
 import PersonalizedDevotionalPanel from "@/components/profile/PersonalizedDevotionalPanel";
 import ProfileStatsRow from "@/components/profile/ProfileStatsRow";
 import ProfileTabBar from "@/components/profile/ProfileTabBar";
+import ProfileHeroHeader from "@/components/profile/ProfileHeroHeader";
+import { base44 } from "@/api/base44Client";
+import useProfileData from "@/hooks/useProfileData";
+import {
+  Section, LibraryRow, ToggleRow, SettingLink, NotifTimeRow, EmptyMsg, SeeAll,
+} from "@/components/profile/ProfileListItems";
 
-// Default hero: beautiful deep-space starfield — keep this as the permanent default
-const DEFAULT_HERO = "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80";
+const ADMIN_EMAILS = ["endofchaos77@gmail.com"];
 
 // Stable placeholder chart data — random values cause infinite re-renders
-const PLACEHOLDER_CHART_DATA = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => ({
+const CHART_DATA = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d, i) => ({
   day: d, chapters: [1, 2, 0, 3, 1, 2, 4][i],
 }));
-const buildChartData = () => PLACEHOLDER_CHART_DATA;
 
 export default function Profile() {
   const { t } = useLang();
-  const [user, setUser] = useState(null);
-  const [bookmarks, setBookmarks] = useState([]);
-  const [highlights, setHighlights] = useState([]);
-  const [notes, setNotes] = useState([]);
-  const [plans, setPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    user, bookmarks, highlights, notes, plans, loading,
+    saveName, uploadAvatar, uploadHero, downloadLibrary,
+  } = useProfileData();
   const [activeTab, setActiveTab] = useState("overview");
   const [notifEnabled, setNotifEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
-  const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [heroUrl, setHeroUrl] = useState(null);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [uploadingHero, setUploadingHero] = useState(false);
   const [shareHighlight, setShareHighlight] = useState(null);
 
-  const avatarInputRef = useRef(null);
-  const heroInputRef = useRef(null);
-
-  useEffect(() => {
-    Promise.all([
-      base44.auth.me().catch(() => null),
-      base44.entities.Bookmark.list("-created_date", 20).catch(() => []),
-      base44.entities.UserHighlight.list("-created_date", 20).catch(() => []),
-      base44.entities.UserNote.list("-created_date", 20).catch(() => []),
-      base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
-    ]).then(([u, bm, hl, nt, rp]) => {
-      setUser(u);
-      setBookmarks(bm || []);
-      setHighlights(hl || []);
-      setNotes(nt || []);
-      setPlans(rp || []);
-      const savedName = sessionStorage.getItem("veritas_display_name") || u?.full_name || "";
-      const savedAvatar = sessionStorage.getItem("veritas_avatar_url") || u?.avatar_url || null;
-      setNameInput(savedName);
-      setAvatarUrl(savedAvatar);
-      setHeroUrl(u?.hero_url || null);
-      // Keep session in sync with actual user data
-      if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
-        sessionStorage.setItem("veritas_display_name", u.full_name);
-      }
-      if (u?.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
-        sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
-      }
-      setLoading(false);
-    });
-  }, []);
-
-  const handleLogout = () => base44.auth.logout();
-
-  const handleDownloadLibrary = async () => {
-    const res = await base44.functions.invoke("exportLibraryData", {});
-    // res.data is the markdown text
-    const blob = new Blob([res.data], { type: "text/markdown;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `veritas-library-${new Date().toISOString().slice(0, 10)}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const saveName = async () => {
-    if (!nameInput.trim()) return;
-    const trimmed = nameInput.trim();
-    await base44.auth.updateMe({ full_name: trimmed });
-    setUser(u => ({ ...u, full_name: trimmed }));
-    sessionStorage.setItem("veritas_display_name", trimmed);
-    setEditingName(false);
-  };
-
-  const handleAvatarUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingAvatar(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    await base44.auth.updateMe({ avatar_url: file_url });
-    setAvatarUrl(file_url);
-    sessionStorage.setItem("veritas_avatar_url", file_url);
-    setUploadingAvatar(false);
-  };
-
-  const handleHeroUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingHero(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    await base44.auth.updateMe({ hero_url: file_url });
-    setHeroUrl(file_url);
-    setUploadingHero(false);
-  };
-
-
-
-  // role may be at top-level or inside data sub-object depending on auth method
-  // Also allow specific known admin emails as a guaranteed fallback
-  const ADMIN_EMAILS = ["endofchaos77@gmail.com"];
   const isAdmin = user?.role === "admin" || user?.data?.role === "admin" || ADMIN_EMAILS.includes(user?.email);
 
-  const chartData = buildChartData();
+  const handleAvatarFile = async (file) => setAvatarUrl(await uploadAvatar(file));
+  const handleHeroFile = async (file) => setHeroUrl(await uploadHero(file));
 
   if (loading) {
     return (
@@ -152,89 +67,24 @@ export default function Profile() {
     );
   }
 
+  const resolvedAvatar = avatarUrl ?? (sessionStorage.getItem("veritas_avatar_url") || user?.avatar_url || null);
+  const resolvedHero = heroUrl ?? (user?.hero_url || null);
+
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       <AnimatePresence>
         {shareHighlight && <HighlightImageShare highlight={shareHighlight} onClose={() => setShareHighlight(null)} />}
       </AnimatePresence>
-      {/* ── Hero Header ── */}
-      {/* Default hero is the beautiful deep-space starfield photo — users can replace with their own */}
-      <div className="relative h-52 overflow-hidden">
-        <img
-          src={heroUrl || DEFAULT_HERO}
-          alt=""
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(8,12,24,0.92) 80%, rgb(8,12,24) 100%)" }} />
 
-        {/* Hero upload button */}
-        <button
-          onClick={() => heroInputRef.current?.click()}
-          className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-inter"
-          style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)" }}
-        >
-          {uploadingHero ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
-          Change Cover
-        </button>
-        <input ref={heroInputRef} type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
+      <ProfileHeroHeader
+        user={user}
+        avatarUrl={resolvedAvatar}
+        heroUrl={resolvedHero}
+        onSaveName={saveName}
+        onAvatarFile={handleAvatarFile}
+        onHeroFile={handleHeroFile}
+      />
 
-        {/* Avatar + name */}
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-5 flex items-end gap-4">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="relative flex-shrink-0"
-          >
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="avatar" className="w-20 h-20 rounded-2xl object-cover"
-                style={{ border: "2px solid rgba(251,191,36,0.35)", boxShadow: "0 0 24px rgba(251,191,36,0.12)" }} />
-            ) : (
-              <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold"
-                style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.18), rgba(251,191,36,0.05))", border: "2px solid rgba(251,191,36,0.35)", boxShadow: "0 0 24px rgba(251,191,36,0.12)" }}
-              >
-                {user?.full_name?.[0]?.toUpperCase() || "✝"}
-              </div>
-            )}
-            {/* Always-visible camera button */}
-            <button
-              onClick={() => avatarInputRef.current?.click()}
-              className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl flex items-center justify-center z-10"
-              style={{ background: "rgba(10,15,30,0.95)", border: "1.5px solid rgba(251,191,36,0.35)", boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-            >
-              {uploadingAvatar ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Camera className="w-3.5 h-3.5" style={{ color: "#fbbf24" }} />}
-            </button>
-          </motion.div>
-          <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-
-          <div className="flex-1 min-w-0 pb-1">
-            {editingName ? (
-              <div className="flex items-center gap-2">
-                <input
-                  value={nameInput}
-                  onChange={e => setNameInput(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && saveName()}
-                  className="bg-transparent border-b border-white/40 text-white font-cinzel text-lg font-bold focus:outline-none flex-1 min-w-0"
-                  autoFocus
-                />
-                <button onClick={saveName} className="text-white/60 hover:text-white transition-colors"><Check className="w-4 h-4" /></button>
-                <button onClick={() => { setNameInput(user?.full_name || ""); setEditingName(false); }} className="text-white/40"><X className="w-4 h-4" /></button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <h1 className="font-cinzel text-lg font-bold text-white truncate">{sessionStorage.getItem("veritas_display_name") || user?.full_name || "Believer"}</h1>
-                <button onClick={() => setEditingName(true)}>
-                  <Edit3 className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
-                </button>
-              </div>
-            )}
-            <p className="text-xs font-inter truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{user?.email}</p>
-          </div>
-        </div>
-      </div>
-
-
-      {/* ── Quick Stats Row ── */}
       <ProfileStatsRow
         sessions={plans.length}
         highlights={highlights.length}
@@ -242,7 +92,6 @@ export default function Profile() {
         saved={bookmarks.length}
       />
 
-      {/* ── Tab Bar ── */}
       <ProfileTabBar activeTab={activeTab} onTabChange={setActiveTab} isAdmin={isAdmin} />
 
       <AnimatePresence mode="wait">
@@ -251,28 +100,22 @@ export default function Profile() {
           {/* ── OVERVIEW TAB ── */}
           {activeTab === "overview" && (
             <div className="px-5 space-y-5">
-              {/* Daily Summary */}
               <DailySummaryCard />
 
-              {/* Daily Reading Ring */}
               <Section label="Today's Reading Goal" icon={Target}>
                 <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.location.href = "/plans"}>
                   <DailyReadingRing chaptersReadToday={0} />
                 </motion.div>
               </Section>
 
-              {/* Reading Goals */}
               <Section label="Reading Goals" icon={Target}>
                 <ReadingGoals />
               </Section>
 
-              {/* Reading Calendar */}
               <ReadingCalendar />
 
-              {/* Monthly Progress Chart */}
               <MonthlyProgressChart />
 
-              {/* Community Reading Plans */}
               <Section label="Join the Community" icon={Users}>
                 <SharedReadingPlan />
               </Section>
@@ -340,36 +183,30 @@ export default function Profile() {
           {/* ── STATS TAB ── */}
           {activeTab === "stats" && (
             <div className="px-5 space-y-5">
-              {/* Reading Stats Overview */}
               <Section label="Reading Stats & Activity" icon={TrendingUp}>
                 <ReadingStatsOverview />
               </Section>
 
-              {/* Calendar Sync */}
               <Section label="Sync with Calendar" icon={Calendar}>
                 <CalendarSyncPanel />
               </Section>
 
-              {/* Personalized Devotional */}
               <Section label="AI Personalized Devotional" icon={Sparkles}>
                 <PersonalizedDevotionalPanel />
               </Section>
 
-              {/* Dashboard Summary */}
               <Section label="Reading Summary" icon={TrendingUp}>
                 <DashboardSummary readingProgress={plans.length} notesCount={notes.length} highlightsCount={highlights.length} />
               </Section>
 
-              {/* Audio Summary */}
               <Section label="Audio Listening" icon={Headphones}>
                 <AudioSummary />
               </Section>
 
-              {/* Reading chart */}
               <Section label="Reading Activity (Last 7 Days)" icon={TrendingUp}>
                 <div className="h-36">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                    <AreaChart data={CHART_DATA} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
                       <defs>
                         <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stopColor="#00f5ff" stopOpacity={0.35} />
@@ -389,7 +226,6 @@ export default function Profile() {
                 </div>
               </Section>
 
-              {/* Detailed stats */}
               <Section label="Library Metrics" icon={BookOpen}>
                 <div className="grid grid-cols-2 gap-3">
                   {[
@@ -438,8 +274,7 @@ export default function Profile() {
                   <ReadingPlanCacheSettings />
                 </div>
                 <SettingLink icon={Shield} label="Private Notes" sub="All notes are encrypted by default" color="#34d399" tag="On" />
-                {/* Download Library Button */}
-                <button onClick={handleDownloadLibrary}
+                <button onClick={downloadLibrary}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-inter text-left transition-colors border-b"
                   style={{ borderColor: "rgba(255,255,255,0.05)" }}>
                   <FileText className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
@@ -455,7 +290,7 @@ export default function Profile() {
               </Section>
 
               <Section label="Account" icon={LogOut}>
-                <button onClick={handleLogout}
+                <button onClick={() => base44.auth.logout()}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-inter text-left transition-colors"
                   style={{ background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.15)", color: "#f87171" }}>
                   <LogOut className="w-4 h-4" />
@@ -468,99 +303,5 @@ export default function Profile() {
         </motion.div>
       </AnimatePresence>
     </div>
-  );
-}
-
-/* ── Sub-components ── */
-function Section({ label, icon: Icon, children }) {
-  return (
-    <div>
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
-        <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</p>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function LibraryRow({ verseRef, sub, href, color }) {
-  return (
-    <a href={href} className="flex items-center gap-3 py-2.5 border-b transition-colors hover:opacity-80" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-      <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: color }} />
-      <div className="flex-1 min-w-0">
-        <p className="font-cinzel text-sm text-white truncate">{verseRef}</p>
-        <p className="text-[10px] font-inter capitalize" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>
-      </div>
-      <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.2)" }} />
-    </a>
-  );
-}
-
-function ToggleRow({ icon: Icon, label, value, onChange, color }) {
-  return (
-    <div className="flex items-center gap-3 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-      <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />
-      <p className="flex-1 text-sm font-inter" style={{ color: "rgba(255,255,255,0.7)" }}>{label}</p>
-      <motion.button onClick={onChange}
-        className="w-11 h-6 rounded-full relative flex items-center px-1"
-        style={{ background: value ? "rgba(0,245,255,0.25)" : "rgba(255,255,255,0.08)" }}>
-        <motion.span animate={{ x: value ? 18 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-          className="w-4 h-4 rounded-full bg-white shadow-sm" />
-      </motion.button>
-    </div>
-  );
-}
-
-function SettingLink({ icon: Icon, label, sub, color, tag }) {
-  return (
-    <div className="flex items-center gap-3 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-      <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>{label}</p>
-        {sub && <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>}
-      </div>
-      {tag
-        ? <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full" style={{ background: "rgba(52,211,153,0.15)", color: "#34d399" }}>{tag}</span>
-        : <ChevronRight className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.2)" }} />
-      }
-    </div>
-  );
-}
-
-function NotifTimeRow({ label, settingKey, defaultTime }) {
-  const [time, setTime] = useState(() => localStorage.getItem(`veritas_notif_${settingKey}`) || defaultTime);
-  const handleChange = (e) => {
-    setTime(e.target.value);
-    localStorage.setItem(`veritas_notif_${settingKey}`, e.target.value);
-  };
-  return (
-    <div className="flex items-center gap-3 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-      <p className="flex-1 text-sm font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>{label}</p>
-      <input
-        type="time"
-        value={time}
-        onChange={handleChange}
-        className="text-xs font-cinzel px-3 py-1.5 rounded-xl focus:outline-none"
-        style={{ background: "rgba(0,245,255,0.07)", border: "1px solid rgba(0,245,255,0.2)", color: "#00f5ff" }}
-      />
-    </div>
-  );
-}
-
-function EmptyMsg({ icon, text }) {
-  return (
-    <div className="flex items-center gap-2 py-4" style={{ color: "rgba(255,255,255,0.25)" }}>
-      <span className="text-lg">{icon}</span>
-      <p className="text-sm font-inter">{text}</p>
-    </div>
-  );
-}
-
-function SeeAll({ to }) {
-  return (
-    <a href={to} className="flex items-center gap-1 text-xs font-cinzel mt-2" style={{ color: "#00f5ff" }}>
-      See all <ChevronRight className="w-3 h-3" />
-    </a>
   );
 }
