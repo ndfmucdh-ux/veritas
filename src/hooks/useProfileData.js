@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { listRecentLibrary, listPlanSessions } from "@/lib/dataAccess";
 
 export default function useProfileData() {
   const [user, setUser] = useState(null);
@@ -12,15 +13,13 @@ export default function useProfileData() {
   useEffect(() => {
     Promise.all([
       base44.auth.me().catch(() => null),
-      base44.entities.Bookmark.list("-created_date", 20).catch(() => []),
-      base44.entities.UserHighlight.list("-created_date", 20).catch(() => []),
-      base44.entities.UserNote.list("-created_date", 20).catch(() => []),
-      base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []),
-    ]).then(([u, bm, hl, nt, rp]) => {
+      listRecentLibrary({ limit: 20 }),
+      listPlanSessions(),
+    ]).then(([u, lib, rp]) => {
       setUser(u);
-      setBookmarks(bm || []);
-      setHighlights(hl || []);
-      setNotes(nt || []);
+      setBookmarks(lib.bookmarks || []);
+      setHighlights(lib.highlights || []);
+      setNotes(lib.notes || []);
       setPlans(rp || []);
       if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
         sessionStorage.setItem("veritas_display_name", u.full_name);

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Check, StickyNote, BookOpen, Mic } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { setNote } from "@/lib/dataAccess";
+import { setNote, getNote } from "@/lib/dataAccess";
 import AudioReflectionRecorder from "./AudioReflectionRecorder";
 import AudioReflectionPlayback from "./AudioReflectionPlayback";
 
@@ -23,13 +23,13 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
     setShowAudioRecorder(false);
     setAudioReflections([]);
 
-    // Load note and audio reflections in parallel
+    // Load note (consolidated-first) and audio reflections in parallel
     const ref = `${book} ${chapter}:${verse.verse} ${translation}`;
     Promise.all([
-      base44.entities.UserNote.filter({ verse_ref: ref }),
+      getNote({ book, chapter, verse: verse.verse, translation }),
       base44.entities.VerseAudioReflection.filter({ verse_ref: ref }),
-    ]).then(([notes, reflections]) => {
-      if (notes?.[0]) setNoteText(notes[0].note_text);
+    ]).then(([noteTextValue, reflections]) => {
+      if (noteTextValue) setNoteText(noteTextValue);
       setAudioReflections(reflections || []);
     }).catch(() => {});
 

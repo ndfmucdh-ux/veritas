@@ -3,6 +3,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { motion } from "framer-motion";
 import { CalendarDays, BookOpen, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { listReadingActivity } from "@/lib/dataAccess";
 
 export default function ReadingStatsOverview() {
   const [stats, setStats] = useState(null);
@@ -15,12 +16,8 @@ export default function ReadingStatsOverview() {
         const user = await base44.auth.me();
         if (!user) return;
 
-        // Fetch reading progress data
-        const progress = await base44.entities.ReadingProgress.filter(
-          { created_by: user.email },
-          '-created_date',
-          50
-        );
+        // Consolidated reading activity (ReadingSession-first, legacy fallback)
+        const progress = await listReadingActivity({ limit: 50 });
 
         const activeDays = new Set(
           progress.map(p => new Date(p.created_date).toISOString().slice(0, 10))

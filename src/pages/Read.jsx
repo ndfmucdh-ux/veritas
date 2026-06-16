@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Maximize2, Minimize2, ChevronUp, Copy, Check, Columns, CheckSquare } from "lucide-react";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 import { base44 } from "@/api/base44Client";
+import { loadChapterAnnotations, recordReadingSession } from "@/lib/dataAccess";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { getOfflineVerse, getOfflineVerseAsync } from "@/lib/offlineBible";
 import { BIBLE_BOOKS } from "@/lib/bibleData";
@@ -160,23 +161,15 @@ export default function Read() {
 
   const trackReading = (versesLoaded) => {
     if (!versesLoaded || versesLoaded.length === 0) return;
-    base44.entities.ReadingProgress.create({ book, chapter, translation, completed_at: new Date().toISOString() }).catch(() => {});
+    // Idempotent reading session (consolidated), keyed per user/day/chapter
+    recordReadingSession({ book, chapter, translation }).catch(() => {});
     // Show guided reflection after reading
     setTimeout(() => setShowReflection(true), 1500);
   };
 
   const loadAnnotations = async () => {
-    try {
-      const [hl, bm, nt] = await Promise.all([
-        base44.entities.UserHighlight.filter({ book, chapter }),
-        base44.entities.Bookmark.filter({ book, chapter }),
-        base44.entities.UserNote.filter({ book, chapter }),
-      ]);
-      const hlMap = {}; (hl || []).forEach(h => { hlMap[h.verse] = { color: h.color }; });
-      const bmMap = {}; (bm || []).forEach(b => { bmMap[b.verse] = true; });
-      const ntMap = {}; (nt || []).forEach(n => { ntMap[n.verse] = n.note_text; });
-      setHighlights(hlMap); setBookmarks(bmMap); setNotes(ntMap);
-    } catch {}
+    const { highlights: hlMap, bookmarks: bmMap, notes: ntMap } = await loadChapterAnnotations({ book, chapter });
+    setHighlights(hlMap); setBookmarks(bmMap); setNotes(ntMap);
   };
 
   const handleVerseUpdate = ({ type, verseNum, data }) => {

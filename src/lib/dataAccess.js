@@ -10,7 +10,7 @@
 // strategy in docs/DATABASE_ARCHITECTURE.md.
 
 import { base44 } from "@/api/base44Client";
-import { verseKey, buildInteractionBase } from "@/lib/verseKeys";
+import { verseKey, buildInteractionBase, bookOrder } from "@/lib/verseKeys";
 
 const PAGE = 50;
 
@@ -84,3 +84,102 @@ export const setHighlight = (descriptor, color) =>
 
 export const setNote = (descriptor, noteText, tags = []) =>
   upsertInteraction(descriptor, { note_text: noteText, has_note: !!noteText, tags });
+
+// --- Chapter-scoped annotations (Reader) -------------------------------------
+// Returns { highlights: {verse: {color}}, bookmarks: {verse: true}, notes: {verse: text} }
+// from the consolidated source, with legacy fallback.
+export async function loadChapterAnnotations({ book, chapter }) {
+  const consolidated = await base44.entities.UserVerseInteraction
+    .filter({ book, chapter }, "-last_interacted_at", 200).catch(() => []);
+
+  if (consolidated && consolidated.length > 0) {
+    const highlights = {}, bookmarks = {}, notes = {};
+    for (const i of consolidated) {
+      if (i.highlight_color && i.highlight_color !== "none") highlights[i.verse] = { color: i.highlight_color };
+      if (i.is_bookmarked) bookmarks[i.verse] = true;
+      if (i.has_note || i.note_text) notes[i.verse] = i.note_text;
+    }
+    return { highlights, bookmarks, notes, source: "consolidated" };
+  }
+
+  const [hl, bm, nt] = await Promise.all([
+    base44.entities.UserHighlight.filter({ book, chapter }).catch(() => []),
+    base44.entities.Bookmark.filter({ book, chapter }).catch(() => []),
+    base44.entities.UserNote.filter({ book, chapter }).catch(() => []),
+  ]);
+  const highlights = {}; (hl || []).forEach(h => { highlights[h.verse] = { color: h.color }; });
+  const bookmarks = {}; (bm || []).forEach(b => { bookmarks[b.verse] = true; });
+  const notes = {}; (nt || []).forEach(n => { notes[n.verse] = n.note_text; });
+  return { highlights, bookmarks, notes, source: "legacy" };
+}
+
+// Read a single verse's note text (side panel), consolidated-first.
+export async function getNote({ book, chapter, verse, translation }) {
+  const key = verseKey(translation, book, chapter, verse);
+  const c = await base44.entities.UserVerseInteraction.filter({ verse_key: key }).catch(() => []);
+  if (c && c[0]) return c[0].note_text || "";
+  const legacy = await base44.entities.UserNote
+    .filter({ verse_ref: `${book} ${chapter}:${verse} ${translation}` }).catch(() => []);
+  return legacy?.[0]?.note_text || "";
+}
+
+// --- Reading sessions (progress) --------------------------------------------
+// Idempotent completion record keyed by session_key.
+export async function recordReadingSession({ book, chapter, translation, planId, readingTimeSeconds = 0 }) {
+  const day = new Date().toISOString().slice(0, 10);
+  const me = await base44.auth.me().catch(() => null);
+  const session_key = `${me?.email || "anon"}|${day}|${translation || "KJV"}|${book}|${chapter}`;
+  const existing = await base44.entities.ReadingSession.filter({ session_key }).catch(() => []);
+  if (existing && existing[0]) return existing[0];
+  return base44.entities.ReadingSession.create({
+    session_key, plan_id: planId, book, book_order: bookOrder(book), chapter,
+    translation: translation || "KJV", completed_at: new Date().toISOString(),
+    reading_time_seconds: readingTimeSeconds, completion_source: "reader",
+  }).catch(() => null);
+}
+
+// Reading history (consolidated ReadingSession first, legacy ReadingProgress fallback).
+export async function listReadingHistory({ limit = 20 } = {}) {
+  const sessions = await base44.entities.ReadingSession.list("-completed_at", limit).catch(() => []);
+  if (sessions && sessions.length > 0) return sessions;
+  return base44.entities.ReadingProgress.list("-completed_at", limit).catch(() => []);
+}
+
+// Plan-linked sessions for the profile (consolidated first).
+export async function listPlanSessions() {
+  const sessions = await base44.entities.ReadingSession.filter({ plan_id: { $exists: true } }).catch(() => []);
+  if (sessions && sessions.length > 0) return sessions;
+  return base44.entities.ReadingProgress.filter({ plan_id: { $exists: true } }).catch(() => []);
+}
+
+// Recent library items for the profile (consolidated first, capped).
+export async function listRecentLibrary({ limit = 20 } = {}) {
+  const interactions = await listInteractions({ limit });
+  if (interactions.length > 0) return deriveViews(interactions);
+  const [bm, hl, nt] = await Promise.all([
+    base44.entities.Bookmark.list("-created_date", limit).catch(() => []),
+    base44.entities.UserHighlight.list("-created_date", limit).catch(() => []),
+    base44.entities.UserNote.list("-created_date", limit).catch(() => []),
+  ]);
+  return { bookmarks: bm || [], highlights: hl || [], notes: nt || [] };
+}
+
+// Reading activity for stats (consolidated ReadingSession first, legacy fallback).
+// Returns rows with created_date / book / chapters_read shape used by charts.
+export async function listReadingActivity({ limit = 50 } = {}) {
+  const sessions = await base44.entities.ReadingSession.list("-completed_at", limit).catch(() => []);
+  if (sessions && sessions.length > 0) {
+    return sessions.map(s => ({
+      created_date: s.completed_at || s.created_date,
+      book: s.book,
+      chapters_read: 1,
+    }));
+  }
+  return base44.entities.ReadingProgress.list("-created_date", limit).catch(() => []);
+}
+
+// Consolidated-aware note delete (used by note managers).
+export async function deleteNoteItem(item) {
+  if (item?._interaction) return base44.entities.UserVerseInteraction.update(item.id, { note_text: "", has_note: false });
+  return base44.entities.UserNote.delete(item.id);
+}

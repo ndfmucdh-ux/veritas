@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StickyNote, FolderPlus, Folder, BookOpen, Trash2, SortAsc, Calendar, ChevronDown, ChevronUp, X, Check, Plus } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { deleteNoteItem } from "@/lib/dataAccess";
 
 const FOLDER_COLORS = ["#00f5ff", "#fbbf24", "#a78bfa", "#34d399", "#f87171", "#f472b6", "#fb923c"];
 const FOLDER_ICONS = ["📁", "✝️", "🙏", "📖", "⭐", "🔥", "💎", "🌿", "🕊️"];
@@ -59,7 +59,8 @@ export default function NotesManager({ notes, onNotesChange }) {
   };
 
   const deleteNote = async (id) => {
-    await base44.entities.UserNote.delete(id);
+    const item = notes.find(n => n.id === id) || { id };
+    await deleteNoteItem(item);
     onNotesChange(notes.filter(n => n.id !== id));
     // Remove from all folders too
     saveFolders(folders.map(f => ({ ...f, noteIds: (f.noteIds || []).filter(nid => nid !== id) })));

@@ -6,12 +6,25 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const [bookmarks, highlights, notes, folders] = await Promise.all([
-      base44.entities.Bookmark.list('-created_date', 500),
-      base44.entities.UserHighlight.list('-created_date', 500),
-      base44.entities.UserNote.list('-created_date', 500),
+    // Consolidated source first (one row per verse), legacy fallback.
+    const [interactions, folders] = await Promise.all([
+      base44.entities.UserVerseInteraction.list('-last_interacted_at', 1000).catch(() => []),
       base44.entities.VerseFolder.list('-created_date', 100),
     ]);
+
+    let bookmarks, highlights, notes;
+    if (interactions && interactions.length > 0) {
+      bookmarks = interactions.filter(i => i.is_bookmarked);
+      highlights = interactions.filter(i => i.highlight_color && i.highlight_color !== 'none')
+        .map(i => ({ ...i, color: i.highlight_color }));
+      notes = interactions.filter(i => i.has_note || i.note_text);
+    } else {
+      [bookmarks, highlights, notes] = await Promise.all([
+        base44.entities.Bookmark.list('-created_date', 500),
+        base44.entities.UserHighlight.list('-created_date', 500),
+        base44.entities.UserNote.list('-created_date', 500),
+      ]);
+    }
 
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Clock, Loader2, ChevronRight } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { listReadingHistory } from "@/lib/dataAccess";
 
 export default function ReadingHistory() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.ReadingProgress.list("-completed_at", 20)
+    listReadingHistory({ limit: 20 })
       .then(data => setHistory(data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
