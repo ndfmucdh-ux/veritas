@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
  * - className: extra classes
  */
 export default function EmptyState({ icon, title, description, action, className }) {
-  const isComponentIcon = typeof icon === "function";
+  const isComponentIcon = typeof icon === "function" || (typeof icon === "object" && icon?.render);
   const IconComp = isComponentIcon ? icon : null;
 
   return (
