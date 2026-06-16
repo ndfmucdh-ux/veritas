@@ -37,7 +37,7 @@ export default function Read() {
   const targetVerse = Number(params.get("verse")) || null;
   const [verses, setVerses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [immersive, setImmersive] = useState(false);
+  const [immersive, setImmersive] = useState(params.get("immersive") === "1");
   const [showSettings, setShowSettings] = useState(false);
   const [fontSize, setFontSize] = useState(18);
   const [fontFamily, setFontFamily] = useState("playfair");
@@ -189,10 +189,20 @@ export default function Read() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const toggleImmersive = () => {
+    const next = !immersive;
+    setImmersive(next);
+    const sp = new URLSearchParams(window.location.search);
+    if (next) sp.set("immersive", "1");
+    else sp.delete("immersive");
+    navigate(`/read?${sp.toString()}`, { replace: true });
+  };
+
   const handleNavigate = (newBook, newChapter) => {
     setBook(newBook);
     setChapter(newChapter);
-    navigate(`/read?book=${encodeURIComponent(newBook)}&chapter=${newChapter}`, { replace: false });
+    const immParam = immersive ? "&immersive=1" : "";
+    navigate(`/read?book=${encodeURIComponent(newBook)}&chapter=${newChapter}${immParam}`, { replace: false });
     containerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -236,7 +246,7 @@ export default function Read() {
           <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
           <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title="AI Devotional">✨</IconBtn>
           <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title="Reader settings"><Settings className="w-4 h-4" /></IconBtn>
-          <IconBtn onClick={() => setImmersive(v => !v)} title={immersive ? "Exit immersive mode" : "Enter immersive mode"}>
+          <IconBtn onClick={toggleImmersive} title={immersive ? "Exit focus mode" : "Enter focus mode"}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </IconBtn>
         </div>
