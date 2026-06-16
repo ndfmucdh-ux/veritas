@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Play, Trash2, ChevronRight, X, Check, Loader2, BookOpen, Music2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS } from "@/lib/bibleData";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const PLAYLIST_COLORS = ["#00f5ff", "#fbbf24", "#a78bfa", "#34d399", "#f97316", "#f472b6", "#60a5fa"];
 const PLAYLIST_ICONS = ["🌅", "🌙", "📖", "🎵", "🙏", "✝️", "🕊️", "⭐", "🔥", "💎"];
@@ -165,15 +166,14 @@ export default function AudioPlaylists() {
 
       {/* Playlists */}
       {loading ? (
-        <div className="flex justify-center py-10">
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
-        </div>
+        <LoadingState label="Loading playlists…" size="md" minHeight={120} />
       ) : playlists.length === 0 ? (
-        <div className="py-10 flex flex-col items-center gap-3">
-          <Music2 className="w-10 h-10" style={{ color: "rgba(255,255,255,0.12)" }} />
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>No playlists yet</p>
-          <p className="text-xs font-inter text-center px-8" style={{ color: "rgba(255,255,255,0.2)" }}>Create a playlist and add chapters or verses to build your custom listening queue</p>
-        </div>
+        <EmptyState
+          icon={Music2}
+          title="No playlists yet"
+          description="Create a playlist and add chapters or verses to build your custom listening queue"
+          minHeight={160}
+        />
       ) : (
         <div className="space-y-3">
           {playlists.map((pl, idx) => {

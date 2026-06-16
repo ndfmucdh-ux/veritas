@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, Headphones, Bookmark } from "lucide-react";
 import { formatTime } from "@/hooks/useAudioDashboard";
+import { EmptyState } from "@/components/ui/states";
 
 export default function AudioHistoryTab({ audioHistory, completed, bookmarkSaved, onSaveBookmark }) {
   return (
@@ -9,10 +10,7 @@ export default function AudioHistoryTab({ audioHistory, completed, bookmarkSaved
         {completed} chapters completed
       </p>
       {audioHistory.length === 0 && (
-        <div className="py-16 flex flex-col items-center gap-3">
-          <Headphones className="w-12 h-12" style={{ color: "rgba(255,255,255,0.15)" }} />
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>No listening history yet</p>
-        </div>
+        <EmptyState icon={Headphones} title="No listening history yet" />
       )}
       {audioHistory.map((a, i) => (
         <motion.div key={a.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}

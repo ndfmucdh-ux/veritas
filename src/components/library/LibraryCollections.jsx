@@ -5,6 +5,7 @@ import {
   Bookmark, Highlighter, StickyNote, Sparkles
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const PRESET_COLLECTIONS = [
   { name: "Comfort", emoji: "🕊️", color: "#60a5fa" },
@@ -158,18 +159,14 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
         )}
       </AnimatePresence>
 
-      {loading && (
-        <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin" style={{ color: "#00f5ff" }} /></div>
-      )}
+      {loading && <LoadingState label="Loading collections…" size="lg" />}
 
       {!loading && collections.length === 0 && (
-        <div className="flex flex-col items-center py-16 gap-3">
-          <span className="text-5xl">📚</span>
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>No collections yet</p>
-          <p className="text-xs font-inter text-center" style={{ color: "rgba(255,255,255,0.25)" }}>
-            Create thematic collections to organize your saved verses
-          </p>
-        </div>
+        <EmptyState
+          icon="📚"
+          title="No collections yet"
+          description="Create thematic collections to organize your saved verses"
+        />
       )}
 
       {/* Collections list */}

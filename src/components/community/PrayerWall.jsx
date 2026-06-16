@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Plus, Send, Loader2, X, CheckCircle2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const CATEGORIES = [
   { id: "all",       label: "All",       emoji: "🙏" },
@@ -177,14 +178,9 @@ export default function PrayerWall() {
 
       {/* Posts */}
       {loading ? (
-        <div className="flex justify-center py-10">
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#a78bfa" }} />
-        </div>
+        <LoadingState label="Loading prayer requests…" size="md" minHeight={120} />
       ) : filtered.length === 0 ? (
-        <div className="py-12 flex flex-col items-center gap-3">
-          <span className="text-4xl">🙏</span>
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>No requests yet — be the first</p>
-        </div>
+        <EmptyState icon="🙏" title="No requests yet — be the first" minHeight={140} />
       ) : (
         <div className="space-y-3">
           <AnimatePresence>

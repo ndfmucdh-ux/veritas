@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
-import { Calendar, Tag, Loader2 } from "lucide-react";
+import { Calendar, Tag } from "lucide-react";
+import { LoadingState } from "@/components/ui/states";
 
 export default function PrayerStatsChart() {
   const [monthlyData, setMonthlyData] = useState([]);
@@ -59,13 +60,7 @@ export default function PrayerStatsChart() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-cyan" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading prayer stats…" size="md" />;
 
   return (
     <div className="rounded-2xl p-4 md:p-6 space-y-5"

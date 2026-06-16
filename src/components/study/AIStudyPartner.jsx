@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Loader2, BookOpen, ChevronDown, ChevronUp, MessageCircle, Send } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import { LoadingState } from "@/components/ui/states";
 
 export default function AIStudyPartner() {
   const { lang } = useLang();
@@ -141,12 +142,7 @@ Return JSON with structure as specified.`,
 
       {/* Loading */}
       {loading && (
-        <div className="flex items-center gap-3 py-6 justify-center">
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
-          <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>
-            {lang === "es" ? "Consultando las Escrituras originales…" : "Consulting original scriptures…"}
-          </p>
-        </div>
+        <LoadingState label={lang === "es" ? "Consultando las Escrituras originales…" : "Consulting original scriptures…"} size="md" minHeight={120} />
       )}
 
       {/* Result */}

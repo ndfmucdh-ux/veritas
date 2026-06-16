@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Lock, Star, Flame, Trophy, Zap, BookOpen, ChevronRight, Loader2 } from "lucide-react";
+import { CheckCircle2, Lock, Star, Flame, Trophy, Zap, BookOpen, ChevronRight, Loader2, Map } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const MILESTONE_INTERVAL = 5;
 const MILESTONE_ICONS = ["🌱", "📖", "✨", "🔥", "⚡", "🏆", "👑", "💎"];
@@ -71,27 +72,21 @@ export default function StudyProgressMap() {
 
   const allPlans = [...startedPresetPlans, ...customPlanSummaries].filter(p => p.totalDays > 0);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-6 h-6 animate-spin" style={{ color: "#00f5ff" }} />
-        <p className="text-sm mt-3" style={{ color: "rgba(255,255,255,0.4)" }}>Loading your journey…</p>
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading your journey…" size="lg" />;
 
   if (allPlans.length === 0) {
     return (
-      <div className="rounded-2xl p-8 flex flex-col items-center gap-3 text-center"
-        style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.1)" }}>
-        <span className="text-4xl">🗺️</span>
-        <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>No active reading plans yet</p>
-        <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Start a reading plan to see your milestone journey here.</p>
-        <a href="/plans" className="mt-2 px-4 py-2 rounded-xl text-xs font-cinzel"
-          style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
-          Browse Plans →
-        </a>
-      </div>
+      <EmptyState
+        icon="🗺️"
+        title="No active reading plans yet"
+        description="Start a reading plan to see your milestone journey here."
+        action={
+          <a href="/plans" className="px-4 py-2 rounded-xl text-xs font-cinzel min-h-9 inline-flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+            style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
+            Browse Plans →
+          </a>
+        }
+      />
     );
   }
 

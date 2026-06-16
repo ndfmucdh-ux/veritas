@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Bookmark, Trash2 } from "lucide-react";
 import { formatTime } from "@/hooks/useAudioDashboard";
+import { EmptyState } from "@/components/ui/states";
 
 export default function AudioBookmarksTab({ bookmarks, onDelete }) {
   return (
@@ -11,13 +12,11 @@ export default function AudioBookmarksTab({ bookmarks, onDelete }) {
         </p>
       </div>
       {bookmarks.length === 0 ? (
-        <div className="py-16 flex flex-col items-center gap-3">
-          <Bookmark className="w-12 h-12" style={{ color: "rgba(255,255,255,0.1)" }} />
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>No spots saved yet</p>
-          <p className="text-xs font-inter text-center px-8" style={{ color: "rgba(255,255,255,0.2)" }}>
-            Tap the 🔖 button on any chapter in History to save your exact listening spot
-          </p>
-        </div>
+        <EmptyState
+          icon={Bookmark}
+          title="No spots saved yet"
+          description="Tap the 🔖 button on any chapter in History to save your exact listening spot"
+        />
       ) : (
         bookmarks.map((bm, i) => (
           <motion.div key={bm.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}

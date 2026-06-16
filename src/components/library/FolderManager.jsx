@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Trash2, Pencil, BookOpen, X, Check, Loader2, ChevronDown, ChevronUp, FolderOpen } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { EmptyState } from "@/components/ui/states";
 
 const FOLDER_THEMES = [
   { name: "Favorite Promises", icon: "⭐", color: "#fbbf24" },
@@ -298,14 +299,12 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
         );
       })}
 
-      {folders.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 gap-3">
-          <span className="text-5xl">📁</span>
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>No folders yet</p>
-          <p className="text-xs font-inter text-center max-w-xs" style={{ color: "rgba(255,255,255,0.25)" }}>
-            Create thematic folders to organize your highlighted verses into meaningful collections
-          </p>
-        </div>
+      {folders.length === 0 && !showCreate && (
+        <EmptyState
+          icon="📁"
+          title="No folders yet"
+          description="Create thematic folders to organize your highlighted verses into meaningful collections"
+        />
       )}
     </div>
   );

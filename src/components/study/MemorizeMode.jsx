@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Check, X, ChevronRight, Loader2, RotateCcw, Trophy, BookOpen } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState } from "@/components/ui/states";
 
 // Mask every other word or random words based on difficulty
 function maskVerse(text, difficulty) {
@@ -94,13 +95,7 @@ export default function MemorizeMode({ book, chapter }) {
 
   const alreadyMemorized = (verseNum) => recitations.some(r => r.verse === verseNum);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-6 h-6 animate-spin text-cyan" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading chapter…" size="lg" />;
 
   return (
     <div className="space-y-5">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Loader2, ChevronDown, Lightbulb, X } from "lucide-react";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 export default function CrossReferencePanel({ book, chapter, activeVerses }) {
   const [references, setReferences] = useState([]);
@@ -76,11 +77,9 @@ export default function CrossReferencePanel({ book, chapter, activeVerses }) {
       {/* Content */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-2">
         {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#7c3aed" }} />
-          </div>
+          <LoadingState label="Finding related verses…" size="md" minHeight={120} />
         ) : references.length === 0 ? (
-          <p className="text-xs text-white/40 text-center py-6">No cross-references found</p>
+          <EmptyState icon={Lightbulb} title="No cross-references found" minHeight={120} />
         ) : (
           references.map((ref, i) => (
             <motion.div

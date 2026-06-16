@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, StickyNote, BookOpen, X, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 export default function NotesArchive() {
   const [notes, setNotes] = useState([]);
@@ -27,13 +28,7 @@ export default function NotesArchive() {
     return matchesSearch && matchesBook;
   });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <div className="w-6 h-6 border-2 border-cyan/30 border-t-cyan rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading your notes…" size="lg" />;
 
   return (
     <div className="space-y-4">
@@ -71,14 +66,14 @@ export default function NotesArchive() {
 
       {/* Notes feed */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center py-16 gap-3">
-          <StickyNote className="w-10 h-10" style={{ color: "rgba(255,255,255,0.12)" }} />
-          <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>No notes found</p>
-          {(search || bookFilter) && (
+        <EmptyState
+          icon={StickyNote}
+          title="No notes found"
+          action={(search || bookFilter) ? (
             <button onClick={() => { setSearch(""); setBookFilter(""); }}
-              className="text-xs font-inter" style={{ color: "#00f5ff" }}>Clear filters</button>
-          )}
-        </div>
+              className="text-xs font-inter min-h-9 px-3 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan" style={{ color: "#00f5ff" }}>Clear filters</button>
+          ) : null}
+        />
       ) : (
         <div className="space-y-3">
           <AnimatePresence>

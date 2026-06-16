@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Play, Pause, Trash2, X, Loader2, Check, FolderPlus, ChevronDown } from "lucide-react";
+import { Plus, Play, Pause, Trash2, X, Loader2, Check, FolderPlus, ChevronDown, Library } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 const PRESET_COLLECTIONS = [
   { name: "Comfort", icon: "🕊️", color: "#a78bfa" },
@@ -71,7 +72,7 @@ export default function VersesCollectionManager() {
     window.speechSynthesis.speak(utt);
   };
 
-  if (loading) return <div className="flex items-center justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-cyan" /></div>;
+  if (loading) return <LoadingState label="Loading collections…" size="md" />;
 
   return (
     <div className="space-y-4">
@@ -144,7 +145,7 @@ export default function VersesCollectionManager() {
       {/* Collections list */}
       <div className="space-y-3">
         {collections.length === 0 ? (
-          <p className="text-center text-white/35 py-8 text-sm font-inter">No collections yet. Use the quick presets above or create a custom one.</p>
+          <EmptyState icon={Library} title="No collections yet" description="Use the quick presets above or create a custom one." minHeight={140} />
         ) : collections.map(col => (
           <motion.div key={col.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl overflow-hidden"

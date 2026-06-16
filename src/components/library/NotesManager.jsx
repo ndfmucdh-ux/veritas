@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { StickyNote, FolderPlus, Folder, BookOpen, Trash2, SortAsc, Calendar, ChevronDown, ChevronUp, X, Check, Plus } from "lucide-react";
 import { deleteNoteItem } from "@/lib/dataAccess";
+import { EmptyState } from "@/components/ui/states";
 
 const FOLDER_COLORS = ["#00f5ff", "#fbbf24", "#a78bfa", "#34d399", "#f87171", "#f472b6", "#fb923c"];
 const FOLDER_ICONS = ["📁", "✝️", "🙏", "📖", "⭐", "🔥", "💎", "🌿", "🕊️"];
@@ -232,10 +233,7 @@ export default function NotesManager({ notes, onNotesChange }) {
           Unfiled Notes ({sortedUnfiled.length})
         </p>
         {sortedUnfiled.length === 0 && notes.length === 0 && (
-          <div className="flex flex-col items-center py-10 gap-3">
-            <StickyNote className="w-8 h-8" style={{ color: "rgba(255,255,255,0.15)" }} />
-            <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>No notes yet</p>
-          </div>
+          <EmptyState icon={StickyNote} title="No notes yet" minHeight={140} />
         )}
         <div className="space-y-2">
           {sortedUnfiled.map(note => (

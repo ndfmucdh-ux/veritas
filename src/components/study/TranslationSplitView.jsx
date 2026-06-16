@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Loader2, Columns } from "lucide-react";
+import { Columns } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { Spinner } from "@/components/ui/states";
 
 const QUICK_TRANSLATIONS = [
   // English
@@ -121,7 +122,7 @@ export default function TranslationSplitView({ book, chapter }) {
         <div ref={leftScrollRef} className="p-3 overflow-y-auto max-h-[60vh] scrollbar-hide" onScroll={handleLeftScroll}>
           <TransPicker value={leftTrans} onChange={setLeftTrans} side="left" />
           {leftLoading ? (
-            <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} /></div>
+            <div className="flex justify-center py-8"><Spinner size="md" label="Loading translation" /></div>
           ) : (
             <div className="space-y-2">
               {leftVerses.map(v => (
@@ -138,7 +139,7 @@ export default function TranslationSplitView({ book, chapter }) {
         <div ref={rightScrollRef} className="p-3 overflow-y-auto max-h-[60vh] scrollbar-hide" onScroll={handleRightScroll}>
           <TransPicker value={rightTrans} onChange={setRightTrans} side="right" />
           {rightLoading ? (
-            <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} /></div>
+            <div className="flex justify-center py-8"><Spinner size="md" label="Loading translation" /></div>
           ) : (
             <div className="space-y-2">
               {rightVerses.map(v => (

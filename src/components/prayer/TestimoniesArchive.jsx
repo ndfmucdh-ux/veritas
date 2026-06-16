@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, History, Heart } from "lucide-react";
+import { EmptyState } from "@/components/ui/states";
 
 const MOOD_ICONS = {
   grateful: "🙏",
@@ -18,13 +19,11 @@ const MOOD_COLORS = {
 export default function TestimoniesArchive({ prayers }) {
   if (prayers.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-3">
-        <Heart className="w-10 h-10" style={{ color: "rgba(52,211,153,0.3)" }} />
-        <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.35)" }}>No testimonies yet</p>
-        <p className="text-xs font-inter text-center max-w-xs" style={{ color: "rgba(255,255,255,0.2)" }}>
-          When you mark a prayer as answered, it will appear here as a testimony of God's faithfulness.
-        </p>
-      </div>
+      <EmptyState
+        icon={Heart}
+        title="No testimonies yet"
+        description="When you mark a prayer as answered, it will appear here as a testimony of God's faithfulness."
+      />
     );
   }
 

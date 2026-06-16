@@ -11,6 +11,7 @@ import {
   ChevronDown, ChevronUp, FolderOpen, GripVertical, StickyNote, Bookmark
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { LoadingState } from "@/components/ui/states";
 
 const THEMES = [
   { name: "Favorite Promises", icon: "⭐", color: "#fbbf24" },
@@ -116,13 +117,7 @@ export default function VerseNoteFolderManager({ highlights = [], notes = [] }) 
     await addRef(targetFolder, ref);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading folders…" size="md" />;
 
   // Build palette of items available for adding
   const verseItems = highlights.map(h => ({ id: `verse::${h.verse_ref}`, ref: h.verse_ref, type: "verse", color: h.color }));

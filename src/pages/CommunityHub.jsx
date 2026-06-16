@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Users, MessageCircle, Heart, Shield, Loader2, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import PrayerWall from "@/components/community/PrayerWall";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 export default function CommunityHub() {
   const [groups, setGroups] = useState([]);
@@ -89,14 +90,9 @@ export default function CommunityHub() {
 
         {/* Groups list */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-cyan" />
-          </div>
+          <LoadingState label="Finding groups…" size="lg" />
         ) : groups.length === 0 ? (
-          <div className="text-center py-12">
-            <Users className="w-8 h-8 mx-auto text-white/20 mb-2" />
-            <p className="text-white/40">No groups in this category yet</p>
-          </div>
+          <EmptyState icon={Users} title="No groups in this category yet" />
         ) : (
           <div className="space-y-3">
             <AnimatePresence>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Plus, Loader2, RotateCcw, Check, X, Zap, BookOpen, Trash2, ChevronRight } from "lucide-react";
+import { LoadingState } from "@/components/ui/states";
 
 // SM-2 spaced repetition algorithm
 function sm2(card, quality) {
@@ -137,11 +138,7 @@ export default function FlashcardStudy() {
   const SOURCE_COLORS = { highlight: "#fbbf24", note: "#a78bfa", manual: "#00f5ff" };
   const decks = [...new Set(cards.map(c => c.deck || "General"))];
 
-  if (loading) return (
-    <div className="flex items-center justify-center py-16">
-      <Loader2 className="w-6 h-6 animate-spin text-cyan" />
-    </div>
-  );
+  if (loading) return <LoadingState label="Loading your flashcards…" size="lg" />;
 
   // ── STUDY SESSION ──
   if (mode === "study") {
