@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { saveTranslationAsync, removeTranslationAsync } from '@/lib/offlineBible';
 
@@ -9,24 +9,16 @@ import { saveTranslationAsync, removeTranslationAsync } from '@/lib/offlineBible
 export function useOfflineDownloadManager() {
   const [downloads, setDownloads] = useState({});
   const [activeDownloads, setActiveDownloads] = useState(new Set());
+  // Synchronous in-flight guard. State updates are async/batched, so reading
+  // `activeDownloads` to detect duplicates races with itself. A ref is updated
+  // synchronously and is the single source of truth for "is this running now".
+  const inFlightRef = useRef(new Set());
 
   const startDownload = useCallback(async (translationCode, translationName) => {
-    // Prevent duplicate downloads — read from state setter to avoid stale closure
-    setActiveDownloads(prev => {
-      if (prev.has(translationCode)) return prev; // already running, no-op
-      return new Set([...prev, translationCode]);
-    });
-
-    // Check if already in-flight before proceeding (ref-based guard)
-    // We use a local flag set before the async work begins
-    let alreadyRunning = false;
-    setActiveDownloads(prev => {
-      alreadyRunning = prev.has(translationCode);
-      return prev;
-    });
-    // Give setState a tick to flush
-    await new Promise(r => setTimeout(r, 0));
-    if (alreadyRunning) return;
+    // Synchronous duplicate guard — bail before any async work if already running.
+    if (inFlightRef.current.has(translationCode)) return;
+    inFlightRef.current.add(translationCode);
+    setActiveDownloads(prev => new Set([...prev, translationCode]));
 
     setDownloads(prev => ({
       ...prev,
@@ -56,6 +48,7 @@ export function useOfflineDownloadManager() {
         [translationCode]: { status: 'error', progress: 0, error: error.message },
       }));
     } finally {
+      inFlightRef.current.delete(translationCode);
       setActiveDownloads(prev => {
         const next = new Set(prev);
         next.delete(translationCode);
@@ -65,9 +58,13 @@ export function useOfflineDownloadManager() {
   }, []);
 
   const cancelDownload = useCallback((translationCode) => {
-    const updated = new Set(activeDownloads);
-    updated.delete(translationCode);
-    setActiveDownloads(updated);
+    inFlightRef.current.delete(translationCode);
+    // Functional updater avoids the stale-closure bug when cancels overlap.
+    setActiveDownloads(prev => {
+      const next = new Set(prev);
+      next.delete(translationCode);
+      return next;
+    });
 
     setDownloads(prev => ({
       ...prev,
@@ -77,7 +74,7 @@ export function useOfflineDownloadManager() {
         error: 'Download cancelled',
       },
     }));
-  }, [activeDownloads]);
+  }, []);
 
   const removeTranslation = useCallback(async (translationCode) => {
     await removeTranslationAsync(translationCode);

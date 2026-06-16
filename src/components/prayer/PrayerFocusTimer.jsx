@@ -48,6 +48,9 @@ export default function PrayerFocusTimer() {
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.5);
+    // Release the AudioContext once the chime finishes — browsers cap concurrent
+    // contexts (~6), so leaking one per timer eventually breaks all audio.
+    oscillator.onended = () => audioContext.close().catch(() => {});
   };
 
   const handleDurationSelect = (duration) => {

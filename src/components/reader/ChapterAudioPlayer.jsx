@@ -21,6 +21,15 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
     setPlaying(false);
   }, [book, chapter]);
 
+  // Stop playback if the Reader unmounts (e.g. navigating away) so audio doesn't
+  // keep playing in the background.
+  useEffect(() => {
+    return () => {
+      stoppedRef.current = true;
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ""; }
+    };
+  }, []);
+
   const stopAll = () => {
     stoppedRef.current = true;
     if (audioRef.current) {

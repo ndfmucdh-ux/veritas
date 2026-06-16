@@ -1,16 +1,33 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 
+// Local-date key (YYYY-MM-DD) — avoids the UTC drift that breaks streaks for
+// users in negative-UTC timezones listening near midnight.
+function localDayKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function calcStreak(audio) {
+  // Parse each completed record's timestamp and bucket by LOCAL calendar day,
+  // matching the same local-day comparison used in the loop below.
   const completedDates = new Set(
-    (audio || []).filter(a => a.completed).map(a => (a.updated_date || a.created_date)?.slice(0, 10)).filter(Boolean)
+    (audio || [])
+      .filter(a => a.completed)
+      .map(a => {
+        const ts = a.updated_date || a.created_date;
+        return ts ? localDayKey(new Date(ts)) : null;
+      })
+      .filter(Boolean)
   );
   let s = 0;
   const today = new Date();
   for (let i = 0; i < 365; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
-    if (completedDates.has(d.toISOString().slice(0, 10))) s++;
+    if (completedDates.has(localDayKey(d))) s++;
     else if (i > 0) break;
   }
   return s;

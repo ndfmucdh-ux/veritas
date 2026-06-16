@@ -13,6 +13,18 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const audioRef = useRef(null);
+  const streamRef = useRef(null);
+  const previewUrlRef = useRef(null);
+
+  // Teardown on unmount: stop the mic stream (releases the device + red dot) and
+  // revoke any preview object URL so we don't leak the device or memory if the
+  // user closes the panel mid-recording or after previewing.
+  useEffect(() => {
+    return () => {
+      streamRef.current?.getTracks().forEach(t => t.stop());
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
 
   const moods = [
     { id: "grateful", label: "Grateful", emoji: "🙏" },
@@ -26,6 +38,7 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: "audio/webm" });
       audioChunksRef.current = [];
 
@@ -37,6 +50,7 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         setAudioBlob(blob);
         stream.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
       };
 
       mediaRecorderRef.current.start();
@@ -55,7 +69,10 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
 
   const playAudio = () => {
     if (audioBlob && audioRef.current) {
+      // Revoke the previous preview URL before creating a new one.
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
       const url = URL.createObjectURL(audioBlob);
+      previewUrlRef.current = url;
       audioRef.current.src = url;
       audioRef.current.play();
       setPlayingAudio(true);
@@ -65,6 +82,7 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
   const discardAudio = () => {
     setAudioBlob(null);
     setPlayingAudio(false);
+    if (previewUrlRef.current) { URL.revokeObjectURL(previewUrlRef.current); previewUrlRef.current = null; }
     if (audioRef.current) audioRef.current.src = "";
   };
 
