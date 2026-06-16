@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Target, X, Check, ChevronDown } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { listReadingActivity } from "@/lib/dataAccess";
 
 const GOAL_KEY = "veritas_daily_goal";
 const DEFAULT_GOAL = { type: "chapters", target: 3 };
@@ -37,19 +38,13 @@ export default function DailyGoalBar() {
 
       const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
-      if (goal.type === "chapters") {
-        const records = await base44.entities.ReadingProgress.list("-created_date", 50);
-        const todayRecords = (records || []).filter(r => r.created_date?.slice(0, 10) === today);
-        // Dedupe by book+chapter
-        const unique = new Set(todayRecords.map(r => `${r.book}:${r.chapter}`));
-        setProgress(unique.size);
-      } else {
-        // verses: count verses read today via XP actions (approximate: chapters × avg verses)
-        const records = await base44.entities.ReadingProgress.list("-created_date", 50);
-        const todayRecords = (records || []).filter(r => r.created_date?.slice(0, 10) === today);
-        const unique = new Set(todayRecords.map(r => `${r.book}:${r.chapter}`));
-        setProgress(unique.size * 26); // ~26 avg verses per chapter
-      }
+      // Consolidated reading activity (ReadingSession-first, legacy fallback)
+      const records = await listReadingActivity({ limit: 50 });
+      const todayRecords = (records || []).filter(r => r.created_date?.slice(0, 10) === today);
+      // Dedupe by book+chapter
+      const unique = new Set(todayRecords.map(r => `${r.book}:${r.chapter}`));
+      // chapters → unique chapter count; verses → approx 26 verses/chapter
+      setProgress(goal.type === "chapters" ? unique.size : unique.size * 26);
     } catch {
       setProgress(0);
     } finally {

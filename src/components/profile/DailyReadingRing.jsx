@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+import { listReadingActivity } from "@/lib/dataAccess";
 
 const DAILY_GOAL = 3;
 
@@ -9,16 +10,27 @@ export default function DailyReadingRing({ chaptersReadToday: initialCount }) {
 
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
-    base44.entities.ReadingProgress.filter({ completed_at: { $gte: today + "T00:00:00.000Z" } })
-      .then(records => setCount((records || []).length))
-      .catch(() => {});
 
-    const unsub = base44.entities.ReadingProgress.subscribe((event) => {
-      if (event.type === "create") {
-        setCount(c => c + 1);
-      }
+    // Consolidated reading activity (ReadingSession-first, legacy fallback)
+    const refresh = () => {
+      listReadingActivity({ limit: 50 })
+        .then(records => {
+          const todays = (records || []).filter(r => (r.created_date || "").slice(0, 10) === today);
+          const unique = new Set(todays.map(r => `${r.book}:${r.chapter}`));
+          setCount(unique.size);
+        })
+        .catch(() => {});
+    };
+    refresh();
+
+    // Subscribe to both sources so the ring updates live regardless of which one is active
+    const unsubSession = base44.entities.ReadingSession.subscribe((event) => {
+      if (event.type === "create") refresh();
     });
-    return unsub;
+    const unsubProgress = base44.entities.ReadingProgress.subscribe((event) => {
+      if (event.type === "create") refresh();
+    });
+    return () => { unsubSession?.(); unsubProgress?.(); };
   }, []);
 
   const progress = Math.min(count / DAILY_GOAL, 1);
