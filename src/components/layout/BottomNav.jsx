@@ -1,19 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Search, BookMarked, Heart, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { useLang } from "@/lib/LanguageContext";
+import { getBottomNavItems } from "@/lib/navigationItems.jsx";
+import BottomNavItem from "@/components/layout/BottomNavItem.jsx";
 
 export default function BottomNav() {
   const location = useLocation();
   const { t } = useLang();
 
-  const NAV_ITEMS = [
-    { path: "/", icon: Home, label: t.home },
-    { path: "/read", icon: BookOpen, label: t.read },
-    { path: "/study-center", icon: BookMarked, label: t.study },
-    { path: "/prayer-journal", icon: Heart, label: t.prayer },
-    { path: "/community", icon: Users, label: t.community },
-  ];
+  const navItems = getBottomNavItems(t);
 
   return (
     <nav
@@ -26,19 +20,9 @@ export default function BottomNav() {
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
-      {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
-        const active = location.pathname === path;
-        return (
-          <Link key={path} to={path} className="flex-1 flex flex-col items-center justify-center py-4 px-3 gap-1 min-h-16">
-            <motion.div animate={{ scale: active ? 1.15 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 22 }}>
-              <Icon style={{ width: 30, height: 30, color: active ? "#fbbf24" : "rgba(255,255,255,0.35)" }} />
-            </motion.div>
-            <span className="text-[10px] font-inter" style={{ color: active ? "#fbbf24" : "rgba(255,255,255,0.3)" }}>
-              {label}
-            </span>
-          </Link>
-        );
-      })}
+      {navItems.map((item) => (
+        <BottomNavItem key={item.path} {...item} active={location.pathname === item.path} />
+      ))}
     </nav>
   );
 }
