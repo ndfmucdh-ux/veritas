@@ -9,7 +9,7 @@ import { RefreshCw, AlertTriangle } from "lucide-react";
 export default class PageErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, message: "" };
+    this.state = { hasError: false, message: "", stack: "" };
   }
 
   static getDerivedStateFromError(error) {
@@ -25,8 +25,11 @@ export default class PageErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    // Surface the real cause in the console for debugging.
+    // Surface the real cause in the console + on screen (mobile has no console).
     console.error("PageErrorBoundary caught:", error, info);
+    // The first 2 lines of the component stack name the component that threw.
+    const stack = (info?.componentStack || "").trim().split("\n").slice(0, 3).join("\n");
+    this.setState({ stack });
   }
 
   render() {
@@ -44,9 +47,10 @@ export default class PageErrorBoundary extends React.Component {
               Please reload to try again. If it keeps happening, restart the app.
             </p>
             {this.state.message && (
-              <p className="text-[11px] font-mono mb-5 px-3 py-2 rounded-lg break-words text-left"
+              <p className="text-[11px] font-mono mb-5 px-3 py-2 rounded-lg break-words text-left whitespace-pre-wrap"
                 style={{ background: "rgba(0,0,0,0.3)", color: "rgba(248,113,113,0.8)", border: "1px solid rgba(248,113,113,0.15)" }}>
                 {this.state.message}
+                {this.state.stack ? "\n" + this.state.stack : ""}
               </p>
             )}
             <button
