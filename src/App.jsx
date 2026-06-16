@@ -12,6 +12,7 @@ import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
 import RouteFallback from '@/components/layout/RouteFallback';
+import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { warmOfflineCache } from '@/lib/offlineBible';
 
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
   }
 
   return (
+    <PageErrorBoundary>
     <Suspense fallback={<RouteFallback />}>
     <Routes>
       <Route element={<AppLayout />}>
@@ -89,6 +91,7 @@ const AuthenticatedApp = () => {
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </Suspense>
+    </PageErrorBoundary>
   );
 };
 
