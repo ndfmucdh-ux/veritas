@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Check, StickyNote, BookOpen, Mic } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { setNote } from "@/lib/dataAccess";
 import AudioReflectionRecorder from "./AudioReflectionRecorder";
 import AudioReflectionPlayback from "./AudioReflectionPlayback";
 
@@ -40,14 +41,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
     if (!noteText.trim()) return;
     setSaving(true);
     try {
-      const existing = await base44.entities.UserNote.filter({ verse_ref: verseRef });
-      if (existing?.[0]) {
-        await base44.entities.UserNote.update(existing[0].id, { note_text: noteText });
-      } else {
-        await base44.entities.UserNote.create({
-          verse_ref: verseRef, book, chapter, verse: verse.verse, translation, note_text: noteText
-        });
-      }
+      await setNote({ translation, book, chapter, verse: verse.verse, verse_ref: verseRef }, noteText);
       setSaved(true);
       onNoteSaved?.(verse.verse, noteText);
       setTimeout(() => setSaved(false), 2500);

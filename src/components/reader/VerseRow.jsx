@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bookmark, Highlighter, StickyNote, X, Check, Share2, FolderPlus, CheckSquare, Square, Mic, Loader2, Sparkles, Copy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { setBookmark, setHighlight, setNote } from "@/lib/dataAccess";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 
 const COLORS = ["yellow", "cyan", "purple", "green", "red", "orange", "pink"];
@@ -46,20 +47,16 @@ export default function VerseRow({
   // verseRef must be computed before it's used — moved above these handlers
   const verseRef = `${book} ${chapter}:${verseNum} ${translation}`;
 
+  const descriptor = { translation, book, chapter, verse: verseNum, verse_ref: verseRef };
+
   const applyHighlight = async (color) => {
-    // Optimistic UI update immediately
+    // Optimistic UI update immediately, then consolidated upsert
     if (highlight?.color === color) {
       onUpdate({ type: "highlight", verseNum, data: null });
-      const existing = await base44.entities.UserHighlight.filter({ verse_ref: verseRef });
-      if (existing?.[0]) await base44.entities.UserHighlight.delete(existing[0].id);
+      await setHighlight(descriptor, "none");
     } else {
       onUpdate({ type: "highlight", verseNum, data: { color } });
-      const existing = await base44.entities.UserHighlight.filter({ verse_ref: verseRef });
-      if (existing?.[0]) {
-        await base44.entities.UserHighlight.update(existing[0].id, { color });
-      } else {
-        await base44.entities.UserHighlight.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation, color });
-      }
+      await setHighlight(descriptor, color);
     }
     setMenuOpen(false);
   };
@@ -68,12 +65,7 @@ export default function VerseRow({
     // Optimistic UI update
     onUpdate({ type: "bookmark", verseNum, data: !isBookmarked });
     setMenuOpen(false);
-    if (isBookmarked) {
-      const existing = await base44.entities.Bookmark.filter({ verse_ref: verseRef });
-      if (existing?.[0]) await base44.entities.Bookmark.delete(existing[0].id);
-    } else {
-      await base44.entities.Bookmark.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation });
-    }
+    await setBookmark(descriptor, !isBookmarked);
   };
 
   const saveNote = async () => {
@@ -82,12 +74,7 @@ export default function VerseRow({
     onUpdate({ type: "note", verseNum, data: noteText });
     setNoteMode(false);
     setMenuOpen(false);
-    const existing = await base44.entities.UserNote.filter({ verse_ref: verseRef });
-    if (existing?.[0]) {
-      await base44.entities.UserNote.update(existing[0].id, { note_text: noteText });
-    } else {
-      await base44.entities.UserNote.create({ verse_ref: verseRef, book, chapter, verse: verseNum, translation, note_text: noteText });
-    }
+    await setNote(descriptor, noteText);
   };
 
   // Inline quick voice note
