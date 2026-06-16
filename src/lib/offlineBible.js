@@ -6,8 +6,14 @@ const DB_VERSION = 2;
 const STORE = "translations";
 const CHAPTER_STORE = "chapters";
 
+// Singleton connection — opening an IndexedDB connection on every read adds real
+// latency to offline verse lookups (called per chapter). We open once and reuse
+// the same connection for the app's lifetime, re-opening only if it closes.
+let _dbPromise = null;
+
 function openDB() {
-  return new Promise((resolve, reject) => {
+  if (_dbPromise) return _dbPromise;
+  _dbPromise = new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = (e) => {
       const db = e.target.result;
@@ -20,9 +26,16 @@ function openDB() {
         chapters.createIndex("book", "book", { unique: false });
       }
     };
-    req.onsuccess = (e) => resolve(e.target.result);
-    req.onerror = () => reject(req.error);
+    req.onsuccess = (e) => {
+      const db = e.target.result;
+      // If the connection ever closes (tab eviction, version change), drop the
+      // cached promise so the next call re-opens cleanly.
+      db.onclose = () => { _dbPromise = null; };
+      resolve(db);
+    };
+    req.onerror = () => { _dbPromise = null; reject(req.error); };
   });
+  return _dbPromise;
 }
 
 export const DOWNLOADABLE_TRANSLATIONS = [
