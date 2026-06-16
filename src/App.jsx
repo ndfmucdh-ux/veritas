@@ -11,25 +11,29 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
-import { useState, useEffect } from 'react';
+import RouteFallback from '@/components/layout/RouteFallback';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { warmOfflineCache } from '@/lib/offlineBible';
 
-// Page imports
+// Home is the landing page — keep it eager so first paint is instant.
 import Home from './pages/Home';
-import Read from './pages/Read';
-import Search from './pages/Search';
-import Library from './pages/Library';
-import Discover from './pages/Discover';
-import Plans from './pages/Plans';
-import Profile from './pages/Profile';
-import Study from './pages/Study';
-import VerseImageGenerator from './pages/VerseImageGenerator';
-import StudyCenter from './pages/StudyCenter';
-import PrayerJournal from './pages/PrayerJournal';
-import CommunityHub from './pages/CommunityHub';
-import NotificationStudio from './pages/NotificationStudio';
-import AudioDashboard from './pages/AudioDashboard';
-import ForYouSection from './pages/ForYouSection';
+
+// Every other page is code-split into its own chunk, loaded only when visited.
+// This keeps the initial bundle tiny (Home only) for maximum first-load speed.
+const Read = lazy(() => import('./pages/Read'));
+const Search = lazy(() => import('./pages/Search'));
+const Library = lazy(() => import('./pages/Library'));
+const Discover = lazy(() => import('./pages/Discover'));
+const Plans = lazy(() => import('./pages/Plans'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Study = lazy(() => import('./pages/Study'));
+const VerseImageGenerator = lazy(() => import('./pages/VerseImageGenerator'));
+const StudyCenter = lazy(() => import('./pages/StudyCenter'));
+const PrayerJournal = lazy(() => import('./pages/PrayerJournal'));
+const CommunityHub = lazy(() => import('./pages/CommunityHub'));
+const NotificationStudio = lazy(() => import('./pages/NotificationStudio'));
+const AudioDashboard = lazy(() => import('./pages/AudioDashboard'));
+const ForYouSection = lazy(() => import('./pages/ForYouSection'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -58,6 +62,7 @@ const AuthenticatedApp = () => {
   }
 
   return (
+    <Suspense fallback={<RouteFallback />}>
     <Routes>
       <Route element={<AppLayout />}>
         {/* Public routes — no login required */}
@@ -83,6 +88,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 
