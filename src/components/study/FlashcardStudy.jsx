@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { Plus, Loader2, RotateCcw, Check, X, Zap, BookOpen, Trash2, ChevronRight } from "lucide-react";
-import { LoadingState } from "@/components/ui/states";
+import { LoadingState, EmptyState } from "@/components/ui/states";
 
 // SM-2 spaced repetition algorithm
 function sm2(card, quality) {
@@ -313,12 +313,11 @@ export default function FlashcardStudy() {
 
       {/* Decks */}
       {decks.length === 0 ? (
-        <div className="text-center py-12 space-y-3">
-          <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>No flashcards yet.</p>
-          <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.2)" }}>
-            Import from your highlights & notes, or create cards manually.
-          </p>
-        </div>
+        <EmptyState
+          icon="🃏"
+          title="No flashcards yet"
+          description="Import from your highlights & notes, or create cards manually."
+        />
       ) : (
         <div className="space-y-3">
           {decks.map(deck => {
