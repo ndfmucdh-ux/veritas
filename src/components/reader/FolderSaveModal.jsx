@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FolderPlus, X, Check, Plus, Loader2, Folder } from "lucide-react";
+import { FolderPlus, X, Check, Plus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const FOLDER_SUGGESTIONS = [
@@ -65,8 +65,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
         transition={{ type: "spring", stiffness: 380, damping: 28 }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-sm rounded-3xl overflow-hidden"
-        style={{ maxHeight: "85vh", display: "flex", flexDirection: "column" }}
-        style={{ background: "rgba(8,13,26,0.99)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}
+        style={{ maxHeight: "85vh", display: "flex", flexDirection: "column", background: "rgba(8,13,26,0.99)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4"
