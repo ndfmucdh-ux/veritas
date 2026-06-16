@@ -11,15 +11,18 @@ export default function useProfileData() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Each source is independently guarded so one failing request can never
+    // leave the page stuck on a blank loading screen. `loading` is always
+    // released in finally, and all views default to safe arrays.
     Promise.all([
       base44.auth.me().catch(() => null),
-      listRecentLibrary({ limit: 20 }),
-      listPlanSessions(),
+      listRecentLibrary({ limit: 20 }).catch(() => ({})),
+      listPlanSessions().catch(() => []),
     ]).then(([u, lib, rp]) => {
       setUser(u);
-      setBookmarks(lib.bookmarks || []);
-      setHighlights(lib.highlights || []);
-      setNotes(lib.notes || []);
+      setBookmarks(lib?.bookmarks || []);
+      setHighlights(lib?.highlights || []);
+      setNotes(lib?.notes || []);
       setPlans(rp || []);
       if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
         sessionStorage.setItem("veritas_display_name", u.full_name);
@@ -27,8 +30,7 @@ export default function useProfileData() {
       if (u?.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
         sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
       }
-      setLoading(false);
-    });
+    }).finally(() => setLoading(false));
   }, []);
 
   const saveName = async (name) => {
