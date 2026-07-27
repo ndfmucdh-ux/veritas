@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
 
-export default function StudyDropdown({ label, value, items, onChange, icon = "📖" }) {
+export default function StudyDropdown({ label, value, items, onChange, icon = "📖", placeholder = "Select…" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState({});
   const triggerRef = useRef(null);
@@ -64,7 +64,7 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "�
           <span className="text-base flex-shrink-0">{icon}</span>
           <div className="text-left min-w-0">
             <p className="text-[9px] text-white/35 uppercase tracking-wider font-inter leading-none mb-0.5">{label}</p>
-            <p className="text-xs truncate">{selectedItem?.label || "Select…"}</p>
+            <p className="text-xs truncate">{selectedItem?.label || placeholder}</p>
           </div>
         </div>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 22 }} className="flex-shrink-0 ml-2">

@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Loader2, X, RefreshCw } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
+import { getTranslatedBookName } from "@/lib/bibleData";
 
 export default function GuidedReflection({ book, chapter, verses, onClose }) {
+  const { lang } = useLang();
+  const isEs = lang === "es";
+  const displayBook = getTranslatedBookName(book, lang);
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -11,13 +16,14 @@ export default function GuidedReflection({ book, chapter, verses, onClose }) {
     setLoading(true);
     setQuestion(null);
     const sampleText = (verses || []).slice(0, 6).map(v => `${v.verse}. ${v.text}`).join(" ");
-    const prompt = `You are a gentle spiritual guide. Based on this passage from ${book} chapter ${chapter}:\n\n"${sampleText}"\n\nGenerate ONE single short, personal, reflective question (max 25 words) that helps the reader apply this scripture to their daily life. Return only the question, nothing else.`;
+    const langInst = isEs ? "Respond entirely in Spanish." : "Respond in English.";
+    const prompt = `${langInst} You are a gentle spiritual guide. Based on this passage from ${book} chapter ${chapter}:\n\n"${sampleText}"\n\nGenerate ONE single short, personal, reflective question (max 25 words) that helps the reader apply this scripture to their daily life. Return only the question, nothing else.`;
     const result = await base44.integrations.Core.InvokeLLM({ prompt });
-    setQuestion(typeof result === "string" ? result.trim() : "How does this passage speak to where you are today?");
+    setQuestion(typeof result === "string" ? result.trim() : (isEs ? "¿Cómo te habla este pasaje en donde estás hoy?" : "How does this passage speak to where you are today?"));
     setLoading(false);
   };
 
-  useEffect(() => { generate(); }, [book, chapter]);
+  useEffect(() => { generate(); }, [book, chapter, lang]);
 
   return (
     <motion.div
@@ -38,14 +44,14 @@ export default function GuidedReflection({ book, chapter, verses, onClose }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
         <Sparkles style={{ width: 14, height: 14, color: "#fbbf24" }} />
         <p style={{ fontFamily: "'Cinzel', serif", fontSize: 10, fontWeight: 600, letterSpacing: "0.15em", color: "#fbbf24", margin: 0 }}>
-          GUIDED REFLECTION · {book} {chapter}
+          {isEs ? "REFLEXIÓN GUIADA" : "GUIDED REFLECTION"} · {displayBook} {chapter}
         </p>
       </div>
 
       {loading ? (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Loader2 style={{ width: 14, height: 14, color: "#a78bfa", animation: "spin 1s linear infinite" }} />
-          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.4)", margin: 0 }}>Reflecting on your reading…</p>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.4)", margin: 0 }}>{isEs ? "Reflexionando sobre tu lectura…" : "Reflecting on your reading…"}</p>
         </div>
       ) : question ? (
         <>
@@ -53,7 +59,7 @@ export default function GuidedReflection({ book, chapter, verses, onClose }) {
             "{question}"
           </p>
           <button onClick={generate} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "'Cinzel', serif", fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
-            <RefreshCw style={{ width: 11, height: 11 }} /> New question
+            <RefreshCw style={{ width: 11, height: 11 }} /> {isEs ? "Nueva pregunta" : "New question"}
           </button>
         </>
       ) : null}

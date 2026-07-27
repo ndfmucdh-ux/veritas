@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown, X, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactDOM from "react-dom";
-import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName } from "@/lib/bibleData";
+import { BIBLE_BOOKS, TRANSLATIONS, getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 
 const CATEGORIES = [
@@ -103,7 +103,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
   const bookData = BIBLE_BOOKS.find(b => b.name === book);
   const bookIdx = BIBLE_BOOKS.findIndex(b => b.name === book);
   const totalChapters = bookData?.chapters || 1;
-  const displayBook = getTranslatedBookName(book, lang);
+  // Nav bar book name follows the CONTENT translation language (BTX3 → "Juan", KJV → "John")
+  const displayBook = getTranslatedBookName(book, getTranslationLang(translation));
   const activeCategory = CATEGORIES.find(c => c.books.includes(book));
 
   useEffect(() => {

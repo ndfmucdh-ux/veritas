@@ -150,6 +150,18 @@ export const getTranslatedBookName = (englishName, lang) => {
   return englishName;
 };
 
+// Language of a translation's CONTENT (e.g. BTX3 → "es", KJV → "en").
+export const getTranslationLang = (code = "KJV") =>
+  TRANSLATIONS.find(t => t.code === code)?.lang || "en";
+
+// Translate the book-name prefix of a verse reference (e.g. "John 3:16" → "Juan 3:16").
+export const translateVerseRef = (ref = "", lang = "en") => {
+  if (!ref || lang === "en") return ref;
+  const names = Object.keys(BOOK_NAMES_ES).sort((a, b) => b.length - a.length);
+  const match = names.find(name => ref === name || ref.startsWith(`${name} `));
+  return match ? ref.replace(match, getTranslatedBookName(match, lang)) : ref;
+};
+
 export const TRANSLATIONS = [
   // English (85 versions)
   { code: "KJV",    name: "King James Version",           lang: "en", youVersionId: 1,    source: "youversion" },

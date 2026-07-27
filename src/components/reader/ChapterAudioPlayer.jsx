@@ -2,8 +2,14 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX, ChevronDown, Headphones, SkipBack, SkipForward } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
+import { getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
 
 export default function ChapterAudioPlayer({ book, chapter, translation, verses }) {
+  const { lang } = useLang();
+  const isEs = lang === "es";
+  // Book name follows the CONTENT translation language (BTX3 → "Juan", KJV → "John")
+  const displayBook = getTranslatedBookName(book, getTranslationLang(translation));
   const [open, setOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -133,14 +139,14 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             {/* Header */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-cinzel text-sm font-semibold text-white">{book} {chapter}</p>
+                <p className="font-cinzel text-sm font-semibold text-white">{displayBook} {chapter}</p>
                 <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
                   {voiceName} · {translation}
                 </p>
               </div>
               <div className="text-[10px] font-cinzel px-2 py-1 rounded-full"
                 style={{ background: playing ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)", color: playing ? "#00f5ff" : "rgba(255,255,255,0.3)", border: playing ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)" }}>
-                {playing ? `v.${currentVerse + 1}` : "Paused"}
+                {playing ? `v.${currentVerse + 1}` : (isEs ? "Pausado" : "Paused")}
               </div>
             </div>
 
@@ -232,7 +238,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
           <Headphones className="w-4 h-4" style={{ color: "#00f5ff" }} />
         )}
         <span className="font-cinzel text-xs font-semibold" style={{ color: playing ? "#00f5ff" : "rgba(255,255,255,0.6)" }}>
-          {playing ? `Listening · v.${currentVerse + 1}` : "Listen to Chapter"}
+          {playing ? (isEs ? `Escuchando · v.${currentVerse + 1}` : `Listening · v.${currentVerse + 1}`) : (isEs ? "Escuchar Capítulo" : "Listen to Chapter")}
         </span>
         <ChevronDown className="w-3.5 h-3.5 ml-auto" style={{ color: "rgba(255,255,255,0.3)", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
       </motion.button>

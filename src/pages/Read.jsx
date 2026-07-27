@@ -25,9 +25,11 @@ import ReaderSettingsPanel from "@/components/reader/ReaderSettingsPanel.jsx";
 import IconBtn from "@/components/reader/ReaderIconButton.jsx";
 import ChapterDownloadButton from "@/components/reader/ChapterDownloadButton.jsx";
 import useVerseSelection from "@/hooks/useVerseSelection";
+import { useLang } from "@/lib/LanguageContext";
 
 
 export default function Read() {
+  const { lang, t } = useLang();
   const params = new URLSearchParams(window.location.search);
   const [book, setBook] = useState(params.get("book") || "John");
   const [chapter, setChapter] = useState(Number(params.get("chapter")) || 3);
@@ -272,6 +274,7 @@ export default function Read() {
           <ChapterHeader
             book={book}
             chapter={chapter}
+            translation={translation}
             testament={bookData?.testament || "OT"}
             scrollRef={containerRef}
           />
@@ -280,7 +283,8 @@ export default function Read() {
           {!loading && verses.length > 0 && (
             <div className="mb-6 mt-4">
               <StudyDropdown
-                label="Jump to Verse"
+                label={t.jumpToVerse || "Jump to Verse"}
+                placeholder={lang === "es" ? "Seleccionar…" : "Select…"}
                 value={selectedVerse}
                 icon="✨"
                 onChange={(verseNum) => {
@@ -423,6 +427,7 @@ export default function Read() {
             chapter={chapter}
             verseRef={devotionalVerse.verse_ref}
             verseText={devotionalVerse.verse_text}
+            translation={translation}
             onClose={() => setDevotionalVerse(null)}
           />
         )}
