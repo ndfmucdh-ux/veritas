@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles, Loader2, X } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 import { getTranslationLang, translateVerseRef } from "@/lib/bibleData";
-
-// Feature flag — text-to-speech is not built yet; keep hidden in production.
-const ENABLE_TTS_NOTICE = false;
+import { generateMoodDevotional } from "@/lib/reflectionGenerator";
 
 const MOOD_CONTEXT = {
   seeking: "seeking direction and clarity from God",
@@ -36,6 +33,7 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
   const [devotional, setDevotional] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userMood, setUserMood] = useState("seeking");
+  const [debugError, setDebugError] = useState(null); // TEMP: surfaces the real failure on screen
 
   const isEs = lang === "es";
   // The verse reference follows the CONTENT translation language, not the UI language.
@@ -60,45 +58,24 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
 
   const generateDevotional = async () => {
     setLoading(true);
+    setDebugError(null);
     try {
-      // Same working generator pipeline used by Guided Reflection & Home Daily Reflection:
-      // direct InvokeLLM with a structured JSON schema. No separate backend endpoint.
-      const langInst = isEs ? "Respond entirely in Spanish." : "Respond in English.";
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `${langInst} You are a compassionate Bible teacher writing a brief, mood-aware devotional.
-
-Verse: ${displayRef} (${translation})
-"${verseText}"
-
-The reader's current mood: ${MOOD_CONTEXT[userMood] || userMood}.
-
-Write a warm, personal devotional specific to BOTH this verse and this mood:
-- title: a short evocative title (max 6 words)
-- reflection: 2-3 sentences explaining the verse's meaning for someone in this mood
-- insights: 2-3 short key insights (each under 20 words)
-- application: one practical action for today (1-2 sentences)
-- prayer: a brief closing prayer (1-2 sentences)`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            reflection: { type: "string" },
-            insights: { type: "array", items: { type: "string" } },
-            application: { type: "string" },
-            prayer: { type: "string" },
-          },
-          required: ["title", "reflection"],
-        },
+      // SAME shared generator Guided Reflection uses (src/lib/reflectionGenerator.js).
+      // Only difference: the selected mood is woven into the prompt.
+      const result = await generateMoodDevotional({
+        verseRef: displayRef,
+        verseText,
+        translation,
+        moodContext: MOOD_CONTEXT[userMood] || userMood,
+        isEs,
       });
-      if (result && typeof result === "object" && result.reflection) {
-        setDevotional(result);
-      } else {
-        setDevotional(FALLBACK[isEs ? "es" : "en"][userMood]);
-      }
+      setDevotional(result);
     } catch (err) {
-      console.error(err);
-      // Graceful static templated fallback — never show a bare error string.
+      console.error("DevotionalPanel generation failed:", err);
+      // Graceful static templated fallback — never a bare error string.
       setDevotional(FALLBACK[isEs ? "es" : "en"][userMood]);
+      // TEMP debug: show the true error so the next live test reveals the real cause.
+      setDebugError(err?.message || String(err));
     } finally {
       setLoading(false);
     }
@@ -207,10 +184,11 @@ Write a warm, personal devotional specific to BOTH this verse and this mood:
               </p>
             )}
 
-            {ENABLE_TTS_NOTICE && (
-              <div className="mt-6 flex items-center gap-2 p-3 rounded-lg" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                <p className="text-[10px] font-inter text-white/50">Text-to-speech coming soon</p>
-              </div>
+            {/* TEMP debug line — remove after the mood panel is confirmed working live */}
+            {debugError && (
+              <p className="text-[10px] font-mono break-words" style={{ color: "rgba(255,255,255,0.25)" }}>
+                debug: {debugError}
+              </p>
             )}
           </motion.div>
         )}

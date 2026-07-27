@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Loader2, X, RefreshCw } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 import { getTranslatedBookName } from "@/lib/bibleData";
+import { generateGuidedQuestion } from "@/lib/reflectionGenerator";
 
 export default function GuidedReflection({ book, chapter, verses, onClose }) {
   const { lang } = useLang();
@@ -15,11 +15,8 @@ export default function GuidedReflection({ book, chapter, verses, onClose }) {
   const generate = async () => {
     setLoading(true);
     setQuestion(null);
-    const sampleText = (verses || []).slice(0, 6).map(v => `${v.verse}. ${v.text}`).join(" ");
-    const langInst = isEs ? "Respond entirely in Spanish." : "Respond in English.";
-    const prompt = `${langInst} You are a gentle spiritual guide. Based on this passage from ${book} chapter ${chapter}:\n\n"${sampleText}"\n\nGenerate ONE single short, personal, reflective question (max 25 words) that helps the reader apply this scripture to their daily life. Return only the question, nothing else.`;
-    const result = await base44.integrations.Core.InvokeLLM({ prompt });
-    setQuestion(typeof result === "string" ? result.trim() : (isEs ? "¿Cómo te habla este pasaje en donde estás hoy?" : "How does this passage speak to where you are today?"));
+    const result = await generateGuidedQuestion({ book, chapter, verses, isEs });
+    setQuestion(result || (isEs ? "¿Cómo te habla este pasaje en donde estás hoy?" : "How does this passage speak to where you are today?"));
     setLoading(false);
   };
 
