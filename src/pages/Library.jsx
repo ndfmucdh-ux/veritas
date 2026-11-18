@@ -14,6 +14,7 @@ import LibraryTabs from "@/components/library/LibraryTabs.jsx";
 import TagFilterBar from "@/components/library/TagFilterBar.jsx";
 import useLibraryData from "@/hooks/useLibraryData";
 import { LoadingState, EmptyState } from "@/components/ui/states";
+import { useLang } from "@/lib/LanguageContext";
 
 const HIGHLIGHT_COLOR_HEX = {
   yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa",
@@ -21,6 +22,7 @@ const HIGHLIGHT_COLOR_HEX = {
 };
 
 export default function Library() {
+  const { t } = useLang();
   const [activeTab, setActiveTab] = useState("bookmarks");
   const {
     bookmarks,
@@ -286,8 +288,8 @@ export default function Library() {
     <div className="md:ml-16 min-h-screen px-4 pt-6">
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">My Library</h1>
-          <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
+          <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">{t.myLibrary}</h1>
+          <p className="text-muted-foreground text-sm">{t.librarySub}</p>
         </div>
         <LibraryHeaderActions
           showAI={showAI}

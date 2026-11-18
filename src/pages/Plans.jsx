@@ -10,6 +10,7 @@ import { base44 } from "@/api/base44Client";
 import PlanInvitePanel from "@/components/plans/PlanInvitePanel";
 import PlanDownloadButton from "@/components/plans/PlanDownloadButton";
 import usePlansData from "@/hooks/usePlansData";
+import { useAccentTint } from "@/lib/accent";
 
 // Real-life Unsplash photo headers per plan
 const PRESET_PLANS = [
@@ -149,6 +150,7 @@ const LANG_FILTER = ["all", "en", "es"];
 
 export default function Plans() {
   const { t, lang } = useLang();
+  const tint = useAccentTint();
   const urlParams = new URLSearchParams(window.location.search);
   const urlCat = urlParams.get("cat") || "all";
 
@@ -290,53 +292,47 @@ export default function Plans() {
 
   // ── Plan Detail View ───────────────────────────────────────────
   if (activePlan) {
+    const accent = tint(activePlan.accent);
     const completed = getCompletedDays(activePlan.title);
     const pct = Math.round((completed / activePlan.duration_days) * 100);
 
     return (
       <div className="md:ml-16 min-h-screen pb-28">
-        {/* Photo hero header */}
-        <div className="relative h-56 md:h-72 overflow-hidden">
-          <img src={activePlan.photo} alt={activePlan.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(10,14,26,0.82) 70%, rgba(10,14,26,0.95) 100%)" }} />
+        {/* Text header */}
+        <div className="px-5 pt-5">
           <button
             onClick={() => { setActivePlan(null); setSelectedDay(null); setGenDevo(null); }}
-            className="absolute top-4 left-4 flex items-center gap-1.5 text-on-image text-sm px-3 py-1.5 rounded-xl transition-colors"
-            style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)" }}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
           >
-            <ChevronLeft className="w-4 h-4" /> Back
+            <ChevronLeft className="w-4 h-4" /> {t.back}
           </button>
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-inter uppercase tracking-widest px-2.5 py-1 rounded-full"
-                style={{ background: `${activePlan.accent}22`, color: activePlan.accent, border: `1px solid ${activePlan.accent}44` }}>
-                {activePlan.lang === "es" ? "Español" : "English"} · {activePlan.duration_days} days
-              </span>
-            </div>
-            <h1 className="font-cinzel text-2xl font-bold text-on-image leading-tight">{activePlan.title}</h1>
-            <p className="text-sm mt-1 text-on-image" style={{ opacity: 0.85 }}>{activePlan.description}</p>
-          </div>
+          <p className="text-xs font-inter uppercase tracking-widest mb-2" style={{ color: accent }}>
+            {activePlan.lang === "es" ? "Español" : "English"} · {activePlan.duration_days} {t.days || "days"}
+          </p>
+          <h1 className="font-cinzel text-3xl font-semibold text-foreground leading-tight">{activePlan.title}</h1>
+          <p className="text-sm mt-2 text-muted-foreground leading-relaxed">{activePlan.description}</p>
+          <div className="mt-3 h-px w-16" style={{ background: accent, opacity: 0.7 }} />
         </div>
 
         {/* View toggle */}
         <div className="flex gap-2 px-5 pt-4">
           <button onClick={() => setShowCalendar(false)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
-            style={{ background: !showCalendar ? `${activePlan.accent}22` : "rgb(var(--ink) / 0.04)", color: !showCalendar ? activePlan.accent : "rgb(var(--ink) / 0.35)", border: !showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgb(var(--ink) / 0.07)" }}>
-            <List className="w-3.5 h-3.5" /> Timeline
+            style={{ background: !showCalendar ? `${accent}22` : "rgb(var(--ink) / 0.04)", color: !showCalendar ? accent : "rgb(var(--ink) / 0.35)", border: !showCalendar ? `1px solid ${accent}44` : "1px solid rgb(var(--ink) / 0.07)" }}>
+            <List className="w-3.5 h-3.5" /> {t.timeline}
           </button>
           <button onClick={() => setShowCalendar(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
-            style={{ background: showCalendar ? `${activePlan.accent}22` : "rgb(var(--ink) / 0.04)", color: showCalendar ? activePlan.accent : "rgb(var(--ink) / 0.35)", border: showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgb(var(--ink) / 0.07)" }}>
-            <CalendarDays className="w-3.5 h-3.5" /> Calendar
+            style={{ background: showCalendar ? `${accent}22` : "rgb(var(--ink) / 0.04)", color: showCalendar ? accent : "rgb(var(--ink) / 0.35)", border: showCalendar ? `1px solid ${accent}44` : "1px solid rgb(var(--ink) / 0.07)" }}>
+            <CalendarDays className="w-3.5 h-3.5" /> {t.calendar}
           </button>
         </div>
 
         {/* Progress bar */}
         <div className="px-5 pt-5 mb-6">
           <div className="flex justify-between text-xs mb-2" style={{ color: "rgb(var(--ink) / 0.4)" }}>
-            <span>{completed} of {activePlan.duration_days} days complete</span>
-            <span style={{ color: activePlan.accent }}>{pct}%</span>
+            <span>{t.daysComplete.replace("{done}", completed).replace("{total}", activePlan.duration_days)}</span>
+            <span style={{ color: accent }}>{pct}%</span>
           </div>
           <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <motion.div
@@ -344,24 +340,24 @@ export default function Plans() {
               animate={{ width: `${pct}%` }}
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="h-full rounded-full"
-              style={{ background: `linear-gradient(90deg, ${activePlan.accent}, ${activePlan.accent}88)` }}
+              style={{ background: `linear-gradient(90deg, ${accent}, ${accent}88)` }}
             />
           </div>
         </div>
 
         {/* Offline download */}
         <div className="px-5 mb-6">
-          <PlanDownloadButton plan={activePlan} accentColor={activePlan.accent} />
+          <PlanDownloadButton plan={activePlan} accentColor={accent} />
         </div>
 
         {/* Calendar or Timeline */}
         {showCalendar ? (
           <div className="px-5 mb-6">
-            <ReadingCalendar progress={progress} accent={activePlan.accent} />
+            <ReadingCalendar progress={progress} accent={accent} />
           </div>
         ) : (
           <PlanTimeline
-            plan={activePlan}
+            plan={{ ...activePlan, accent }}
             completedDays={completed}
             onSelectDay={setSelectedDay}
             selectedDay={selectedDay}
@@ -378,8 +374,8 @@ export default function Plans() {
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                 className="rounded-2xl overflow-hidden transition-all"
                 style={{
-                  background: open ? "rgb(var(--ink) / 0.05)" : "rgb(var(--ink) / 0.03)",
-                  border: done ? `1px solid rgba(52,211,153,0.25)` : open ? `1px solid ${activePlan.accent}33` : "1px solid rgb(var(--ink) / 0.06)",
+                  background: "hsl(var(--card))",
+                  border: done ? `1px solid rgba(52,211,153,0.25)` : open ? `1px solid ${accent}33` : "1px solid rgb(var(--ink) / 0.06)",
                 }}
               >
                 <button className="w-full flex items-center gap-3 p-4 text-left" onClick={() => setSelectedDay(open ? null : day)}>
@@ -391,12 +387,12 @@ export default function Plans() {
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Day {day.day}</p>
-                    <p className="font-cinzel text-sm font-semibold text-white truncate">{day.title}</p>
+                    <p className="text-xs font-inter text-muted-foreground">{t.dayLabel} {day.day}</p>
+                    <p className="font-cinzel text-base font-semibold text-foreground truncate">{day.title}</p>
                     <div className="flex gap-1 mt-1.5 flex-wrap">
                       {day.verses.map(v => (
                         <span key={v} className="text-[10px] px-2 py-0.5 rounded-full font-inter"
-                          style={{ background: `${activePlan.accent}15`, color: activePlan.accent }}>
+                          style={{ background: `${accent}15`, color: accent }}>
                           {v}
                         </span>
                       ))}
@@ -418,8 +414,8 @@ export default function Plans() {
                       <div className="px-4 pb-5 border-t" style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
                         {/* Devotional text */}
                         <div className="pt-4">
-                          <p className="text-[10px] font-inter uppercase tracking-widest mb-3" style={{ color: activePlan.accent }}>
-                            ✦ Devotional
+                          <p className="text-[10px] font-inter uppercase tracking-widest mb-3" style={{ color: accent }}>
+                            {t.devotionalLabel}
                           </p>
                           <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                             {(genDevo && selectedDay?.day === day.day) ? genDevo.reflection : day.devotional}
@@ -430,7 +426,7 @@ export default function Plans() {
                             <div className="mt-4 space-y-3">
                               {genDevo.insights?.length > 0 && (
                                 <div>
-                                  <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "#FFD700" }}>Key Insights</p>
+                                  <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "var(--t-gold)" }}>{t.keyInsights}</p>
                                   <ul className="space-y-1.5">
                                     {genDevo.insights.map((ins, i) => (
                                       <li key={i} className="text-sm flex gap-2" style={{ color: "rgb(var(--ink) / 0.6)" }}>
@@ -442,7 +438,7 @@ export default function Plans() {
                               )}
                               {genDevo.application && (
                                 <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                                  <p className="text-[10px] font-inter uppercase tracking-widest mb-1" style={{ color: "#00f5ff" }}>Apply Today</p>
+                                  <p className="text-[10px] font-inter uppercase tracking-widest mb-1" style={{ color: "var(--t-cyan)" }}>{t.applyToday}</p>
                                   <p className="text-sm" style={{ color: "rgb(var(--ink) / 0.7)" }}>{genDevo.application}</p>
                                 </div>
                               )}
@@ -454,7 +450,7 @@ export default function Plans() {
                             <div className="mt-4 rounded-xl p-4"
                               style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                               <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>
-                                🙏 Prayer
+                                {t.prayerLabel}
                               </p>
                               <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgb(var(--ink) / 0.65)" }}>
                                 {day.prayer}
@@ -511,7 +507,7 @@ export default function Plans() {
           <PlanInvitePanel
             planTitle={activePlan.title}
             planCategory={activePlan.category}
-            accentColor={activePlan.accent}
+            accentColor={accent}
           />
         </div>
       </div>
@@ -530,7 +526,7 @@ export default function Plans() {
 
       {/* Language filter */}
       <div className="flex gap-2 px-4 pt-4 pb-2 overflow-x-auto scrollbar-hide">
-        {[["all", "All", "🌍"], ["en", "English", "🇺🇸"], ["es", "Español", "🇲🇽"]].map(([v, l, flag]) => (
+        {[["all", "All", ""], ["en", "English", ""], ["es", "Español", ""]].map(([v, l, flag]) => (
           <button key={v} onClick={() => setLangFilter(v)}
             className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-inter transition-all"
             style={{
@@ -680,24 +676,24 @@ export default function Plans() {
               </div>
 
               {/* Meta */}
-              <div className="px-4 py-3" style={{ background: "hsl(var(--surface-2))" }}>
-                <p className="text-xs mb-3 leading-relaxed" style={{ color: "rgb(var(--ink) / 0.45)" }}>{plan.description}</p>
+              <div className="px-4 py-3.5 bg-card">
+                <p className="text-sm mb-3 leading-relaxed text-foreground/80">{plan.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-inter capitalize"
-                      style={{ background: `${plan.accent}15`, color: plan.accent, border: `1px solid ${plan.accent}30` }}>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full font-inter capitalize font-medium"
+                      style={{ background: `${tint(plan.accent)}1f`, color: tint(plan.accent), border: `1px solid ${tint(plan.accent)}55` }}>
                       {plan.category.replace("_", " ")}
                     </span>
-                    <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{plan.duration_days} days</span>
-                    {started && <span className="text-[10px] font-inter" style={{ color: plan.accent }}>{pct}%</span>}
+                    <span className="text-xs font-inter text-muted-foreground">{plan.duration_days} {t.daysWord || "days"}</span>
+                    {started && <span className="text-xs font-inter font-semibold" style={{ color: tint(plan.accent) }}>{pct}%</span>}
                   </div>
-                  <div className="flex items-center gap-1 text-xs font-cinzel" style={{ color: plan.accent }}>
+                  <div className="flex items-center gap-1 text-xs font-cinzel" style={{ color: tint(plan.accent) }}>
                     Start <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
                 {started && (
                   <div className="mt-2.5 h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: plan.accent }} />
+                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: tint(plan.accent) }} />
                   </div>
                 )}
               </div>

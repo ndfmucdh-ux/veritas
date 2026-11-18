@@ -12,6 +12,7 @@ import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
 import ViewTransitionLinks from '@/components/layout/ViewTransitionLinks';
+import EmojiSanitizer from '@/components/layout/EmojiSanitizer';
 import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { warmOfflineCache } from '@/lib/offlineBible';
@@ -122,6 +123,7 @@ function App() {
           <AuthenticatedApp />
         </Router>
         <Toaster />
+        <EmojiSanitizer />
       </QueryClientProvider>
       </LanguageProvider>
     </AuthProvider>
