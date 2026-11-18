@@ -148,7 +148,7 @@ export default function AudioDashboard() {
         <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=80" alt="Audio" className="w-full h-full object-cover" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(10,14,26,0.92))" }} />
         <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
-          <h1 className="font-cinzel text-2xl font-bold text-white">Audio Dashboard</h1>
+          <h1 className="font-cinzel text-3xl font-semibold text-foreground">Audio Dashboard</h1>
           <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>Your scripture listening journey</p>
         </div>
       </div>

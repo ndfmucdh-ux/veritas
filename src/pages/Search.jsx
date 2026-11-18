@@ -88,7 +88,7 @@ export default function Search() {
     <div className="md:ml-16 min-h-screen px-4 pt-6 pb-28">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="font-cinzel text-2xl font-bold mb-1">{t.search}</h1>
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">{t.search}</h1>
         <p className="text-muted-foreground text-sm">{t.scripture} · {t.myNotes} · {t.prayerJournalTab}</p>
       </div>
 

@@ -171,13 +171,10 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       {/* Hero */}
-      <div className="relative h-40 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80" alt="Study" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(10,14,26,0.92))" }} />
-        <div className="absolute bottom-0 px-5 pb-4">
-          <h1 className="font-cinzel text-2xl font-bold text-white">{t.studyCenter}</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>Commentary · Cross-refs · Dictionary · Topical</p>
-        </div>
+      <div className="px-5 pt-6 pb-2">
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground">{t.studyCenter}</h1>
+        <p className="text-sm mt-1 text-muted-foreground">Commentary · Cross-refs · Dictionary · Topical</p>
+        <div className="mt-3 h-px w-16" style={{ background: "var(--t-gold)", opacity: 0.6 }} />
       </div>
 
       {/* AI Insights Button */}

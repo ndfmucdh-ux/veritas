@@ -286,7 +286,7 @@ export default function Library() {
     <div className="md:ml-16 min-h-screen px-4 pt-6">
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="font-cinzel text-2xl font-bold mb-1">My Library</h1>
+          <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">My Library</h1>
           <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
         </div>
         <LibraryHeaderActions

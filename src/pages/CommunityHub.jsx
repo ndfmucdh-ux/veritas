@@ -44,7 +44,7 @@ export default function CommunityHub() {
     <div className="md:ml-16 min-h-screen pb-28 px-4 md:px-8">
       {/* Header */}
       <div className="max-w-4xl mx-auto pt-6 mb-8">
-        <h1 className="font-cinzel text-2xl font-bold text-white mb-2">Community</h1>
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-2">Community</h1>
         <p className="text-sm text-white/50">Connect with believers worldwide</p>
       </div>
 

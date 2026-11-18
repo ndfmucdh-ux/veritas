@@ -86,7 +86,7 @@ export default function PrayerJournal() {
       <div className="max-w-4xl mx-auto pt-6 mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-cinzel text-2xl font-bold text-white mb-1">Prayer Journal</h1>
+            <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">Prayer Journal</h1>
             <p className="text-sm text-white/50">Record your conversations with God</p>
           </div>
           <motion.button

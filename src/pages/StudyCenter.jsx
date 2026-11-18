@@ -158,7 +158,7 @@ export default function StudyCenter() {
     <div className="md:ml-16 min-h-screen pb-28 px-4 md:px-8">
       {/* Header */}
       <div className="max-w-4xl mx-auto pt-6 mb-6">
-        <h1 className="font-cinzel text-2xl font-bold text-white mb-1">Study Center</h1>
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">Study Center</h1>
         <p className="text-sm text-white/50 mb-5">Deep dive into scripture with AI-powered analysis</p>
 
         <StudyCenterTabs

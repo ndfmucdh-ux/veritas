@@ -301,7 +301,7 @@ export default function Plans() {
           <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(10,14,26,0.82) 70%, rgba(10,14,26,0.95) 100%)" }} />
           <button
             onClick={() => { setActivePlan(null); setSelectedDay(null); setGenDevo(null); }}
-            className="absolute top-4 left-4 flex items-center gap-1.5 text-white/80 hover:text-white text-sm px-3 py-1.5 rounded-xl transition-colors"
+            className="absolute top-4 left-4 flex items-center gap-1.5 text-on-image text-sm px-3 py-1.5 rounded-xl transition-colors"
             style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)" }}
           >
             <ChevronLeft className="w-4 h-4" /> Back
@@ -313,8 +313,8 @@ export default function Plans() {
                 {activePlan.lang === "es" ? "Español" : "English"} · {activePlan.duration_days} days
               </span>
             </div>
-            <h1 className="font-cinzel text-2xl font-bold text-white leading-tight">{activePlan.title}</h1>
-            <p className="text-sm mt-1" style={{ color: "rgb(var(--ink) / 0.5)" }}>{activePlan.description}</p>
+            <h1 className="font-cinzel text-2xl font-bold text-on-image leading-tight">{activePlan.title}</h1>
+            <p className="text-sm mt-1 text-on-image" style={{ opacity: 0.85 }}>{activePlan.description}</p>
           </div>
         </div>
 
@@ -522,13 +522,10 @@ export default function Plans() {
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       {/* Header */}
-      <div className="relative h-44 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80" alt="Reading Plans" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(10,14,26,0.92))" }} />
-        <div className="absolute bottom-0 px-5 pb-5">
-          <h1 className="font-cinzel text-2xl font-bold text-white">{t.readingPlansTitle}</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.structuredJourneys}</p>
-        </div>
+      <div className="px-5 pt-6 pb-2">
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground">{t.readingPlansTitle}</h1>
+        <p className="text-sm mt-1 text-muted-foreground">{t.structuredJourneys}</p>
+        <div className="mt-3 h-px w-16" style={{ background: "var(--t-gold)", opacity: 0.6 }} />
       </div>
 
       {/* Language filter */}
@@ -666,7 +663,7 @@ export default function Plans() {
               style={{ border: "1px solid rgb(var(--ink) / 0.07)" }}
             >
               {/* Photo */}
-              <div className="relative h-36 overflow-hidden">
+              <div className="relative h-28 overflow-hidden">
                 <img src={plan.photo} alt={plan.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(10,14,26,0.9))" }} />
                 <div className="absolute top-3 right-3 flex gap-2">
@@ -678,7 +675,7 @@ export default function Plans() {
                   )}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 px-4 pb-3">
-                  <h3 className="font-cinzel text-base font-bold text-white leading-tight">{plan.title}</h3>
+                  <h3 className="font-cinzel text-base font-bold text-on-image leading-tight">{plan.title}</h3>
                 </div>
               </div>
 
