@@ -24,7 +24,7 @@ export default function ContinueReadingCard() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-cinzel text-sm font-semibold text-white/90">{t.continueReading}</p>
-            <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{t.pickUp}</p>
+            <p className="font-inter text-xs mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>{t.pickUp}</p>
           </div>
           <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(0,245,255,0.5)" }} />
         </motion.div>

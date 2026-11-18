@@ -29,7 +29,7 @@ export default function ForYouSection() {
       <div className="relative overflow-hidden rounded-3xl mb-6 mt-4"
         style={{ background: `linear-gradient(135deg, ${section.color}18, ${section.color}06)`, border: `1px solid ${section.color}33` }}>
         <div className="px-6 py-8">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 mb-6 text-xs font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 mb-6 text-xs font-cinzel" style={{ color: "rgb(var(--ink) / 0.4)" }}>
             <ArrowLeft className="w-3.5 h-3.5" /> Volver
           </button>
           <div className="flex items-center gap-4">
@@ -39,16 +39,16 @@ export default function ForYouSection() {
             </div>
             <div>
               <h1 className="font-cinzel text-2xl font-bold text-white">{section.title}</h1>
-              <p className="text-sm font-inter mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>{section.subtitle}</p>
+              <p className="text-sm font-inter mt-1" style={{ color: "rgb(var(--ink) / 0.5)" }}>{section.subtitle}</p>
             </div>
           </div>
-          <p className="mt-4 text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>{section.intro}</p>
+          <p className="mt-4 text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.65)" }}>{section.intro}</p>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto space-y-6">
         <div>
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Temas de Estudio</p>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>Temas de Estudio</p>
           <div className="space-y-3">
             {section.themes.map((theme, i) => (
               <ForYouThemeCard key={i} theme={theme} index={i} color={section.color}
@@ -66,7 +66,7 @@ export default function ForYouSection() {
             </div>
             <div className="flex-1">
               <p className="font-cinzel text-sm font-semibold text-white">Planes de Lectura</p>
-              <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+              <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                 Ver todos los planes para {section.title.toLowerCase()}
               </p>
             </div>

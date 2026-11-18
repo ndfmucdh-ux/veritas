@@ -54,9 +54,9 @@ export default function MorningInspiration() {
   if (loading) {
     return (
       <div className="rounded-2xl p-4 flex items-center gap-3"
-        style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
         <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: "#00f5ff" }} />
-        <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Preparing your morning verse…</p>
+        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Preparing your morning verse…</p>
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function MorningInspiration() {
               style={{ background: "var(--fill-3)" }}
             >
               <RefreshCw className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`}
-                style={{ color: "rgba(255,255,255,0.3)" }} />
+                style={{ color: "rgb(var(--ink) / 0.3)" }} />
             </motion.button>
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function MorningInspiration() {
           <motion.div key={inspiration.verse_ref}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
             <p className="font-playfair italic leading-relaxed mb-2"
-              style={{ fontSize: "15px", color: "rgba(255,255,255,0.88)" }}>
+              style={{ fontSize: "15px", color: "rgb(var(--ink) / 0.88)" }}>
               "{inspiration.verse_text}"
             </p>
             <p className="font-cinzel text-xs font-semibold mb-3" style={{ color: theme.color }}>
@@ -119,7 +119,7 @@ export default function MorningInspiration() {
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   className="text-sm font-inter leading-relaxed mb-3 overflow-hidden"
-                  style={{ color: "rgba(255,255,255,0.6)" }}
+                  style={{ color: "rgb(var(--ink) / 0.6)" }}
                 >
                   {inspiration.reflection}
                 </motion.p>
@@ -130,7 +130,7 @@ export default function MorningInspiration() {
               <button
                 onClick={() => setExpanded(v => !v)}
                 className="text-[11px] font-inter"
-                style={{ color: "rgba(255,255,255,0.35)" }}
+                style={{ color: "rgb(var(--ink) / 0.35)" }}
               >
                 {expanded
                 ? (lang === "es" ? "Menos ↑" : lang === "pt" ? "Menos ↑" : "Less ↑")

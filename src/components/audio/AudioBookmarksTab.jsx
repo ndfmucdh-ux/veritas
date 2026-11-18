@@ -7,7 +7,7 @@ export default function AudioBookmarksTab({ bookmarks, onDelete }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between mb-1">
-        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
+        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>
           {bookmarks.length} saved spot{bookmarks.length !== 1 ? "s" : ""}
         </p>
       </div>
@@ -28,10 +28,10 @@ export default function AudioBookmarksTab({ bookmarks, onDelete }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-cinzel text-sm font-semibold text-white">{bm.label}</p>
-              <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                 {bm.translation} · at {formatTime(bm.timestamp_seconds)}
               </p>
-              <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.2)" }}>
+              <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.2)" }}>
                 Saved {new Date(bm.saved_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
               </p>
             </div>

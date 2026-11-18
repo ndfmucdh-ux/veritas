@@ -28,9 +28,9 @@ export default function ErrorState({
       className={cn("flex flex-col items-center justify-center text-center gap-3 py-12 px-6", className)}
     >
       <AlertTriangle className="w-8 h-8" style={{ color: "#f87171" }} aria-hidden="true" />
-      <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{title}</p>
+      <p className="font-cinzel text-sm" style={{ color: "rgb(var(--ink) / 0.7)" }}>{title}</p>
       {description && (
-        <p className="text-xs font-inter max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.35)" }}>
+        <p className="text-xs font-inter max-w-xs leading-relaxed" style={{ color: "rgb(var(--ink) / 0.35)" }}>
           {description}
         </p>
       )}

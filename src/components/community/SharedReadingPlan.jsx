@@ -93,7 +93,7 @@ export default function SharedReadingPlan() {
                 onKeyDown={e => e.key === "Enter" && handleCreatePlan()}
                 placeholder="Plan name (e.g. 'Daily Psalms')"
                 className="flex-1 px-3 py-2 rounded-lg text-sm font-inter focus:outline-none"
-                style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.8)" }}
+                style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.8)" }}
               />
               <motion.button whileTap={{ scale: 0.9 }} onClick={handleCreatePlan}
                 className="px-4 py-2 rounded-lg text-sm font-cinzel"
@@ -109,7 +109,7 @@ export default function SharedReadingPlan() {
       <div className="space-y-3">
         {plans.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
               No community reading plans yet. Create one to get started!
             </p>
           </div>
@@ -122,7 +122,7 @@ export default function SharedReadingPlan() {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <p className="font-cinzel text-sm font-semibold text-white">{plan.name}</p>
-                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                     {plan.member_count} member{plan.member_count > 1 ? "s" : ""}
                   </p>
                 </div>
@@ -137,7 +137,7 @@ export default function SharedReadingPlan() {
               </div>
 
               {plan.description && (
-                <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <p className="text-xs font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   {plan.description}
                 </p>
               )}

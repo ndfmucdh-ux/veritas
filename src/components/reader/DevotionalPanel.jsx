@@ -93,7 +93,7 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
       aria-label={isEs ? "Devocional Diario" : "Daily Devotional"}
     >
       {/* Header */}
-      <div className="sticky top-0 px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+      <div className="sticky top-0 px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4" style={{ color: "#a78bfa" }} />
           <h2 className="font-cinzel text-sm font-semibold text-white">{isEs ? "Devocional Diario" : "Daily Devotional"}</h2>
@@ -105,7 +105,7 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
       </div>
 
       {/* Mood selector */}
-      <div className="px-5 py-4 space-y-2 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+      <div className="px-5 py-4 space-y-2 border-b" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
         <p className="text-[10px] font-cinzel uppercase tracking-widest text-white/35">{isEs ? "¿Cómo te sientes?" : "How are you feeling?"}</p>
         <div className="flex gap-1.5 flex-wrap">
           {moods.map(m => (
@@ -115,9 +115,9 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
               aria-pressed={userMood === m.id}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-inter transition-all min-h-11"
               style={{
-                background: userMood === m.id ? "rgba(167,139,250,0.12)" : "rgba(255,255,255,0.04)",
+                background: userMood === m.id ? "rgba(167,139,250,0.12)" : "rgb(var(--ink) / 0.04)",
                 border: userMood === m.id ? "1px solid rgba(167,139,250,0.25)" : "1px solid transparent",
-                color: userMood === m.id ? "#a78bfa" : "rgba(255,255,255,0.4)",
+                color: userMood === m.id ? "#a78bfa" : "rgb(var(--ink) / 0.4)",
               }}
             >
               <span>{m.emoji}</span>
@@ -161,8 +161,8 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
             <p className="text-sm font-inter leading-relaxed text-white/70">{devotional.reflection}</p>
 
             {Array.isArray(devotional.insights) && devotional.insights.length > 0 && (
-              <div className="rounded-xl p-3" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <div className="rounded-xl p-3" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+                <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                   {isEs ? "Ideas Clave" : "Key Insights"}
                 </p>
                 <ul className="space-y-1.5">
@@ -186,7 +186,7 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
 
             {/* TEMP debug line — remove after the mood panel is confirmed working live */}
             {debugError && (
-              <p className="text-[10px] font-mono break-words" style={{ color: "rgba(255,255,255,0.25)" }}>
+              <p className="text-[10px] font-mono break-words" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                 debug: {debugError}
               </p>
             )}

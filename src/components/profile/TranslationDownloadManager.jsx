@@ -61,12 +61,12 @@ export default function TranslationDownloadManager() {
     <div className="space-y-4">
       {/* Storage indicator */}
       {storageInfo && (
-        <div className="rounded-2xl p-4" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="rounded-2xl p-4" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <span className="text-xs font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.35)" }}>
               Offline Storage
             </span>
-            <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
               {(storageInfo.used / 1024 / 1024).toFixed(1)}MB / {(storageInfo.quota / 1024 / 1024).toFixed(0)}MB
             </span>
           </div>
@@ -80,7 +80,7 @@ export default function TranslationDownloadManager() {
               }}
             />
           </div>
-          <p className="text-[10px] font-inter mt-2" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="text-[10px] font-inter mt-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             {downloaded.size} translation{downloaded.size !== 1 ? "s" : ""} downloaded
           </p>
         </div>
@@ -99,15 +99,15 @@ export default function TranslationDownloadManager() {
                 onClick={() => setExpandedLang(isExpanded ? null : group.lang)}
                 className="w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all"
                 style={{
-                  background: isExpanded ? "rgba(0,245,255,0.08)" : "rgba(255,255,255,0.04)",
-                  border: isExpanded ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.08)",
+                  background: isExpanded ? "rgba(0,245,255,0.08)" : "rgb(var(--ink) / 0.04)",
+                  border: isExpanded ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.08)",
                 }}
               >
                 <div className="flex items-center gap-3">
                   <span className="text-lg">{group.flag}</span>
                   <div className="text-left">
                     <p className="font-cinzel text-sm font-semibold text-white">{group.label}</p>
-                    <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+                    <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                       {groupDownloaded} of {translations.length}
                     </p>
                   </div>
@@ -116,7 +116,7 @@ export default function TranslationDownloadManager() {
                   animate={{ rotate: isExpanded ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.4)" }} />
+                  <ChevronDown className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.4)" }} />
                 </motion.div>
               </button>
 
@@ -142,7 +142,7 @@ export default function TranslationDownloadManager() {
                           >
                             <div>
                               <p className="text-xs font-cinzel font-semibold text-white">{trans.code}</p>
-                              <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+                              <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                                 {trans.name}
                               </p>
                             </div>

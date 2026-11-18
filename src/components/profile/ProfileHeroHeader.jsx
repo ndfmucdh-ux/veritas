@@ -41,7 +41,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
       <button
         onClick={() => heroInputRef.current?.click()}
         className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-inter"
-        style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)" }}
+        style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(8px)", border: "1px solid rgb(var(--ink) / 0.15)", color: "rgb(var(--ink) / 0.7)" }}
       >
         {uploadingHero ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Camera className="w-3.5 h-3.5" />}
         Change Cover
@@ -92,11 +92,11 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
             <div className="flex items-center gap-2">
               <h1 className="font-cinzel text-lg font-bold text-white truncate">{sessionStorage.getItem("veritas_display_name") || user?.full_name || "Believer"}</h1>
               <button onClick={() => setEditingName(true)}>
-                <Edit3 className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
+                <Edit3 className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} />
               </button>
             </div>
           )}
-          <p className="text-xs font-inter truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{user?.email}</p>
+          <p className="text-xs font-inter truncate" style={{ color: "rgb(var(--ink) / 0.4)" }}>{user?.email}</p>
         </div>
       </div>
     </div>

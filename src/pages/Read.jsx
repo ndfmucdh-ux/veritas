@@ -231,7 +231,7 @@ export default function Read() {
           top: immersive ? 0 : "57px",
           background: oledMode ? "rgba(0,0,0,0.97)" : "var(--chrome-surface)",
           backdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "1px solid rgb(var(--ink) / 0.06)",
           overflow: "visible",
         }}
       >
@@ -462,7 +462,7 @@ export default function Read() {
             style={{
               background: "hsl(var(--surface-4) / 0.92)",
               backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid rgb(var(--ink) / 0.1)",
               boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
             }}
           >

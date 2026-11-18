@@ -70,9 +70,9 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
                   onClick={() => setMood(m.id)}
                   className="rounded-xl p-3 text-sm font-inter transition-all"
                   style={{
-                    background: mood === m.id ? `${m.color}22` : "rgba(255,255,255,0.05)",
-                    color: mood === m.id ? m.color : "rgba(255,255,255,0.5)",
-                    border: mood === m.id ? `1px solid ${m.color}44` : "1px solid rgba(255,255,255,0.1)"
+                    background: mood === m.id ? `${m.color}22` : "rgb(var(--ink) / 0.05)",
+                    color: mood === m.id ? m.color : "rgb(var(--ink) / 0.5)",
+                    border: mood === m.id ? `1px solid ${m.color}44` : "1px solid rgb(var(--ink) / 0.1)"
                   }}
                 >
                   {m.label}
@@ -106,7 +106,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
               <button
                 onClick={() => setPrayer(null)}
                 className="flex-1 py-2 rounded-xl text-sm font-inter"
-                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.6)" }}
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.6)" }}
               >
                 Back
               </button>

@@ -114,17 +114,17 @@ export default function PrayerJournal() {
         <div className="flex gap-2">
           <button onClick={() => setView("active")}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-cinzel transition-all"
-            style={{ background: view === "active" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)", color: view === "active" ? "#00f5ff" : "rgba(255,255,255,0.4)", border: view === "active" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent" }}>
+            style={{ background: view === "active" ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)", color: view === "active" ? "#00f5ff" : "rgb(var(--ink) / 0.4)", border: view === "active" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent" }}>
             <Clock className="w-3.5 h-3.5" /> Active ({activePrayers.length})
           </button>
           <button onClick={() => setView("answered")}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-cinzel transition-all"
-            style={{ background: view === "answered" ? "rgba(52,211,153,0.12)" : "rgba(255,255,255,0.05)", color: view === "answered" ? "#34d399" : "rgba(255,255,255,0.4)", border: view === "answered" ? "1px solid rgba(52,211,153,0.25)" : "1px solid transparent" }}>
+            style={{ background: view === "answered" ? "rgba(52,211,153,0.12)" : "rgb(var(--ink) / 0.05)", color: view === "answered" ? "#34d399" : "rgb(var(--ink) / 0.4)", border: view === "answered" ? "1px solid rgba(52,211,153,0.25)" : "1px solid transparent" }}>
             <CheckCircle2 className="w-3.5 h-3.5" /> Answered ({answeredPrayers.length})
           </button>
           <button onClick={() => setView("testimonies")}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-cinzel transition-all"
-            style={{ background: view === "testimonies" ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.05)", color: view === "testimonies" ? "#fbbf24" : "rgba(255,255,255,0.4)", border: view === "testimonies" ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent" }}>
+            style={{ background: view === "testimonies" ? "rgba(251,191,36,0.12)" : "rgb(var(--ink) / 0.05)", color: view === "testimonies" ? "#fbbf24" : "rgb(var(--ink) / 0.4)", border: view === "testimonies" ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent" }}>
             <History className="w-3.5 h-3.5" /> Testimonies
           </button>
         </div>
@@ -138,8 +138,8 @@ export default function PrayerJournal() {
               onClick={() => setFilter(m.id)}
               className="flex-shrink-0 py-2 px-4 rounded-full text-xs font-cinzel whitespace-nowrap transition-all"
               style={{
-                background: filter === m.id ? `${m.color}22` : "rgba(255,255,255,0.05)",
-                color: filter === m.id ? m.color : "rgba(255,255,255,0.4)",
+                background: filter === m.id ? `${m.color}22` : "rgb(var(--ink) / 0.05)",
+                color: filter === m.id ? m.color : "rgb(var(--ink) / 0.4)",
                 border: filter === m.id ? `1px solid ${m.color}44` : "1px solid transparent"
               }}
             >

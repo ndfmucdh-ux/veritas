@@ -49,7 +49,7 @@ export default function DailyReadingRing({ chaptersReadToday: initialCount }) {
     <div className="flex flex-col items-center gap-2">
       <div className="relative w-28 h-28">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r={radius} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="8" />
+          <circle cx="50" cy="50" r={radius} fill="none" stroke="rgb(var(--ink) / 0.07)" strokeWidth="8" />
           <motion.circle
             cx="50" cy="50" r={radius}
             fill="none"
@@ -67,16 +67,16 @@ export default function DailyReadingRing({ chaptersReadToday: initialCount }) {
           <span className="font-cinzel text-xl font-bold" style={{ color: done ? "#34d399" : "#00f5ff" }}>
             {count}
           </span>
-          <span className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <span className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             / {DAILY_GOAL} ch
           </span>
         </div>
       </div>
       <div className="text-center">
-        <p className="text-xs font-cinzel font-semibold" style={{ color: done ? "#34d399" : "rgba(255,255,255,0.6)" }}>
+        <p className="text-xs font-cinzel font-semibold" style={{ color: done ? "#34d399" : "rgb(var(--ink) / 0.6)" }}>
           {done ? "🎉 Goal Met!" : "Daily Goal"}
         </p>
-        <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           {pct}% complete
         </p>
       </div>

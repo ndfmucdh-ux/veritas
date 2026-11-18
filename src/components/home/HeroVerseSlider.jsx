@@ -188,13 +188,13 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
 
       {/* Content */}
       <div className="relative z-10 px-5 pt-5 pb-4">
-        <p className="text-[10px] font-inter uppercase tracking-[0.22em] mb-4" style={{ color: "rgba(255,255,255,0.45)" }}>
+        <p className="text-[10px] font-inter uppercase tracking-[0.22em] mb-4" style={{ color: "rgb(var(--ink) / 0.45)" }}>
           ✦ {t.verseOfTheDay}
         </p>
 
         <AnimatePresence mode="wait">
           <motion.div key={current} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }}>
-            <p className="font-playfair italic leading-relaxed mb-3" style={{ fontSize: "clamp(15px, 3.8vw, 19px)", color: "rgba(255,255,255,0.92)" }}>
+            <p className="font-playfair italic leading-relaxed mb-3" style={{ fontSize: "clamp(15px, 3.8vw, 19px)", color: "rgb(var(--ink) / 0.92)" }}>
               "{verse.text}"
             </p>
             <p className="font-cinzel text-sm font-bold" style={{ color: "#fbbf24" }}>— {verse.verse_ref}</p>
@@ -206,8 +206,8 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
           {showReflection && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden mt-3">
-              <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{verse.reflection}</p>
+              <div className="rounded-xl p-3" style={{ background: "rgb(var(--ink) / 0.07)", border: "1px solid rgb(var(--ink) / 0.1)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>{verse.reflection}</p>
               </div>
             </motion.div>
           )}
@@ -217,7 +217,7 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
         <div className="flex items-center gap-2 mt-4">
           <button onClick={() => setShowReflection(v => !v)}
             className="text-xs px-3 py-1.5 rounded-xl font-inter transition-colors"
-            style={{ background: "rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.6)" }}>
             {showReflection ? t.hide : t.reflect}
           </button>
           <a href={readUrl}
@@ -227,7 +227,7 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
           </a>
           <button onClick={() => navigator.share?.({ text: `"${verse.text}" — ${verse.verse_ref}` }) || navigator.clipboard?.writeText(`"${verse.text}" — ${verse.verse_ref}`)}
             className="ml-auto flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+            style={{ background: "rgb(var(--ink) / 0.06)", color: "rgb(var(--ink) / 0.4)" }}>
             <Share2 className="w-3 h-3" /> {t.share}
           </button>
         </div>
@@ -237,12 +237,12 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
       <button onClick={() => go(-1)} aria-label={t.previousVerse}
         className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center"
         style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)" }}>
-        <ChevronLeft className="w-4 h-4 text-white/60" />
+        <ChevronLeft className="w-4 h-4 text-onimage/80" />
       </button>
       <button onClick={() => go(1)} aria-label={t.nextVerse}
         className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center"
         style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)" }}>
-        <ChevronRight className="w-4 h-4 text-white/60" />
+        <ChevronRight className="w-4 h-4 text-onimage/80" />
       </button>
 
       {/* Dots */}
@@ -250,7 +250,7 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
         {slides.map((_, i) => (
           <button key={i} onClick={() => { clearInterval(autoRef.current); setCurrent(i); }}
             className="rounded-full transition-all"
-            style={{ width: i === current ? 16 : 6, height: 6, background: i === current ? "#fbbf24" : "rgba(255,255,255,0.3)" }} />
+            style={{ width: i === current ? 16 : 6, height: 6, background: i === current ? "#fbbf24" : "rgb(var(--ink) / 0.3)" }} />
         ))}
       </div>
     </div>

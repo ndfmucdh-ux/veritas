@@ -92,7 +92,7 @@ export default function LevelUpAnimation({ level, show, onComplete }) {
 
               <div>
                 <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1"
-                  style={{ color: "rgba(255,255,255,0.4)" }}>Level Up!</p>
+                  style={{ color: "rgb(var(--ink) / 0.4)" }}>Level Up!</p>
                 <motion.p
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function LevelUpAnimation({ level, show, onComplete }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.6 }}
                   className="text-xs font-inter mt-1"
-                  style={{ color: "rgba(255,255,255,0.4)" }}
+                  style={{ color: "rgb(var(--ink) / 0.4)" }}
                 >
                   You've reached {level?.minXP?.toLocaleString()} XP
                 </motion.p>

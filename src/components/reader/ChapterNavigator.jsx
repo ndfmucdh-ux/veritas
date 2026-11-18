@@ -133,15 +133,15 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
       <div className="flex items-center gap-2">
         <button onClick={prevChapter} disabled={atStart}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)", color: atStart ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.55)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)", color: atStart ? "rgb(var(--ink) / 0.18)" : "rgb(var(--ink) / 0.55)" }}>
           <ChevronLeft className="w-4 h-4" />
         </button>
 
         <button onClick={() => { setSelectedCategory(null); setSelectedBook(null); setModal("books"); }}
           className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl"
-          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)" }}>
           <span className="font-cinzel text-sm font-semibold text-white truncate">{displayBook} {chapter}</span>
-          <ChevronDown className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
+          <ChevronDown className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />
         </button>
 
         <button onClick={() => { setSelectedLanguage(null); setModal("translation"); }}
@@ -152,7 +152,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
         <button onClick={nextChapter} disabled={atEnd}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)", color: atEnd ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.55)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)", color: atEnd ? "rgb(var(--ink) / 0.18)" : "rgb(var(--ink) / 0.55)" }}>
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -217,15 +217,15 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                           {lang === "es" ? "Atrás" : "Back"}
                         </button>
                       )}
-                      <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 15, fontWeight: 700, color: "#fff", margin: 0 }}>
+                      <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: 15, fontWeight: 700, color: "rgb(var(--ink))", margin: 0 }}>
                         {modal === "translation" ? "Bible Version" : selectedCategory ? selectedCategory.label : "Select Book"}
                       </h2>
                     </div>
                     <button onClick={close}
                       style={{
                         fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 600,
-                        color: "rgba(255,255,255,0.55)", background: "var(--fill-3)",
-                        border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16,
+                        color: "rgb(var(--ink) / 0.55)", background: "var(--fill-3)",
+                        border: "1px solid rgb(var(--ink) / 0.1)", borderRadius: 16,
                         padding: "5px 12px", cursor: "pointer",
                       }}>
                       {lang === "es" ? "Cerrar" : "Close"}
@@ -297,7 +297,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                                 <p style={{ fontFamily: "'Cinzel', serif", fontSize: 11, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.1 }}>
                                   {getTranslatedBookName(bname, lang)}
                                 </p>
-                                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 8, color: "rgba(255,255,255,0.45)", margin: "1px 0 0" }}>
+                                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 8, color: "rgb(var(--text-on-image) / 0.7)", margin: "1px 0 0" }}>
                                   {bData?.chapters} {lang === "es" ? "cap." : "ch."}
                                 </p>
                               </div>
@@ -356,14 +356,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                               onClick={() => { onTranslationChange?.(tr.code); close(); }}
                               style={{
                                 display: "flex", alignItems: "center", gap: 12, padding: "11px 12px", borderRadius: 12, cursor: "pointer",
-                                background: isActive ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.03)",
+                                background: isActive ? "rgba(251,191,36,0.12)" : "rgb(var(--ink) / 0.03)",
                                 border: isActive ? "1.5px solid rgba(251,191,36,0.4)" : "1px solid rgba(255,215,0,0.08)",
                                 textAlign: "left",
                               }}>
-                              <span style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: isActive ? "#fbbf24" : "rgba(255,255,255,0.8)", minWidth: 50 }}>
+                              <span style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: isActive ? "#fbbf24" : "rgb(var(--ink) / 0.8)", minWidth: 50 }}>
                                 {tr.code}
                               </span>
-                              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", flex: 1 }}>
+                              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: "rgb(var(--ink) / 0.35)", flex: 1 }}>
                                 {tr.name}
                               </span>
                               {isActive && <Check style={{ width: 13, height: 13, color: "#fbbf24", flexShrink: 0 }} />}
@@ -424,8 +424,8 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                     <button onClick={close}
                       style={{
                         width: 28, height: 28, borderRadius: 10, background: "var(--fill-3)",
-                        border: "1px solid rgba(255,255,255,0.12)", cursor: "pointer",
-                        display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)",
+                        border: "1px solid rgb(var(--ink) / 0.12)", cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "center", color: "rgb(var(--ink) / 0.5)",
                       }}>
                       <X style={{ width: 14, height: 14 }} />
                     </button>
@@ -442,14 +442,14 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                             style={{
                               aspectRatio: "1/1.1", borderRadius: 12, cursor: "pointer",
                               border: isActive ? "1.5px solid rgba(251,191,36,0.9)" : "1.5px solid rgba(255,215,0,0.12)",
-                              background: isActive ? "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.08))" : "rgba(255,255,255,0.03)",
+                              background: isActive ? "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.08))" : "rgb(var(--ink) / 0.03)",
                               display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                               boxShadow: isActive ? "0 0 16px rgba(251,191,36,0.4), inset 0 0 12px rgba(251,191,36,0.1)" : "0 2px 8px rgba(0,0,0,0.3)",
                             }}>
-                            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 7, fontWeight: 600, color: isActive ? "rgba(251,191,36,0.75)" : "rgba(255,255,255,0.35)", letterSpacing: "0.08em", lineHeight: 1, textTransform: "uppercase" }}>
+                            <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 7, fontWeight: 600, color: isActive ? "rgba(251,191,36,0.75)" : "rgb(var(--ink) / 0.35)", letterSpacing: "0.08em", lineHeight: 1, textTransform: "uppercase" }}>
                               {lang === "es" ? "Cap" : "Ch"}
                             </span>
-                            <span style={{ fontFamily: "'Cinzel', serif", fontSize: 16, fontWeight: isActive ? 700 : 600, color: isActive ? "#fbbf24" : "rgba(255,255,255,0.75)", lineHeight: 1.1 }}>
+                            <span style={{ fontFamily: "'Cinzel', serif", fontSize: 16, fontWeight: isActive ? 700 : 600, color: isActive ? "#fbbf24" : "rgb(var(--ink) / 0.75)", lineHeight: 1.1 }}>
                               {ch}
                             </span>
                           </button>

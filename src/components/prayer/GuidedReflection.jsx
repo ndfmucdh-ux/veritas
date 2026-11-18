@@ -34,7 +34,7 @@ export default function GuidedReflection({ book, chapter, verses, onClose }) {
         boxShadow: "0 0 28px rgba(251,191,36,0.05)",
       }}
     >
-      <button onClick={onClose} style={{ position: "absolute", top: 12, right: 12, background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.3)", padding: 0 }}>
+      <button onClick={onClose} style={{ position: "absolute", top: 12, right: 12, background: "none", border: "none", cursor: "pointer", color: "rgb(var(--ink) / 0.3)", padding: 0 }}>
         <X style={{ width: 14, height: 14 }} />
       </button>
 
@@ -48,14 +48,14 @@ export default function GuidedReflection({ book, chapter, verses, onClose }) {
       {loading ? (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Loader2 style={{ width: 14, height: 14, color: "#a78bfa", animation: "spin 1s linear infinite" }} />
-          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.4)", margin: 0 }}>{isEs ? "Reflexionando sobre tu lectura…" : "Reflecting on your reading…"}</p>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgb(var(--ink) / 0.4)", margin: 0 }}>{isEs ? "Reflexionando sobre tu lectura…" : "Reflecting on your reading…"}</p>
         </div>
       ) : question ? (
         <>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontStyle: "italic", lineHeight: 1.7, color: "rgba(255,255,255,0.88)", margin: "0 0 14px" }}>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontStyle: "italic", lineHeight: 1.7, color: "rgb(var(--ink) / 0.88)", margin: "0 0 14px" }}>
             "{question}"
           </p>
-          <button onClick={generate} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "'Cinzel', serif", fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
+          <button onClick={generate} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "'Cinzel', serif", fontSize: 10, color: "rgb(var(--ink) / 0.3)" }}>
             <RefreshCw style={{ width: 11, height: 11 }} /> {isEs ? "Nueva pregunta" : "New question"}
           </button>
         </>

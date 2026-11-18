@@ -7,7 +7,7 @@ export default function ExplainThisPanel({ value, onChange, onExplain, loading, 
       <div className="flex items-center gap-2 mb-3">
         <Sparkles className="w-4 h-4" style={{ color: "#fbbf24" }} />
         <p className="font-cinzel text-sm font-semibold text-white">Explain This</p>
-        <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>AI theological summary</p>
+        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>AI theological summary</p>
       </div>
       <div className="flex gap-2">
         <input
@@ -16,7 +16,7 @@ export default function ExplainThisPanel({ value, onChange, onExplain, loading, 
           onKeyDown={e => e.key === "Enter" && onExplain()}
           placeholder={placeholder}
           className="flex-1 rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-          style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }}
+          style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.2)", color: "rgb(var(--ink) / 0.85)" }}
         />
         <motion.button
           type="button"
@@ -33,8 +33,8 @@ export default function ExplainThisPanel({ value, onChange, onExplain, loading, 
         {result && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-3 overflow-hidden">
             <div className="flex items-start justify-between gap-2">
-              <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>{result}</p>
-              <button type="button" onClick={onClearResult} className="flex-shrink-0"><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+              <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.8)" }}>{result}</p>
+              <button type="button" onClick={onClearResult} className="flex-shrink-0"><X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} /></button>
             </div>
           </motion.div>
         )}

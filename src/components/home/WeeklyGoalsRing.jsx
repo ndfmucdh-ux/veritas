@@ -23,7 +23,7 @@ function GoldRing({ pct, size = 80, stroke = 7, children }) {
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="absolute" style={{ transform: "rotate(-90deg)" }}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgb(var(--ink) / 0.07)" strokeWidth={stroke} />
         <motion.circle
           cx={size / 2} cy={size / 2} r={r}
           fill="none"
@@ -120,7 +120,7 @@ export default function WeeklyGoalsRing() {
             className="overflow-hidden mb-3">
             <div className="rounded-xl p-3 space-y-3"
               style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(251,191,36,0.15)" }}>
-              <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+              <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                 {lang === "es" ? "Establece tus metas semanales" : "Set your weekly targets"}
               </p>
               {[
@@ -129,15 +129,15 @@ export default function WeeklyGoalsRing() {
               ].map(({ key, label: lbl, icon: Icon, color, max }) => (
                 <div key={key} className="flex items-center gap-3">
                   <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color }} />
-                  <p className="font-inter text-xs flex-1" style={{ color: "rgba(255,255,255,0.65)" }}>{lbl}</p>
+                  <p className="font-inter text-xs flex-1" style={{ color: "rgb(var(--ink) / 0.65)" }}>{lbl}</p>
                   <div className="flex items-center gap-2">
                     <button onClick={() => setEditGoals(g => ({ ...g, [key]: Math.max(1, (g[key] || 1) - 1) }))}
                       className="w-6 h-6 rounded-lg font-bold text-sm flex items-center justify-center"
-                      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>−</button>
+                      style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}>−</button>
                     <span className="font-cinzel text-sm font-bold w-5 text-center" style={{ color }}>{editGoals[key]}</span>
                     <button onClick={() => setEditGoals(g => ({ ...g, [key]: Math.min(max, (g[key] || 1) + 1) }))}
                       className="w-6 h-6 rounded-lg font-bold text-sm flex items-center justify-center"
-                      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>+</button>
+                      style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}>+</button>
                   </div>
                 </div>
               ))}
@@ -156,7 +156,7 @@ export default function WeeklyGoalsRing() {
         {/* Overall */}
         <GoldRing pct={overallPct} size={76} stroke={7}>
           <p className="font-cinzel text-base font-bold" style={{ color: "#fbbf24" }}>{overallPct}%</p>
-          <p className="text-[8px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-[8px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
             {lang === "es" ? "Total" : "Overall"}
           </p>
         </GoldRing>
@@ -168,8 +168,8 @@ export default function WeeklyGoalsRing() {
               <p className="font-cinzel text-[10px] font-bold" style={{ color: "#00f5ff" }}>{chPct}%</p>
             </GoldRing>
             <div>
-              <p className="font-cinzel text-xs font-semibold text-white">{chaptersRead}<span className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>/{goals.chapters}</span></p>
-              <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <p className="font-cinzel text-xs font-semibold text-white">{chaptersRead}<span className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>/{goals.chapters}</span></p>
+              <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                 {lang === "es" ? "Capítulos" : "Chapters"}
               </p>
             </div>
@@ -180,8 +180,8 @@ export default function WeeklyGoalsRing() {
               <p className="font-cinzel text-[10px] font-bold" style={{ color: "#a78bfa" }}>{notePct}%</p>
             </GoldRing>
             <div>
-              <p className="font-cinzel text-xs font-semibold text-white">{notesWritten}<span className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>/{goals.notes}</span></p>
-              <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <p className="font-cinzel text-xs font-semibold text-white">{notesWritten}<span className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>/{goals.notes}</span></p>
+              <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                 {lang === "es" ? "Notas" : "Notes"}
               </p>
             </div>

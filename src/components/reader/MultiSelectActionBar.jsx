@@ -40,7 +40,7 @@ export default function MultiSelectActionBar({ selectedCount, copied, onCopy, on
         onClick={onCancel}
         aria-label="Clear selected verses"
         className="w-7 h-7 rounded-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white/40"
-        style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}
+        style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}
       >
         <X className="w-3.5 h-3.5" aria-hidden="true" />
       </button>

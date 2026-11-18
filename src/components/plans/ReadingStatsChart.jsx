@@ -79,7 +79,7 @@ export default function ReadingStatsChart() {
           { label: "Daily Avg", value: `${stats.avgMinutes}m`, color: "#fbbf24" },
           { label: "Books", value: booksCompleted, color: "#34d399" },
         ].map(s => (
-          <div key={s.label} className="rounded-xl p-3" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <div key={s.label} className="rounded-xl p-3" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.06)" }}>
             <p className="text-[10px] font-cinzel text-white/40 mb-1">{s.label}</p>
             <p className="font-cinzel text-lg font-bold" style={{ color: s.color }}>{s.value}</p>
           </div>
@@ -92,8 +92,8 @@ export default function ReadingStatsChart() {
           onClick={() => setChartType("time")}
           className="flex-1 py-2 rounded-lg text-xs font-cinzel transition-all"
           style={{
-            background: chartType === "time" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-            color: chartType === "time" ? "#00f5ff" : "rgba(255,255,255,0.4)",
+            background: chartType === "time" ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)",
+            color: chartType === "time" ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
             border: chartType === "time" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
           }}
         >
@@ -103,8 +103,8 @@ export default function ReadingStatsChart() {
           onClick={() => setChartType("books")}
           className="flex-1 py-2 rounded-lg text-xs font-cinzel transition-all"
           style={{
-            background: chartType === "books" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-            color: chartType === "books" ? "#00f5ff" : "rgba(255,255,255,0.4)",
+            background: chartType === "books" ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)",
+            color: chartType === "books" ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
             border: chartType === "books" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
           }}
         >
@@ -123,15 +123,15 @@ export default function ReadingStatsChart() {
                   <stop offset="100%" stopColor="#00f5ff" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} label={{ value: "Minutes", angle: -90, position: "insideLeft" }} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)" }} axisLine={false} tickLine={false} label={{ value: "Minutes", angle: -90, position: "insideLeft" }} />
               <Tooltip contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12, fontFamily: "Inter" }} />
               <Line type="monotone" dataKey="time_minutes" stroke="#00f5ff" strokeWidth={2} dot={{ fill: "#00f5ff", r: 3 }} />
             </LineChart>
           ) : (
             <BarChart data={dailyData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)" }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12 }} />
               <Bar dataKey="time_minutes" fill="#a78bfa" radius={[6, 6, 0, 0]} />
             </BarChart>

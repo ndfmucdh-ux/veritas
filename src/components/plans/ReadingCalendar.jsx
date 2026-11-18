@@ -51,12 +51,12 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
 
   return (
     <div className="rounded-2xl overflow-visible"
-      style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.08)" }}>
+      style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <button onClick={() => { setOffset(o => o - 1); setSelectedDay(null); }}
           className="w-8 h-8 rounded-xl flex items-center justify-center"
-          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>
           <ChevronLeft className="w-4 h-4" />
         </button>
         <div className="text-center">
@@ -67,7 +67,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
         </div>
         <button onClick={() => { setOffset(o => Math.min(0, o + 1)); setSelectedDay(null); }}
           className="w-8 h-8 rounded-xl flex items-center justify-center"
-          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}
+          style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}
           disabled={offset >= 0}>
           <ChevronRight className="w-4 h-4" style={{ opacity: offset >= 0 ? 0.25 : 1 }} />
         </button>
@@ -76,7 +76,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
       {/* Day labels */}
       <div className="grid grid-cols-7 px-3 pb-1">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(d => (
-          <p key={d} className="text-center text-[9px] font-cinzel pb-1" style={{ color: "rgba(255,255,255,0.2)" }}>{d}</p>
+          <p key={d} className="text-center text-[9px] font-cinzel pb-1" style={{ color: "rgb(var(--ink) / 0.2)" }}>{d}</p>
         ))}
       </div>
 
@@ -105,7 +105,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
                   : done
                     ? `${accent}18`
                     : isToday
-                      ? "rgba(255,255,255,0.07)"
+                      ? "rgb(var(--ink) / 0.07)"
                       : "transparent",
                 border: isSelected
                   ? `1.5px solid ${accent}`
@@ -113,7 +113,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
                     ? `1px solid ${accent}55`
                     : done
                       ? `1px solid ${accent}40`
-                      : "1px solid rgba(255,255,255,0.04)",
+                      : "1px solid rgb(var(--ink) / 0.04)",
                 cursor: done ? "pointer" : "default",
                 boxShadow: isSelected ? `0 0 12px ${accent}30` : "none",
               }}
@@ -126,7 +126,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
               <span
                 className="text-[10px] font-inter"
                 style={{
-                  color: done ? accent : isToday ? "white" : "rgba(255,255,255,0.4)",
+                  color: done ? accent : isToday ? "white" : "rgb(var(--ink) / 0.4)",
                   fontWeight: isToday || done ? "600" : "400",
                 }}
               >
@@ -158,14 +158,14 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="font-cinzel text-sm font-bold text-white">{selectedDay.date}</p>
-                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                     {selectedDay.sessions.length} session{selectedDay.sessions.length !== 1 ? "s" : ""} completed
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedDay(null)}
                   className="w-7 h-7 rounded-xl flex items-center justify-center"
-                  style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}
+                  style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -202,7 +202,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
                       <div className="flex-1 min-w-0">
                         <p className="font-cinzel text-sm text-white font-semibold truncate">{label}</p>
                         {translation && isRealBook && (
-                          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{translation}</p>
+                          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>{translation}</p>
                         )}
                       </div>
                       {readHref && (

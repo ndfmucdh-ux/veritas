@@ -7,14 +7,14 @@ import VeritasLogo from "@/components/ui/VeritasLogo";
 // and on each scroll effect; without memo, every prior message re-parses its
 // markdown each time. Bubbles only change when their own message content changes.
 const MARKDOWN_COMPONENTS = {
-  p: ({ children }) => <p className="text-sm font-inter leading-relaxed mb-2 last:mb-0" style={{ color: "rgba(255,255,255,0.85)" }}>{children}</p>,
+  p: ({ children }) => <p className="text-sm font-inter leading-relaxed mb-2 last:mb-0" style={{ color: "rgb(var(--ink) / 0.85)" }}>{children}</p>,
   strong: ({ children }) => <strong style={{ color: "#fbbf24" }}>{children}</strong>,
-  em: ({ children }) => <em style={{ color: "rgba(255,255,255,0.6)" }}>{children}</em>,
+  em: ({ children }) => <em style={{ color: "rgb(var(--ink) / 0.6)" }}>{children}</em>,
   a: ({ children, href }) => <a href={href} className="underline" style={{ color: "#00f5ff" }} target="_blank" rel="noopener noreferrer">{children}</a>,
   ul: ({ children }) => <ul className="ml-4 list-disc space-y-1 my-2">{children}</ul>,
-  li: ({ children }) => <li className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.78)" }}>{children}</li>,
+  li: ({ children }) => <li className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.78)" }}>{children}</li>,
   blockquote: ({ children }) => (
-    <blockquote className="border-l-2 pl-3 my-2 italic" style={{ borderColor: "#fbbf24", color: "rgba(255,255,255,0.6)" }}>{children}</blockquote>
+    <blockquote className="border-l-2 pl-3 my-2 italic" style={{ borderColor: "#fbbf24", color: "rgb(var(--ink) / 0.6)" }}>{children}</blockquote>
   ),
 };
 
@@ -36,11 +36,11 @@ function AssistantMessage({ role, content }) {
         className="max-w-[82%] rounded-2xl px-4 py-3"
         style={isUser
           ? { background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.18)" }
-          : { background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }
+          : { background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)" }
         }
       >
         {isUser ? (
-          <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.9)" }}>{content}</p>
+          <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.9)" }}>{content}</p>
         ) : (
           <ReactMarkdown components={MARKDOWN_COMPONENTS}>{content}</ReactMarkdown>
         )}

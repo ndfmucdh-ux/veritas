@@ -71,14 +71,14 @@ export default function ReadingCalendar() {
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-4">
         <motion.button whileTap={{ scale: 0.9 }} onClick={handlePrevMonth} className="p-1.5 rounded-lg"
-          style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>
           <ChevronLeft className="w-4 h-4" />
         </motion.button>
-        <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.5)" }}>
+        <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.5)" }}>
           {monthName}
         </p>
         <motion.button whileTap={{ scale: 0.9 }} onClick={handleNextMonth} className="p-1.5 rounded-lg"
-          style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>
           <ChevronRight className="w-4 h-4" />
         </motion.button>
       </div>
@@ -86,7 +86,7 @@ export default function ReadingCalendar() {
       {/* Day labels */}
       <div className="grid grid-cols-7 gap-2 mb-3">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-          <div key={day} className="text-center text-[10px] font-cinzel" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <div key={day} className="text-center text-[10px] font-cinzel" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             {day}
           </div>
         ))}
@@ -109,14 +109,14 @@ export default function ReadingCalendar() {
                 background: isMet
                   ? "rgba(52,211,153,0.2)"
                   : day
-                  ? "rgba(255,255,255,0.04)"
+                  ? "rgb(var(--ink) / 0.04)"
                   : "transparent",
                 border: isToday
                   ? "1.5px solid #00f5ff"
                   : isMet
                   ? "1px solid rgba(52,211,153,0.3)"
-                  : "1px solid rgba(255,255,255,0.07)",
-                color: day ? (isMet ? "#34d399" : "rgba(255,255,255,0.4)") : "transparent"
+                  : "1px solid rgb(var(--ink) / 0.07)",
+                color: day ? (isMet ? "#34d399" : "rgb(var(--ink) / 0.4)") : "transparent"
               }}
             >
               {day && (
@@ -131,9 +131,9 @@ export default function ReadingCalendar() {
       </div>
 
       {/* Summary */}
-      <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+      <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgb(var(--ink) / 0.1)" }}>
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Days read this month</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Days read this month</p>
           <span className="font-cinzel font-bold text-white">{monthGoalPercentage}%</span>
         </div>
         <div className="h-1.5 rounded-full overflow-hidden mt-2" style={{ background: "var(--fill-3)" }}>

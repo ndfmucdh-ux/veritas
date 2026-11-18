@@ -149,7 +149,7 @@ export default function AudioDashboard() {
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), hsl(var(--background) / 0.97))" }} />
         <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
           <h1 className="font-cinzel text-2xl font-bold text-white">Audio Dashboard</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Your scripture listening journey</p>
+          <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>Your scripture listening journey</p>
         </div>
       </div>
 
@@ -163,7 +163,7 @@ export default function AudioDashboard() {
               <span className="font-cinzel text-sm" style={{ color: "#a78bfa" }}>Sleep timer: {formatCountdown(sleepCountdown)}</span>
             </div>
             <button onClick={cancelSleepTimer} className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
+              style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>
               <X className="w-3.5 h-3.5" />
             </button>
           </motion.div>
@@ -181,9 +181,9 @@ export default function AudioDashboard() {
           <button key={id} onClick={() => setActiveTab(id)}
             className="flex-shrink-0 px-4 py-2 rounded-xl font-cinzel text-xs transition-all"
             style={{
-              background: activeTab === id ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-              color: activeTab === id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-              border: activeTab === id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+              background: activeTab === id ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
+              color: activeTab === id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
+              border: activeTab === id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
             }}>
             {label}
           </button>
@@ -234,11 +234,11 @@ export default function AudioDashboard() {
                 <p className="font-cinzel text-base font-bold text-white">Sleep Timer</p>
                 <button onClick={() => setShowSleepPicker(false)}
                   className="w-8 h-8 rounded-xl flex items-center justify-center"
-                  style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
+                  style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-xs font-inter mb-4" style={{ color: "rgba(255,255,255,0.4)" }}>Audio will automatically pause after the selected time</p>
+              <p className="text-xs font-inter mb-4" style={{ color: "rgb(var(--ink) / 0.4)" }}>Audio will automatically pause after the selected time</p>
               <div className="grid grid-cols-3 gap-3">
                 {SLEEP_TIMER_OPTIONS.map(m => (
                   <button key={m} onClick={() => startSleepTimer(m)}

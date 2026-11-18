@@ -111,12 +111,12 @@ Return JSON with structure as specified.`,
             <p className="font-cinzel text-sm font-bold text-white">
               {lang === "es" ? "Compañero de Estudio IA" : "AI Study Partner"}
             </p>
-            <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
               {lang === "es" ? "Griego · Hebreo · Teología · Contexto" : "Greek · Hebrew · Theology · Context"}
             </p>
           </div>
         </div>
-        <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
+        <p className="text-xs font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.5)" }}>
           {lang === "es"
             ? "Pregunta sobre cualquier versículo o término bíblico. Exploro el griego y hebreo original, historia, teología y aplicación personal."
             : "Ask about any verse or biblical term. I'll explore the original Greek and Hebrew, history, theology, and personal application."}
@@ -131,7 +131,7 @@ Return JSON with structure as specified.`,
           onKeyDown={e => e.key === "Enter" && analyze()}
           placeholder={ph}
           className="w-full pl-4 pr-14 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
-          style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }}
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.85)", fontSize: "16px" }}
         />
         <motion.button whileTap={{ scale: 0.9 }} onClick={analyze} disabled={loading || !query.trim()}
           className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center"
@@ -157,7 +157,7 @@ Return JSON with structure as specified.`,
                 <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "#fbbf24" }}>
                   {result.reference}
                 </p>
-                <p className="font-playfair italic text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.88)" }}>
+                <p className="font-playfair italic text-sm leading-relaxed" style={{ color: "rgb(var(--ink) / 0.88)" }}>
                   "{result.verse_text}"
                 </p>
               </div>
@@ -165,7 +165,7 @@ Return JSON with structure as specified.`,
 
             {/* Historical Context */}
             <StudySection label={lang === "es" ? "Contexto Histórico" : "Historical Context"} color="#00f5ff">
-              <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+              <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                 {result.historical_context}
               </p>
             </StudySection>
@@ -190,10 +190,10 @@ Return JSON with structure as specified.`,
                                 {w.language}
                               </span>
                             </div>
-                            <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.45)" }}>{w.literal_meaning}</p>
+                            <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.45)" }}>{w.literal_meaning}</p>
                           </div>
                           {isOpen ? <ChevronUp className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#a78bfa" }} />
-                            : <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }} />}
+                            : <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }} />}
                         </button>
                         <AnimatePresence>
                           {isOpen && (
@@ -204,17 +204,17 @@ Return JSON with structure as specified.`,
                                   <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1" style={{ color: "rgba(167,139,250,0.6)" }}>
                                     {lang === "es" ? "Rango Semántico" : "Semantic Range"}
                                   </p>
-                                  <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>{w.semantic_range}</p>
+                                  <p className="text-xs font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.65)" }}>{w.semantic_range}</p>
                                 </div>
                                 <div className="rounded-lg p-2.5"
                                   style={{ background: "rgba(167,139,250,0.1)", border: "1px solid rgba(167,139,250,0.2)" }}>
                                   <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1" style={{ color: "#a78bfa" }}>
                                     ✦ {lang === "es" ? "Cómo Expande el Versículo" : "How It Expands the Verse"}
                                   </p>
-                                  <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.78)" }}>{w.how_it_expands}</p>
+                                  <p className="text-xs font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.78)" }}>{w.how_it_expands}</p>
                                 </div>
                                 {w.part_of_speech && (
-                                  <span className="text-[9px] font-cinzel italic" style={{ color: "rgba(255,255,255,0.3)" }}>
+                                  <span className="text-[9px] font-cinzel italic" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                                     {w.part_of_speech}
                                   </span>
                                 )}
@@ -232,7 +232,7 @@ Return JSON with structure as specified.`,
             {/* Redemptive Context */}
             {result.redemptive_context && (
               <StudySection label={lang === "es" ? "Contexto Redentor" : "Redemptive Context"} color="#34d399">
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                   {result.redemptive_context}
                 </p>
               </StudySection>
@@ -241,7 +241,7 @@ Return JSON with structure as specified.`,
             {/* Theological Insights */}
             {result.theological_insights && (
               <StudySection label={lang === "es" ? "Perspectivas Teológicas" : "Theological Insights"} color="#fbbf24">
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                   {result.theological_insights}
                 </p>
               </StudySection>
@@ -266,7 +266,7 @@ Return JSON with structure as specified.`,
             {/* Application */}
             {result.application && (
               <StudySection label={lang === "es" ? "Aplicación Personal" : "Personal Application"} color="#f472b6">
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                   {result.application}
                 </p>
               </StudySection>
@@ -274,8 +274,8 @@ Return JSON with structure as specified.`,
 
             {/* Follow-up Q&A */}
             <div className="rounded-2xl p-4"
-              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
+              style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+              <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                 <MessageCircle className="w-3 h-3 inline mr-1" />
                 {lang === "es" ? "Pregunta de Seguimiento" : "Ask a Follow-up"}
               </p>
@@ -284,7 +284,7 @@ Return JSON with structure as specified.`,
                   onKeyDown={e => e.key === "Enter" && askFollowUp()}
                   placeholder={lang === "es" ? "Pregunta algo más sobre este pasaje…" : "Ask something more about this passage…"}
                   className="w-full pl-3 pr-12 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.8)", fontSize: "16px" }} />
+                  style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.8)", fontSize: "16px" }} />
                 <button onClick={askFollowUp} disabled={followUpLoading || !followUp.trim()}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg flex items-center justify-center"
                   style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", opacity: !followUp.trim() ? 0.4 : 1 }}>
@@ -296,7 +296,7 @@ Return JSON with structure as specified.`,
                   <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
                     className="mt-3 p-3 rounded-xl"
                     style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                    <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+                    <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.8)" }}>
                       {followUpResult}
                     </p>
                   </motion.div>
@@ -310,7 +310,7 @@ Return JSON with structure as specified.`,
 
       {!result && !loading && (
         <div className="space-y-2">
-          <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>
             {lang === "es" ? "Sugerencias" : "Try asking"}
           </p>
           {(lang === "es"
@@ -319,7 +319,7 @@ Return JSON with structure as specified.`,
           ).map(s => (
             <button key={s} onClick={() => { setQuery(s); }}
               className="block w-full text-left px-3 py-2.5 rounded-xl text-xs font-inter transition-all"
-              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}>
+              style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.06)", color: "rgb(var(--ink) / 0.5)" }}>
               {s}
             </button>
           ))}
@@ -331,7 +331,7 @@ Return JSON with structure as specified.`,
 
 function StudySection({ label, color = "#00f5ff", children }) {
   return (
-    <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
+    <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
       <p className="text-[9px] font-cinzel uppercase tracking-widest mb-3" style={{ color }}>{label}</p>
       {children}
     </div>

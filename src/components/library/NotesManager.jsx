@@ -87,12 +87,12 @@ export default function NotesManager({ notes, onNotesChange }) {
         <div className="flex gap-2">
           <button onClick={() => setSortBy("date")}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel transition-all"
-            style={{ background: sortBy === "date" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)", color: sortBy === "date" ? "#00f5ff" : "rgba(255,255,255,0.4)", border: sortBy === "date" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent" }}>
+            style={{ background: sortBy === "date" ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)", color: sortBy === "date" ? "#00f5ff" : "rgb(var(--ink) / 0.4)", border: sortBy === "date" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent" }}>
             <Calendar className="w-3.5 h-3.5" /> Date
           </button>
           <button onClick={() => setSortBy("alpha")}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel transition-all"
-            style={{ background: sortBy === "alpha" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)", color: sortBy === "alpha" ? "#00f5ff" : "rgba(255,255,255,0.4)", border: sortBy === "alpha" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent" }}>
+            style={{ background: sortBy === "alpha" ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)", color: sortBy === "alpha" ? "#00f5ff" : "rgb(var(--ink) / 0.4)", border: sortBy === "alpha" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent" }}>
             <SortAsc className="w-3.5 h-3.5" /> A–Z
           </button>
         </div>
@@ -113,14 +113,14 @@ export default function NotesManager({ notes, onNotesChange }) {
               <input value={newName} onChange={e => setNewName(e.target.value)}
                 placeholder="Folder name (e.g. 'Sermon Notes', 'Romans Study')"
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+                style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.12)", color: "rgb(var(--ink) / 0.85)" }}
                 autoFocus onKeyDown={e => e.key === "Enter" && createFolder()}
               />
               <div className="flex gap-2 flex-wrap">
                 {FOLDER_ICONS.map(em => (
                   <button key={em} onClick={() => setNewIcon(em)}
                     className="w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all"
-                    style={{ background: newIcon === em ? "rgba(167,139,250,0.2)" : "rgba(255,255,255,0.05)", border: newIcon === em ? "1px solid rgba(167,139,250,0.4)" : "1px solid transparent" }}>
+                    style={{ background: newIcon === em ? "rgba(167,139,250,0.2)" : "rgb(var(--ink) / 0.05)", border: newIcon === em ? "1px solid rgba(167,139,250,0.4)" : "1px solid transparent" }}>
                     {em}
                   </button>
                 ))}
@@ -133,7 +133,7 @@ export default function NotesManager({ notes, onNotesChange }) {
                 ))}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setShowCreate(false)} className="flex-1 py-2 rounded-xl text-sm font-cinzel" style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
+                <button onClick={() => setShowCreate(false)} className="flex-1 py-2 rounded-xl text-sm font-cinzel" style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>Cancel</button>
                 <button onClick={createFolder} disabled={!newName.trim()}
                   className="flex-1 py-2 rounded-xl text-sm font-cinzel flex items-center justify-center gap-2"
                   style={{ background: `${newColor}22`, color: newColor, border: `1px solid ${newColor}44` }}>
@@ -158,15 +158,15 @@ export default function NotesManager({ notes, onNotesChange }) {
                 <span className="text-xl">{folder.icon}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-cinzel text-sm font-semibold text-white">{folder.name}</p>
-                  <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{folderNotes.length} note{folderNotes.length !== 1 ? "s" : ""}</p>
+                  <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{folderNotes.length} note{folderNotes.length !== 1 ? "s" : ""}</p>
                 </div>
-                {isExpanded ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }} /> : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }} />}
+                {isExpanded ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }} /> : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }} />}
               </button>
               <button onClick={() => setAddingToFolder(addingToFolder === folder.id ? null : folder.id)}
                 className="p-1.5 rounded-lg transition-colors" style={{ color: folder.color }}>
                 <Plus className="w-3.5 h-3.5" />
               </button>
-              <button onClick={() => deleteFolder(folder.id)} className="p-1.5 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
+              <button onClick={() => deleteFolder(folder.id)} className="p-1.5 rounded-lg" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -175,8 +175,8 @@ export default function NotesManager({ notes, onNotesChange }) {
             <AnimatePresence>
               {addingToFolder === folder.id && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <div className="px-4 pb-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                    <p className="text-[9px] font-cinzel uppercase tracking-widest pt-2 mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>Add a note to this folder</p>
+                  <div className="px-4 pb-3 border-t" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
+                    <p className="text-[9px] font-cinzel uppercase tracking-widest pt-2 mb-2" style={{ color: "rgb(var(--ink) / 0.25)" }}>Add a note to this folder</p>
                     <div className="space-y-1 max-h-40 overflow-y-auto scrollbar-hide">
                       {notes.filter(n => !(folder.noteIds || []).includes(n.id)).map(n => (
                         <button key={n.id} onClick={() => addNoteToFolder(folder.id, n.id)}
@@ -187,7 +187,7 @@ export default function NotesManager({ notes, onNotesChange }) {
                         </button>
                       ))}
                       {notes.filter(n => !(folder.noteIds || []).includes(n.id)).length === 0 && (
-                        <p className="text-xs font-inter text-center py-3" style={{ color: "rgba(255,255,255,0.25)" }}>All notes are already in this folder</p>
+                        <p className="text-xs font-inter text-center py-3" style={{ color: "rgb(var(--ink) / 0.25)" }}>All notes are already in this folder</p>
                       )}
                     </div>
                   </div>
@@ -199,21 +199,21 @@ export default function NotesManager({ notes, onNotesChange }) {
             <AnimatePresence>
               {isExpanded && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <div className="px-4 pb-4 border-t space-y-2" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                  <div className="px-4 pb-4 border-t space-y-2" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
                     {folderNotes.length === 0 ? (
-                      <p className="text-xs font-inter text-center py-4" style={{ color: "rgba(255,255,255,0.25)" }}>No notes yet — tap + to add</p>
+                      <p className="text-xs font-inter text-center py-4" style={{ color: "rgb(var(--ink) / 0.25)" }}>No notes yet — tap + to add</p>
                     ) : folderNotes.map(note => (
                       <div key={note.id} className="flex items-start gap-2 rounded-xl p-3 mt-2"
                         style={{ background: `${folder.color}08`, border: `1px solid ${folder.color}18` }}>
                         <div className="flex-1 min-w-0">
                           <p className="font-cinzel text-xs mb-1" style={{ color: folder.color }}>{note.verse_ref || "Note"}</p>
-                          <p className="text-xs font-inter leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.65)" }}>{note.note_text}</p>
+                          <p className="text-xs font-inter leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.65)" }}>{note.note_text}</p>
                         </div>
                         <div className="flex gap-1 flex-shrink-0">
-                          <a href={`/read?book=${note.book}&chapter=${note.chapter}`} className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.3)" }}>
+                          <a href={`/read?book=${note.book}&chapter=${note.chapter}`} className="p-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                             <BookOpen className="w-3 h-3" />
                           </a>
-                          <button onClick={() => removeNoteFromFolder(folder.id, note.id)} className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
+                          <button onClick={() => removeNoteFromFolder(folder.id, note.id)} className="p-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                             <X className="w-3 h-3" />
                           </button>
                         </div>
@@ -229,7 +229,7 @@ export default function NotesManager({ notes, onNotesChange }) {
 
       {/* Unfiled notes */}
       <div>
-        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>
+        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.25)" }}>
           Unfiled Notes ({sortedUnfiled.length})
         </p>
         {sortedUnfiled.length === 0 && notes.length === 0 && (
@@ -241,12 +241,12 @@ export default function NotesManager({ notes, onNotesChange }) {
               <StickyNote className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#a78bfa" }} />
               <div className="flex-1 min-w-0">
                 <p className="font-cinzel text-xs mb-1" style={{ color: "#a78bfa" }}>{note.verse_ref || "Note"}</p>
-                <p className="text-xs font-inter leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.65)" }}>{note.note_text}</p>
-                <p className="text-[10px] font-inter mt-1" style={{ color: "rgba(255,255,255,0.3)" }}>
+                <p className="text-xs font-inter leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.65)" }}>{note.note_text}</p>
+                <p className="text-[10px] font-inter mt-1" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                   {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </p>
               </div>
-              <button onClick={() => deleteNote(note.id)} className="p-1 rounded-lg flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }}>
+              <button onClick={() => deleteNote(note.id)} className="p-1 rounded-lg flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>

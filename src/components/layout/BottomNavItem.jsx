@@ -10,9 +10,9 @@ export default function BottomNavItem({ path, icon: Icon, label, active }) {
         className="px-4 py-1 rounded-full"
         style={{ background: active ? "rgba(251,191,36,0.14)" : "transparent" }}
       >
-        <Icon style={{ width: 22, height: 22, color: active ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+        <Icon style={{ width: 22, height: 22, color: active ? "#fbbf24" : "rgb(var(--ink) / 0.55)" }} />
       </motion.div>
-      <span className="text-[10px] font-inter text-center leading-tight" style={{ color: active ? "#fbbf24" : "rgba(255,255,255,0.55)" }}>
+      <span className="text-[10px] font-inter text-center leading-tight" style={{ color: active ? "#fbbf24" : "rgb(var(--ink) / 0.55)" }}>
         {label}
       </span>
     </Link>

@@ -76,32 +76,32 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
               background: "var(--panel-surface)",
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
-              borderLeft: "1px solid rgba(255,255,255,0.08)",
+              borderLeft: "1px solid rgb(var(--ink) / 0.08)",
               boxShadow: "-8px 0 32px rgba(0,0,0,0.5)",
             }}
           >
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3.5 border-b flex-shrink-0"
-              style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+              style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
               <StickyNote className="w-4 h-4" style={{ color: "#a78bfa" }} />
               <div className="flex-1 min-w-0">
                 <p className="font-cinzel text-xs font-semibold" style={{ color: "#a78bfa" }}>
                   {book} {chapter}:{verse.verse}
                 </p>
-                <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{translation}</p>
+                <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{translation}</p>
               </div>
               <motion.button whileTap={{ scale: 0.88 }} onClick={onClose}
                 className="w-7 h-7 rounded-xl flex items-center justify-center"
                 style={{ background: "var(--fill-3)" }}>
-                <X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.45)" }} />
+                <X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.45)" }} />
               </motion.button>
             </div>
 
             {/* Verse preview */}
             <div className="px-4 py-3 border-b flex-shrink-0"
-              style={{ borderColor: "rgba(255,255,255,0.05)", background: "rgba(167,139,250,0.04)" }}>
+              style={{ borderColor: "rgb(var(--ink) / 0.05)", background: "rgba(167,139,250,0.04)" }}>
               <p className="font-playfair italic text-sm leading-relaxed"
-                style={{ color: verse.red_letter ? "#f87171" : "rgba(255,255,255,0.78)", fontSize: "13px" }}>
+                style={{ color: verse.red_letter ? "#f87171" : "rgb(var(--ink) / 0.78)", fontSize: "13px" }}>
                 "{verse.text}"
               </p>
             </div>
@@ -109,7 +109,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
             {/* Note input */}
             <div className="flex-1 flex flex-col px-4 pt-4 pb-4 min-h-0">
               <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2"
-                style={{ color: "rgba(255,255,255,0.25)" }}>Your Reflection</p>
+                style={{ color: "rgb(var(--ink) / 0.25)" }}>Your Reflection</p>
               <textarea
                 ref={textareaRef}
                 value={noteText}
@@ -119,13 +119,13 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
                 style={{
                   background: "var(--fill-2)",
                   border: "1px solid rgba(167,139,250,0.2)",
-                  color: "rgba(255,255,255,0.82)",
+                  color: "rgb(var(--ink) / 0.82)",
                   minHeight: "140px",
                   lineHeight: "1.65",
                 }}
                 onKeyDown={e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSave(); }}
               />
-              <p className="text-[10px] font-inter mt-1.5" style={{ color: "rgba(255,255,255,0.2)" }}>
+              <p className="text-[10px] font-inter mt-1.5" style={{ color: "rgb(var(--ink) / 0.2)" }}>
                 ⌘+Enter to save
               </p>
 
@@ -194,7 +194,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
             <div className="px-4 pb-5 flex-shrink-0">
               <a href={`/read?book=${encodeURIComponent(book)}&chapter=${chapter}`}
                 className="flex items-center gap-2 text-xs font-cinzel py-2 justify-center"
-                style={{ color: "rgba(255,255,255,0.25)" }}>
+                style={{ color: "rgb(var(--ink) / 0.25)" }}>
                 <BookOpen className="w-3.5 h-3.5" />
                 Read full chapter
               </a>

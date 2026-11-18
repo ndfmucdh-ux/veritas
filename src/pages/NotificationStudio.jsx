@@ -90,7 +90,7 @@ const DESIGN_SPECS = [
   },
   {
     title: "Color Palette",
-    specs: ["Background: #06080f (Deep Space Black)", "Glass surface: rgba(255,255,255,0.04)", "Cyan accent: #00F5FF — for hope, faith, peace themes", "Gold accent: #FFD700 — for love, wisdom, grace themes", "Orange: #f97316 — for strength, courage themes", "Red letter: #f87171 — for direct scripture quotes", "Text: rgba(255,255,255,0.88) / rgba(255,255,255,0.45) muted"],
+    specs: ["Background: #06080f (Deep Space Black)", "Glass surface: rgb(var(--ink) / 0.04)", "Cyan accent: #00F5FF — for hope, faith, peace themes", "Gold accent: #FFD700 — for love, wisdom, grace themes", "Orange: #f97316 — for strength, courage themes", "Red letter: #f87171 — for direct scripture quotes", "Text: rgb(var(--ink) / 0.88) / rgb(var(--ink) / 0.45) muted"],
     color: "#a78bfa",
   },
   {
@@ -199,7 +199,7 @@ export default function NotificationStudio() {
           </div>
           <div>
             <h1 className="font-cinzel text-xl font-bold text-white">Notification Studio</h1>
-            <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>VOTD Push & Email Templates · Veritas Brand System</p>
+            <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>VOTD Push & Email Templates · Veritas Brand System</p>
           </div>
         </div>
 
@@ -210,7 +210,7 @@ export default function NotificationStudio() {
             <Zap className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-cinzel" style={{ color: "#00f5ff" }}>Today's VOTD · {dailyVerse.verse_ref}</p>
-              <p className="text-xs font-inter mt-0.5 truncate" style={{ color: "rgba(255,255,255,0.45)" }}>"{dailyVerse.text?.slice(0, 80)}…"</p>
+              <p className="text-xs font-inter mt-0.5 truncate" style={{ color: "rgb(var(--ink) / 0.45)" }}>"{dailyVerse.text?.slice(0, 80)}…"</p>
             </div>
           </div>
         )}
@@ -224,9 +224,9 @@ export default function NotificationStudio() {
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setPreviewHtml(null); setPushPreviews(null); }}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel whitespace-nowrap transition-all flex-shrink-0"
               style={{
-                background: activeTab === tab.id ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.04)",
-                color: activeTab === tab.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                border: activeTab === tab.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)",
+                background: activeTab === tab.id ? "rgba(0,245,255,0.1)" : "rgb(var(--ink) / 0.04)",
+                color: activeTab === tab.id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
+                border: activeTab === tab.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.07)",
               }}>
               <Icon className="w-3.5 h-3.5" />
               {tab.label}
@@ -250,7 +250,7 @@ export default function NotificationStudio() {
                   onChange={e => setSendName(e.target.value)}
                   placeholder="Preview name (e.g. Sarah)"
                   className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+                  style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}
                 />
                 <button onClick={loadPushPreviews} disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel transition-all"
@@ -269,13 +269,13 @@ export default function NotificationStudio() {
                       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                       onClick={() => setSelectedPush(selectedPush?.id === t.id ? null : t)}
                       className="rounded-2xl overflow-hidden cursor-pointer"
-                      style={{ background: "var(--fill-1)", border: selectedPush?.id === t.id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)" }}>
+                      style={{ background: "var(--fill-1)", border: selectedPush?.id === t.id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgb(var(--ink) / 0.07)" }}>
 
                       <div className="px-4 py-3 flex items-start gap-3">
                         {/* Phone mockup mini */}
                         <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-                          style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                          <Smartphone className="w-4 h-4" style={{ color: "rgba(255,255,255,0.4)" }} />
+                          style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)" }}>
+                          <Smartphone className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.4)" }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -283,13 +283,13 @@ export default function NotificationStudio() {
                               style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}>
                               {t.variant}
                             </span>
-                            <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>⏰ {t.time}</span>
+                            <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.25)" }}>⏰ {t.time}</span>
                           </div>
                           <p className="text-sm font-cinzel font-semibold text-white mb-0.5">
                             {live ? live.title_rendered : t.title.replace("{name}", sendName || "Sarah").replace("{streak_days}", "7")}
                           </p>
                           <p className="text-xs font-inter leading-relaxed whitespace-pre-line"
-                            style={{ color: "rgba(255,255,255,0.5)" }}>
+                            style={{ color: "rgb(var(--ink) / 0.5)" }}>
                             {live ? live.body_rendered : t.body.replace("{name}", sendName || "Sarah").replace("{verse_excerpt}", dailyVerse?.text?.slice(0, 60) + "…" || "For God so loved the world…").replace("{ref}", dailyVerse?.verse_ref || "John 3:16")}
                           </p>
                         </div>
@@ -298,12 +298,12 @@ export default function NotificationStudio() {
                       <AnimatePresence>
                         {selectedPush?.id === t.id && (
                           <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
-                            <div className="px-4 pb-4 pt-2 border-t space-y-2" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                            <div className="px-4 pb-4 pt-2 border-t space-y-2" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
                               <div className="flex items-center gap-2">
-                                <div className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>Strategy Note</div>
+                                <div className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>Strategy Note</div>
                               </div>
-                              <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>{t.note}</p>
-                              <p className="text-[10px] font-cinzel" style={{ color: "rgba(255,255,255,0.25)" }}>📐 {t.char_hint}</p>
+                              <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>{t.note}</p>
+                              <p className="text-[10px] font-cinzel" style={{ color: "rgb(var(--ink) / 0.25)" }}>📐 {t.char_hint}</p>
                               {live && (
                                 <div className="flex gap-3 text-[10px] font-inter" style={{ color: "rgba(0,245,255,0.6)" }}>
                                   <span>Title: {live.char_count_title} chars</span>
@@ -323,7 +323,7 @@ export default function NotificationStudio() {
                 <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(251,191,36,0.6)" }}>📱 Rich Push Spec</p>
                 <ul className="space-y-1">
                   {["Image: 1080×540px, JPEG ≤300KB", "Background: Deep dark gradient #06080f → #0d1326", "Logo: Centered 120×120px, 22% border-radius", "Glow overlay: Cyan radial, 30% opacity", "Sacred geometry watermark: 8% opacity"].map(s => (
-                    <li key={s} className="text-xs font-inter flex items-center gap-2" style={{ color: "rgba(255,255,255,0.4)" }}>
+                    <li key={s} className="text-xs font-inter flex items-center gap-2" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                       <span style={{ color: "#fbbf24" }}>·</span> {s}
                     </li>
                   ))}
@@ -340,7 +340,7 @@ export default function NotificationStudio() {
               <div className="flex gap-2">
                 <input value={sendName} onChange={e => setSendName(e.target.value)} placeholder="Recipient name"
                   className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
+                  style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }} />
                 <button onClick={() => loadEmailPreview("daily")} disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel"
                   style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.25)" }}>
@@ -350,13 +350,13 @@ export default function NotificationStudio() {
               </div>
 
               {/* Test send */}
-              <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>Send Test Email</p>
+              <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+                <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.25)" }}>Send Test Email</p>
                 <div className="flex gap-2">
                   <input value={sendEmail} onChange={e => setSendEmail(e.target.value)} placeholder="admin@example.com"
                     type="email"
                     className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                    style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
+                    style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }} />
                   <button onClick={handleSendTest} disabled={loading || !sendEmail}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel transition-all"
                     style={{ background: sendStatus === "success" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)", color: sendStatus === "success" ? "#34d399" : "#fbbf24", border: `1px solid ${sendStatus === "success" ? "rgba(52,211,153,0.3)" : "rgba(251,191,36,0.3)"}` }}>
@@ -369,12 +369,12 @@ export default function NotificationStudio() {
               {loading && !previewHtml && <LoadingState label="Building email preview…" color="#fbbf24" />}
 
               {previewHtml && (
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "var(--fill-2)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgb(var(--ink) / 0.1)" }}>
+                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "var(--fill-2)", borderBottom: "1px solid rgb(var(--ink) / 0.06)" }}>
                     <div className="flex gap-1.5">
                       {["#f87171", "#fbbf24", "#34d399"].map(c => <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />)}
                     </div>
-                    <span className="text-[10px] font-cinzel ml-2" style={{ color: "rgba(255,255,255,0.3)" }}>Email Preview · Daily Verse of the Day</span>
+                    <span className="text-[10px] font-cinzel ml-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Email Preview · Daily Verse of the Day</span>
                   </div>
                   <iframe
                     srcDoc={previewHtml}
@@ -395,7 +395,7 @@ export default function NotificationStudio() {
               <div className="flex gap-2">
                 <input value={sendName} onChange={e => setSendName(e.target.value)} placeholder="Recipient name"
                   className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
+                  style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }} />
                 <button onClick={() => loadEmailPreview("weekly")} disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel"
                   style={{ background: "rgba(167,139,250,0.1)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.25)" }}>
@@ -407,12 +407,12 @@ export default function NotificationStudio() {
               {loading && !previewHtml && <LoadingState label="Building email preview…" color="#a78bfa" />}
 
               {previewHtml && (
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "var(--fill-2)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgb(var(--ink) / 0.1)" }}>
+                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "var(--fill-2)", borderBottom: "1px solid rgb(var(--ink) / 0.06)" }}>
                     <div className="flex gap-1.5">
                       {["#f87171", "#fbbf24", "#34d399"].map(c => <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />)}
                     </div>
-                    <span className="text-[10px] font-cinzel ml-2" style={{ color: "rgba(255,255,255,0.3)" }}>Email Preview · Weekly Digest</span>
+                    <span className="text-[10px] font-cinzel ml-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Email Preview · Weekly Digest</span>
                   </div>
                   <iframe
                     srcDoc={previewHtml}
@@ -428,7 +428,7 @@ export default function NotificationStudio() {
                 {["7 daily verses from the past week with themes", "User's streak + XP progress summary", "Most highlighted verse of the week", "3 CTA buttons: Open App · Start a Plan · Prayer Journal", "Unsubscribe + preference links in footer"].map(s => (
                   <div key={s} className="flex items-start gap-2 mb-2">
                     <span style={{ color: "#a78bfa" }}>·</span>
-                    <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>{s}</p>
+                    <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>{s}</p>
                   </div>
                 ))}
               </div>
@@ -440,11 +440,11 @@ export default function NotificationStudio() {
             <div className="px-5 space-y-4 pb-4">
               <SectionHeader icon={Bell} label="Daily Devotional Reminder" color="#00f5ff" />
               <div className="rounded-2xl p-5 space-y-4" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.6)" }}>
                   Choose what time each day you'd like to be reminded to check your personalized AI devotional.
                 </p>
                 <div>
-                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgba(255,255,255,0.35)" }}>Preferred Time (Your Timezone)</label>
+                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgb(var(--ink) / 0.35)" }}>Preferred Time (Your Timezone)</label>
                   <input
                     type="time"
                     value={devotionalTime}
@@ -461,7 +461,7 @@ export default function NotificationStudio() {
                 </button>
                 <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: "rgba(0,245,255,0.04)" }}>
                   <Zap className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00f5ff" }} />
-                  <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
                     You'll receive a personalized notification at <strong>{devotionalTime}</strong> reminding you to read your daily devotional based on your recent highlights and prayer journal.
                   </p>
                 </div>
@@ -474,11 +474,11 @@ export default function NotificationStudio() {
             <div className="px-5 space-y-4 pb-4">
               <SectionHeader icon={Bell} label="Prayer Reminder" color="#a78bfa" />
               <div className="rounded-2xl p-5 space-y-4" style={{ background: "rgba(167,139,250,0.03)", border: "1px solid rgba(167,139,250,0.15)" }}>
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.6)" }}>
                   Set a time to be reminded about prayer journal entries with pending follow-up reminders.
                 </p>
                 <div>
-                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgba(255,255,255,0.35)" }}>Prayer Reminder Time (Your Timezone)</label>
+                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgb(var(--ink) / 0.35)" }}>Prayer Reminder Time (Your Timezone)</label>
                   <input
                     type="time"
                     value={prayerReminderTime}
@@ -495,7 +495,7 @@ export default function NotificationStudio() {
                 </button>
                 <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: "rgba(167,139,250,0.04)" }}>
                   <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#a78bfa" }} />
-                  <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
                     At <strong>{prayerReminderTime}</strong>, you'll be notified about pending prayer follow-ups and encouraged to update their status.
                   </p>
                 </div>
@@ -520,7 +520,7 @@ export default function NotificationStudio() {
                   <p className="font-cinzel text-sm font-semibold mb-3" style={{ color: spec.color }}>{spec.title}</p>
                   <ul className="space-y-1.5">
                     {spec.specs.map(s => (
-                      <li key={s} className="flex items-start gap-2 text-xs font-inter" style={{ color: "rgba(255,255,255,0.55)" }}>
+                      <li key={s} className="flex items-start gap-2 text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.55)" }}>
                         <span style={{ color: spec.color }}>·</span> {s}
                       </li>
                     ))}
@@ -533,7 +533,7 @@ export default function NotificationStudio() {
               <div className="space-y-3">
                 {AUTOMATION_RULES.map(rule => (
                   <div key={rule.title} className="flex items-start gap-3 rounded-2xl p-4"
-                    style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                    style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                     <span className="text-xl flex-shrink-0">{rule.icon}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -543,7 +543,7 @@ export default function NotificationStudio() {
                           {rule.tag}
                         </span>
                       </div>
-                      <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.45)" }}>{rule.desc}</p>
+                      <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.45)" }}>{rule.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -561,7 +561,7 @@ export default function NotificationStudio() {
                     <div key={mode} className="flex items-start gap-2">
                       <code className="text-[10px] px-2 py-0.5 rounded font-mono flex-shrink-0"
                         style={{ background: "rgba(52,211,153,0.1)", color: "#34d399" }}>{mode}</code>
-                      <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>{desc}</p>
+                      <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{desc}</p>
                     </div>
                   ))}
                 </div>
@@ -579,7 +579,7 @@ function SectionHeader({ icon: Icon, label, color }) {
   return (
     <div className="flex items-center gap-2 mb-1">
       <Icon className="w-3.5 h-3.5" style={{ color }} />
-      <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</p>
+      <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: "rgb(var(--ink) / 0.3)" }}>{label}</p>
     </div>
   );
 }

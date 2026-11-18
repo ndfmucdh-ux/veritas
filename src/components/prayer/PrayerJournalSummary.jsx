@@ -72,7 +72,7 @@ export default function PrayerJournalSummary() {
           className="rounded-xl p-3" style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)" }}>
           <div className="flex items-center gap-2 mb-1">
             <Heart className="w-3.5 h-3.5" style={{ color: "#a78bfa" }} />
-            <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Total Prayers</p>
+            <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Total Prayers</p>
           </div>
           <p className="font-cinzel text-lg font-bold text-white">{summary.total}</p>
         </motion.div>
@@ -81,11 +81,11 @@ export default function PrayerJournalSummary() {
           className="rounded-xl p-3" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "#34d399" }} />
-            <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Answered</p>
+            <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Answered</p>
           </div>
           <div className="flex items-baseline gap-2">
             <p className="font-cinzel text-lg font-bold text-white">{summary.answered}</p>
-            <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>({answeredPercentage}%)</span>
+            <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>({answeredPercentage}%)</span>
           </div>
         </motion.div>
       </div>
@@ -109,8 +109,8 @@ export default function PrayerJournalSummary() {
       {summary.topics.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Tag className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
-            <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <Tag className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} />
+            <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
               Top Topics
             </p>
           </div>
@@ -129,7 +129,7 @@ export default function PrayerJournalSummary() {
       )}
 
       {summary.total === 0 && (
-        <p className="text-xs font-inter text-center py-4" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <p className="text-xs font-inter text-center py-4" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           Start recording prayers to see your summary
         </p>
       )}

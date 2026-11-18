@@ -47,7 +47,7 @@ export default function MorningReminder() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-cinzel text-xs font-semibold mb-1" style={{ color: "#fbbf24" }}>{t.morningReminderTitle}</p>
-            <p className="font-inter text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>{message}</p>
+            <p className="font-inter text-xs leading-relaxed" style={{ color: "rgb(var(--ink) / 0.6)" }}>{message}</p>
             <Link to="/plans" onClick={dismiss}
               className="inline-flex items-center gap-1.5 mt-2 text-xs font-cinzel px-3 py-1.5 rounded-xl"
               style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.25)" }}>
@@ -55,7 +55,7 @@ export default function MorningReminder() {
             </Link>
           </div>
           <button onClick={dismiss} className="flex-shrink-0 p-1 rounded-lg hover:bg-white/5 transition-colors">
-            <X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
+            <X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} />
           </button>
         </motion.div>
       )}

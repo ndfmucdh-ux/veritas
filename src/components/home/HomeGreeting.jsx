@@ -17,7 +17,7 @@ export default function HomeGreeting() {
           <h1 className="font-cinzel font-bold text-white leading-tight" style={{ fontSize: "clamp(16px, 4.5vw, 21px)" }}>
             {t[greetingKey]}{firstName ? `, ${firstName}` : ""}
           </h1>
-          <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="font-inter text-xs mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             "{t.slogan}"
           </p>
         </div>

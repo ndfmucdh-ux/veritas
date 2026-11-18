@@ -121,7 +121,7 @@ export default function Library() {
               <div className="flex items-center gap-1">
                 <button onClick={() => setTagManagerItem({ id: bm.id, type: "bookmark", tags: bm.tags || [] })}
                   className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
-                  style={{ color: (bm.tags?.length > 0) ? "#00f5ff" : "rgba(255,255,255,0.25)" }}>
+                  style={{ color: (bm.tags?.length > 0) ? "#00f5ff" : "rgb(var(--ink) / 0.25)" }}>
                   <Tag className="w-3.5 h-3.5" />
                 </button>
                 <a href={`/read?book=${bm.book}&chapter=${bm.chapter}`}
@@ -178,11 +178,11 @@ export default function Library() {
             style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.2)" }}>
             <div className="flex items-center justify-between mb-2">
               <p className="font-cinzel text-xs" style={{ color: "#a78bfa" }}>✦ Devotional · {hlDevotional.ref}</p>
-              <button onClick={() => setHlDevotional(null)}><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+              <button onClick={() => setHlDevotional(null)}><X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} /></button>
             </div>
             {hlDevLoading
-              ? <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" style={{ color: "#a78bfa" }} /><span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Seeking wisdom…</span></div>
-              : <p className="text-sm font-inter leading-relaxed whitespace-pre-line" style={{ color: "rgba(255,255,255,0.75)" }}>{hlDevotional.text}</p>
+              ? <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" style={{ color: "#a78bfa" }} /><span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Seeking wisdom…</span></div>
+              : <p className="text-sm font-inter leading-relaxed whitespace-pre-line" style={{ color: "rgb(var(--ink) / 0.75)" }}>{hlDevotional.text}</p>
             }
           </motion.div>
         )}
@@ -258,7 +258,7 @@ export default function Library() {
               <div className="flex items-center gap-1 flex-shrink-0">
                 <button onClick={() => setTagManagerItem({ id: note.id, type: "note", tags: note.tags || [] })}
                   className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
-                  style={{ color: (note.tags?.length > 0) ? "#00f5ff" : "rgba(255,255,255,0.25)" }}>
+                  style={{ color: (note.tags?.length > 0) ? "#00f5ff" : "rgb(var(--ink) / 0.25)" }}>
                   <Tag className="w-3.5 h-3.5" />
                 </button>
                 <button onClick={() => setShareItem({ verseRef: note.verse_ref, verseText: note.note_text })}

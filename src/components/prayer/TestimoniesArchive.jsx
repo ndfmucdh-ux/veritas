@@ -62,7 +62,7 @@ export default function TestimoniesArchive({ prayers }) {
                 <p className="font-cinzel text-sm text-white">{prayer.verse_ref || "Personal Prayer"}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs">{icon}</span>
-                  <span className="text-[10px] font-inter capitalize" style={{ color: "rgba(255,255,255,0.35)" }}>{prayer.mood}</span>
+                  <span className="text-[10px] font-inter capitalize" style={{ color: "rgb(var(--ink) / 0.35)" }}>{prayer.mood}</span>
                   <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full flex items-center gap-1"
                     style={{ background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}>
                     <CheckCircle2 className="w-2.5 h-2.5" /> Answered
@@ -70,7 +70,7 @@ export default function TestimoniesArchive({ prayers }) {
                 </div>
               </div>
               {prayer.answered_date && (
-                <span className="text-[10px] font-inter flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }}>
+                <span className="text-[10px] font-inter flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                   {new Date(prayer.answered_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
               )}
@@ -78,7 +78,7 @@ export default function TestimoniesArchive({ prayers }) {
 
             {/* Original prayer */}
             <p className="text-xs font-inter leading-relaxed mb-3 line-clamp-2"
-              style={{ color: "rgba(255,255,255,0.5)" }}>{prayer.prayer_text}</p>
+              style={{ color: "rgb(var(--ink) / 0.5)" }}>{prayer.prayer_text}</p>
 
             {/* Testimony note */}
             {prayer.answered_note && (
@@ -96,7 +96,7 @@ export default function TestimoniesArchive({ prayers }) {
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {prayer.tags.map(tag => (
                   <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full font-inter"
-                    style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                    style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.3)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                     #{tag}
                   </span>
                 ))}

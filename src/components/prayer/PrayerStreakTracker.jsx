@@ -59,16 +59,16 @@ export default function PrayerStreakTracker({ prayers }) {
 
   return (
     <div className="rounded-2xl overflow-hidden mb-5"
-      style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
       {/* Streak header */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Flame className="w-4 h-4" style={{ color: streak > 0 ? "#f97316" : "rgba(255,255,255,0.2)" }} />
-          <span className="font-cinzel text-sm font-bold" style={{ color: streak > 0 ? "#f97316" : "rgba(255,255,255,0.4)" }}>
+          <Flame className="w-4 h-4" style={{ color: streak > 0 ? "#f97316" : "rgb(var(--ink) / 0.2)" }} />
+          <span className="font-cinzel text-sm font-bold" style={{ color: streak > 0 ? "#f97316" : "rgb(var(--ink) / 0.4)" }}>
             {streak} day{streak !== 1 ? "s" : ""} streak
           </span>
         </div>
-        <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           Best: {longestStreak} days
         </span>
       </div>
@@ -77,7 +77,7 @@ export default function PrayerStreakTracker({ prayers }) {
       <div className="px-4 pb-3">
         <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
           {["S","M","T","W","T","F","S"].map((d, i) => (
-            <p key={i} className="text-center text-[8px] font-cinzel mb-1" style={{ color: "rgba(255,255,255,0.2)" }}>{d}</p>
+            <p key={i} className="text-center text-[8px] font-cinzel mb-1" style={{ color: "rgb(var(--ink) / 0.2)" }}>{d}</p>
           ))}
           {activeDays.map(({ date, active }) => (
             <motion.div key={date}
@@ -86,8 +86,8 @@ export default function PrayerStreakTracker({ prayers }) {
               transition={{ duration: 0.25 }}
               className="aspect-square rounded-md flex items-center justify-center"
               style={{
-                background: active ? "rgba(249,115,22,0.25)" : "rgba(255,255,255,0.04)",
-                border: active ? "1px solid rgba(249,115,22,0.5)" : "1px solid rgba(255,255,255,0.05)",
+                background: active ? "rgba(249,115,22,0.25)" : "rgb(var(--ink) / 0.04)",
+                border: active ? "1px solid rgba(249,115,22,0.5)" : "1px solid rgb(var(--ink) / 0.05)",
               }}
               title={date}
             >
@@ -100,7 +100,7 @@ export default function PrayerStreakTracker({ prayers }) {
       {/* Next badge goal */}
       {nextBadge && (
         <div className="px-4 pb-3">
-          <div className="flex items-center justify-between text-[10px] font-inter mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <div className="flex items-center justify-between text-[10px] font-inter mb-1.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             <span>Next: {nextBadge.icon} {nextBadge.label} ({nextBadge.days} days)</span>
             <span style={{ color: nextBadge.color }}>{streak}/{nextBadge.days}</span>
           </div>

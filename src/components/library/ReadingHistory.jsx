@@ -63,7 +63,7 @@ export default function ReadingHistory() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
             className="flex items-center gap-3 px-4 py-3.5 rounded-xl group transition-all"
-            style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)" }}
+            style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.06)" }}
           >
             {/* Number badge */}
             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-cinzel text-xs font-bold"
@@ -83,12 +83,12 @@ export default function ReadingHistory() {
                   </span>
                 )}
                 {dateLabel && (
-                  <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>
+                  <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                     {dateLabel}
                   </span>
                 )}
                 {item.reading_time_seconds > 0 && (
-                  <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>
+                  <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                     · {Math.round(item.reading_time_seconds / 60)}m
                   </span>
                 )}
@@ -96,7 +96,7 @@ export default function ReadingHistory() {
             </div>
 
             <ChevronRight className="w-4 h-4 flex-shrink-0 transition-colors group-hover:text-cyan"
-              style={{ color: "rgba(255,255,255,0.2)" }} />
+              style={{ color: "rgb(var(--ink) / 0.2)" }} />
           </motion.a>
         );
       })}

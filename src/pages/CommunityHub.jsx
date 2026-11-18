@@ -55,9 +55,9 @@ export default function CommunityHub() {
             <button key={id} onClick={() => setActiveTab(id)}
               className="flex-1 py-2.5 rounded-xl font-cinzel text-xs transition-all"
               style={{
-                background: activeTab === id ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-                color: activeTab === id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-                border: activeTab === id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)"
+                background: activeTab === id ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
+                color: activeTab === id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
+                border: activeTab === id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgb(var(--ink) / 0.07)"
               }}>
               {label}
             </button>
@@ -78,8 +78,8 @@ export default function CommunityHub() {
               onClick={() => setSelectedCategory(cat.id)}
               className="flex-shrink-0 py-2 px-4 rounded-full text-xs font-cinzel whitespace-nowrap transition-all"
               style={{
-                background: selectedCategory === cat.id ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                color: selectedCategory === cat.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
+                background: selectedCategory === cat.id ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)",
+                color: selectedCategory === cat.id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
                 border: selectedCategory === cat.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
               }}
             >
@@ -123,10 +123,10 @@ export default function CommunityHub() {
                   <p className="text-xs text-white/50 mb-3 line-clamp-2">{group.description}</p>
                   <div className="flex items-center justify-between text-[10px]">
                     <div className="flex items-center gap-3">
-                      <span style={{ color: "rgba(255,255,255,0.3)" }}>
+                      <span style={{ color: "rgb(var(--ink) / 0.3)" }}>
                         👥 {group.members_label}
                       </span>
-                      <span style={{ color: "rgba(255,255,255,0.3)" }}>
+                      <span style={{ color: "rgb(var(--ink) / 0.3)" }}>
                         📧 {group.category.replace(/_/g, " ")}
                       </span>
                     </div>

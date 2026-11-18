@@ -81,8 +81,8 @@ export default function PrayerStatsChart() {
             <button key={v.id} onClick={() => setView(v.id)}
               className="text-[10px] px-2.5 py-1.5 rounded-lg font-cinzel transition-all"
               style={{
-                background: view === v.id ? "rgba(244,114,182,0.15)" : "rgba(255,255,255,0.03)",
-                color: view === v.id ? "#f472b6" : "rgba(255,255,255,0.35)",
+                background: view === v.id ? "rgba(244,114,182,0.15)" : "rgb(var(--ink) / 0.03)",
+                color: view === v.id ? "#f472b6" : "rgb(var(--ink) / 0.35)",
                 border: view === v.id ? "1px solid rgba(244,114,182,0.3)" : "1px solid transparent"
               }}>
               {v.label}
@@ -95,8 +95,8 @@ export default function PrayerStatsChart() {
         <div className="h-40">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData} margin={{ top: 8, right: 8, left: -24, bottom: 0 }}>
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip
                 contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(244,114,182,0.2)", borderRadius: 8, fontSize: 12, fontFamily: "Cinzel" }}
                 labelStyle={{ color: "#f472b6" }}
@@ -116,7 +116,7 @@ export default function PrayerStatsChart() {
               <motion.div key={item.topic} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
                 className="flex items-center justify-between rounded-lg p-2"
                 style={{ background: "rgba(244,114,182,0.08)" }}>
-                <span className="text-xs font-inter capitalize" style={{ color: "rgba(255,255,255,0.7)" }}>{item.topic}</span>
+                <span className="text-xs font-inter capitalize" style={{ color: "rgb(var(--ink) / 0.7)" }}>{item.topic}</span>
                 <div className="flex items-center gap-2">
                   <div className="w-20 h-1.5 rounded-full bg-white/10 overflow-hidden">
                     <div className="h-full rounded-full" style={{

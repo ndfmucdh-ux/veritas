@@ -67,9 +67,9 @@ export default function ReadingGoals() {
           <button key={m} onClick={() => setMode(m)}
             className="flex-1 py-2 rounded-xl text-xs font-cinzel uppercase tracking-wider transition-all"
             style={{
-              background: mode === m ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-              color: mode === m ? "#00f5ff" : "rgba(255,255,255,0.3)",
-              border: mode === m ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)"
+              background: mode === m ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
+              color: mode === m ? "#00f5ff" : "rgb(var(--ink) / 0.3)",
+              border: mode === m ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.07)"
             }}>
             {m}
           </button>
@@ -82,7 +82,7 @@ export default function ReadingGoals() {
           <p className="font-cinzel text-sm text-white font-semibold">
             {mode === "daily" ? "Daily" : "Weekly"} Chapter Goal
           </p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             How many chapters to read {mode === "daily" ? "per day" : "this week"}
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function ReadingGoals() {
             const idx = opts.indexOf(target);
             if (idx > 0) setTarget(opts[idx - 1]);
           }} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>
+            style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}>
             <ChevronDown className="w-4 h-4" />
           </button>
           <span className="font-cinzel text-2xl font-bold w-10 text-center" style={{ color: accentColor }}>
@@ -103,7 +103,7 @@ export default function ReadingGoals() {
             const idx = opts.indexOf(target);
             if (idx < opts.length - 1) setTarget(opts[idx + 1]);
           }} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>
+            style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}>
             <ChevronUp className="w-4 h-4" />
           </button>
         </div>
@@ -111,7 +111,7 @@ export default function ReadingGoals() {
 
       {/* Progress bar */}
       <div>
-        <div className="flex justify-between text-[11px] mb-1.5 font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+        <div className="flex justify-between text-[11px] mb-1.5 font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
           <span>{progress} of {target} chapters</span>
           <span style={{ color: done ? "#34d399" : accentColor }}>{pct}%{done ? " ✓ Goal met!" : ""}</span>
         </div>
@@ -129,7 +129,7 @@ export default function ReadingGoals() {
         <div className="flex gap-1 mt-2 flex-wrap">
           {Array.from({ length: Math.min(target, 42) }).map((_, i) => (
             <div key={i} className="w-2 h-2 rounded-full transition-all"
-              style={{ background: i < progress ? accentColor : "rgba(255,255,255,0.08)" }} />
+              style={{ background: i < progress ? accentColor : "rgb(var(--ink) / 0.08)" }} />
           ))}
         </div>
       </div>

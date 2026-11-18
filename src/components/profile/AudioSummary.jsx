@@ -38,9 +38,9 @@ export default function AudioSummary() {
 
   if (audioHistory.length === 0) {
     return (
-      <div className="rounded-2xl p-5 text-center" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
-        <Headphones className="w-8 h-8 mx-auto mb-2" style={{ color: "rgba(255,255,255,0.15)" }} />
-        <p className="font-cinzel text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>No audio history yet</p>
+      <div className="rounded-2xl p-5 text-center" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+        <Headphones className="w-8 h-8 mx-auto mb-2" style={{ color: "rgb(var(--ink) / 0.15)" }} />
+        <p className="font-cinzel text-xs" style={{ color: "rgb(var(--ink) / 0.3)" }}>No audio history yet</p>
       </div>
     );
   }
@@ -59,15 +59,15 @@ export default function AudioSummary() {
           <div key={s.label} className="rounded-xl p-3 text-center"
             style={{ background: `${s.color}08`, border: `1px solid ${s.color}18` }}>
             <p className="font-cinzel text-sm font-bold" style={{ color: s.color }}>{s.value}</p>
-            <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{s.label}</p>
+            <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Top books */}
       {topBooks.length > 0 && (
-        <div className="rounded-xl p-3 space-y-2" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>Most Listened Books</p>
+        <div className="rounded-xl p-3 space-y-2" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.06)" }}>
+          <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>Most Listened Books</p>
           {topBooks.map(([book, count], i) => (
             <div key={book} className="flex items-center gap-2">
               <span className="w-4 text-[10px] font-cinzel text-center flex-shrink-0" style={{ color: colors[i] }}>{i + 1}</span>

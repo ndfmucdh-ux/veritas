@@ -52,7 +52,7 @@ export default function PrayerCard({
           <div>
             <p className="text-[10px] font-inter leading-relaxed" style={{ color: "rgba(52,211,153,0.9)" }}>{prayer.answered_note}</p>
             {prayer.answered_date && (
-              <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                 {new Date(prayer.answered_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </p>
             )}
@@ -68,12 +68,12 @@ export default function PrayerCard({
             placeholder="How was this prayer answered? (optional)"
             rows={2}
             className="w-full rounded-xl px-3 py-2 text-xs font-inter resize-none focus:outline-none"
-            style={{ background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(255,255,255,0.8)" }}
+            style={{ background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.25)", color: "rgb(var(--ink) / 0.8)" }}
           />
           <div className="flex gap-2">
             <button onClick={() => onSetAnswering(null)}
               className="flex-1 py-1.5 rounded-xl text-xs font-cinzel"
-              style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
+              style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>Cancel</button>
             <button onClick={() => onMarkAnswered(prayer)}
               className="flex-1 py-1.5 rounded-xl text-xs font-cinzel flex items-center justify-center gap-1.5"
               style={{ background: "rgba(52,211,153,0.15)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}>

@@ -19,8 +19,8 @@ export default function ThemeFilterTags({ selectedTag, onTagSelect }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <Tag className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} />
-        <p className="text-xs font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <Tag className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} />
+        <p className="text-xs font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           Filter by Theme
         </p>
       </div>
@@ -31,9 +31,9 @@ export default function ThemeFilterTags({ selectedTag, onTagSelect }) {
             onClick={() => onTagSelect(theme.id === selectedTag ? null : theme.id)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-inter transition-all"
             style={{
-              background: selectedTag === theme.id ? `${theme.color}22` : "rgba(255,255,255,0.05)",
-              color: selectedTag === theme.id ? theme.color : "rgba(255,255,255,0.4)",
-              border: selectedTag === theme.id ? `1px solid ${theme.color}44` : "1px solid rgba(255,255,255,0.07)"
+              background: selectedTag === theme.id ? `${theme.color}22` : "rgb(var(--ink) / 0.05)",
+              color: selectedTag === theme.id ? theme.color : "rgb(var(--ink) / 0.4)",
+              border: selectedTag === theme.id ? `1px solid ${theme.color}44` : "1px solid rgb(var(--ink) / 0.07)"
             }}
           >
             <theme.Icon className="w-3.5 h-3.5" />

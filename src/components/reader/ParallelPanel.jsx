@@ -94,25 +94,25 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
     >
       {/* Header */}
       <div className="flex-shrink-0 px-4 py-3 flex items-center justify-between"
-        style={{ background: "var(--chrome-surface)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "var(--chrome-surface)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgb(var(--ink) / 0.07)" }}>
         <div className="flex items-center gap-3">
           <Columns className="w-4 h-4" style={{ color: "#00f5ff" }} />
           <span className="font-cinzel text-sm font-semibold text-white/80">Parallel View</span>
-          <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{book} {chapter}</span>
+          <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{book} {chapter}</span>
         </div>
         <div className="flex items-center gap-4">
            <div className="flex items-center gap-2.5">
              <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-               style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>−</button>
-             <span className="text-sm font-cinzel px-3" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
+               style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>−</button>
+             <span className="text-sm font-cinzel px-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>{fontSize}</span>
              <button onClick={() => setFontSize(f => Math.min(26, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-               style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>+</button>
+               style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>+</button>
            </div>
            <select
              value={secondTranslation}
              onChange={e => setSecondTranslation(e.target.value)}
              className="text-xs font-cinzel px-4 py-2 rounded-xl focus:outline-none"
-             style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+             style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}
            >
              {ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => (
                <option key={t.code} value={t.code}>{t.label}</option>
@@ -128,7 +128,7 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
 
       {/* Column headers */}
       <div className="flex-shrink-0 grid grid-cols-2 gap-px"
-        style={{ background: "var(--fill-2)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        style={{ background: "var(--fill-2)", borderBottom: "1px solid rgb(var(--ink) / 0.06)" }}>
         <div className="px-4 py-2 text-center">
           <span className="text-[10px] font-cinzel uppercase tracking-widest font-bold" style={{ color: "#fbbf24" }}>{primaryTranslation}</span>
         </div>
@@ -141,34 +141,34 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
       {loading ? (
         <div className="flex-1 flex items-center justify-center gap-3">
           <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
-          <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.35)" }}>Loading {secondTranslation}…</p>
+          <p className="text-sm font-cinzel" style={{ color: "rgb(var(--ink) / 0.35)" }}>Loading {secondTranslation}…</p>
         </div>
       ) : (
         <div className="flex-1 overflow-hidden">
-          <div className="grid grid-cols-2 divide-x h-full" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+          <div className="grid grid-cols-2 divide-x h-full" style={{ borderColor: "rgb(var(--ink) / 0.05)" }}>
             {/* Left column — primary */}
             <div ref={leftScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide will-change-scroll" onScroll={handleLeftScroll}>
               {primaryVerses.map(v => (
                 <div key={v.verse} className="flex gap-1.5">
-                  <span className="font-cinzel flex-shrink-0 pt-1 w-5 text-right select-none" style={{ color: "rgba(255,255,255,0.2)", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
+                  <span className="font-cinzel flex-shrink-0 pt-1 w-5 text-right select-none" style={{ color: "rgb(var(--ink) / 0.2)", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
                   <p className="font-playfair leading-relaxed" style={{
                     fontSize: `${fontSize}px`,
-                    color: v.red_letter ? "#f87171" : "rgba(255,255,255,0.82)",
+                    color: v.red_letter ? "#f87171" : "rgb(var(--ink) / 0.82)",
                     textShadow: v.red_letter ? "0 0 12px rgba(248,113,113,0.4)" : "none",
                   }}>{v.text}</p>
                 </div>
               ))}
             </div>
             {/* Right column — secondary */}
-            <div ref={rightScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide will-change-scroll" style={{ borderLeft: "1px solid rgba(255,255,255,0.06)" }} onScroll={handleRightScroll}>
+            <div ref={rightScrollRef} className="px-3 py-4 space-y-3 overflow-y-auto scrollbar-hide will-change-scroll" style={{ borderLeft: "1px solid rgb(var(--ink) / 0.06)" }} onScroll={handleRightScroll}>
               {secondVerses.map(v => (
                 <div key={v.verse} className="flex gap-1.5">
-                  <span className="font-cinzel flex-shrink-0 pt-1 w-5 text-right select-none" style={{ color: "rgba(255,255,255,0.2)", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
-                  <p className="font-playfair leading-relaxed" style={{ fontSize: `${fontSize}px`, color: "rgba(255,255,255,0.72)" }}>{v.text}</p>
+                  <span className="font-cinzel flex-shrink-0 pt-1 w-5 text-right select-none" style={{ color: "rgb(var(--ink) / 0.2)", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
+                  <p className="font-playfair leading-relaxed" style={{ fontSize: `${fontSize}px`, color: "rgb(var(--ink) / 0.72)" }}>{v.text}</p>
                 </div>
               ))}
               {secondVerses.length === 0 && (
-                <p className="text-xs text-center py-8" style={{ color: "rgba(255,255,255,0.25)" }}>No data for {secondTranslation}</p>
+                <p className="text-xs text-center py-8" style={{ color: "rgb(var(--ink) / 0.25)" }}>No data for {secondTranslation}</p>
               )}
             </div>
           </div>

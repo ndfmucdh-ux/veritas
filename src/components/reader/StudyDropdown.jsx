@@ -55,9 +55,9 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
         className="w-full flex items-center justify-between rounded-xl font-cinzel font-semibold transition-all"
         style={{
           padding: "10px 14px",
-          background: isOpen ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-          border: isOpen ? "1px solid rgba(0,245,255,0.35)" : "1px solid rgba(255,255,255,0.1)",
-          color: isOpen ? "#00f5ff" : "rgba(255,255,255,0.75)"
+          background: isOpen ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)",
+          border: isOpen ? "1px solid rgba(0,245,255,0.35)" : "1px solid rgb(var(--ink) / 0.1)",
+          color: isOpen ? "#00f5ff" : "rgb(var(--ink) / 0.75)"
         }}
       >
         <div className="flex items-center gap-2.5 min-w-0">

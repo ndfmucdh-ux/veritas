@@ -11,7 +11,7 @@ const SECTIONS = [
 export default function QuickSections() {
   return (
     <div>
-      <p className="text-[10px] font-inter uppercase tracking-[0.2em] mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
+      <p className="text-[10px] font-inter uppercase tracking-[0.2em] mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>
         Quick Access
       </p>
       <div className="grid grid-cols-2 gap-3">

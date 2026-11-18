@@ -104,7 +104,7 @@ export default function PrayerWall() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-cinzel text-base font-bold text-white">Prayer Wall</h2>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
             {posts.reduce((sum, p) => sum + (p.prayer_count || 0), 0).toLocaleString()} prayers sent · {posts.length} requests
           </p>
         </div>
@@ -129,15 +129,15 @@ export default function PrayerWall() {
                 placeholder="Share your prayer request with the community…"
                 rows={3}
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter resize-none focus:outline-none"
-                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }} />
+                style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.85)", fontSize: "16px" }} />
               <div className="flex flex-wrap gap-1.5">
                 {CATEGORIES.filter(c => c.id !== "all").map(cat => (
                   <button key={cat.id} onClick={() => setNewCategory(cat.id)}
                     className="px-2.5 py-1 rounded-full text-[10px] font-cinzel transition-all"
                     style={{
-                      background: newCategory === cat.id ? `${CATEGORY_COLORS[cat.id]}20` : "rgba(255,255,255,0.04)",
-                      color: newCategory === cat.id ? CATEGORY_COLORS[cat.id] : "rgba(255,255,255,0.4)",
-                      border: newCategory === cat.id ? `1px solid ${CATEGORY_COLORS[cat.id]}50` : "1px solid rgba(255,255,255,0.07)"
+                      background: newCategory === cat.id ? `${CATEGORY_COLORS[cat.id]}20` : "rgb(var(--ink) / 0.04)",
+                      color: newCategory === cat.id ? CATEGORY_COLORS[cat.id] : "rgb(var(--ink) / 0.4)",
+                      border: newCategory === cat.id ? `1px solid ${CATEGORY_COLORS[cat.id]}50` : "1px solid rgb(var(--ink) / 0.07)"
                     }}>
                     {cat.emoji} {cat.label}
                   </button>
@@ -146,7 +146,7 @@ export default function PrayerWall() {
               <div className="flex gap-2">
                 <button onClick={() => setShowForm(false)}
                   className="flex-1 py-2.5 rounded-xl font-cinzel text-xs"
-                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
                   Cancel
                 </button>
                 <motion.button whileTap={{ scale: 0.96 }} onClick={submitRequest} disabled={submitting || !newRequest.trim()}
@@ -167,9 +167,9 @@ export default function PrayerWall() {
           <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
             className="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-cinzel whitespace-nowrap transition-all"
             style={{
-              background: activeCategory === cat.id ? "rgba(167,139,250,0.15)" : "rgba(255,255,255,0.04)",
-              color: activeCategory === cat.id ? "#a78bfa" : "rgba(255,255,255,0.4)",
-              border: activeCategory === cat.id ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgba(255,255,255,0.07)"
+              background: activeCategory === cat.id ? "rgba(167,139,250,0.15)" : "rgb(var(--ink) / 0.04)",
+              color: activeCategory === cat.id ? "#a78bfa" : "rgb(var(--ink) / 0.4)",
+              border: activeCategory === cat.id ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgb(var(--ink) / 0.07)"
             }}>
             {cat.emoji} {cat.label}
           </button>
@@ -200,7 +200,7 @@ export default function PrayerWall() {
                       {catInfo?.emoji || "🙏"}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
+                      <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.8)" }}>
                         {post.request}
                       </p>
                       <p className="text-[9px] font-cinzel uppercase tracking-wider mt-1.5"
@@ -211,8 +211,8 @@ export default function PrayerWall() {
                   </div>
 
                   <div className="flex items-center justify-between mt-3 pt-3"
-                    style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                    <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>
+                    style={{ borderTop: "1px solid rgb(var(--ink) / 0.05)" }}>
+                    <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                       {post.prayer_count || 0} 🙏 · {post.amen_count || 0} 🕊️
                     </span>
                     <div className="flex items-center gap-1.5">
@@ -223,9 +223,9 @@ export default function PrayerWall() {
                         disabled={amenPosts.includes(post.id)}
                         className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
                         style={{
-                          background: amenPosts.includes(post.id) ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.04)",
-                          color: amenPosts.includes(post.id) ? "#fbbf24" : "rgba(255,255,255,0.45)",
-                          border: amenPosts.includes(post.id) ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.07)",
+                          background: amenPosts.includes(post.id) ? "rgba(251,191,36,0.15)" : "rgb(var(--ink) / 0.04)",
+                          color: amenPosts.includes(post.id) ? "#fbbf24" : "rgb(var(--ink) / 0.45)",
+                          border: amenPosts.includes(post.id) ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
                         }}>
                         🕊️ Amen
                       </motion.button>
@@ -236,9 +236,9 @@ export default function PrayerWall() {
                         disabled={hasPrayed}
                         className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
                         style={{
-                          background: hasPrayed ? "rgba(167,139,250,0.15)" : "rgba(255,255,255,0.05)",
-                          color: hasPrayed ? "#a78bfa" : "rgba(255,255,255,0.5)",
-                          border: hasPrayed ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgba(255,255,255,0.08)",
+                          background: hasPrayed ? "rgba(167,139,250,0.15)" : "rgb(var(--ink) / 0.05)",
+                          color: hasPrayed ? "#a78bfa" : "rgb(var(--ink) / 0.5)",
+                          border: hasPrayed ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgb(var(--ink) / 0.08)",
                         }}>
                         {hasPrayed
                           ? <><CheckCircle2 className="w-3 h-3" /> Praying</>

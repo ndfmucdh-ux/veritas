@@ -214,10 +214,10 @@ export default function Plans() {
     return (
       <div className="md:ml-16 min-h-screen pb-28">
         <div className="px-4 pt-4 pb-3 flex items-center gap-3"
-          style={{ background: "var(--chrome-surface)", backdropFilter: "blur(20px)", position: "sticky", top: "57px", zIndex: 20, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          style={{ background: "var(--chrome-surface)", backdropFilter: "blur(20px)", position: "sticky", top: "57px", zIndex: 20, borderBottom: "1px solid rgb(var(--ink) / 0.06)" }}>
           <button onClick={() => setActiveCustomPlan(null)}
             className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl"
-            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.6)" }}>
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -238,7 +238,7 @@ export default function Plans() {
               <div key={s.label} className="rounded-2xl p-3 text-center"
                 style={{ background: `${accent}08`, border: `1px solid ${accent}20` }}>
                 <p className="font-cinzel text-base font-bold" style={{ color: accent }}>{s.value}</p>
-                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
+                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -256,7 +256,7 @@ export default function Plans() {
               const allDone = completedInBook === sel.chapters.length;
               return (
                 <div key={sel.book} className="rounded-2xl overflow-hidden"
-                  style={{ background: "var(--fill-1)", border: `1px solid ${allDone ? "rgba(52,211,153,0.25)" : "rgba(255,255,255,0.07)"}` }}>
+                  style={{ background: "var(--fill-1)", border: `1px solid ${allDone ? "rgba(52,211,153,0.25)" : "rgb(var(--ink) / 0.07)"}` }}>
                   <div className="flex items-center justify-between px-4 py-3">
                     <p className="font-cinzel text-sm font-semibold text-white">{sel.book}</p>
                     <span className="text-xs font-cinzel" style={{ color: allDone ? "#34d399" : accent }}>
@@ -314,7 +314,7 @@ export default function Plans() {
               </span>
             </div>
             <h1 className="font-cinzel text-2xl font-bold text-white leading-tight">{activePlan.title}</h1>
-            <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>{activePlan.description}</p>
+            <p className="text-sm mt-1" style={{ color: "rgb(var(--ink) / 0.5)" }}>{activePlan.description}</p>
           </div>
         </div>
 
@@ -322,19 +322,19 @@ export default function Plans() {
         <div className="flex gap-2 px-5 pt-4">
           <button onClick={() => setShowCalendar(false)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
-            style={{ background: !showCalendar ? `${activePlan.accent}22` : "rgba(255,255,255,0.04)", color: !showCalendar ? activePlan.accent : "rgba(255,255,255,0.35)", border: !showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgba(255,255,255,0.07)" }}>
+            style={{ background: !showCalendar ? `${activePlan.accent}22` : "rgb(var(--ink) / 0.04)", color: !showCalendar ? activePlan.accent : "rgb(var(--ink) / 0.35)", border: !showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgb(var(--ink) / 0.07)" }}>
             <List className="w-3.5 h-3.5" /> Timeline
           </button>
           <button onClick={() => setShowCalendar(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
-            style={{ background: showCalendar ? `${activePlan.accent}22` : "rgba(255,255,255,0.04)", color: showCalendar ? activePlan.accent : "rgba(255,255,255,0.35)", border: showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgba(255,255,255,0.07)" }}>
+            style={{ background: showCalendar ? `${activePlan.accent}22` : "rgb(var(--ink) / 0.04)", color: showCalendar ? activePlan.accent : "rgb(var(--ink) / 0.35)", border: showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgb(var(--ink) / 0.07)" }}>
             <CalendarDays className="w-3.5 h-3.5" /> Calendar
           </button>
         </div>
 
         {/* Progress bar */}
         <div className="px-5 pt-5 mb-6">
-          <div className="flex justify-between text-xs mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>
+          <div className="flex justify-between text-xs mb-2" style={{ color: "rgb(var(--ink) / 0.4)" }}>
             <span>{completed} of {activePlan.duration_days} days complete</span>
             <span style={{ color: activePlan.accent }}>{pct}%</span>
           </div>
@@ -378,20 +378,20 @@ export default function Plans() {
                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                 className="rounded-2xl overflow-hidden transition-all"
                 style={{
-                  background: open ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-                  border: done ? `1px solid rgba(52,211,153,0.25)` : open ? `1px solid ${activePlan.accent}33` : "1px solid rgba(255,255,255,0.06)",
+                  background: open ? "rgb(var(--ink) / 0.05)" : "rgb(var(--ink) / 0.03)",
+                  border: done ? `1px solid rgba(52,211,153,0.25)` : open ? `1px solid ${activePlan.accent}33` : "1px solid rgb(var(--ink) / 0.06)",
                 }}
               >
                 <button className="w-full flex items-center gap-3 p-4 text-left" onClick={() => setSelectedDay(open ? null : day)}>
                   <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: done ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.06)" }}>
+                    style={{ background: done ? "rgba(52,211,153,0.15)" : "rgb(var(--ink) / 0.06)" }}>
                     {done
                       ? <CheckCircle2 className="w-4 h-4" style={{ color: "#34d399" }} />
-                      : <span className="text-xs font-cinzel font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>{day.day}</span>
+                      : <span className="text-xs font-cinzel font-bold" style={{ color: "rgb(var(--ink) / 0.4)" }}>{day.day}</span>
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Day {day.day}</p>
+                    <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Day {day.day}</p>
                     <p className="font-cinzel text-sm font-semibold text-white truncate">{day.title}</p>
                     <div className="flex gap-1 mt-1.5 flex-wrap">
                       {day.verses.map(v => (
@@ -403,7 +403,7 @@ export default function Plans() {
                     </div>
                   </div>
                   <ChevronRight className="w-4 h-4 flex-shrink-0 transition-transform"
-                    style={{ color: "rgba(255,255,255,0.25)", transform: open ? "rotate(90deg)" : "none" }} />
+                    style={{ color: "rgb(var(--ink) / 0.25)", transform: open ? "rotate(90deg)" : "none" }} />
                 </button>
 
                 <AnimatePresence>
@@ -415,13 +415,13 @@ export default function Plans() {
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 pb-5 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+                      <div className="px-4 pb-5 border-t" style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
                         {/* Devotional text */}
                         <div className="pt-4">
                           <p className="text-[10px] font-inter uppercase tracking-widest mb-3" style={{ color: activePlan.accent }}>
                             ✦ Devotional
                           </p>
-                          <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+                          <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                             {(genDevo && selectedDay?.day === day.day) ? genDevo.reflection : day.devotional}
                           </p>
 
@@ -433,7 +433,7 @@ export default function Plans() {
                                   <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "#FFD700" }}>Key Insights</p>
                                   <ul className="space-y-1.5">
                                     {genDevo.insights.map((ins, i) => (
-                                      <li key={i} className="text-sm flex gap-2" style={{ color: "rgba(255,255,255,0.6)" }}>
+                                      <li key={i} className="text-sm flex gap-2" style={{ color: "rgb(var(--ink) / 0.6)" }}>
                                         <span style={{ color: "#FFD700" }}>·</span>{ins}
                                       </li>
                                     ))}
@@ -443,7 +443,7 @@ export default function Plans() {
                               {genDevo.application && (
                                 <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
                                   <p className="text-[10px] font-inter uppercase tracking-widest mb-1" style={{ color: "#00f5ff" }}>Apply Today</p>
-                                  <p className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{genDevo.application}</p>
+                                  <p className="text-sm" style={{ color: "rgb(var(--ink) / 0.7)" }}>{genDevo.application}</p>
                                 </div>
                               )}
                             </div>
@@ -452,11 +452,11 @@ export default function Plans() {
                           {/* Prayer */}
                           {day.prayer && (
                             <div className="mt-4 rounded-xl p-4"
-                              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                              <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
+                              style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+                              <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                                 🙏 Prayer
                               </p>
-                              <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
+                              <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgb(var(--ink) / 0.65)" }}>
                                 {day.prayer}
                               </p>
                             </div>
@@ -499,9 +499,9 @@ export default function Plans() {
           })}
 
           {activePlan.days.length < activePlan.duration_days && (
-            <div className="rounded-2xl p-8 text-center" style={{ border: "1px dashed rgba(255,255,255,0.1)" }}>
-              <Heart className="w-8 h-8 mx-auto mb-3" style={{ color: "rgba(255,255,255,0.2)" }} />
-              <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <div className="rounded-2xl p-8 text-center" style={{ border: "1px dashed rgb(var(--ink) / 0.1)" }}>
+              <Heart className="w-8 h-8 mx-auto mb-3" style={{ color: "rgb(var(--ink) / 0.2)" }} />
+              <p className="text-sm" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                 {activePlan.duration_days - activePlan.days.length} more days of scripture & devotions
               </p>
             </div>
@@ -527,7 +527,7 @@ export default function Plans() {
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), hsl(var(--background) / 0.95))" }} />
         <div className="absolute bottom-0 px-5 pb-5">
           <h1 className="font-cinzel text-2xl font-bold text-white">{t.readingPlansTitle}</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{t.structuredJourneys}</p>
+          <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.structuredJourneys}</p>
         </div>
       </div>
 
@@ -537,9 +537,9 @@ export default function Plans() {
           <button key={v} onClick={() => setLangFilter(v)}
             className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-inter transition-all"
             style={{
-              background: langFilter === v ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-              border: langFilter === v ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
-              color: langFilter === v ? "#00f5ff" : "rgba(255,255,255,0.45)",
+              background: langFilter === v ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
+              border: langFilter === v ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
+              color: langFilter === v ? "#00f5ff" : "rgb(var(--ink) / 0.45)",
             }}>
             <span>{flag}</span><span>{l}</span>
           </button>
@@ -561,9 +561,9 @@ export default function Plans() {
           <button key={v} onClick={() => setCatFilter(v)}
             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
             style={{
-              background: catFilter === v ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)",
-              border: catFilter === v ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.07)",
-              color: catFilter === v ? "#fbbf24" : "rgba(255,255,255,0.4)",
+              background: catFilter === v ? "rgba(251,191,36,0.12)" : "rgb(var(--ink) / 0.04)",
+              border: catFilter === v ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
+              color: catFilter === v ? "#fbbf24" : "rgb(var(--ink) / 0.4)",
             }}>
             <CatIcon className="w-3.5 h-3.5" /><span>{l}</span>
           </button>
@@ -573,7 +573,7 @@ export default function Plans() {
       {/* Custom Plans */}
       <div className="px-4 pt-2 pb-1">
         <div className="flex items-center justify-between mb-3">
-          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>{t.customPlans}</p>
+          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.customPlans}</p>
           <button onClick={() => setShowBuilder(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-cinzel text-xs transition-all"
             style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
@@ -591,7 +591,7 @@ export default function Plans() {
             </div>
             <div>
               <p className="font-cinzel text-sm font-semibold text-white">Build Your Own Plan</p>
-              <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Select books, chapters & a target date</p>
+              <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>Select books, chapters & a target date</p>
             </div>
           </button>
         ) : (
@@ -618,10 +618,10 @@ export default function Plans() {
                   </div>
                   <div className="flex items-center gap-1">
                     <button onClick={e => { e.stopPropagation(); deleteCustomPlan(plan.id); }}
-                      className="p-1.5 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
+                      className="p-1.5 rounded-lg" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                    <ChevronRight className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)" }} />
+                    <ChevronRight className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.25)" }} />
                   </div>
                 </motion.div>
               );
@@ -638,7 +638,7 @@ export default function Plans() {
       {/* Divider */}
       <div className="flex items-center gap-3 px-4 mb-3">
         <div className="flex-1 h-px" style={{ background: "var(--fill-3)" }} />
-        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>{t.curatedPlans}</p>
+        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>{t.curatedPlans}</p>
         <div className="flex-1 h-px" style={{ background: "var(--fill-3)" }} />
       </div>
 
@@ -663,7 +663,7 @@ export default function Plans() {
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
               onClick={() => setActivePlan(plan)}
               className="rounded-2xl overflow-hidden cursor-pointer"
-              style={{ border: "1px solid rgba(255,255,255,0.07)" }}
+              style={{ border: "1px solid rgb(var(--ink) / 0.07)" }}
             >
               {/* Photo */}
               <div className="relative h-36 overflow-hidden">
@@ -672,7 +672,7 @@ export default function Plans() {
                 <div className="absolute top-3 right-3 flex gap-2">
                   {plan.lang === "es" && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-inter flex items-center gap-1"
-                      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)", color: "rgba(255,255,255,0.7)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)", color: "rgb(var(--ink) / 0.7)", border: "1px solid rgb(var(--ink) / 0.1)" }}>
                       <Globe className="w-2.5 h-2.5" /> Español
                     </span>
                   )}
@@ -684,14 +684,14 @@ export default function Plans() {
 
               {/* Meta */}
               <div className="px-4 py-3" style={{ background: "hsl(var(--surface-2))" }}>
-                <p className="text-xs mb-3 leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{plan.description}</p>
+                <p className="text-xs mb-3 leading-relaxed" style={{ color: "rgb(var(--ink) / 0.45)" }}>{plan.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-inter capitalize"
                       style={{ background: `${plan.accent}15`, color: plan.accent, border: `1px solid ${plan.accent}30` }}>
                       {plan.category.replace("_", " ")}
                     </span>
-                    <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{plan.duration_days} days</span>
+                    <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{plan.duration_days} days</span>
                     {started && <span className="text-[10px] font-inter" style={{ color: plan.accent }}>{pct}%</span>}
                   </div>
                   <div className="flex items-center gap-1 text-xs font-cinzel" style={{ color: plan.accent }}>

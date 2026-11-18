@@ -63,7 +63,7 @@ export default function PersonalizedDevotionalPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="p-4 rounded-2xl" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="p-4 rounded-2xl" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Sparkles className="w-5 h-5 text-purple" />

@@ -15,9 +15,9 @@ export default function ProfileTabBar({ activeTab, onTabChange, isAdmin = false 
           <button key={tab} type="button" role="tab" aria-selected={activeTab === tab} onClick={() => onTabChange(tab)}
             className="flex-1 flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all min-h-14"
             style={{
-              background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.03)",
-              color: activeTab === tab ? "#00f5ff" : "rgba(255,255,255,0.35)",
-              border: activeTab === tab ? "1px solid rgba(0,245,255,0.2)" : "1px solid rgba(255,255,255,0.06)",
+              background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgb(var(--ink) / 0.03)",
+              color: activeTab === tab ? "#00f5ff" : "rgb(var(--ink) / 0.35)",
+              border: activeTab === tab ? "1px solid rgba(0,245,255,0.2)" : "1px solid rgb(var(--ink) / 0.06)",
             }}>
             <Icon className="w-5 h-5" />
             {TAB_LABELS[tab]}

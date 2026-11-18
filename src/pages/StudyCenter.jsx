@@ -205,7 +205,7 @@ export default function StudyCenter() {
         {activeTab === "analysis" && (
           <>
             {/* Book selector */}
-            <div className="rounded-2xl p-4 md:p-6" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="rounded-2xl p-4 md:p-6" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
               <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4 text-white/40">Books of the Bible</p>
               <div className="space-y-2">
                 {theologicalGroups.map(group => (
@@ -215,14 +215,14 @@ export default function StudyCenter() {
                       onClick={() => setExpandedCategory(expandedCategory === group.id ? null : group.id)}
                       className="w-full flex items-center gap-2 px-4 py-3.5 rounded-xl transition-all text-left"
                       style={{
-                        background: expandedCategory === group.id ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)",
+                        background: expandedCategory === group.id ? "rgba(0,245,255,0.1)" : "rgb(var(--ink) / 0.05)",
                         borderLeft: expandedCategory === group.id ? "3px solid #00f5ff" : "3px solid transparent"
                       }}
                     >
                       <ChevronDown
                         className="w-4 h-4 flex-shrink-0"
                         style={{
-                          color: expandedCategory === group.id ? "#00f5ff" : "rgba(255,255,255,0.3)",
+                          color: expandedCategory === group.id ? "#00f5ff" : "rgb(var(--ink) / 0.3)",
                           transform: expandedCategory === group.id ? "rotate(0deg)" : "rotate(-90deg)",
                           transition: "transform 0.2s"
                         }}
@@ -251,9 +251,9 @@ export default function StudyCenter() {
                                 }}
                                 className="py-4 px-2 rounded-xl text-xs font-cinzel transition-all text-center font-bold"
                                 style={{
-                                  background: selectedBook === b.name ? "rgba(0,245,255,0.25)" : "rgba(255,255,255,0.06)",
-                                  color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.55)",
-                                  border: selectedBook === b.name ? "2px solid rgba(0,245,255,0.4)" : "1px solid rgba(255,255,255,0.08)"
+                                  background: selectedBook === b.name ? "rgba(0,245,255,0.25)" : "rgb(var(--ink) / 0.06)",
+                                  color: selectedBook === b.name ? "#00f5ff" : "rgb(var(--ink) / 0.55)",
+                                  border: selectedBook === b.name ? "2px solid rgba(0,245,255,0.4)" : "1px solid rgb(var(--ink) / 0.08)"
                                 }}
                               >
                                 {getTranslatedBookName(b.name, lang).substring(0, 7)}
@@ -356,7 +356,7 @@ export default function StudyCenter() {
                   {outline.sections?.length > 0 && (
                     <div className="space-y-4">
                       {outline.sections.map((section, idx) => (
-                        <div key={idx} className="pb-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+                        <div key={idx} className="pb-4 border-b" style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
                           <p className="font-cinzel text-white mb-2">{section.title || `Section ${idx + 1}`}</p>
                           <p className="text-sm text-white/50 leading-relaxed mb-2">{section.summary || ""}</p>
                           {section.key_verses?.length > 0 && (

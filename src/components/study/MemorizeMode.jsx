@@ -105,7 +105,7 @@ export default function MemorizeMode({ book, chapter }) {
           <BookOpen className="w-4 h-4" style={{ color: "#a78bfa" }} />
           <p className="font-cinzel text-sm font-semibold text-white">Memorize Mode</p>
         </div>
-        <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.45)" }}>
+        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.45)" }}>
           Select a verse, choose difficulty, and recite it from memory. Earn XP for accurate recitations.
         </p>
       </div>
@@ -116,11 +116,11 @@ export default function MemorizeMode({ book, chapter }) {
           <button key={d.id} onClick={() => setDifficulty(d.id)}
             className="flex-1 py-3 rounded-xl text-center transition-all"
             style={{
-              background: difficulty === d.id ? "rgba(167,139,250,0.15)" : "rgba(255,255,255,0.04)",
-              border: difficulty === d.id ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgba(255,255,255,0.07)",
+              background: difficulty === d.id ? "rgba(167,139,250,0.15)" : "rgb(var(--ink) / 0.04)",
+              border: difficulty === d.id ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
             }}>
-            <p className="font-cinzel text-xs font-semibold" style={{ color: difficulty === d.id ? "#a78bfa" : "rgba(255,255,255,0.55)" }}>{d.label}</p>
-            <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{d.desc}</p>
+            <p className="font-cinzel text-xs font-semibold" style={{ color: difficulty === d.id ? "#a78bfa" : "rgb(var(--ink) / 0.55)" }}>{d.label}</p>
+            <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{d.desc}</p>
           </button>
         ))}
       </div>
@@ -128,7 +128,7 @@ export default function MemorizeMode({ book, chapter }) {
       {/* Verse picker */}
       {!selectedVerse ? (
         <div className="space-y-2">
-          <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             {book} {chapter} — Select a verse
           </p>
           {verses.length === 0 && (
@@ -143,13 +143,13 @@ export default function MemorizeMode({ book, chapter }) {
                 className="w-full text-left px-4 py-3 rounded-xl transition-all flex items-start gap-3"
                 style={{
                   background: "var(--fill-1)",
-                  border: alreadyMemorized(v.verse) ? "1px solid rgba(52,211,153,0.25)" : "1px solid rgba(255,255,255,0.07)",
+                  border: alreadyMemorized(v.verse) ? "1px solid rgba(52,211,153,0.25)" : "1px solid rgb(var(--ink) / 0.07)",
                 }}>
                 <span className="font-cinzel text-xs font-bold flex-shrink-0 pt-0.5"
-                  style={{ color: alreadyMemorized(v.verse) ? "#34d399" : "rgba(255,255,255,0.3)" }}>
+                  style={{ color: alreadyMemorized(v.verse) ? "#34d399" : "rgb(var(--ink) / 0.3)" }}>
                   {v.verse}
                 </span>
-                <p className="text-xs font-inter leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.7)" }}>{v.text}</p>
+                <p className="text-xs font-inter leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.7)" }}>{v.text}</p>
                 {alreadyMemorized(v.verse) && (
                   <Check className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" style={{ color: "#34d399" }} />
                 )}
@@ -161,7 +161,7 @@ export default function MemorizeMode({ book, chapter }) {
         <div className="space-y-4">
           {/* Back */}
           <button onClick={() => setSelectedVerse(null)} className="flex items-center gap-1.5 text-xs font-cinzel"
-            style={{ color: "rgba(255,255,255,0.35)" }}>
+            style={{ color: "rgb(var(--ink) / 0.35)" }}>
             <ChevronRight className="w-3.5 h-3.5 rotate-180" /> Back to verses
           </button>
 
@@ -187,7 +187,7 @@ export default function MemorizeMode({ book, chapter }) {
                     {revealed.has(idx) ? item.word : "·".repeat(Math.max(3, item.word.length))}
                   </button>
                 ) : (
-                  <span key={idx} className="font-playfair text-sm" style={{ color: "rgba(255,255,255,0.85)" }}>
+                  <span key={idx} className="font-playfair text-sm" style={{ color: "rgb(var(--ink) / 0.85)" }}>
                     {item.word}
                   </span>
                 )
@@ -195,11 +195,11 @@ export default function MemorizeMode({ book, chapter }) {
             </div>
             <div className="flex items-center gap-2 mt-4">
               <button onClick={revealAll} className="text-[10px] font-cinzel px-3 py-1.5 rounded-lg"
-                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>
                 <Eye className="w-3 h-3 inline mr-1" />Reveal All
               </button>
               <button onClick={hideAll} className="text-[10px] font-cinzel px-3 py-1.5 rounded-lg"
-                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>
                 <EyeOff className="w-3 h-3 inline mr-1" />Hide All
               </button>
               <button onClick={() => setShowRecite(!showRecite)}
@@ -226,7 +226,7 @@ export default function MemorizeMode({ book, chapter }) {
                     placeholder="Type the verse from memory..."
                     rows={4}
                     className="w-full rounded-xl p-4 text-sm font-playfair resize-none focus:outline-none"
-                    style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)", lineHeight: "1.75" }}
+                    style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgb(var(--ink) / 0.85)", lineHeight: "1.75" }}
                   />
                   <div className="flex gap-2">
                     <button onClick={checkRecitation} disabled={!userInput.trim()}
@@ -236,7 +236,7 @@ export default function MemorizeMode({ book, chapter }) {
                     </button>
                     <button onClick={() => { setUserInput(""); setResult(null); }}
                       className="px-4 py-3 rounded-xl"
-                      style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.35)" }}>
+                      style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                       <RotateCcw className="w-4 h-4" />
                     </button>
                   </div>
@@ -255,7 +255,7 @@ export default function MemorizeMode({ book, chapter }) {
                             <Trophy className="w-5 h-5 flex-shrink-0" style={{ color: "#34d399" }} />
                             <div>
                               <p className="font-cinzel text-sm font-semibold" style={{ color: "#34d399" }}>Well recited!</p>
-                              <p className="text-xs font-inter mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+                              <p className="text-xs font-inter mt-1" style={{ color: "rgb(var(--ink) / 0.5)" }}>
                                 +{difficulty === "hard" ? 50 : difficulty === "medium" ? 30 : 15} XP awarded. Keep practicing to master this verse.
                               </p>
                             </div>
@@ -265,7 +265,7 @@ export default function MemorizeMode({ book, chapter }) {
                             <X className="w-5 h-5 flex-shrink-0" style={{ color: "#f87171" }} />
                             <div>
                               <p className="font-cinzel text-sm font-semibold" style={{ color: "#f87171" }}>Keep practicing</p>
-                              <p className="text-xs font-inter mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>
+                              <p className="text-xs font-inter mt-1" style={{ color: "rgb(var(--ink) / 0.5)" }}>
                                 Study the verse more and try again. Use "Reveal All" to review the full text.
                               </p>
                             </div>

@@ -132,14 +132,14 @@ export default function ReadingStatsOverview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="p-4 rounded-2xl"
-          style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.08)" }}
+          style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.08)" }}
         >
           <p className="text-sm font-cinzel font-semibold text-white mb-4">Reading Trend (30 Days)</p>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={monthlyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" style={{ fontSize: 12 }} />
-              <YAxis stroke="rgba(255,255,255,0.3)" style={{ fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--ink) / 0.1)" />
+              <XAxis dataKey="date" stroke="rgb(var(--ink) / 0.3)" style={{ fontSize: 12 }} />
+              <YAxis stroke="rgb(var(--ink) / 0.3)" style={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={{
                   background: "rgba(0,0,0,0.8)",

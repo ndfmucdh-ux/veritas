@@ -17,12 +17,12 @@ export default function AudioOverviewTab({
           <div key={s.label} className="rounded-2xl p-5 text-center" style={{ background: `${s.color}08`, border: `1px solid ${s.color}20` }}>
             <div className="text-3xl mb-2">{s.icon}</div>
             <p className="font-cinzel text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-            <p className="text-[10px] font-inter mt-1" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
+            <p className="text-[10px] font-inter mt-1" style={{ color: "rgb(var(--ink) / 0.35)" }}>{s.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
         <div className="flex items-center justify-between mb-3">
           <p className="font-cinzel text-sm text-white flex items-center gap-2"><Target className="w-4 h-4 text-gold" /> Today's Goal</p>
           <span className="font-cinzel text-xs" style={{ color: todayCount >= goal ? "#34d399" : "#00f5ff" }}>{todayCount}/{goal} chapters</span>
@@ -34,14 +34,14 @@ export default function AudioOverviewTab({
         {todayCount >= goal && <p className="text-xs font-inter mt-2" style={{ color: "#34d399" }}>✅ Goal reached today!</p>}
       </div>
 
-      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
-        <p className="font-cinzel text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(255,255,255,0.3)" }}>This Week</p>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+        <p className="font-cinzel text-xs uppercase tracking-widest mb-4" style={{ color: "rgb(var(--ink) / 0.3)" }}>This Week</p>
         <div className="flex items-end gap-2 h-24">
           {weeklyData.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <motion.div initial={{ height: 0 }} animate={{ height: `${(d.count / maxWeekly) * 80}px` }} transition={{ delay: i * 0.05, duration: 0.5 }}
-                className="w-full rounded-t-lg" style={{ background: d.count > 0 ? "rgba(0,245,255,0.4)" : "rgba(255,255,255,0.06)", minHeight: 4 }} />
-              <span className="text-[9px] font-cinzel" style={{ color: "rgba(255,255,255,0.3)" }}>{d.day}</span>
+                className="w-full rounded-t-lg" style={{ background: d.count > 0 ? "rgba(0,245,255,0.4)" : "rgb(var(--ink) / 0.06)", minHeight: 4 }} />
+              <span className="text-[9px] font-cinzel" style={{ color: "rgb(var(--ink) / 0.3)" }}>{d.day}</span>
             </div>
           ))}
         </div>
@@ -75,7 +75,7 @@ export default function AudioOverviewTab({
             <p className="font-cinzel text-sm font-bold text-white">
               {streak >= 7 ? "Streak Champion!" : streak >= 3 ? "On Fire!" : streak >= 1 ? "Building Momentum" : "Start Your Streak"}
             </p>
-            <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>
               {streak >= 7 ? `${streak} days of consistent listening` : streak >= 3 ? `${streak} days — keep going!` : streak >= 1 ? "Day 1 complete!" : "Listen today to begin"}
             </p>
           </div>

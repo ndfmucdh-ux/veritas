@@ -93,7 +93,7 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
       {/* Quick theme suggestions */}
       {folders.length === 0 && !showCreate && (
         <div className="rounded-2xl p-4" style={{ background: "rgba(0,245,255,0.04)", border: "1px dashed rgba(0,245,255,0.15)" }}>
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>Quick Start — Suggested Themes</p>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>Quick Start — Suggested Themes</p>
           <div className="grid grid-cols-2 gap-2">
             {FOLDER_THEMES.map(t => (
               <button key={t.name} onClick={() => openCreate(t)}
@@ -132,25 +132,25 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
               <input value={newName} onChange={e => setNewName(e.target.value)}
                 placeholder="Folder name..."
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+                style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.12)", color: "rgb(var(--ink) / 0.85)" }}
                 autoFocus
               />
 
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>Icon</p>
+                  <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>Icon</p>
                   <div className="flex flex-wrap gap-1">
                     {ICONS.map(em => (
                       <button key={em} onClick={() => setNewIcon(em)}
                         className="w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all"
-                        style={{ background: newIcon === em ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)", border: newIcon === em ? "1px solid rgba(0,245,255,0.4)" : "1px solid transparent" }}>
+                        style={{ background: newIcon === em ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)", border: newIcon === em ? "1px solid rgba(0,245,255,0.4)" : "1px solid transparent" }}>
                         {em}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>Color</p>
+                  <p className="text-[9px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>Color</p>
                   <div className="flex flex-wrap gap-1.5">
                     {COLORS.map(c => (
                       <button key={c} onClick={() => setNewColor(c)}
@@ -164,7 +164,7 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
               <div className="flex gap-2 pt-1">
                 <button onClick={() => { setShowCreate(false); setEditingFolder(null); }}
                   className="flex-1 py-2 rounded-xl font-cinzel text-sm"
-                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
+                  style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>Cancel</button>
                 <button onClick={saveFolder} disabled={!newName.trim() || saving}
                   className="flex-1 py-2 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2"
                   style={{ background: `${newColor}20`, color: newColor, border: `1px solid ${newColor}40` }}>
@@ -206,18 +206,18 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
                 <span className="text-2xl flex-shrink-0">{folder.icon || "📁"}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-cinzel text-sm font-semibold text-white">{folder.name}</p>
-                  <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+                  <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                     {refs.length} verse{refs.length !== 1 ? "s" : ""}
                   </p>
                 </div>
-                {isExpanded ? <ChevronUp className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)" }} /> : <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)" }} />}
+                {isExpanded ? <ChevronUp className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.25)" }} /> : <ChevronDown className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.25)" }} />}
               </button>
               <button onClick={() => openEdit(folder)} className="p-1.5 rounded-lg transition-colors hover:bg-white/10"
-                style={{ color: "rgba(255,255,255,0.3)" }}>
+                style={{ color: "rgb(var(--ink) / 0.3)" }}>
                 <Pencil className="w-3.5 h-3.5" />
               </button>
               <button onClick={() => deleteFolder(folder.id)} className="p-1.5 rounded-lg transition-colors hover:bg-destructive/10"
-                style={{ color: "rgba(255,255,255,0.3)" }}>
+                style={{ color: "rgb(var(--ink) / 0.3)" }}>
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -226,13 +226,13 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
             <AnimatePresence>
               {isExpanded && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }} className="overflow-hidden">
-                  <div className="px-4 pb-4 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                  <div className="px-4 pb-4 border-t" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
 
                     {/* Verses in folder */}
                     {refs.length === 0 ? (
                       <div className="py-4 text-center">
-                        <FolderOpen className="w-6 h-6 mx-auto mb-2" style={{ color: "rgba(255,255,255,0.15)" }} />
-                        <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>Empty folder. Add highlighted verses below.</p>
+                        <FolderOpen className="w-6 h-6 mx-auto mb-2" style={{ color: "rgb(var(--ink) / 0.15)" }} />
+                        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>Empty folder. Add highlighted verses below.</p>
                       </div>
                     ) : (
                       <div className="space-y-1.5 mt-3">
@@ -242,11 +242,11 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
                             <p className="text-xs font-cinzel" style={{ color: folder.color || "#00f5ff" }}>· {ref}</p>
                             <div className="flex gap-1">
                               <a href={`/read?book=${ref.split(" ")[0]}&chapter=${ref.split(" ")[1]?.split(":")[0] || 1}`}
-                                className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.3)" }}>
+                                className="p-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                                 <BookOpen className="w-3 h-3" />
                               </a>
                               <button onClick={() => removeVerseFromFolder(folder, ref)}
-                                className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
+                                className="p-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                                 <X className="w-3 h-3" />
                               </button>
                             </div>
@@ -258,7 +258,7 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
                     {/* Add highlights button */}
                     <button onClick={() => setAddingHighlights(isAddingHL ? null : folder.id)}
                       className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-xl font-cinzel text-xs transition-all"
-                      style={{ background: isAddingHL ? `${folder.color || "#00f5ff"}15` : "rgba(255,255,255,0.04)", color: folder.color || "#00f5ff", border: `1px dashed ${folder.color || "#00f5ff"}35` }}>
+                      style={{ background: isAddingHL ? `${folder.color || "#00f5ff"}15` : "rgb(var(--ink) / 0.04)", color: folder.color || "#00f5ff", border: `1px dashed ${folder.color || "#00f5ff"}35` }}>
                       <Plus className="w-3.5 h-3.5" /> Add Highlighted Verses
                     </button>
 
@@ -268,7 +268,7 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                           <div className="mt-2 space-y-1.5 max-h-52 overflow-y-auto scrollbar-hide">
                             {availableHighlights.length === 0 ? (
-                              <p className="text-xs font-inter text-center py-4" style={{ color: "rgba(255,255,255,0.3)" }}>
+                              <p className="text-xs font-inter text-center py-4" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                                 All your highlights are already in this folder
                               </p>
                             ) : (
@@ -280,9 +280,9 @@ export default function FolderManager({ folders, highlights, onFoldersChange }) 
                                     style={{ border: `1px solid ${borderColor}20`, borderLeft: `3px solid ${borderColor}` }}>
                                     <div className="flex-1 min-w-0">
                                       <p className="text-xs font-cinzel" style={{ color: borderColor }}>{hl.verse_ref}</p>
-                                      <p className="text-[10px] font-inter capitalize" style={{ color: "rgba(255,255,255,0.3)" }}>{hl.color}</p>
+                                      <p className="text-[10px] font-inter capitalize" style={{ color: "rgb(var(--ink) / 0.3)" }}>{hl.color}</p>
                                     </div>
-                                    <Plus className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
+                                    <Plus className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />
                                   </button>
                                 );
                               })

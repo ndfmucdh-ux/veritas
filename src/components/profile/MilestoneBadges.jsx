@@ -27,7 +27,7 @@ export default function MilestoneBadges({ streak = 0, prayerCount = 0, highlight
     <div>
       <div className="flex items-center gap-2 mb-4">
         <Trophy className="w-4 h-4" style={{ color: "#fbbf24" }} />
-        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>Milestone Achievements</p>
+        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>Milestone Achievements</p>
         <span className="text-xs font-cinzel px-2 py-0.5 rounded-full" style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24" }}>
           {unlockedBadges.length}/{MILESTONES.length}
         </span>
@@ -42,18 +42,18 @@ export default function MilestoneBadges({ streak = 0, prayerCount = 0, highlight
               whileHover={unlocked ? { scale: 1.08 } : {}}
               className="flex flex-col items-center gap-2 rounded-2xl p-3 transition-all"
               style={{
-                background: unlocked ? `${badge.color}15` : "rgba(255,255,255,0.03)",
-                border: unlocked ? `1px solid ${badge.color}40` : "1px solid rgba(255,255,255,0.06)",
+                background: unlocked ? `${badge.color}15` : "rgb(var(--ink) / 0.03)",
+                border: unlocked ? `1px solid ${badge.color}40` : "1px solid rgb(var(--ink) / 0.06)",
                 opacity: unlocked ? 1 : 0.5,
               }}
               title={badge.description}
             >
               <span className="text-2xl">{badge.icon}</span>
-              <p className="text-[9px] font-cinzel text-center leading-tight" style={{ color: unlocked ? badge.color : "rgba(255,255,255,0.25)" }}>
+              <p className="text-[9px] font-cinzel text-center leading-tight" style={{ color: unlocked ? badge.color : "rgb(var(--ink) / 0.25)" }}>
                 {badge.name}
               </p>
               {!unlocked && (
-                <p className="text-[8px] font-inter text-center" style={{ color: "rgba(255,255,255,0.2)" }}>
+                <p className="text-[8px] font-inter text-center" style={{ color: "rgb(var(--ink) / 0.2)" }}>
                   {badge.unlockedAt} to unlock
                 </p>
               )}

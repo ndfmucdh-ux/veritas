@@ -82,13 +82,13 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                 </button>
               </div>
 
-              <p className="text-sm font-inter mb-4" style={{ color: "rgba(255,255,255,0.6)" }}>
+              <p className="text-sm font-inter mb-4" style={{ color: "rgb(var(--ink) / 0.6)" }}>
                 Share this reading plan with friends
               </p>
 
               {/* Copy Link */}
               <div className="mb-4">
-                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
+                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                   Copy Link
                 </p>
                 <div className="flex gap-2">
@@ -97,7 +97,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                     value={inviteLink}
                     readOnly
                     className="flex-1 px-3 py-2.5 rounded-lg text-xs font-inter focus:outline-none"
-                    style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.7)" }}
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.7)" }}
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
@@ -112,7 +112,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
 
               {/* Email Invite */}
               <div>
-                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
+                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                   Send Email
                 </p>
                 <div className="flex gap-2">
@@ -123,7 +123,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                     onKeyDown={e => e.key === "Enter" && handleSendEmail()}
                     placeholder="friend@example.com"
                     className="flex-1 px-3 py-2.5 rounded-lg text-xs font-inter focus:outline-none"
-                    style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.7)" }}
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.7)" }}
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}

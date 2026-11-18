@@ -23,7 +23,7 @@ export default function ReaderSettingsPanel({
         >
           <div
             className="rounded-2xl p-4 space-y-4"
-            style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}
+            style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}
           >
             <SettingRow label="Font Size">
               <div className="flex items-center gap-2">
@@ -41,8 +41,8 @@ export default function ReaderSettingsPanel({
                     onClick={() => setFontFamily(f)}
                     className="text-xs px-3 py-1 rounded-lg font-inter transition-all focus:outline-none focus:ring-2 focus:ring-cyan/70"
                     style={{
-                      background: fontFamily === f ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                      color: fontFamily === f ? "#00f5ff" : "rgba(255,255,255,0.4)",
+                      background: fontFamily === f ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)",
+                      color: fontFamily === f ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
                       border: fontFamily === f ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
                     }}
                   >
@@ -75,7 +75,7 @@ function Stepper({ children, onClick }) {
       whileTap={{ scale: 0.88 }}
       onClick={onClick}
       className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold font-inter focus:outline-none focus:ring-2 focus:ring-cyan/70"
-      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}
+      style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.6)" }}
     >
       {children}
     </motion.button>
@@ -85,7 +85,7 @@ function Stepper({ children, onClick }) {
 function SettingRow({ label, children }) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{label}</span>
+      <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{label}</span>
       {children}
     </div>
   );
@@ -98,7 +98,7 @@ function Toggle({ value, onChange }) {
       aria-pressed={value}
       onClick={onChange}
       className="w-11 h-6 rounded-full relative flex items-center px-1 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/70"
-      style={{ background: value ? "rgba(0,245,255,0.3)" : "rgba(255,255,255,0.08)" }}
+      style={{ background: value ? "rgba(0,245,255,0.3)" : "rgb(var(--ink) / 0.08)" }}
     >
       <motion.span
         animate={{ x: value ? 18 : 0 }}

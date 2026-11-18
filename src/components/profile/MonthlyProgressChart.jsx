@@ -74,7 +74,7 @@ export default function MonthlyProgressChart() {
           <Calendar className="w-4 h-4" style={{ color: "#00f5ff" }} />
           <p className="font-cinzel text-sm font-semibold text-white">Monthly Progress</p>
         </div>
-        <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>Last 30 days</span>
+        <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>Last 30 days</span>
       </div>
 
       {/* Chart */}
@@ -83,12 +83,12 @@ export default function MonthlyProgressChart() {
           <BarChart data={chartData} margin={{ top: 8, right: 0, left: -24, bottom: 0 }}>
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }}
+              tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)", fontFamily: "Inter" }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }}
+              tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)" }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
@@ -102,7 +102,7 @@ export default function MonthlyProgressChart() {
                 fontFamily: "Cinzel"
               }}
               labelStyle={{ color: "#00f5ff" }}
-              itemStyle={{ color: "rgba(255,255,255,0.7)" }}
+              itemStyle={{ color: "rgb(var(--ink) / 0.7)" }}
             />
             <Bar
               dataKey="value"
@@ -123,11 +123,11 @@ export default function MonthlyProgressChart() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Chapters Read</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Chapters Read</p>
           <p className="font-cinzel text-lg font-bold text-white mt-1">{totalChapters}</p>
         </div>
         <div className="rounded-xl p-3" style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Active Days</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Active Days</p>
           <p className="font-cinzel text-lg font-bold" style={{ color: "#fbbf24" }} >{activeDays}</p>
         </div>
       </div>
@@ -145,11 +145,11 @@ export default function MonthlyProgressChart() {
           </p>
           <div className="space-y-1">
             <div className="flex justify-between">
-              <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>Chapters read</span>
+              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.6)" }}>Chapters read</span>
               <span className="font-cinzel font-bold text-white">{selectedData.chaptersRead}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.6)" }}>Focused on</span>
+              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.6)" }}>Focused on</span>
               <span className="font-cinzel font-bold text-white">{selectedData.books}</span>
             </div>
           </div>

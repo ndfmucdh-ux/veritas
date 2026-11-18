@@ -199,14 +199,14 @@ function VerseRow({
         whileTap={{ scale: 0.995 }}
       >
         {selectionMode && (
-          <span className="flex-shrink-0 mt-0.5" style={{ color: isSelected ? "#00f5ff" : "rgba(255,255,255,0.2)" }}>
+          <span className="flex-shrink-0 mt-0.5" style={{ color: isSelected ? "#00f5ff" : "rgb(var(--ink) / 0.2)" }}>
             {isSelected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
           </span>
         )}
         <span className="font-inter leading-relaxed select-text"
           style={{
             fontSize,
-            color: redLetter ? "#f87171" : "rgba(255,255,255,0.88)",
+            color: redLetter ? "#f87171" : "rgb(var(--ink) / 0.88)",
             textShadow: redLetter ? "0 0 18px rgba(248,113,113,0.45), 0 0 8px rgba(248,113,113,0.25)" : "none",
             transition: "text-shadow 0.3s ease",
           }}>
@@ -233,15 +233,15 @@ function VerseRow({
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={(e) => e.stopPropagation()}
             className="absolute left-0 right-0 z-20 rounded-2xl p-3 mt-1"
-            style={{ background: "var(--popover-surface)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
+            style={{ background: "var(--popover-surface)", backdropFilter: "blur(20px)", border: "1px solid rgb(var(--ink) / 0.1)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
           >
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
               {book} {chapter}:{verseNum}
             </p>
 
             {/* Highlight colors */}
             <div className="flex items-center gap-2 mb-3">
-              <Highlighter className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
+              <Highlighter className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />
               {COLORS.map(c => (
                 <button key={c} onClick={() => applyHighlight(c)}
                   className="w-6 h-6 rounded-full transition-transform hover:scale-110"
@@ -256,7 +256,7 @@ function VerseRow({
             <div className="flex gap-2 flex-wrap">
               <button onClick={toggleBookmark}
                 className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
-                style={{ background: isBookmarked ? "rgba(251,191,36,0.2)" : "rgba(255,255,255,0.06)", color: isBookmarked ? "#fbbf24" : "rgba(255,255,255,0.5)" }}>
+                style={{ background: isBookmarked ? "rgba(251,191,36,0.2)" : "rgb(var(--ink) / 0.06)", color: isBookmarked ? "#fbbf24" : "rgb(var(--ink) / 0.5)" }}>
                 <Bookmark className="w-3.5 h-3.5" />
                 {isBookmarked ? "Saved" : "Bookmark"}
               </button>
@@ -317,7 +317,7 @@ function VerseRow({
               </button>
               <button onClick={() => setMenuOpen(false)}
                 className="ml-auto flex items-center justify-center w-9 h-9 rounded-xl"
-                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.3)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.3)" }}>
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -338,7 +338,7 @@ function VerseRow({
                         {reflection.type === "prayer" ? "A Prayer for You" : "For Reflection"}
                       </p>
                     </div>
-                    <p className="text-sm font-inter leading-relaxed italic" style={{ color: "rgba(255,255,255,0.75)" }}>
+                    <p className="text-sm font-inter leading-relaxed italic" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                       {reflection.reflection}
                     </p>
                   </div>
@@ -350,14 +350,14 @@ function VerseRow({
             <AnimatePresence>
               {noteMode && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <div className="mt-3 pt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+                  <div className="mt-3 pt-3 border-t" style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
                     <textarea
                       value={noteText}
                       onChange={e => setNoteText(e.target.value)}
                       placeholder="Write your reflection..."
                       rows={3}
                       className="w-full rounded-xl p-3 text-sm font-inter resize-none focus:outline-none"
-                      style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+                      style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}
                     />
                     <button onClick={saveNote}
                       className="mt-2 flex items-center gap-1.5 text-xs px-4 py-2 rounded-xl font-cinzel"

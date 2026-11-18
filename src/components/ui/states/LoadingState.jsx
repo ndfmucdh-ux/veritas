@@ -31,7 +31,7 @@ export default function LoadingState({
         className={cn("flex items-center gap-2.5 py-3", className)}
       >
         <Spinner size={size} color={color} label={label} />
-        <span className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>{label}</span>
+        <span className="text-sm font-cinzel" style={{ color: "rgb(var(--ink) / 0.4)" }}>{label}</span>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function LoadingState({
       style={{ minHeight }}
     >
       <Spinner size={size} color={color} label={label} />
-      <p className="text-sm font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>{label}</p>
+      <p className="text-sm font-cinzel" style={{ color: "rgb(var(--ink) / 0.4)" }}>{label}</p>
     </motion.div>
   );
 }

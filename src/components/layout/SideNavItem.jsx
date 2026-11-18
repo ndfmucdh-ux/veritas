@@ -13,7 +13,7 @@ export default function SideNavItem({ path, icon: Icon, label, active }) {
           border: active ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent",
         }}
       >
-        <Icon style={{ width: 24, height: 24, color: active ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+        <Icon style={{ width: 24, height: 24, color: active ? "#fbbf24" : "rgb(var(--ink) / 0.55)" }} />
       </motion.div>
     </Link>
   );

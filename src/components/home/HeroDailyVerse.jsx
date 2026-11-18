@@ -46,13 +46,13 @@ export default function HeroDailyVerse() {
       className="relative rounded-2xl overflow-hidden"
       style={{
         background: "linear-gradient(135deg, rgba(0,245,255,0.07) 0%, rgba(255,215,0,0.05) 100%)",
-        border: "1px solid rgba(255,255,255,0.09)",
+        border: "1px solid rgb(var(--ink) / 0.09)",
         boxShadow: "0 0 40px rgba(0,245,255,0.06)",
       }}
     >
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
-        <p className="text-[10px] font-inter uppercase tracking-[0.2em] mb-4" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <p className="text-[10px] font-inter uppercase tracking-[0.2em] mb-4" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           ✦ Verse of the Day
         </p>
 
@@ -67,7 +67,7 @@ export default function HeroDailyVerse() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="font-playfair italic leading-relaxed"
-            style={{ fontSize: "clamp(15px, 3.5vw, 18px)", color: "rgba(255,255,255,0.88)" }}
+            style={{ fontSize: "clamp(15px, 3.5vw, 18px)", color: "rgb(var(--ink) / 0.88)" }}
           >
             "{verse?.text}"
           </motion.p>
@@ -88,9 +88,9 @@ export default function HeroDailyVerse() {
           exit={{ height: 0, opacity: 0 }}
           className="px-5 pb-4"
         >
-          <div className="rounded-xl p-3 mt-1" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <p className="text-[10px] font-inter uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>Reflection</p>
-            <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>{verse.reflection}</p>
+          <div className="rounded-xl p-3 mt-1" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+            <p className="text-[10px] font-inter uppercase tracking-widest mb-1.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>Reflection</p>
+            <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.7)" }}>{verse.reflection}</p>
           </div>
         </motion.div>
       )}
@@ -100,7 +100,7 @@ export default function HeroDailyVerse() {
         <button
           onClick={() => setShowReflection(v => !v)}
           className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}
+          style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}
         >
           {showReflection ? "Hide" : "Reflect"}
         </button>
@@ -116,7 +116,7 @@ export default function HeroDailyVerse() {
         <button
           onClick={handleShare}
           className="ml-auto flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-          style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}
+          style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}
         >
           <Share2 className="w-3 h-3" /> Share
         </button>

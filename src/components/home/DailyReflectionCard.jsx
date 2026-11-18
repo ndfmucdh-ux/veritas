@@ -107,12 +107,12 @@ export default function DailyReflectionCard() {
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <button onClick={generateReflection} disabled={loading}
                 className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.35)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                 <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
               </button>
               <button onClick={() => setDismissed(true)}
                 className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.35)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                 <X className="w-3 h-3" />
               </button>
             </div>
@@ -121,21 +121,21 @@ export default function DailyReflectionCard() {
           {loading && (
             <div className="flex items-center gap-2 pt-2">
               <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#a78bfa" }} />
-              <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
+              <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                 {(TEXT[lang] || TEXT.en).loading}
               </p>
             </div>
           )}
 
           {error && !loading && (
-            <p className="text-xs font-inter pt-2" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <p className="text-xs font-inter pt-2" style={{ color: "rgb(var(--ink) / 0.4)" }}>
               {(TEXT[lang] || TEXT.en).empty}
             </p>
           )}
 
           {reflection && !loading && (
             <div className="mt-2.5 space-y-2">
-              <p className="text-xs font-playfair italic leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.82)" }}>
+              <p className="text-xs font-playfair italic leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.82)" }}>
                 "{reflection.prompt}"
               </p>
               <div className="flex items-center justify-between">

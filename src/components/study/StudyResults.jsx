@@ -4,7 +4,7 @@ export function CommentaryResult({ data }) {
   return (
     <>
       <Section label="Historical Context" color="#fbbf24">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.context}</p>
+        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>{data.context}</p>
       </Section>
       {data.key_words?.length > 0 && (
         <Section label="Greek / Hebrew Words" color="#a78bfa">
@@ -13,17 +13,17 @@ export function CommentaryResult({ data }) {
               <div key={i} className="flex gap-3">
                 <span className="font-cinzel text-sm font-bold text-white/80">{w.word}</span>
                 <span className="text-xs font-inter italic" style={{ color: "#a78bfa" }}>{w.original}</span>
-                <span className="text-xs font-inter flex-1" style={{ color: "rgba(255,255,255,0.55)" }}>{w.meaning}</span>
+                <span className="text-xs font-inter flex-1" style={{ color: "rgb(var(--ink) / 0.55)" }}>{w.meaning}</span>
               </div>
             ))}
           </div>
         </Section>
       )}
       <Section label="Theological Significance" color="#34d399">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.theology}</p>
+        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>{data.theology}</p>
       </Section>
       <Section label="Application" color="#00f5ff">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.application}</p>
+        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>{data.application}</p>
       </Section>
       {data.cross_refs?.length > 0 && (
         <Section label="See Also">
@@ -48,8 +48,8 @@ export function CrossRefsResult({ data }) {
               {r.reference}
             </a>
             <div>
-              <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.7)" }}>{r.connection}</p>
-              <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>{r.theme}</span>
+              <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.7)" }}>{r.connection}</p>
+              <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>{r.theme}</span>
             </div>
           </div>
         ))}
@@ -64,9 +64,9 @@ export function TopicalResult({ tag, data }) {
       <div className="space-y-4">
         {data.map((v, i) => (
           <div key={i}>
-            <p className="font-playfair italic text-sm leading-relaxed mb-1.5" style={{ color: "rgba(255,255,255,0.82)" }}>"{v.text}"</p>
+            <p className="font-playfair italic text-sm leading-relaxed mb-1.5" style={{ color: "rgb(var(--ink) / 0.82)" }}>"{v.text}"</p>
             <p className="font-cinzel text-xs font-bold mb-1" style={{ color: "#fbbf24" }}>{v.ref}</p>
-            <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.45)" }}>{v.insight}</p>
+            <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.45)" }}>{v.insight}</p>
           </div>
         ))}
       </div>
@@ -78,16 +78,16 @@ export function DictionaryResult({ data }) {
   return (
     <>
       <Section label={`Definition: ${data.term}`} color="#fbbf24">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>{data.definition}</p>
+        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.8)" }}>{data.definition}</p>
       </Section>
       {data.greek_hebrew && (
         <Section label="Greek / Hebrew" color="#a78bfa">
-          <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.7)" }}>{data.greek_hebrew}</p>
-          {data.etymology && <p className="text-xs mt-2 font-inter italic" style={{ color: "rgba(255,255,255,0.45)" }}>{data.etymology}</p>}
+          <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.7)" }}>{data.greek_hebrew}</p>
+          {data.etymology && <p className="text-xs mt-2 font-inter italic" style={{ color: "rgb(var(--ink) / 0.45)" }}>{data.etymology}</p>}
         </Section>
       )}
       <Section label="Biblical Usage" color="#34d399">
-        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{data.usage}</p>
+        <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>{data.usage}</p>
       </Section>
       {data.key_verses?.length > 0 && (
         <Section label="Key Verses">

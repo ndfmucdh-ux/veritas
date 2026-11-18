@@ -263,14 +263,14 @@ export default function VirtualAssistant({ onClose }) {
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
         border: "1px solid rgba(251,191,36,0.22)",
-        boxShadow: "0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(251,191,36,0.07), inset 0 1px 0 rgba(255,255,255,0.05)",
+        boxShadow: "0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(251,191,36,0.07), inset 0 1px 0 rgb(var(--ink) / 0.05)",
       }}
     >
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 flex-shrink-0"
         style={{
           background: "linear-gradient(135deg, rgba(251,191,36,0.1), rgba(167,139,250,0.05))",
-          borderBottom: "1px solid rgba(255,255,255,0.07)"
+          borderBottom: "1px solid rgb(var(--ink) / 0.07)"
         }}>
         <div className="relative flex-shrink-0">
           <div className="rounded-2xl overflow-hidden" style={{ boxShadow: "0 0 18px rgba(251,191,36,0.35)" }}>
@@ -281,19 +281,19 @@ export default function VirtualAssistant({ onClose }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-cinzel text-sm font-bold text-white tracking-wide">{ASSISTANT_NAME}</p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.38)" }}>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.38)" }}>
             Your faithful spiritual companion
           </p>
         </div>
         <button onClick={() => setShowHistory(v => !v)}
           className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/10"
-          style={{ color: showHistory ? "#fbbf24" : "rgba(255,255,255,0.35)", background: showHistory ? "rgba(251,191,36,0.1)" : "transparent" }}
+          style={{ color: showHistory ? "#fbbf24" : "rgb(var(--ink) / 0.35)", background: showHistory ? "rgba(251,191,36,0.1)" : "transparent" }}
           title="Conversation history">
           <History className="w-4 h-4" />
         </button>
         <button onClick={onClose}
           className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/10"
-          style={{ color: "rgba(255,255,255,0.35)" }}>
+          style={{ color: "rgb(var(--ink) / 0.35)" }}>
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -318,9 +318,9 @@ export default function VirtualAssistant({ onClose }) {
               <VeritasLogo size={28} />
             </div>
             <div className="rounded-2xl px-4 py-3 flex items-center gap-2"
-              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
               <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: "#fbbf24" }} />
-              <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Preparing your personal guidance…</span>
+              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Preparing your personal guidance…</span>
             </div>
           </div>
         )}
@@ -335,9 +335,9 @@ export default function VirtualAssistant({ onClose }) {
               <VeritasLogo size={28} />
             </div>
             <div className="rounded-2xl px-4 py-3 flex items-center gap-2"
-              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
               <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: "#fbbf24" }} />
-              <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Seeking wisdom…</span>
+              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Seeking wisdom…</span>
             </div>
           </div>
         )}
@@ -345,14 +345,14 @@ export default function VirtualAssistant({ onClose }) {
         {/* Quick prompts — show only at start */}
         {messages?.length === 1 && !loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="space-y-2">
-            <p className="text-[10px] font-cinzel uppercase tracking-widest px-1" style={{ color: "rgba(255,255,255,0.22)" }}>Where shall we begin?</p>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest px-1" style={{ color: "rgb(var(--ink) / 0.22)" }}>Where shall we begin?</p>
             <div className="grid grid-cols-2 gap-2">
               {QUICK_PROMPTS.map((q) => (
                 <button key={q.label} onClick={() => sendMessage(q.prompt)}
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all"
-                  style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                   <span className="text-base flex-shrink-0">{q.icon}</span>
-                  <span className="text-[11px] font-inter leading-tight" style={{ color: "rgba(255,255,255,0.58)" }}>{q.label}</span>
+                  <span className="text-[11px] font-inter leading-tight" style={{ color: "rgb(var(--ink) / 0.58)" }}>{q.label}</span>
                 </button>
               ))}
             </div>
@@ -364,7 +364,7 @@ export default function VirtualAssistant({ onClose }) {
 
       {/* Input */}
       <div className="flex-shrink-0 px-4 py-3"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(0,0,0,0.25)" }}>
+        style={{ borderTop: "1px solid rgb(var(--ink) / 0.07)", background: "rgba(0,0,0,0.25)" }}>
         <div className="flex items-end gap-2">
           <textarea
             ref={inputRef}
@@ -376,8 +376,8 @@ export default function VirtualAssistant({ onClose }) {
             className="flex-1 resize-none rounded-2xl px-4 py-3 text-sm font-inter focus:outline-none scrollbar-hide"
             style={{
               background: "var(--fill-2)",
-              border: "1px solid rgba(255,255,255,0.09)",
-              color: "rgba(255,255,255,0.85)",
+              border: "1px solid rgb(var(--ink) / 0.09)",
+              color: "rgb(var(--ink) / 0.85)",
               maxHeight: 96,
               lineHeight: 1.5,
             }}
@@ -388,8 +388,8 @@ export default function VirtualAssistant({ onClose }) {
             disabled={!input.trim() || loading || !messages}
             className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all"
             style={{
-              background: input.trim() && !loading && messages ? "linear-gradient(135deg, #fbbf24, #f59e0b)" : "rgba(255,255,255,0.06)",
-              color: input.trim() && !loading && messages ? "#0a0f1e" : "rgba(255,255,255,0.2)",
+              background: input.trim() && !loading && messages ? "linear-gradient(135deg, #fbbf24, #f59e0b)" : "rgb(var(--ink) / 0.06)",
+              color: input.trim() && !loading && messages ? "#0a0f1e" : "rgb(var(--ink) / 0.2)",
             }}
           >
             <Send className="w-4 h-4" />

@@ -200,14 +200,14 @@ export default function OfflineBibleManager() {
       <button onClick={() => setExpanded(v => !v)} className="w-full flex items-center gap-3 px-4 py-3.5">
         <WifiOff className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
         <div className="flex-1 text-left">
-          <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.8)" }}>Offline Bible Library</p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.8)" }}>Offline Bible Library</p>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
             {downloadedCount > 0 ? `${downloadedCount} translation${downloadedCount > 1 ? "s" : ""} saved · Read anywhere` : "Download YouVersion translations for offline"}
           </p>
         </div>
         {expanded
-          ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
-          : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />}
+          ? <ChevronUp className="w-4 h-4 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />
+          : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />}
       </button>
 
       <AnimatePresence>
@@ -219,16 +219,16 @@ export default function OfflineBibleManager() {
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+            <div className="border-t" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
               {/* Language group tabs */}
               <div className="flex gap-1.5 px-4 pt-3 pb-2 overflow-x-auto scrollbar-hide">
                 {LANG_GROUPS.filter(g => g.lang === "featured" || getGroupItems(g.lang).length > 0).map(g => (
                   <button key={g.lang} onClick={() => setActiveGroup(g.lang)}
                     className="px-3 py-1.5 rounded-xl text-[10px] font-cinzel font-semibold whitespace-nowrap transition-all flex-shrink-0"
                     style={{
-                      background: activeGroup === g.lang ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.04)",
-                      color: activeGroup === g.lang ? "#fbbf24" : "rgba(255,255,255,0.35)",
-                      border: activeGroup === g.lang ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.06)",
+                      background: activeGroup === g.lang ? "rgba(251,191,36,0.15)" : "rgb(var(--ink) / 0.04)",
+                      color: activeGroup === g.lang ? "#fbbf24" : "rgb(var(--ink) / 0.35)",
+                      border: activeGroup === g.lang ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgb(var(--ink) / 0.06)",
                     }}>
                     {g.label}
                   </button>
@@ -267,16 +267,16 @@ function TranslationRow({ translation, status, message, meta, onDownload, onRemo
       style={{
         background: translation.featured
           ? "rgba(251,191,36,0.06)"
-          : isDone ? "rgba(52,211,153,0.05)" : "rgba(255,255,255,0.03)",
+          : isDone ? "rgba(52,211,153,0.05)" : "rgb(var(--ink) / 0.03)",
         border: translation.featured
           ? "1px solid rgba(251,191,36,0.2)"
-          : isDone ? "1px solid rgba(52,211,153,0.15)" : "1px solid rgba(255,255,255,0.06)"
+          : isDone ? "1px solid rgba(52,211,153,0.15)" : "1px solid rgb(var(--ink) / 0.06)"
       }}>
       <span className="text-base flex-shrink-0">{translation.flag}</span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <p className="text-xs font-cinzel font-semibold truncate"
-            style={{ color: translation.featured ? "#fbbf24" : isDone ? "#34d399" : "rgba(255,255,255,0.75)" }}>
+            style={{ color: translation.featured ? "#fbbf24" : isDone ? "#34d399" : "rgb(var(--ink) / 0.75)" }}>
             {translation.code} · {translation.name}
           </p>
           {translation.featured && <Star className="w-2.5 h-2.5 flex-shrink-0" style={{ color: "#fbbf24" }} fill="#fbbf24" />}
@@ -285,7 +285,7 @@ function TranslationRow({ translation, status, message, meta, onDownload, onRemo
           <p className="text-[10px] font-inter mt-0.5" style={{ color: "#00f5ff" }}>{message}</p>
         )}
         {isDone && meta && (
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             {meta.totalChapters} chapters · {new Date(meta.downloadedAt).toLocaleDateString()}
           </p>
         )}

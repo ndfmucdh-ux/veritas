@@ -36,7 +36,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
     >
       <div
         className="w-full max-w-sm rounded-2xl p-5 space-y-4"
-        style={{ background: "var(--popover-surface)", border: "1px solid rgba(255,255,255,0.1)" }}
+        style={{ background: "var(--popover-surface)", border: "1px solid rgb(var(--ink) / 0.1)" }}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -44,14 +44,14 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
             <Tag className="w-4 h-4 text-cyan" />
             <p className="font-cinzel text-sm font-semibold text-white">Manage Tags</p>
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Preset tags */}
         <div>
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Quick tags</p>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Quick tags</p>
           <div className="flex flex-wrap gap-2">
             {PRESET_TAGS.map(tag => (
               <button
@@ -59,9 +59,9 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
                 onClick={() => toggleTag(tag)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
                 style={{
-                  background: tags.includes(tag) ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-                  color: tags.includes(tag) ? "#00f5ff" : "rgba(255,255,255,0.45)",
-                  border: tags.includes(tag) ? "1px solid rgba(0,245,255,0.35)" : "1px solid rgba(255,255,255,0.08)"
+                  background: tags.includes(tag) ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)",
+                  color: tags.includes(tag) ? "#00f5ff" : "rgb(var(--ink) / 0.45)",
+                  border: tags.includes(tag) ? "1px solid rgba(0,245,255,0.35)" : "1px solid rgb(var(--ink) / 0.08)"
                 }}
               >
                 {tags.includes(tag) && <Check className="w-3 h-3" />}
@@ -73,7 +73,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
 
         {/* Custom tag input */}
         <div>
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Custom tag</p>
+          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Custom tag</p>
           <div className="flex gap-2">
             <input
               value={customInput}
@@ -81,7 +81,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
               onKeyDown={e => e.key === "Enter" && addCustom()}
               placeholder="e.g. Morning Devotion"
               className="flex-1 rounded-xl px-3 py-2 text-sm font-inter focus:outline-none"
-              style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
+              style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.85)" }}
             />
             <button
               onClick={addCustom}
@@ -97,7 +97,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
         {/* Active tags */}
         {tags.length > 0 && (
           <div>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Selected ({tags.length})</p>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Selected ({tags.length})</p>
             <div className="flex flex-wrap gap-1.5">
               {tags.map(tag => (
                 <span key={tag} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-inter"

@@ -130,8 +130,8 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
                   onClick={() => setMood(m.id)}
                   className="text-xs px-2.5 py-1 rounded-lg font-inter transition-all"
                   style={{
-                    background: mood === m.id ? "rgba(0,229,255,0.2)" : "rgba(255,255,255,0.05)",
-                    color: mood === m.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
+                    background: mood === m.id ? "rgba(0,229,255,0.2)" : "rgb(var(--ink) / 0.05)",
+                    color: mood === m.id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
                     border: mood === m.id ? "1px solid rgba(0,229,255,0.3)" : "1px solid transparent",
                   }}
                 >
@@ -169,7 +169,7 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
               <Play className="w-4 h-4" />
             </motion.button>
             <audio ref={audioRef} onEnded={() => setPlayingAudio(false)} />
-            <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.1)" }} />
+            <div className="flex-1 h-1 rounded-full" style={{ background: "rgb(var(--ink) / 0.1)" }} />
             <button onClick={discardAudio} className="text-xs font-inter text-white/40 hover:text-white/60 transition-colors">
               Discard
             </button>

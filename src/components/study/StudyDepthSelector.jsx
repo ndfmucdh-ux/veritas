@@ -17,8 +17,8 @@ export default function StudyDepthSelector({ depth, onChange }) {
           onClick={() => onChange(d.id)}
           className="flex-1 py-4 rounded-xl text-sm font-cinzel transition-all font-semibold"
           style={{
-            background: depth === d.id ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-            color: depth === d.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
+            background: depth === d.id ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)",
+            color: depth === d.id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
             border: depth === d.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
           }}
         >

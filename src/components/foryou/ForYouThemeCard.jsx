@@ -9,7 +9,7 @@ export default function ForYouThemeCard({ theme, index, color, isExpanded, onTog
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }}>
       <motion.button whileTap={{ scale: 0.98 }} onClick={onToggle}
         className="w-full rounded-2xl p-4 text-left transition-all"
-        style={{ background: isExpanded ? `${color}12` : "rgba(255,255,255,0.04)", border: `1px solid ${isExpanded ? color + "44" : "rgba(255,255,255,0.07)"}` }}>
+        style={{ background: isExpanded ? `${color}12` : "rgb(var(--ink) / 0.04)", border: `1px solid ${isExpanded ? color + "44" : "rgb(var(--ink) / 0.07)"}` }}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ background: `${color}18`, border: `1px solid ${color}33` }}>
@@ -17,10 +17,10 @@ export default function ForYouThemeCard({ theme, index, color, isExpanded, onTog
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-cinzel text-sm font-semibold text-white">{theme.label}</p>
-            <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{theme.desc}</p>
+            <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>{theme.desc}</p>
           </div>
           <ChevronRight className="w-4 h-4 flex-shrink-0 transition-transform"
-            style={{ color: "rgba(255,255,255,0.3)", transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)" }} />
+            style={{ color: "rgb(var(--ink) / 0.3)", transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)" }} />
         </div>
       </motion.button>
 
@@ -38,10 +38,10 @@ export default function ForYouThemeCard({ theme, index, color, isExpanded, onTog
                   <Link key={vi} to={`/read?book=${encodeURIComponent(engBook)}&chapter=${chapter}`}>
                     <motion.div whileTap={{ scale: 0.97 }}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all"
-                      style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                      style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                       <BookOpen className="w-4 h-4 flex-shrink-0" style={{ color }} />
-                      <span className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>{verse}</span>
-                      <ChevronRight className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }} />
+                      <span className="font-cinzel text-sm" style={{ color: "rgb(var(--ink) / 0.8)" }}>{verse}</span>
+                      <ChevronRight className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }} />
                     </motion.div>
                   </Link>
                 );
