@@ -1,33 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Share2, ChevronRight, Sun, Leaf } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import useLocalizedVotd from "@/hooks/useLocalizedVotd";
 import { pickVersePhoto } from "@/lib/verseImagery";
 
-const FALLBACK = {
-  verse_ref: "1 Peter 5:7",
-  text: "Cast all your anxiety on him because he cares for you.",
-  reflection: "You are carried. Bring today's worries to Him, one by one.",
-};
 const GOLD = "#d9b77e";
 
 export default function HeroDailyVerse() {
-  const { t } = useLang();
-  const [verse, setVerse] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { t, lang } = useLang();
+  const { verse, loading, base } = useLocalizedVotd(lang);
   const [showReflection, setShowReflection] = useState(false);
-
-  useEffect(() => {
-    base44.functions.invoke("getVerseOfTheDay", {})
-      .then((res) => {
-        const data = res.data?.dailyVerse || res.data;
-        setVerse({ verse_ref: data?.verse_ref || data?.ref, text: data?.text, reflection: data?.reflection });
-      })
-      .catch(() => setVerse(FALLBACK))
-      .finally(() => setLoading(false));
-  }, []);
 
   const photo = useMemo(() => pickVersePhoto(`${verse?.text || ""} ${verse?.reflection || ""}`), [verse]);
 
@@ -38,10 +22,7 @@ export default function HeroDailyVerse() {
     else navigator.clipboard?.writeText(text);
   };
 
-  const parts = verse?.verse_ref?.split(" ") || [];
-  const book = parts.slice(0, -1).join(" ");
-  const chapter = parts[parts.length - 1]?.split(":")[0];
-  const readHref = book ? `/read?book=${encodeURIComponent(book)}&chapter=${chapter}` : "/read";
+  const readHref = base?.book ? `/read?book=${encodeURIComponent(base.book)}&chapter=${base.chapter}` : "/read";
 
   return (
     <motion.section
