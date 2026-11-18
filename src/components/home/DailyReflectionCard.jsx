@@ -138,14 +138,14 @@ export default function DailyReflectionCard() {
               <p className="text-xs font-playfair italic leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.82)" }}>
                 "{reflection.prompt}"
               </p>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
                 <a href={`/read?book=${encodeURIComponent(reflection.key_verse?.split(" ").slice(0,-1).join(" "))}&chapter=${reflection.key_verse?.split(" ").pop()?.split(":")[0]}`}
                   className="font-cinzel text-[10px] font-semibold"
                   style={{ color: "#fbbf24" }}>
                   {reflection.key_verse}
                 </a>
                 {reflection.theme && (
-                  <span className="text-[9px] font-cinzel px-2 py-0.5 rounded-full capitalize"
+                  <span className="text-[10px] font-cinzel px-2.5 py-1 rounded-xl capitalize max-w-full min-w-0 break-words text-center leading-snug"
                     style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa" }}>
                     {reflection.theme}
                   </span>
