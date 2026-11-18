@@ -120,7 +120,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
 
   return (
-    <div className="fixed bottom-36 md:bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-80 z-40">
+    <div className={`fixed bottom-36 md:bottom-24 right-4 md:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -218,7 +218,8 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={() => { setOpen(v => !v); if (open && playing) stopAll(); }}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-2xl w-full justify-center"
+        aria-label={isEs ? "Escuchar Capítulo" : "Listen to Chapter"}
+        className={`flex items-center gap-2 h-12 rounded-full justify-center ${open ? "w-full px-4 rounded-2xl" : playing ? "px-4" : "w-12"}`}
         style={{
           background: open ? "var(--popover-surface)" : "hsl(var(--surface-4) / 0.9)",
           border: `1px solid ${playing ? "rgba(0,245,255,0.35)" : "rgb(var(--ink) / 0.1)"}`,
@@ -235,12 +236,14 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             ))}
           </span>
         ) : (
-          <Headphones className="w-4 h-4" style={{ color: "#00f5ff" }} />
+          <Headphones className="w-5 h-5" style={{ color: "#00f5ff" }} />
         )}
-        <span className="font-cinzel text-xs font-semibold" style={{ color: playing ? "#00f5ff" : "rgb(var(--ink) / 0.6)" }}>
-          {playing ? (isEs ? `Escuchando · v.${currentVerse + 1}` : `Listening · v.${currentVerse + 1}`) : (isEs ? "Escuchar Capítulo" : "Listen to Chapter")}
-        </span>
-        <ChevronDown className="w-3.5 h-3.5 ml-auto" style={{ color: "rgb(var(--ink) / 0.3)", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+        {(open || playing) && (
+          <span className="font-cinzel text-xs font-semibold" style={{ color: playing ? "#00f5ff" : "rgb(var(--ink) / 0.75)" }}>
+            {playing ? (isEs ? `Escuchando · v.${currentVerse + 1}` : `Listening · v.${currentVerse + 1}`) : (isEs ? "Escuchar Capítulo" : "Listen to Chapter")}
+          </span>
+        )}
+        {open && <ChevronDown className="w-4 h-4 ml-auto" style={{ color: "rgb(var(--ink) / 0.6)", transform: "rotate(180deg)" }} />}
       </motion.button>
 
       {/* Hidden audio element for YouVersion audio playback */}

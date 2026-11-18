@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { savePrefs } from "@/lib/preferencesSync";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail, Lock, User, Shield, Eye, EyeOff, Check, Loader2, ChevronDown,
@@ -138,6 +139,7 @@ export default function AccountSettings({ user }) {
     localStorage.setItem("veritas_red_letter", String(redLetterOn));
     localStorage.setItem("veritas_verse_numbers", String(verseNumbers));
     localStorage.setItem("veritas_audio_autoplay", String(audioAutoplay));
+    savePrefs({ default_translation: defaultTranslation, show_red_letter: redLetterOn, show_verse_numbers: verseNumbers });
     setReadingSaved(true);
     setTimeout(() => setReadingSaved(false), 2500);
   };

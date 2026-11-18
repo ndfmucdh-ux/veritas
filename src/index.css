@@ -164,6 +164,30 @@ html[data-theme="light"] :is(.text-pink-300, .text-pink-400) { color: var(--t-pi
 html[data-theme="light"] :is(.text-orange-300, .text-orange-400) { color: var(--t-orange); }
 html[data-theme="light"] :is(.text-blue-300, .text-blue-400) { color: var(--t-blue); }
 
+/* Readability: faint "ink" text (alpha < 0.6) is raised to AA-friendly levels in both themes */
+:is([style^="color: rgb(var(--ink) / 0.1"], [style*="; color: rgb(var(--ink) / 0.1"],
+    [style^="color: rgb(var(--ink) / 0.2"], [style*="; color: rgb(var(--ink) / 0.2"],
+    [style^="color: rgb(var(--ink) / 0.3"], [style*="; color: rgb(var(--ink) / 0.3"]) { color: rgb(var(--ink) / 0.62) !important; }
+:is([style^="color: rgb(var(--ink) / 0.4"], [style*="; color: rgb(var(--ink) / 0.4"],
+    [style^="color: rgb(var(--ink) / 0.5"], [style*="; color: rgb(var(--ink) / 0.5"]) { color: rgb(var(--ink) / 0.74) !important; }
+:is([style^="color: rgb(var(--ink) / 0.6"], [style*="; color: rgb(var(--ink) / 0.6"],
+    [style^="color: rgb(var(--ink) / 0.7"], [style*="; color: rgb(var(--ink) / 0.7"]) { color: rgb(var(--ink) / 0.82) !important; }
+:is(.text-white\/10, .text-white\/20, .text-white\/25, .text-white\/30, .text-white\/35) { color: rgb(var(--ink) / 0.62); }
+:is(.text-white\/40, .text-white\/45, .text-white\/50, .text-white\/60, .text-white\/70) { color: rgb(var(--ink) / 0.78); }
+:is(.text-muted-foreground) { color: hsl(var(--muted-foreground)); }
+html[data-theme="light"] { --muted-foreground: 223 14% 30%; }
+
+/* Mobile ergonomics: larger icons, readable micro-text, comfortable tap targets */
+@media (max-width: 767px) {
+  svg.lucide.w-3, svg.lucide.w-3\.5 { width: 1.1rem; height: 1.1rem; }
+  svg.lucide.w-4 { width: 1.25rem; height: 1.25rem; }
+  .text-\[8px\], .text-\[9px\], .text-\[10px\] { font-size: 11.5px !important; }
+  .text-\[11px\] { font-size: 12.5px !important; }
+  .text-xs { font-size: 0.8125rem; }
+  button.w-6, button.w-7, button.w-8 { min-width: 2.5rem; }
+  button.h-6, button.h-7, button.h-8 { min-height: 2.5rem; }
+}
+
 /* Short, controlled transition only while the theme is being switched */
 html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, fill 0.2s ease !important;

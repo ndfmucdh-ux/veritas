@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback } 
 import { base44 } from "@/api/base44Client";
 import { detectLanguage, getDictionary, isSupported, translate } from "@/lib/i18n";
 import { EXTRA } from "@/lib/i18nExtra";
+import { hydratePrefs } from "@/lib/preferencesSync";
 import { getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 
 // Locale dictionaries (en/es/fr/pt/de) plus extra UI strings; missing keys fall back to English.
@@ -32,6 +33,20 @@ export function LanguageProvider({ children }) {
       if (prefs?.[0]) await base44.entities.UserPreferences.update(prefs[0].id, data);
       else await base44.entities.UserPreferences.create(data);
     }).catch(() => {});
+  }, []);
+
+  // Restore saved language + Bible version + reading settings for signed-in users.
+  useEffect(() => {
+    hydratePrefs().then((prefs) => {
+      if (!prefs) return;
+      if (prefs.language && isSupported(prefs.language)) {
+        localStorage.setItem("veritas_lang", prefs.language);
+        setLangState(prefs.language);
+      }
+      if (prefs.default_translation) {
+        window.dispatchEvent(new CustomEvent("veritas:translation", { detail: prefs.default_translation }));
+      }
+    });
   }, []);
 
   // Keep <html lang> in sync for accessibility and correct hyphenation.

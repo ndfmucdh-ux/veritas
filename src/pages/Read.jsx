@@ -19,6 +19,7 @@ import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
 import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
 import ChapterAudioPlayer from "@/components/reader/ChapterAudioPlayer";
+import { savePrefs } from "@/lib/preferencesSync";
 import GuidedReflection from "@/components/prayer/GuidedReflection";
 import MultiSelectActionBar from "@/components/reader/MultiSelectActionBar.jsx";
 import ReaderSettingsPanel from "@/components/reader/ReaderSettingsPanel.jsx";
@@ -37,9 +38,16 @@ export default function Read() {
     const explicit = params.get("translation");
     if (explicit) return explicit;
     const stored = localStorage.getItem("veritas_translation");
-    // Ignore a stored translation that doesn't match the app language.
-    return stored && getTranslationLang(stored) === lang ? stored : (DEFAULT_TRANSLATION_BY_LANG[lang] || "KJV");
+    // The user's explicit choice always wins; the app-language default is only a first-run fallback.
+    return stored || DEFAULT_TRANSLATION_BY_LANG[lang] || "KJV";
   });
+
+  // Persist the Bible version choice (local + saved preferences).
+  useEffect(() => {
+    if (localStorage.getItem("veritas_translation") === translation) return;
+    localStorage.setItem("veritas_translation", translation);
+    savePrefs({ default_translation: translation });
+  }, [translation]);
 
   // Language switched elsewhere → Bible text follows.
   useEffect(() => {
@@ -52,9 +60,22 @@ export default function Read() {
   const [loading, setLoading] = useState(true);
   const [immersive, setImmersive] = useState(params.get("immersive") === "1");
   const [showSettings, setShowSettings] = useState(false);
-  const [fontSize, setFontSize] = useState(18);
-  const [fontFamily, setFontFamily] = useState("playfair");
-  const [showNumbers, setShowNumbers] = useState(true);
+  const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem("veritas_reader_font_size")) || 18);
+  const [fontFamily, setFontFamily] = useState(() => localStorage.getItem("veritas_reader_font_family") || "playfair");
+  const [showNumbers, setShowNumbers] = useState(() => localStorage.getItem("veritas_verse_numbers") !== "false");
+
+  // Persist reading settings (local + saved preferences).
+  useEffect(() => {
+    const changed = localStorage.getItem("veritas_reader_font_size") !== String(fontSize)
+      || localStorage.getItem("veritas_reader_font_family") !== fontFamily
+      || localStorage.getItem("veritas_verse_numbers") !== String(showNumbers);
+    if (!changed) return;
+    localStorage.setItem("veritas_reader_font_size", String(fontSize));
+    localStorage.setItem("veritas_reader_font_family", fontFamily);
+    localStorage.setItem("veritas_verse_numbers", String(showNumbers));
+    const ff = ["inter", "playfair", "cinzel"].includes(fontFamily) ? { font_family: fontFamily } : {};
+    savePrefs({ font_size: fontSize, show_verse_numbers: showNumbers, ...ff });
+  }, [fontSize, fontFamily, showNumbers]);
   const [oledMode, setOledMode] = useState(() => localStorage.getItem("veritas_oled_mode") === "true");
   const [highlights, setHighlights] = useState({});
   const [bookmarks, setBookmarks] = useState({});
