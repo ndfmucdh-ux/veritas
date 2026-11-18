@@ -2,17 +2,11 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, X, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const MESSAGES = [
-  "Good morning! Your reading plan is waiting. A few minutes in the Word sets the tone for the day. 🌅",
-  "Today's a great day to dig into Scripture. Your streak is counting on you! 🔥",
-  "A new day, a new chapter. Open your reading plan and meet God in His Word. ✝️",
-  "Your personalized plan is ready. Just a few verses can transform your morning. 📖",
-];
+import { useLang } from "@/lib/LanguageContext";
 
 export default function MorningReminder() {
+  const { t } = useLang();
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -22,11 +16,11 @@ export default function MorningReminder() {
     const today = new Date().toDateString();
     const dismissed = localStorage.getItem("veritas_morning_dismissed");
     if (dismissed === today) return;
-
-    const idx = new Date().getDay() % MESSAGES.length;
-    setMessage(MESSAGES[idx]);
     setVisible(true);
   }, []);
+
+  // Derived from the active language so it changes instantly with the toggle.
+  const message = t.morningMessages[new Date().getDay() % t.morningMessages.length];
 
   const dismiss = () => {
     localStorage.setItem("veritas_morning_dismissed", new Date().toDateString());
@@ -52,12 +46,12 @@ export default function MorningReminder() {
             <Bell className="w-4 h-4" style={{ color: "#fbbf24" }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-cinzel text-xs font-semibold mb-1" style={{ color: "#fbbf24" }}>Morning Reading Reminder</p>
+            <p className="font-cinzel text-xs font-semibold mb-1" style={{ color: "#fbbf24" }}>{t.morningReminderTitle}</p>
             <p className="font-inter text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>{message}</p>
             <Link to="/plans" onClick={dismiss}
               className="inline-flex items-center gap-1.5 mt-2 text-xs font-cinzel px-3 py-1.5 rounded-xl"
               style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.25)" }}>
-              <BookOpen className="w-3 h-3" /> Open My Plan
+              <BookOpen className="w-3 h-3" /> {t.openMyPlan}
             </Link>
           </div>
           <button onClick={dismiss} className="flex-shrink-0 p-1 rounded-lg hover:bg-white/5 transition-colors">

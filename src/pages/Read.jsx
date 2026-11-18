@@ -7,7 +7,7 @@ import { base44 } from "@/api/base44Client";
 import { loadChapterAnnotations, recordReadingSession } from "@/lib/dataAccess";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { getOfflineVerse, getOfflineVerseAsync } from "@/lib/offlineBible";
-import { BIBLE_BOOKS } from "@/lib/bibleData";
+import { BIBLE_BOOKS, getTranslatedBookName, toEnglishBookName, getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 import VerseRow from "@/components/reader/VerseRow.jsx";
 import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
 import ChapterNavigator from "@/components/reader/ChapterNavigator.jsx";
@@ -31,11 +31,22 @@ import { useLang } from "@/lib/LanguageContext";
 export default function Read() {
   const { lang, t } = useLang();
   const params = new URLSearchParams(window.location.search);
-  const [book, setBook] = useState(params.get("book") || "John");
+  const [book, setBook] = useState(toEnglishBookName(params.get("book") || "John"));
   const [chapter, setChapter] = useState(Number(params.get("chapter")) || 3);
-  const [translation, setTranslation] = useState(
-    params.get("translation") || localStorage.getItem("veritas_translation") || "KJV"
-  );
+  const [translation, setTranslation] = useState(() => {
+    const explicit = params.get("translation");
+    if (explicit) return explicit;
+    const stored = localStorage.getItem("veritas_translation");
+    // Ignore a stored translation that doesn't match the app language.
+    return stored && getTranslationLang(stored) === lang ? stored : (DEFAULT_TRANSLATION_BY_LANG[lang] || "KJV");
+  });
+
+  // Language switched elsewhere → Bible text follows.
+  useEffect(() => {
+    const onTranslation = (e) => setTranslation(e.detail);
+    window.addEventListener("veritas:translation", onTranslation);
+    return () => window.removeEventListener("veritas:translation", onTranslation);
+  }, []);
   const targetVerse = Number(params.get("verse")) || null;
   const [verses, setVerses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -238,17 +249,17 @@ export default function Read() {
 
         <div className="flex items-center gap-2">
           <div className="flex-1" />
-          <IconBtn onClick={toggleSelectionMode} active={selectionMode} title="Multi-select verses">
+          <IconBtn onClick={toggleSelectionMode} active={selectionMode} title={t.multiSelect}>
             <CheckSquare className="w-4 h-4" />
           </IconBtn>
-          <IconBtn onClick={() => copyChapter()} title="Copy chapter">
+          <IconBtn onClick={() => copyChapter()} title={t.copyChapter}>
             {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
           </IconBtn>
           <ChapterDownloadButton book={book} chapter={chapter} translation={translation} />
-          <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
-          <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title="AI Devotional">✨</IconBtn>
-          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title="Reader settings"><Settings className="w-4 h-4" /></IconBtn>
-          <IconBtn onClick={toggleImmersive} title={immersive ? "Exit focus mode" : "Enter focus mode"}>
+          <IconBtn onClick={() => setShowParallel(true)} title={t.parallelView}><Columns className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title={t.aiDevotional}>✨</IconBtn>
+          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title={t.readerSettings}><Settings className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={toggleImmersive} title={immersive ? t.exitFocus : t.enterFocus}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </IconBtn>
         </div>
@@ -284,7 +295,7 @@ export default function Read() {
             <div className="mb-6 mt-4">
               <StudyDropdown
                 label={t.jumpToVerse || "Jump to Verse"}
-                placeholder={lang === "es" ? "Seleccionar…" : "Select…"}
+                placeholder={t.select}
                 value={selectedVerse}
                 icon="✨"
                 onChange={(verseNum) => {
@@ -312,8 +323,8 @@ export default function Read() {
           ) : verses.length === 0 ? (
             <EmptyState
               icon="📖"
-              title={`${book} ${chapter} isn't available offline`}
-              description="This translation isn't downloaded yet. Connect to the internet, or switch to KJV which works offline."
+              title={`${getTranslatedBookName(book, getTranslationLang(translation))} ${chapter} ${t.notOfflineTitle}`}
+              description={t.notOfflineDesc}
             />
           ) : (
             <motion.div

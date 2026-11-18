@@ -150,6 +150,19 @@ export const getTranslatedBookName = (englishName, lang) => {
   return englishName;
 };
 
+// Reverse lookup: any localized book name (es/pt/fr/it) or singular alias → canonical English name.
+const REVERSE_BOOKS = (() => {
+  const map = { Salmo: "Psalms", Psalm: "Psalms", Cantares: "Song of Solomon", "Cantar de los Cantares": "Song of Solomon" };
+  [BOOK_NAMES_ES, BOOK_NAMES_PT, BOOK_NAMES_FR, BOOK_NAMES_IT].forEach(dict => {
+    Object.entries(dict).forEach(([en, loc]) => { map[loc] = en; });
+  });
+  return map;
+})();
+export const toEnglishBookName = (name = "") => REVERSE_BOOKS[name] || name;
+
+// Default translation for an app language (Spanish → BTX3 Biblia Textual, English → KJV).
+export const DEFAULT_TRANSLATION_BY_LANG = { en: "KJV", es: "BTX3" };
+
 // Language of a translation's CONTENT (e.g. BTX3 → "es", KJV → "en").
 export const getTranslationLang = (code = "KJV") =>
   TRANSLATIONS.find(t => t.code === code)?.lang || "en";

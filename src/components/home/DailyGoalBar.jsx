@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Target, X, Check, ChevronDown } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { listReadingActivity } from "@/lib/dataAccess";
+import { useLang } from "@/lib/LanguageContext";
 
 const GOAL_KEY = "veritas_daily_goal";
 const DEFAULT_GOAL = { type: "chapters", target: 3 };
@@ -19,6 +20,7 @@ function saveGoal(goal) {
 }
 
 export default function DailyGoalBar() {
+  const { t } = useLang();
   const [goal, setGoal] = useState(loadGoal);
   const [progress, setProgress] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
@@ -62,7 +64,7 @@ export default function DailyGoalBar() {
   const pct = Math.min(100, goal.target > 0 ? Math.round((progress / goal.target) * 100) : 0);
   const done = pct >= 100;
   const displayProgress = goal.type === "chapters" ? progress : progress;
-  const unit = goal.type === "chapters" ? "ch" : "vs";
+  const unit = goal.type === "chapters" ? t.unitChapters : t.unitVerses;
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -72,7 +74,7 @@ export default function DailyGoalBar() {
           <div className="flex items-center gap-2">
             <Target className="w-3.5 h-3.5 flex-shrink-0" style={{ color: done ? "#34d399" : "#fbbf24" }} />
             <span className="text-[10px] font-inter uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.4)" }}>
-              Daily Goal
+              {t.dailyGoal}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -123,11 +125,11 @@ export default function DailyGoalBar() {
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 pt-2 border-t space-y-3" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-              <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>Set Daily Goal</p>
+              <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>{t.setDailyGoal}</p>
 
               {/* Type toggle */}
               <div className="flex gap-2">
-                {[["chapters", "Chapters"], ["verses", "Verses"]].map(([val, label]) => (
+                {[["chapters", t.chaptersLabel], ["verses", t.versesLabel]].map(([val, label]) => (
                   <button key={val} onClick={() => setEditType(val)}
                     className="flex-1 py-2 rounded-xl text-xs font-cinzel font-semibold transition-all"
                     style={{
@@ -172,7 +174,7 @@ export default function DailyGoalBar() {
               <button onClick={handleSave}
                 className="w-full py-2.5 rounded-xl text-sm font-cinzel font-semibold flex items-center justify-center gap-2"
                 style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.25)" }}>
-                <Check className="w-4 h-4" /> Save Goal
+                <Check className="w-4 h-4" /> {t.saveGoal}
               </button>
             </div>
           </motion.div>

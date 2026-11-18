@@ -2,16 +2,20 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const BOOK_MAP = { Psalm: "Psalms" };
+import { toEnglishBookName, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
+import { useLang } from "@/lib/LanguageContext";
 
 function VersePreviewCard({ verse }) {
+  const { lang } = useLang();
   const lastSpace = verse.ref.lastIndexOf(" ");
   const rawBook = verse.ref.substring(0, lastSpace);
   const chapterVerse = verse.ref.substring(lastSpace + 1);
   const chapter = chapterVerse.split(":")[0];
   const verseNum = chapterVerse.split(":")[1]?.split("-")[0];
-  const book = BOOK_MAP[rawBook] || rawBook;
-  const readUrl = `/read?book=${encodeURIComponent(book)}&chapter=${chapter}${verseNum ? `&verse=${verseNum}` : ""}`;
+  // Reader routes use canonical English book names; the verse text/ref shown stays localized.
+  const book = toEnglishBookName(rawBook);
+  const translation = DEFAULT_TRANSLATION_BY_LANG[lang];
+  const readUrl = `/read?book=${encodeURIComponent(book)}&chapter=${chapter}${verseNum ? `&verse=${verseNum}` : ""}${translation ? `&translation=${translation}` : ""}`;
 
   return (
     <Link to={readUrl}>

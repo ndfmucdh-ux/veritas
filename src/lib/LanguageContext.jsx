@@ -1,4 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { base44 } from "@/api/base44Client";
+import { EXTRA } from "@/lib/i18nExtra";
+import { getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 
 const T = {
   en: {
@@ -121,15 +124,60 @@ const T = {
   },
 };
 
-const LangCtx = createContext({ lang: "en", t: T.en, setLang: () => {} });
+// Missing keys in a language fall back to English instead of rendering blank.
+const buildDict = (l) => {
+  const merged = { ...T.en, ...EXTRA.en, ...(T[l] || {}), ...(EXTRA[l] || {}) };
+  Object.keys(merged).forEach(k => { if (merged[k] == null && T.en[k] != null) merged[k] = T.en[k]; });
+  return merged;
+};
+const DICTS = { en: buildDict("en"), es: buildDict("es") };
+
+const LangCtx = createContext({ lang: "en", t: DICTS.en, setLang: () => {}, tr: (en) => en });
+
+const initialLang = () => {
+  const l = localStorage.getItem("veritas_lang");
+  return DICTS[l] ? l : "en";
+};
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState(() => localStorage.getItem("veritas_lang") || "en");
+  const [lang, setLang] = useState(initialLang);
+
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+
+  // Keep language across tabs.
+  useEffect(() => {
+    const onStorage = (e) => { if (e.key === "veritas_lang" && DICTS[e.newValue]) setLang(e.newValue); };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const changeLang = (l) => {
+    if (!DICTS[l]) return;
     localStorage.setItem("veritas_lang", l);
+    // Bible text follows the app language: switch translation if it's in another language.
+    const stored = localStorage.getItem("veritas_translation") || "KJV";
+    if (getTranslationLang(stored) !== l) {
+      const next = DEFAULT_TRANSLATION_BY_LANG[l] || "KJV";
+      localStorage.setItem("veritas_translation", next);
+      window.dispatchEvent(new CustomEvent("veritas:translation", { detail: next }));
+    }
     setLang(l);
+    // Best-effort sync to the saved preferences (signed-out visitors simply skip).
+    base44.auth.isAuthenticated().then(async (ok) => {
+      if (!ok) return;
+      const prefs = await base44.entities.UserPreferences.list("-updated_date", 1);
+      const data = { language: l, default_translation: localStorage.getItem("veritas_translation") || "KJV" };
+      if (prefs?.[0]) await base44.entities.UserPreferences.update(prefs[0].id, data);
+      else await base44.entities.UserPreferences.create(data);
+    }).catch(() => {});
   };
-  const value = { lang, t: T[lang] || T.en, setLang: changeLang };
+
+  const value = useMemo(() => ({
+    lang,
+    t: DICTS[lang],
+    setLang: changeLang,
+    tr: (en, es) => (lang === "es" && es != null ? es : en),
+  }), [lang]);
   return <LangCtx.Provider value={value}>{children}</LangCtx.Provider>;
 }
 

@@ -12,11 +12,13 @@ import HeaderProfileLink from "@/components/layout/HeaderProfileLink.jsx";
 import LangToggle from "@/components/layout/LangToggle.jsx";
 import HeaderNavPill from "@/components/layout/HeaderNavPill.jsx";
 import useCurrentUserDisplay from "@/hooks/useCurrentUserDisplay";
+import { useLang } from "@/lib/LanguageContext";
 
 export default function AppLayout() {
   const location = useLocation();
   const isImmersive = location.pathname.startsWith("/read") && location.search.includes("immersive=1");
   const { displayName, displayAvatar } = useCurrentUserDisplay();
+  const { t } = useLang();
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,8 +45,8 @@ export default function AppLayout() {
 
           <div className="flex items-center gap-1">
             <LangToggle />
-            <HeaderNavPill to="/plans" icon={Target} label="Plans" />
-            <HeaderNavPill to="/discover" icon={Star} label="Discover" />
+            <HeaderNavPill to="/plans" icon={Target} label={t.plans} />
+            <HeaderNavPill to="/discover" icon={Star} label={t.discover} />
             <HeaderProfileLink avatarUrl={displayAvatar} displayName={displayName} />
           </div>
         </header>

@@ -21,7 +21,7 @@ export default function HomeGreeting() {
             "{t.slogan}"
           </p>
         </div>
-        <Link to="/profile" aria-label="Open profile">
+        <Link to="/profile" aria-label={t.openProfile}>
           {displayAvatar ? (
             <img
               src={displayAvatar}

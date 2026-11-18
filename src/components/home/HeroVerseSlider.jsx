@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Share2, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import { toEnglishBookName, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 
 // Hoisted to module scope — these were previously rebuilt inside useEffect on
 // every language change. They're pure constants, so allocate them once.
@@ -159,9 +160,10 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
     const chapterVerse = ref.substring(lastSpace + 1) || "1:1";
     const chapterNum = chapterVerse.split(":")[0];
     const verseNum = chapterVerse.split(":")[1];
-    const bookName = BOOK_MAP[rawBook] || rawBook;
-    return `/read?book=${encodeURIComponent(bookName)}&chapter=${chapterNum}${verseNum ? `&verse=${verseNum}` : ""}`;
-  }, [verse.verse_ref]);
+    const bookName = toEnglishBookName(BOOK_MAP[rawBook] || rawBook);
+    const translation = DEFAULT_TRANSLATION_BY_LANG[lang];
+    return `/read?book=${encodeURIComponent(bookName)}&chapter=${chapterNum}${verseNum ? `&verse=${verseNum}` : ""}${translation ? `&translation=${translation}` : ""}`;
+  }, [verse.verse_ref, lang]);
 
   return (
     <div className="relative rounded-3xl overflow-hidden" style={{ minHeight: 260 }}>
@@ -232,12 +234,12 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
       </div>
 
       {/* Slider controls */}
-      <button onClick={() => go(-1)} aria-label="Previous verse"
+      <button onClick={() => go(-1)} aria-label={t.previousVerse}
         className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center"
         style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)" }}>
         <ChevronLeft className="w-4 h-4 text-white/60" />
       </button>
-      <button onClick={() => go(1)} aria-label="Next verse"
+      <button onClick={() => go(1)} aria-label={t.nextVerse}
         className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full flex items-center justify-center"
         style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(8px)" }}>
         <ChevronRight className="w-4 h-4 text-white/60" />
