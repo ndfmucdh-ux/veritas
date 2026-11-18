@@ -20,7 +20,7 @@ export default function GroupDetail({ groupId, onBack }) {
 
   const back = (
     <button type="button" onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted-foreground min-h-10">
-      <ArrowLeft className="w-4 h-4" /> {t.back}
+      <ArrowLeft className="w-4 h-4" /> {t.cmBackBtn}
     </button>
   );
 

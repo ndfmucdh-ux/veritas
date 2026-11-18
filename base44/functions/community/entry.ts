@@ -186,6 +186,7 @@ const ACTIONS: Record<string, (c: any) => Promise<any>> = {
     return {
       group: { id: group.id, name: group.name, description: group.description, category: group.category, privacy: group.privacy, member_count: members.length, plan_title: group.plan_title || '', plan_selections: group.plan_selections || [] },
       role: mine.role,
+      myId: me.id,
       myChapters: mine.completed_chapters || [],
       members: members.map((m: any) => ({ userId: m.user_id, name: m.user_name, role: m.role, progress: progressOf(group, m) })),
       posts: posts.map((p: any) => ({

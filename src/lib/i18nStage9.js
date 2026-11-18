@@ -14,7 +14,7 @@ export const STAGE9 = {
     cmNoPlan: "No shared plan yet.", cmSetPlan: "Set study plan", cmEditPlan: "Edit plan", cmPlanName: "Plan name", cmBook: "Book", cmFromCh: "From", cmToCh: "To", cmAddRange: "Add chapters",
     cmSavePlan: "Save plan", cmYourProgress: "Your progress", cmChaptersDone: "{done} of {total} chapters", cmReadNext: "Read next: {ref}", cmPlanDone: "You finished the plan.",
     cmInviteFriends: "Invite friends", cmNoInvitable: "All your friends are already here, or you have no friends yet.", cmSendInvites: "Send invitations", cmInvitesSent: "Invitations sent",
-    cmOwner: "Owner", cmStudyTogether: "Study together", cmPrayTogether: "Pray together", cmGroupCreated: "Group created", cmYou: "You",
+    cmOwner: "Owner", cmStudyTogether: "Study together", cmPrayTogether: "Pray together", cmGroupCreated: "Group created", cmYou: "You", cmBackBtn: "Back",
   },
   es: {
     s9Edit: "Editar", s9EditNote: "Editar nota", s9VotdEmail: "Correo del versículo diario", s9VotdEmailSub: "Recibe el Versículo del Día en tu correo cada mañana",
@@ -30,7 +30,7 @@ export const STAGE9 = {
     cmNoPlan: "Aún no hay un plan compartido.", cmSetPlan: "Crear plan de estudio", cmEditPlan: "Editar plan", cmPlanName: "Nombre del plan", cmBook: "Libro", cmFromCh: "Desde", cmToCh: "Hasta", cmAddRange: "Añadir capítulos",
     cmSavePlan: "Guardar plan", cmYourProgress: "Tu progreso", cmChaptersDone: "{done} de {total} capítulos", cmReadNext: "Leer siguiente: {ref}", cmPlanDone: "Terminaste el plan.",
     cmInviteFriends: "Invitar amigos", cmNoInvitable: "Todos tus amigos ya están aquí, o aún no tienes amigos.", cmSendInvites: "Enviar invitaciones", cmInvitesSent: "Invitaciones enviadas",
-    cmOwner: "Líder", cmStudyTogether: "Estudiar juntos", cmPrayTogether: "Orar juntos", cmGroupCreated: "Grupo creado", cmYou: "Tú",
+    cmOwner: "Líder", cmStudyTogether: "Estudiar juntos", cmPrayTogether: "Orar juntos", cmGroupCreated: "Grupo creado", cmYou: "Tú", cmBackBtn: "Atrás",
   },
   fr: {
     s9Edit: "Modifier", s9EditNote: "Modifier la note", s9VotdEmail: "E-mail du verset quotidien", s9VotdEmailSub: "Recevez le verset du jour dans votre boîte mail chaque matin",
@@ -46,7 +46,7 @@ export const STAGE9 = {
     cmNoPlan: "Pas encore de plan partagé.", cmSetPlan: "Définir un plan d'étude", cmEditPlan: "Modifier le plan", cmPlanName: "Nom du plan", cmBook: "Livre", cmFromCh: "De", cmToCh: "À", cmAddRange: "Ajouter des chapitres",
     cmSavePlan: "Enregistrer le plan", cmYourProgress: "Votre progression", cmChaptersDone: "{done} sur {total} chapitres", cmReadNext: "Lire ensuite : {ref}", cmPlanDone: "Vous avez terminé le plan.",
     cmInviteFriends: "Inviter des amis", cmNoInvitable: "Tous vos amis sont déjà là, ou vous n'avez pas encore d'amis.", cmSendInvites: "Envoyer les invitations", cmInvitesSent: "Invitations envoyées",
-    cmOwner: "Responsable", cmStudyTogether: "Étudier ensemble", cmPrayTogether: "Prier ensemble", cmGroupCreated: "Groupe créé", cmYou: "Vous",
+    cmOwner: "Responsable", cmStudyTogether: "Étudier ensemble", cmPrayTogether: "Prier ensemble", cmGroupCreated: "Groupe créé", cmYou: "Vous", cmBackBtn: "Retour",
   },
   pt: {
     s9Edit: "Editar", s9EditNote: "Editar nota", s9VotdEmail: "E-mail do versículo diário", s9VotdEmailSub: "Receba o Versículo do Dia no seu e-mail toda manhã",
@@ -62,7 +62,7 @@ export const STAGE9 = {
     cmNoPlan: "Ainda não há plano compartilhado.", cmSetPlan: "Definir plano de estudo", cmEditPlan: "Editar plano", cmPlanName: "Nome do plano", cmBook: "Livro", cmFromCh: "De", cmToCh: "Até", cmAddRange: "Adicionar capítulos",
     cmSavePlan: "Salvar plano", cmYourProgress: "Seu progresso", cmChaptersDone: "{done} de {total} capítulos", cmReadNext: "Ler a seguir: {ref}", cmPlanDone: "Você concluiu o plano.",
     cmInviteFriends: "Convidar amigos", cmNoInvitable: "Todos os seus amigos já estão aqui, ou você ainda não tem amigos.", cmSendInvites: "Enviar convites", cmInvitesSent: "Convites enviados",
-    cmOwner: "Líder", cmStudyTogether: "Estudar juntos", cmPrayTogether: "Orar juntos", cmGroupCreated: "Grupo criado", cmYou: "Você",
+    cmOwner: "Líder", cmStudyTogether: "Estudar juntos", cmPrayTogether: "Orar juntos", cmGroupCreated: "Grupo criado", cmYou: "Você", cmBackBtn: "Voltar",
   },
   de: {
     s9Edit: "Bearbeiten", s9EditNote: "Notiz bearbeiten", s9VotdEmail: "E-Mail zum Tagesvers", s9VotdEmailSub: "Erhalte den Vers des Tages jeden Morgen per E-Mail",
@@ -78,6 +78,6 @@ export const STAGE9 = {
     cmNoPlan: "Noch kein gemeinsamer Plan.", cmSetPlan: "Studienplan festlegen", cmEditPlan: "Plan bearbeiten", cmPlanName: "Planname", cmBook: "Buch", cmFromCh: "Von", cmToCh: "Bis", cmAddRange: "Kapitel hinzufügen",
     cmSavePlan: "Plan speichern", cmYourProgress: "Dein Fortschritt", cmChaptersDone: "{done} von {total} Kapiteln", cmReadNext: "Als Nächstes lesen: {ref}", cmPlanDone: "Du hast den Plan abgeschlossen.",
     cmInviteFriends: "Freunde einladen", cmNoInvitable: "Alle deine Freunde sind schon dabei, oder du hast noch keine Freunde.", cmSendInvites: "Einladungen senden", cmInvitesSent: "Einladungen gesendet",
-    cmOwner: "Leiter", cmStudyTogether: "Gemeinsam studieren", cmPrayTogether: "Gemeinsam beten", cmGroupCreated: "Gruppe erstellt", cmYou: "Du",
+    cmOwner: "Leiter", cmStudyTogether: "Gemeinsam studieren", cmPrayTogether: "Gemeinsam beten", cmGroupCreated: "Gruppe erstellt", cmYou: "Du", cmBackBtn: "Zurück",
   },
 };
