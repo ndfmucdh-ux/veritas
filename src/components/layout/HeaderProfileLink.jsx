@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { prefetchRoute } from "@/lib/routeLoaders";
 import { Check, Sun, Moon, Monitor, User } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useLang } from "@/lib/LanguageContext";
@@ -11,7 +12,6 @@ const THEMES = [["light", "Light", Sun], ["dark", "Dark", Moon], ["system", "Sys
 // One avatar button holds profile, language and theme so the top bar stays calm.
 export default function HeaderProfileLink({ avatarUrl, displayName }) {
   const { lang, setLang } = useLang();
-  const navigate = useNavigate();
   const [mode, setMode] = useState(getThemeMode);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function HeaderProfileLink({ avatarUrl, displayName }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger aria-label="Profile and settings" className="flex-shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-ring">
+      <DropdownMenuTrigger aria-label="Profile and settings" onPointerEnter={() => prefetchRoute("/profile")} onPointerDown={() => prefetchRoute("/profile")} className="flex-shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-ring">
         {avatarUrl ? (
           <img src={avatarUrl} alt={displayName || "Profile"} className="w-11 h-11 rounded-full object-cover" style={{ border: "2px solid var(--t-gold)" }} />
         ) : (
@@ -32,7 +32,7 @@ export default function HeaderProfileLink({ avatarUrl, displayName }) {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[11rem]">
-        <DropdownMenuItem onSelect={() => navigate("/profile")} className="gap-2 min-h-10"><User className="w-4 h-4" /> Profile</DropdownMenuItem>
+        <DropdownMenuItem asChild className="gap-2 min-h-10"><Link to="/profile"><User className="w-4 h-4" /> Profile</Link></DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel className="text-xs">Theme</DropdownMenuLabel>
         {THEMES.map(([id, label, Icon]) => (

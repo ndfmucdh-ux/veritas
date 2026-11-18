@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getVerseCount } from "@/lib/chapterVerses";
 import { createPortal } from "react-dom";
 import { Loader2, X, ChevronDown, Plus, Check } from "lucide-react";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
@@ -36,6 +37,24 @@ export default function NoteEditorSheet({ onClose, onSave, existingTags = [] }) 
   const [saving, setSaving] = useState(false);
 
   const max = BIBLE_BOOKS.find((b) => b.name === book)?.chapters || 1;
+  const [verseMax, setVerseMax] = useState(0);
+  const [counting, setCounting] = useState(true);
+
+  // Exact verse count of the chosen chapter, so the list matches the real book.
+  useEffect(() => {
+    let live = true;
+    setCounting(true);
+    const translation = localStorage.getItem("veritas_translation") || "KJV";
+    getVerseCount(book, Number(chapter), translation)
+      .catch(() => 0)
+      .then((n) => {
+        if (!live) return;
+        setVerseMax(n);
+        setVerse((v) => (n && Number(v) > n ? 1 : v));
+        setCounting(false);
+      });
+    return () => { live = false; };
+  }, [book, chapter]);
 
   const toggleTag = (tag) => setPicked((p) => (p.includes(tag) ? p.filter((x) => x !== tag) : [...p, tag]));
   const addTag = () => {
@@ -68,9 +87,14 @@ export default function NoteEditorSheet({ onClose, onSave, existingTags = [] }) 
           <Select label={t.s6Chapter} value={chapter} onChange={(e) => setChapter(e.target.value)}>
             {range(max).map((n) => <option key={n} value={n}>{n}</option>)}
           </Select>
-          <Select label={t.s6Verse} value={verse} onChange={(e) => setVerse(e.target.value)}>
-            {range(176).map((n) => <option key={n} value={n}>{n}</option>)}
-          </Select>
+          {verseMax > 0 || counting ? (
+            <Select label={t.s6Verse} value={verse} onChange={(e) => setVerse(e.target.value)}>
+              {counting ? <option value={verse}>…</option> : range(verseMax).map((n) => <option key={n} value={n}>{n}</option>)}
+            </Select>
+          ) : (
+            <label className="block min-w-0"><span className={lbl}>{t.s6Verse}</span>
+              <input type="number" min={1} value={verse} onChange={(e) => setVerse(e.target.value)} className={field} style={{ fontSize: 16 }} /></label>
+          )}
         </div>
 
         <label className="block"><span className={lbl}>{t.s6NoteTitle}</span>

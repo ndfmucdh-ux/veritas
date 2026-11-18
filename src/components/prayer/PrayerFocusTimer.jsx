@@ -140,7 +140,7 @@ export default function PrayerFocusTimer() {
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <p className="font-cinzel text-sm font-semibold" className="text-primary">{t.pjTimer}</p>
+              <p className="font-cinzel text-sm font-semibold text-primary">{t.pjTimer}</p>
               <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
