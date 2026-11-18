@@ -24,12 +24,8 @@ export default function useProfileData() {
       setHighlights(lib?.highlights || []);
       setNotes(lib?.notes || []);
       setPlans(rp || []);
-      if (u?.full_name && !sessionStorage.getItem("veritas_display_name")) {
-        sessionStorage.setItem("veritas_display_name", u.full_name);
-      }
-      if (u?.avatar_url && !sessionStorage.getItem("veritas_avatar_url")) {
-        sessionStorage.setItem("veritas_avatar_url", u.avatar_url);
-      }
+      if (u?.full_name) localStorage.setItem("veritas_display_name", u.full_name);
+      if (u?.avatar_url) localStorage.setItem("veritas_avatar_url", u.avatar_url);
     }).finally(() => setLoading(false));
   }, []);
 
@@ -38,14 +34,15 @@ export default function useProfileData() {
     if (!trimmed) return;
     await base44.auth.updateMe({ full_name: trimmed });
     setUser(u => ({ ...u, full_name: trimmed }));
-    sessionStorage.setItem("veritas_display_name", trimmed);
+    localStorage.setItem("veritas_display_name", trimmed);
     window.dispatchEvent(new Event("veritas:profile"));
   };
 
   const uploadAvatar = async (file) => {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     await base44.auth.updateMe({ avatar_url: file_url });
-    sessionStorage.setItem("veritas_avatar_url", file_url);
+    setUser(u => ({ ...u, avatar_url: file_url }));
+    localStorage.setItem("veritas_avatar_url", file_url);
     window.dispatchEvent(new Event("veritas:profile"));
     return file_url;
   };
@@ -53,6 +50,7 @@ export default function useProfileData() {
   const uploadHero = async (file) => {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     await base44.auth.updateMe({ hero_url: file_url });
+    setUser(u => ({ ...u, hero_url: file_url }));
     return file_url;
   };
 

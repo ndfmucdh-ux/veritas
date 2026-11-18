@@ -10,12 +10,12 @@ const GOLD = "#d9b77e";
 export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName, onAvatarFile, onHeroFile }) {
   const { t } = useLang();
   const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(sessionStorage.getItem("veritas_display_name") || user?.full_name || "");
+  const [nameInput, setNameInput] = useState(user?.full_name || localStorage.getItem("veritas_display_name") || "");
   const [editor, setEditor] = useState(null); // { kind: "avatar" | "hero", src }
   const avatarInputRef = useRef(null);
   const heroInputRef = useRef(null);
 
-  const displayName = sessionStorage.getItem("veritas_display_name") || user?.full_name || t.s5Believer;
+  const displayName = user?.full_name || localStorage.getItem("veritas_display_name") || t.s5Believer;
 
   const handleSaveName = async () => {
     await onSaveName(nameInput);

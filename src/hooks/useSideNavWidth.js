@@ -1,40 +1,37 @@
 import { useState, useEffect, useCallback } from "react";
 
-const KEY = "veritas_sidenav_width";
-export const NAV_MIN = 64;
-export const NAV_MAX = 320;
+/** A width the user can drag to change; remembered in localStorage. */
+export function useResizableWidth(key, def, min, max) {
+  const [width, setWidthState] = useState(() => Number(localStorage.getItem(key)) || def);
+  const setWidth = useCallback((w) => {
+    const next = Math.round(Math.min(max, Math.max(min, w)));
+    localStorage.setItem(key, String(next));
+    setWidthState(next);
+  }, [key, min, max]);
+  const reset = useCallback(() => {
+    localStorage.removeItem(key);
+    setWidthState(def);
+  }, [key, def]);
+  return { width, setWidth, reset };
+}
+
 export const NAV_FULL = 224;
-export const NAV_COLLAPSE_BELOW = 120;
+export const NAV_ICONS = 72;
+const NAV_COLLAPSE_BELOW = 140;
 
-const autoWidth = () =>
-  window.matchMedia("(min-width: 768px) and (max-width: 1023px) and (orientation: portrait)").matches ? NAV_MIN : NAV_FULL;
-
-/** Side menu width: user-dragged (saved) or auto (icons-only on portrait tablets). Exposed as --sidenav-w. */
-export default function useSideNavWidth() {
-  const [saved, setSaved] = useState(() => Number(localStorage.getItem(KEY)) || null);
-  const [auto, setAuto] = useState(autoWidth);
-  const width = saved || auto;
-
-  useEffect(() => {
-    const onChange = () => setAuto(autoWidth());
-    window.addEventListener("resize", onChange);
-    return () => window.removeEventListener("resize", onChange);
-  }, []);
+/**
+ * Side menu width. Only the reader lets the user resize it (drag below ~140px = icons only);
+ * every other page keeps the full menu. Exposed as the --sidenav-w CSS variable.
+ */
+export default function useSideNavWidth(isReader) {
+  const { width: saved, setWidth: save, reset } = useResizableWidth("veritas_sidenav_width", NAV_FULL, NAV_ICONS, 320);
+  const width = isReader ? saved : NAV_FULL;
 
   useEffect(() => {
     document.documentElement.style.setProperty("--sidenav-w", `${width}px`);
   }, [width]);
 
-  const setWidth = useCallback((w) => {
-    const next = w < NAV_COLLAPSE_BELOW ? NAV_MIN : Math.min(NAV_MAX, Math.max(NAV_FULL - 48, w));
-    localStorage.setItem(KEY, String(next));
-    setSaved(next);
-  }, []);
-
-  const reset = useCallback(() => {
-    localStorage.removeItem(KEY);
-    setSaved(null);
-  }, []);
+  const setWidth = useCallback((w) => save(w < NAV_COLLAPSE_BELOW ? NAV_ICONS : Math.max(w, NAV_FULL - 40)), [save]);
 
   return { width, collapsed: width < NAV_COLLAPSE_BELOW, setWidth, reset };
 }

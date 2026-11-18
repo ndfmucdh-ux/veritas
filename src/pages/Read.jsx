@@ -244,7 +244,7 @@ export default function Read() {
 
   return (
     <motion.div {...pageTransition}
-      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "min-h-screen"}`}
+      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "min-h-screen reader-offset"}`}
       style={{ background: oledMode ? "#000000" : immersive ? "hsl(var(--background))" : undefined }}
     >
       {!immersive && <BookSidebar book={book} translation={translation} onNavigate={handleNavigate} />}
@@ -480,7 +480,7 @@ export default function Read() {
             exit={{ opacity: 0, scale: 0.7 }}
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={() => containerRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-24 md:bottom-8 right-4 w-11 h-11 rounded-full flex items-center justify-center z-30"
+            className="fixed bottom-24 min-[1101px]:bottom-8 right-4 w-11 h-11 rounded-full flex items-center justify-center z-30"
             style={{
               background: "hsl(var(--surface-4) / 0.92)",
               backdropFilter: "blur(12px)",

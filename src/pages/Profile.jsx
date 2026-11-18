@@ -64,7 +64,7 @@ export default function Profile() {
     );
   }
 
-  const resolvedAvatar = avatarUrl ?? (sessionStorage.getItem("veritas_avatar_url") || user?.avatar_url || null);
+  const resolvedAvatar = avatarUrl ?? (user?.avatar_url || localStorage.getItem("veritas_avatar_url") || null);
   const resolvedHero = heroUrl ?? (user?.hero_url || null);
 
   return (

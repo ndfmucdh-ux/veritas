@@ -99,7 +99,8 @@ export default function AccountSettings({ user }) {
     if (!newName.trim()) return;
     setNameSaving(true);
     await base44.auth.updateMe({ full_name: newName.trim() });
-    sessionStorage.setItem("veritas_display_name", newName.trim());
+    localStorage.setItem("veritas_display_name", newName.trim());
+    window.dispatchEvent(new Event("veritas:profile"));
     setNameSaving(false);
     setNameSaved(true);
     setTimeout(() => setNameSaved(false), 2500);

@@ -1,0 +1,21 @@
+/* Navigation layout:
+   - Phones and portrait tablets (up to 1100px wide): bottom tab bar with a More menu.
+   - Landscape tablets and desktop: left side menu. */
+.nav-side { display: none; }
+.nav-bottom { display: flex; }
+.has-sidenav { padding-left: 0; }
+.book-side { display: none; }
+.reader-offset { padding-left: 0; }
+
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
+  .nav-side { display: flex; }
+  .nav-bottom { display: none; }
+  .has-sidenav { padding-left: var(--sidenav-w, 224px); }
+  .book-side { display: flex; }
+  .reader-offset { padding-left: var(--booksb-w, 176px); }
+}
+
+/* Portrait tablet has no side menu, so pages must not reserve room for it. */
+@media (min-width: 768px) and (orientation: portrait) and (max-width: 1100px) {
+  .md\:ml-16 { margin-left: 0; }
+}
