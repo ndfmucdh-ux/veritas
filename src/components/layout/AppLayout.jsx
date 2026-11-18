@@ -46,7 +46,7 @@ export default function AppLayout() {
         </header>
       )}
 
-      <main className={`flex-1 ${isImmersive ? "" : "has-sidenav"}`}>
+      <main className={`flex-1 ${isImmersive ? "" : `has-sidenav ${location.pathname.startsWith("/read") ? "is-reader" : ""}`}`}>
         <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>

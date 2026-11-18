@@ -37,7 +37,7 @@ export default function AssistantButton() {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
-            className="fixed bottom-24 right-4 md:bottom-8 md:right-6 w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center z-50"
+            className="assistant-fab fixed right-4 w-12 h-12 min-[1101px]:w-14 min-[1101px]:h-14 rounded-2xl flex items-center justify-center z-50"
             style={{
               background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(167,139,250,0.1))",
               border: "1.5px solid rgba(251,191,36,0.35)",

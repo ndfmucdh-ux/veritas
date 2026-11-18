@@ -33,7 +33,7 @@ export default function PlansListView({ presets, customPlans, getCompletedDays, 
     (cat === "all" || p.category === cat) && (langF === "all" || p.lang === langF) && matches(p.title, getCompletedDays(p.title), p.duration_days));
 
   return (
-    <div className="md:ml-16 min-h-screen pb-28 px-4 pt-6 space-y-4 max-w-2xl mx-auto">
+    <div className="md:ml-16 min-h-screen pb-28 px-4 pt-6 space-y-4 w-full max-w-5xl mx-auto">
       <header>
         <h1 className="font-cinzel text-3xl font-semibold text-foreground">{t.readingPlansTitle}</h1>
         <p className="text-sm text-muted-foreground mt-1">{t.structuredJourneys}</p>

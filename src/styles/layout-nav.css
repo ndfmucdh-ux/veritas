@@ -1,21 +1,31 @@
 /* Navigation layout:
-   - Phones and portrait tablets (up to 1100px wide): bottom tab bar with a More menu.
-   - Landscape tablets and desktop: left side menu. */
-.nav-side { display: none; }
+   - Phones and portrait tablets: bottom tab bar with a More menu.
+   - Portrait tablets, reader only: also an icon rail plus the book list on the left.
+   - Landscape tablets and desktop: full left side menu, no bottom bar. */
+.nav-side, .book-side { display: none; }
 .nav-bottom { display: flex; }
-.has-sidenav { padding-left: 0; }
-.book-side { display: none; }
-.reader-offset { padding-left: 0; }
+.has-sidenav, .reader-offset { padding-left: 0; }
 
-@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
-  .nav-side { display: flex; }
-  .nav-bottom { display: none; }
-  .has-sidenav { padding-left: var(--sidenav-w, 224px); }
-  .book-side { display: flex; }
+/* Portrait tablet, reader */
+@media (min-width: 768px) and (max-width: 1100px) and (orientation: portrait) {
+  .nav-side.nav-reader, .book-side { display: flex; bottom: 4.5rem; }
+  .has-sidenav.is-reader { padding-left: var(--sidenav-w, 72px); }
   .reader-offset { padding-left: var(--booksb-w, 176px); }
 }
 
-/* Portrait tablet has no side menu, so pages must not reserve room for it. */
-@media (min-width: 768px) and (orientation: portrait) and (max-width: 1100px) {
-  .md\:ml-16 { margin-left: 0; }
+/* Landscape tablet and desktop */
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
+  .nav-side, .book-side { display: flex; }
+  .nav-bottom { display: none; }
+  .has-sidenav { padding-left: var(--sidenav-w, 224px); }
+  .reader-offset { padding-left: var(--booksb-w, 176px); }
+}
+
+/* The shell already reserves room for the side menu; pages must not add their own margin. */
+.md\:ml-16 { margin-left: 0 !important; }
+
+/* Assistant button sits above the bottom tab bar when it is shown */
+.assistant-fab { bottom: 6rem; }
+@media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
+  .assistant-fab { bottom: 2rem; right: 1.5rem; }
 }

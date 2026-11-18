@@ -16,7 +16,7 @@ export default function CustomPlanDetail({ plan, onBack, onToggleChapter }) {
   const deadlineValue = daysLeft !== null ? `${Math.abs(daysLeft)}d` : estDays ? `${estDays}d` : "—";
 
   return (
-    <div className="md:ml-16 min-h-screen pb-28 px-4 pt-4 space-y-4 max-w-2xl mx-auto">
+    <div className="md:ml-16 min-h-screen pb-28 px-4 pt-4 space-y-4 w-full max-w-5xl mx-auto">
       <button type="button" onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground min-h-9">
         <ChevronLeft className="w-4 h-4" /> {t.back}
       </button>

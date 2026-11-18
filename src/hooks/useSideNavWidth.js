@@ -24,7 +24,9 @@ const NAV_COLLAPSE_BELOW = 140;
  * every other page keeps the full menu. Exposed as the --sidenav-w CSS variable.
  */
 export default function useSideNavWidth(isReader) {
-  const { width: saved, setWidth: save, reset } = useResizableWidth("veritas_sidenav_width", NAV_FULL, NAV_ICONS, 320);
+  // Portrait tablets start as an icon rail; everything else starts with the full menu.
+  const portraitTablet = window.matchMedia("(min-width: 768px) and (max-width: 1100px) and (orientation: portrait)").matches;
+  const { width: saved, setWidth: save, reset } = useResizableWidth("veritas_sidenav_width", portraitTablet ? NAV_ICONS : NAV_FULL, NAV_ICONS, 320);
   const width = isReader ? saved : NAV_FULL;
 
   useEffect(() => {

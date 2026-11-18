@@ -16,7 +16,7 @@ export default function SideNav() {
     <>
       <nav
         aria-label="Main"
-        className={`nav-side fixed left-0 top-[57px] bottom-0 z-40 flex-col py-4 gap-1 overflow-y-auto overflow-x-hidden scrollbar-hide ${collapsed ? "px-2" : "px-3"}`}
+        className={`nav-side ${isReader ? "nav-reader" : ""} fixed left-0 top-[57px] bottom-0 z-40 flex-col py-4 gap-1 overflow-y-auto overflow-x-hidden scrollbar-hide ${collapsed ? "px-2" : "px-3"}`}
         style={{ width, background: "var(--chrome-surface)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRight: "1px solid var(--hairline)" }}
       >
         {[1, 2].map((g) => (
