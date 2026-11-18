@@ -20,7 +20,7 @@ export default function BookSidebar({ book, translation, onNavigate }) {
     <>
       <aside
         className="book-side flex-col fixed top-[57px] bottom-0 border-r border-border bg-background/80 backdrop-blur z-20"
-        style={{ left: "var(--sidenav-w, 224px)", width }}
+        style={{ left: "var(--book-left, 0px)", width }}
       >
         <p className="px-4 pt-4 pb-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t.s6ReaderBooks}</p>
         <nav className="flex-1 overflow-y-auto px-2 pb-6">
@@ -44,6 +44,6 @@ export default function BookSidebar({ book, translation, onNavigate }) {
 
 // Handle follows the sidebar's right edge: side menu width + book list width.
 function BookHandle({ width, onResize, onReset }) {
-  const navNow = () => parseInt(window.getComputedStyle(document.documentElement).getPropertyValue("--sidenav-w")) || 224;
-  return <ResizeHandle className="book-side" left={`calc(var(--sidenav-w, 224px) + ${width}px)`} onResize={(x) => onResize(x - navNow())} onReset={onReset} label="Resize book list" />;
+  const navNow = () => document.querySelector("aside.book-side")?.getBoundingClientRect().left || 0;
+  return <ResizeHandle className="book-side" left={`calc(var(--book-left, 0px) + ${width}px)`} onResize={(x) => onResize(x - navNow())} onReset={onReset} label="Resize book list" />;
 }

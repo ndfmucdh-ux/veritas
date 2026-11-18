@@ -6,10 +6,11 @@
 .nav-bottom { display: flex; }
 .has-sidenav, .reader-offset { padding-left: 0; }
 
-/* Portrait tablet, reader */
+:root { --book-left: 0px; }
+
+/* Portrait tablet, reader: no side menu, only the book list (above the bottom tab bar) */
 @media (min-width: 768px) and (max-width: 1100px) and (orientation: portrait) {
-  .nav-side.nav-reader, .book-side { display: flex; bottom: 4.5rem; }
-  .has-sidenav.is-reader { padding-left: var(--sidenav-w, 72px); }
+  .book-side { display: flex; bottom: 4.5rem !important; }
   .reader-offset { padding-left: var(--booksb-w, 176px); }
 }
 
@@ -17,6 +18,7 @@
 @media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
   .nav-side, .book-side { display: flex; }
   .nav-bottom { display: none; }
+  :root { --book-left: var(--sidenav-w, 224px); }
   .has-sidenav { padding-left: var(--sidenav-w, 224px); }
   .reader-offset { padding-left: var(--booksb-w, 176px); }
 }

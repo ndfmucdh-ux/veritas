@@ -8,14 +8,14 @@ export default function MoreSheet({ open, onClose, items, pathname, title }) {
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 z-[60] md:hidden"
+            className="fixed inset-0 z-[60]"
             style={{ background: "rgba(30,25,15,0.4)" }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
           />
           <motion.div
             role="dialog" aria-label={title}
-            className="fixed left-0 right-0 bottom-0 z-[61] md:hidden rounded-t-3xl px-4 pt-4"
+            className="fixed left-0 right-0 bottom-0 z-[61] rounded-t-3xl px-4 pt-4"
             style={{ background: "hsl(var(--card))", borderTop: "1px solid var(--hairline)", paddingBottom: "calc(20px + env(safe-area-inset-bottom))" }}
             initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
             transition={{ type: "spring", stiffness: 380, damping: 36 }}

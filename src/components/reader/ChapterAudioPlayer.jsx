@@ -120,7 +120,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
 
   return (
-    <div className={`fixed bottom-40 md:bottom-28 right-4 md:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
+    <div className={`fixed bottom-40 min-[1101px]:bottom-28 right-4 md:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
       <AnimatePresence>
         {open && (
           <motion.div
