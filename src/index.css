@@ -48,8 +48,77 @@
     --chart-3: 270 60% 65%;
     --chart-4: 142 71% 45%;
     --chart-5: 0 84% 60%;
+    --body-glow: 223 30% 20%;
+    --success: 142 71% 45%;
+    --warning: 48 96% 53%;
+    color-scheme: dark;
+  }
+
+  /* Light palette: same tokens, re-valued with AA contrast on light surfaces */
+  html[data-theme="light"] {
+    --background: 40 25% 97%;
+    --foreground: 223 35% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 223 35% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 223 35% 12%;
+    --primary: 187 90% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 223 20% 92%;
+    --secondary-foreground: 223 35% 12%;
+    --muted: 223 20% 94%;
+    --muted-foreground: 223 12% 36%;
+    --accent: 38 92% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 223 15% 84%;
+    --input: 223 15% 86%;
+    --surface-1: 40 20% 98%;
+    --surface-2: 0 0% 100%;
+    --surface-3: 223 20% 96%;
+    --surface-4: 0 0% 100%;
+    --fill-1: rgba(20, 30, 60, 0.035);
+    --fill-2: rgba(20, 30, 60, 0.055);
+    --fill-3: rgba(20, 30, 60, 0.08);
+    --hairline: rgba(20, 30, 60, 0.13);
+    --ring: 187 90% 28%;
+    --gold: 38 92% 34%;
+    --cyan: 187 90% 26%;
+    --purple: 270 50% 42%;
+    --chart-1: 187 90% 28%;
+    --chart-2: 38 92% 38%;
+    --chart-3: 270 50% 45%;
+    --chart-4: 142 71% 32%;
+    --chart-5: 0 72% 45%;
+    --body-glow: 40 30% 100%;
+    --success: 142 71% 30%;
+    --warning: 38 92% 38%;
+    color-scheme: light;
   }
 }
+
+/* Short, controlled transition only while the theme is being switched */
+html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, fill 0.2s ease !important;
+}
+
+/* Light-mode remap of hardcoded light-on-dark colors (Tailwind text-white/* and inline rgba whites/accents) */
+html[data-theme="light"] [class^="text-white"],
+html[data-theme="light"] [class*=" text-white"] { color: hsl(var(--foreground) / 0.82); }
+html[data-theme="light"] [class*=" border-white"],
+html[data-theme="light"] [class^="border-white"] { border-color: var(--hairline); }
+html[data-theme="light"] [style^="color: rgba(255, 255, 255"],
+html[data-theme="light"] [style*="; color: rgba(255, 255, 255"],
+html[data-theme="light"] [style^="color: rgb(255, 255, 255"],
+html[data-theme="light"] [style*="; color: rgb(255, 255, 255"] { color: hsl(var(--foreground) / 0.78) !important; }
+html[data-theme="light"] [style^="color: rgb(251, 191, 36"], html[data-theme="light"] [style*="; color: rgb(251, 191, 36"] { color: hsl(var(--gold)) !important; }
+html[data-theme="light"] [style^="color: rgb(167, 139, 250"], html[data-theme="light"] [style*="; color: rgb(167, 139, 250"] { color: hsl(var(--purple)) !important; }
+html[data-theme="light"] [style^="color: rgb(0, 245, 255"], html[data-theme="light"] [style*="; color: rgb(0, 245, 255"],
+html[data-theme="light"] [style^="color: rgb(0, 229, 255"], html[data-theme="light"] [style*="; color: rgb(0, 229, 255"] { color: hsl(var(--cyan)) !important; }
+html[data-theme="light"] [style^="color: rgb(52, 211, 153"], html[data-theme="light"] [style*="; color: rgb(52, 211, 153"] { color: hsl(var(--success)) !important; }
+html[data-theme="light"] [style^="color: rgb(248, 113, 113"], html[data-theme="light"] [style*="; color: rgb(248, 113, 113"] { color: hsl(var(--destructive)) !important; }
+html[data-theme="light"] .red-letter { color: hsl(var(--destructive)); }
 
 @layer base {
   * {
@@ -58,7 +127,7 @@
 
   body {
     @apply bg-background text-foreground font-inter;
-    background: radial-gradient(ellipse at top, hsl(223 30% 20%) 0%, hsl(var(--background)) 70%);
+    background: radial-gradient(ellipse at top, hsl(var(--body-glow)) 0%, hsl(var(--background)) 70%);
     background-attachment: fixed;
     min-height: 100vh;
 

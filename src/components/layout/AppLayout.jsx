@@ -10,6 +10,7 @@ import VeritasLogo from "@/components/ui/VeritasLogo";
 import AssistantButton from "@/components/assistant/AssistantButton";
 import HeaderProfileLink from "@/components/layout/HeaderProfileLink.jsx";
 import LangToggle from "@/components/layout/LangToggle.jsx";
+import ThemeToggle from "@/components/layout/ThemeToggle.jsx";
 import HeaderNavPill from "@/components/layout/HeaderNavPill.jsx";
 import useCurrentUserDisplay from "@/hooks/useCurrentUserDisplay";
 import { useLang } from "@/lib/LanguageContext";
@@ -38,13 +39,14 @@ export default function AppLayout() {
             <motion.div whileHover={{ scale: 1.05 }} style={{ boxShadow: "0 0 18px rgba(255,215,0,0.3)" }} className="rounded-xl">
               <VeritasLogo size={34} />
             </motion.div>
-            <span className="font-cinzel font-bold text-base tracking-[0.12em] text-white/90">
+            <span className="font-cinzel font-bold text-base tracking-[0.12em] text-foreground">
               VERITAS
             </span>
           </Link>
 
           <div className="flex items-center gap-1">
             <LangToggle />
+            <ThemeToggle />
             <HeaderNavPill to="/plans" icon={Target} label={t.plans} />
             <HeaderNavPill to="/discover" icon={Star} label={t.discover} />
             <HeaderProfileLink avatarUrl={displayAvatar} displayName={displayName} />

@@ -6,6 +6,14 @@ import { useLang } from "@/lib/LanguageContext";
 
 const CACHE_KEY = "veritas_daily_reflection";
 const CACHE_DATE_KEY = "veritas_daily_reflection_date";
+const LANG_NAMES = { en: "English", es: "Spanish", fr: "French", pt: "Portuguese", de: "German" };
+const TEXT = {
+  en: { title: "Daily Reflection", loading: "Crafting your reflection…", empty: "Add highlights and notes to get your personal reflection." },
+  es: { title: "Reflexión Diaria", loading: "Generando…", empty: "Añade notas y versículos para tu reflexión personal." },
+  fr: { title: "Réflexion du jour", loading: "Préparation de votre réflexion…", empty: "Ajoutez des surlignages et des notes pour votre réflexion personnelle." },
+  pt: { title: "Reflexão Diária", loading: "Gerando sua reflexão…", empty: "Adicione destaques e notas para sua reflexão pessoal." },
+  de: { title: "Tägliche Besinnung", loading: "Deine Besinnung wird erstellt…", empty: "Füge Markierungen und Notizen hinzu, um deine persönliche Besinnung zu erhalten." },
+};
 
 export default function DailyReflectionCard() {
   const { lang } = useLang();
@@ -17,8 +25,9 @@ export default function DailyReflectionCard() {
   useEffect(() => {
     // Check cache — only generate once per day
     const today = new Date().toISOString().slice(0, 10);
-    const cached = sessionStorage.getItem(CACHE_KEY);
-    const cachedDate = sessionStorage.getItem(CACHE_DATE_KEY);
+    // Cache is per language so switching language regenerates the reflection and verse.
+    const cached = sessionStorage.getItem(`${CACHE_KEY}_${lang}`);
+    const cachedDate = sessionStorage.getItem(`${CACHE_DATE_KEY}_${lang}`);
     if (cached && cachedDate === today) {
       try { setReflection(JSON.parse(cached)); return; } catch {}
     }
@@ -36,7 +45,8 @@ export default function DailyReflectionCard() {
 
       const hlRefs = (highlights || []).slice(0, 10).map(h => h.verse_ref).filter(Boolean).join(", ");
       const noteSnippets = (notes || []).slice(0, 5).map(n => n.note_text?.slice(0, 80)).filter(Boolean).join("; ");
-      const langInst = lang === "es" ? "Respond entirely in Spanish." : "Respond in English.";
+      const langName = LANG_NAMES[lang] || "English";
+      const langInst = `Respond entirely in ${langName}, including the book name in key_verse and the theme.`;
 
       const res = await base44.integrations.Core.InvokeLLM({
         prompt: `${langInst} You are a personal spiritual guide. Based on this user's most highlighted verses (${hlRefs || "John 3:16, Psalm 23:1"}) and recent notes (${noteSnippets || "general reflections"}), generate a unique, personalized daily reflection prompt.
@@ -59,8 +69,8 @@ export default function DailyReflectionCard() {
       });
 
       const today = new Date().toISOString().slice(0, 10);
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify(res));
-      sessionStorage.setItem(CACHE_DATE_KEY, today);
+      sessionStorage.setItem(`${CACHE_KEY}_${lang}`, JSON.stringify(res));
+      sessionStorage.setItem(`${CACHE_DATE_KEY}_${lang}`, today);
       setReflection(res);
     } catch {
       setError(true);
@@ -91,7 +101,7 @@ export default function DailyReflectionCard() {
               <Sparkles className="w-3 h-3" style={{ color: "#a78bfa" }} />
             </div>
             <p className="font-cinzel text-xs font-semibold flex-1" style={{ color: "#a78bfa" }}>
-              {lang === "es" ? "Reflexión Diaria" : "Daily Reflection"}
+              {(TEXT[lang] || TEXT.en).title}
             </p>
             {/* Refresh + Dismiss side by side */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -112,14 +122,14 @@ export default function DailyReflectionCard() {
             <div className="flex items-center gap-2 pt-2">
               <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#a78bfa" }} />
               <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
-                {lang === "es" ? "Generando…" : "Crafting your reflection…"}
+                {(TEXT[lang] || TEXT.en).loading}
               </p>
             </div>
           )}
 
           {error && !loading && (
             <p className="text-xs font-inter pt-2" style={{ color: "rgba(255,255,255,0.4)" }}>
-              {lang === "es" ? "Añade notas y versículos para tu reflexión personal." : "Add highlights and notes to get your personal reflection."}
+              {(TEXT[lang] || TEXT.en).empty}
             </p>
           )}
 
