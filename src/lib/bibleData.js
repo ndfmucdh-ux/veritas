@@ -161,7 +161,7 @@ const REVERSE_BOOKS = (() => {
 export const toEnglishBookName = (name = "") => REVERSE_BOOKS[name] || name;
 
 // Default translation for an app language (Spanish → BTX3 Biblia Textual, English → KJV).
-export const DEFAULT_TRANSLATION_BY_LANG = { en: "KJV", es: "BTX3" };
+export const DEFAULT_TRANSLATION_BY_LANG = { en: "KJV", es: "BTX3", fr: "LSG", pt: "ARA", de: "LUT" };
 
 // Language of a translation's CONTENT (e.g. BTX3 → "es", KJV → "en").
 export const getTranslationLang = (code = "KJV") =>

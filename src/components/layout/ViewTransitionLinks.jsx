@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { smoothNavigate } from "@/lib/smoothNavigate";
+import { prefetchRoute } from "@/lib/routeLoaders";
 
 /**
  * Routes every in-app <a>/<Link> click through smoothNavigate (View Transitions).
@@ -22,8 +23,23 @@ export default function ViewTransitionLinks() {
       e.preventDefault();
       smoothNavigate(() => navigate(to));
     };
+    // Start loading the target page's code the moment a finger/cursor lands on a link.
+    const onPress = (e) => {
+      const a = e.target.closest?.("a[href]");
+      if (!a) return;
+      const url = new URL(a.href, window.location.href);
+      if (url.origin === window.location.origin) prefetchRoute(url.pathname);
+    };
     document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    document.addEventListener("pointerdown", onPress, { passive: true });
+    document.addEventListener("touchstart", onPress, { passive: true });
+    document.addEventListener("pointerover", onPress, { passive: true });
+    return () => {
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("pointerdown", onPress);
+      document.removeEventListener("touchstart", onPress);
+      document.removeEventListener("pointerover", onPress);
+    };
   }, [navigate]);
 
   return null;
