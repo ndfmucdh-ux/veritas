@@ -13,21 +13,21 @@ export default function QuickActionsGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 auto-rows-fr gap-3">
       {actions.map((action, i) => {
         const Icon = action.icon;
         return (
-          <Link key={action.path} to={action.path}>
+          <Link key={action.path} to={action.path} className="block h-full">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + i * 0.05 }}
               whileTap={{ scale: 0.96 }}
-              className="flex flex-col gap-2 rounded-2xl px-4 py-5"
+              className="h-full min-h-[92px] flex flex-col gap-2 rounded-2xl px-4 py-5"
               style={{ background: action.bg, border: `1px solid ${action.border}` }}
             >
               <Icon className="w-6 h-6" style={{ color: action.color }} />
-              <span className="font-cinzel text-sm font-semibold text-white/80">{action.label}</span>
+              <span className="font-cinzel text-sm font-semibold text-white/80 break-words">{action.label}</span>
             </motion.div>
           </Link>
         );

@@ -15,21 +15,21 @@ const CATEGORIES = [
 export default function CategoryCards() {
   const { t } = useLang();
   return (
-    <div className="grid grid-cols-3 gap-2.5">
+    <div className="grid grid-cols-3 auto-rows-fr gap-2.5">
       {CATEGORIES.map((cat, i) => {
         const Icon = cat.icon;
         return (
-          <Link key={cat.key} to={cat.path}>
+          <Link key={cat.key} to={cat.path} className="block h-full">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.05, type: "spring", stiffness: 360, damping: 24 }}
               whileTap={{ scale: 0.95 }}
-              className="flex flex-col items-center gap-2 rounded-2xl py-4 px-2 cursor-pointer"
+              className="h-full min-h-[84px] flex flex-col items-center justify-center gap-2 rounded-2xl py-4 px-2 cursor-pointer"
               style={{ background: cat.bg, border: `1px solid ${cat.border}` }}
             >
               <Icon className="w-6 h-6" style={{ color: cat.color }} />
-              <span className="font-cinzel text-[11px] font-semibold text-center leading-tight" style={{ color: cat.color }}>
+              <span className="font-cinzel text-[11px] font-semibold text-center leading-tight break-words max-w-full" style={{ color: cat.color }}>
                 {t[cat.key]}
               </span>
             </motion.div>

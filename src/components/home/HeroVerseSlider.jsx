@@ -181,7 +181,7 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
         />
       </AnimatePresence>
       {/* Gradient overlay */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,10,20,0.3) 0%, hsl(var(--background) / 0.78) 60%, hsl(var(--background) / 0.97) 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,10,20,0.3) 0%, rgba(10,14,26,0.78) 60%, rgba(10,14,26,0.97) 100%)" }} />
 
       {/* Shimmer on load */}
       {loading && <div className="absolute inset-0 shimmer" />}

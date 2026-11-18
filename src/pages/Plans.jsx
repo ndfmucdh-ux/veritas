@@ -298,7 +298,7 @@ export default function Plans() {
         {/* Photo hero header */}
         <div className="relative h-56 md:h-72 overflow-hidden">
           <img src={activePlan.photo} alt={activePlan.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, hsl(var(--background) / 0.85) 70%, hsl(var(--background)) 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(10,14,26,0.82) 70%, rgba(10,14,26,0.95) 100%)" }} />
           <button
             onClick={() => { setActivePlan(null); setSelectedDay(null); setGenDevo(null); }}
             className="absolute top-4 left-4 flex items-center gap-1.5 text-white/80 hover:text-white text-sm px-3 py-1.5 rounded-xl transition-colors"
@@ -524,7 +524,7 @@ export default function Plans() {
       {/* Header */}
       <div className="relative h-44 overflow-hidden">
         <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80" alt="Reading Plans" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), hsl(var(--background) / 0.95))" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(10,14,26,0.92))" }} />
         <div className="absolute bottom-0 px-5 pb-5">
           <h1 className="font-cinzel text-2xl font-bold text-white">{t.readingPlansTitle}</h1>
           <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.structuredJourneys}</p>
@@ -668,7 +668,7 @@ export default function Plans() {
               {/* Photo */}
               <div className="relative h-36 overflow-hidden">
                 <img src={plan.photo} alt={plan.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, hsl(var(--background) / 0.95))" }} />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(10,14,26,0.9))" }} />
                 <div className="absolute top-3 right-3 flex gap-2">
                   {plan.lang === "es" && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-inter flex items-center gap-1"

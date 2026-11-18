@@ -240,14 +240,15 @@ function VerseRow({
             </p>
 
             {/* Highlight colors */}
-            <div className="flex items-center gap-2 mb-3">
-              <Highlighter className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />
+            <div className="flex items-center gap-2.5 mb-3 flex-wrap px-1">
+              <Highlighter className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.5)" }} />
               {COLORS.map(c => (
                 <button key={c} onClick={() => applyHighlight(c)}
-                  className="w-6 h-6 rounded-full transition-transform hover:scale-110"
+                  aria-label={c}
+                  className="w-[26px] h-[26px] shrink-0 rounded-full transition-transform hover:scale-110"
                   style={{
                     background: COLOR_HEX[c],
-                    boxShadow: highlight?.color === c ? `0 0 0 2px white, 0 0 0 4px ${COLOR_HEX[c]}` : "none"
+                    boxShadow: highlight?.color === c ? `0 0 0 2px rgb(var(--ink)), 0 0 0 4px ${COLOR_HEX[c]}` : "none"
                   }} />
               ))}
             </div>

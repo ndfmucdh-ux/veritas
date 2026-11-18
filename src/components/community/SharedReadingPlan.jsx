@@ -9,9 +9,12 @@ export default function SharedReadingPlan() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [newPlanName, setNewPlanName] = useState("");
+  const [me, setMe] = useState(null);
+  const [joining, setJoining] = useState(null);
 
   useEffect(() => {
     loadPlans();
+    base44.auth.me().then(setMe).catch(() => setMe(null));
   }, []);
 
   const loadPlans = async () => {
@@ -44,14 +47,29 @@ export default function SharedReadingPlan() {
     }
   };
 
+  const isMember = (plan) => !!me?.email && (plan.member_emails || []).includes(me.email);
+
+  // Join / leave toggle: each user is counted once, however many times they tap.
   const handleJoinPlan = async (plan) => {
+    if (joining === plan.id) return;
+    let user = me;
+    if (!user) {
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
+    setJoining(plan.id);
     try {
-      await base44.entities.CommunityGroup.update(plan.id, {
-        member_count: (plan.member_count || 1) + 1
-      });
-      loadPlans();
+      const emails = plan.member_emails || [];
+      const already = emails.includes(user.email);
+      const nextEmails = already ? emails.filter(e => e !== user.email) : [...emails, user.email];
+      const base = Math.max(plan.member_count || 1, emails.length);
+      const nextCount = Math.max(1, already ? base - 1 : base + 1);
+      await base44.entities.CommunityGroup.update(plan.id, { member_emails: nextEmails, member_count: nextCount });
+      await loadPlans();
     } catch (err) {
       console.error(err);
+    } finally {
+      setJoining(null);
     }
   };
 
@@ -129,9 +147,13 @@ export default function SharedReadingPlan() {
                 <div className="flex items-center gap-2">
                   <SharedReadingPlanInvite planId={plan.id} planName={plan.name} />
                   <motion.button whileTap={{ scale: 0.95 }} onClick={() => handleJoinPlan(plan)}
-                    className="px-4 py-2 rounded-lg text-xs font-cinzel min-h-10"
-                    style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff" }}>
-                    Join
+                    disabled={joining === plan.id}
+                    aria-pressed={isMember(plan)}
+                    className="px-4 py-2 rounded-lg text-xs font-cinzel min-h-10 disabled:opacity-60"
+                    style={isMember(plan)
+                      ? { background: "rgba(52,211,153,0.15)", color: "var(--t-green)" }
+                      : { background: "rgba(0,245,255,0.15)", color: "var(--t-cyan)" }}>
+                    {joining === plan.id ? "…" : isMember(plan) ? "Joined ✓" : "Join"}
                   </motion.button>
                 </div>
               </div>

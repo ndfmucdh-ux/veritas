@@ -249,7 +249,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                                 padding: 0, background: "transparent", textAlign: "left",
                               }}>
                               <img src={cat.image} alt={cat.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} onError={e => { e.target.style.display = "none"; }} />
-                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.75) 100%)" }} />
+                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%)" }} />
                               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1.5, background: `linear-gradient(90deg, transparent, ${cat.color}99, transparent)` }} />
                               <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 12px" }}>
                                 <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.1 }}>
@@ -291,7 +291,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                                 padding: 0, background: "transparent", textAlign: "left",
                               }}>
                               <img src={img} alt={bname} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} onError={e => { e.target.style.display = "none"; }} />
-                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%)" }} />
+                              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.88) 100%)" }} />
                               <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1.5, background: `linear-gradient(90deg, transparent, ${selectedCategory.color}77, transparent)` }} />
                               <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px 10px" }}>
                                 <p style={{ fontFamily: "'Cinzel', serif", fontSize: 11, fontWeight: 700, color: "#fff", margin: 0, lineHeight: 1.1 }}>

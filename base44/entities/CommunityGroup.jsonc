@@ -29,6 +29,13 @@
     },
     "leader_email": {
       "type": "string"
+    },
+    "member_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who joined, so each user is counted once"
     }
   },
   "required": [

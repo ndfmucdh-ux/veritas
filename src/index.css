@@ -177,6 +177,11 @@ html[data-theme="light"] :is(.text-blue-300, .text-blue-400) { color: var(--t-bl
 :is(.text-muted-foreground) { color: hsl(var(--muted-foreground)); }
 html[data-theme="light"] { --muted-foreground: 223 14% 30%; }
 
+/* Cards: text never spills out of its box, grid cells share the same height */
+body { overflow-wrap: break-word; }
+.grid > * { min-width: 0; }
+.grid > a > :only-child { height: 100%; }
+
 /* Mobile ergonomics: larger icons, readable micro-text, comfortable tap targets */
 @media (max-width: 767px) {
   svg.lucide.w-3, svg.lucide.w-3\.5 { width: 1.1rem; height: 1.1rem; }

@@ -36,7 +36,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
   return (
     <div className="relative h-52 overflow-hidden">
       <img src={heroUrl || DEFAULT_HERO} alt="" className="w-full h-full object-cover" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, hsl(var(--background) / 0.92) 80%, hsl(var(--background)) 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(10,14,26,0.85) 80%, rgba(10,14,26,0.95) 100%)" }} />
 
       <button
         onClick={() => heroInputRef.current?.click()}

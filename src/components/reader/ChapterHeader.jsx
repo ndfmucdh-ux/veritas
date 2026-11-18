@@ -16,7 +16,7 @@ export default function ChapterHeader({ book, chapter, testament, translation })
   return (
     <div className="relative h-36 rounded-2xl overflow-hidden mb-6">
       <img src={imgSrc} alt={book} className="w-full h-full object-cover" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1), hsl(var(--background) / 0.9))" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(10,14,26,0.88))" }} />
       <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
         <motion.h2
           key={`${book}-${chapter}`}
