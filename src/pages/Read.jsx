@@ -27,6 +27,8 @@ import IconBtn from "@/components/reader/ReaderIconButton.jsx";
 import ChapterDownloadButton from "@/components/reader/ChapterDownloadButton.jsx";
 import useVerseSelection from "@/hooks/useVerseSelection";
 import { useLang } from "@/lib/LanguageContext";
+import ChapterPager from "@/components/reader/ChapterPager";
+import BookSidebar from "@/components/reader/BookSidebar";
 
 
 export default function Read() {
@@ -242,9 +244,10 @@ export default function Read() {
 
   return (
     <motion.div {...pageTransition}
-      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen"}`}
+      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen xl:pl-64"}`}
       style={{ background: oledMode ? "#000000" : immersive ? "hsl(var(--background))" : undefined }}
     >
+      {!immersive && <BookSidebar book={book} translation={translation} onNavigate={handleNavigate} />}
       {/* Reader top bar */}
       <div
         className="sticky z-30 px-4 py-3 space-y-3"
@@ -301,7 +304,7 @@ export default function Read() {
 
       {/* Scrollable reading area */}
       <div ref={containerRef} className="flex-1 overflow-y-auto overflow-x-visible scrollbar-hide">
-        <div className="px-4 md:px-8 max-w-2xl mx-auto w-full pb-32 pt-2">
+        <div className="mx-3 sm:mx-auto sm:w-full max-w-2xl my-3 mb-40 rounded-3xl bg-card border border-border px-4 md:px-8 pb-6 pt-1" style={{ boxShadow: "0 4px 24px rgba(40,30,15,0.08)" }}>
           {/* Chapter header with parallax */}
           <ChapterHeader
             book={book}
@@ -397,9 +400,7 @@ export default function Read() {
 
           {/* Bottom nav */}
           {!loading && verses.length > 0 && (
-            <div className="mt-12 pb-44 md:pb-32 pr-16">
-              <ChapterNavigator book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
-            </div>
+            <ChapterPager book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
           )}
         </div>
       </div>

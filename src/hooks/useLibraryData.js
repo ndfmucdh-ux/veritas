@@ -73,5 +73,6 @@ export default function useLibraryData() {
     deleteNote,
     updateBookmarkTags,
     updateNoteTags,
+    reload: loadAll,
   };
 }

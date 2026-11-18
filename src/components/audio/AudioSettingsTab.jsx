@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Toggle from "@/components/ui/Toggle";
 import { useLang } from "@/lib/LanguageContext";
 import { motion } from "framer-motion";
 
@@ -40,12 +41,7 @@ export default function AudioSettingsTab({
             <p className="font-cinzel text-sm text-white">{t.s1EnableRem}</p>
             <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{t.s1DailyPing}</p>
           </div>
-          <button onClick={() => setNotifPrefs(p => ({ ...p, enabled: !p.enabled }))}
-            className="w-12 h-6 rounded-full relative flex items-center px-1 transition-colors"
-            style={{ background: notifPrefs.enabled ? "rgba(0,245,255,0.3)" : "rgb(var(--ink) / 0.1)" }}>
-            <motion.span animate={{ x: notifPrefs.enabled ? 24 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-              className="w-4 h-4 rounded-full bg-white" />
-          </button>
+          <Toggle value={notifPrefs.enabled} onChange={() => setNotifPrefs(p => ({ ...p, enabled: !p.enabled }))} label={t.s1EnableRem} />
         </div>
 
         <div>

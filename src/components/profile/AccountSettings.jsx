@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Toggle from "@/components/ui/Toggle";
 import { savePrefs } from "@/lib/preferencesSync";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -315,12 +316,7 @@ export default function AccountSettings({ user }) {
                               ].map(({ label, value, setter, color }) => (
                                 <div key={label} className="flex items-center justify-between py-2 border-b" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
                                   <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.65)" }}>{tr(label)}</p>
-                                  <motion.button onClick={() => setter(v => !v)}
-                                    className="w-11 h-6 rounded-full relative flex items-center px-1"
-                                    style={{ background: value ? `${color}30` : "rgb(var(--ink) / 0.08)" }}>
-                                    <motion.span animate={{ x: value ? 18 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-                                      className="w-4 h-4 rounded-full bg-white shadow-sm" />
-                                  </motion.button>
+                                  <Toggle value={value} onChange={() => setter(v => !v)} label={tr(label)} />
                                 </div>
                               ))}
                             </div>

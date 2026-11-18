@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Toggle from "@/components/ui/Toggle";
 import { motion } from "framer-motion";
 import { BellOff, Bell, Clock, Check, AlarmClock } from "lucide-react";
 
@@ -48,13 +49,7 @@ export default function QuietModeSettings() {
               </p>
             </div>
           </div>
-          <motion.button
-            onClick={() => setQuietMode(v => !v)}
-            className="w-12 h-6 rounded-full relative flex items-center px-1 flex-shrink-0"
-            style={{ background: quietMode ? "rgba(167,139,250,0.35)" : "rgb(var(--ink) / 0.08)" }}>
-            <motion.span animate={{ x: quietMode ? 24 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-              className="w-4 h-4 rounded-full bg-white shadow-sm" />
-          </motion.button>
+          <Toggle value={quietMode} onChange={() => setQuietMode(v => !v)} label="Quiet mode" />
         </div>
 
         {quietMode && (
@@ -69,12 +64,7 @@ export default function QuietModeSettings() {
                 <Bell className="w-3.5 h-3.5" style={{ color: "#00f5ff" }} />
                 <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.75)" }}>Daily Reading Reminder</p>
               </div>
-              <motion.button onClick={() => setAllowDailyReading(v => !v)}
-                className="w-11 h-6 rounded-full relative flex items-center px-1"
-                style={{ background: allowDailyReading ? "rgba(0,245,255,0.3)" : "rgb(var(--ink) / 0.08)" }}>
-                <motion.span animate={{ x: allowDailyReading ? 18 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-                  className="w-4 h-4 rounded-full bg-white shadow-sm" />
-              </motion.button>
+              <Toggle value={allowDailyReading} onChange={() => setAllowDailyReading(v => !v)} label="Daily Reading Reminder" />
             </div>
 
             {[

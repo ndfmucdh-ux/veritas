@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Toggle from "@/components/ui/Toggle";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 
@@ -32,12 +33,7 @@ export function ToggleRow({ icon: Icon, label, value, onChange, color }) {
     <div className="flex items-center gap-3 py-3 border-b" style={{ borderColor: "rgb(var(--ink) / 0.05)" }}>
       <Icon className="w-4 h-4 flex-shrink-0" style={{ color }} />
       <p className="flex-1 text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.7)" }}>{label}</p>
-      <motion.button onClick={onChange}
-        className="w-11 h-6 rounded-full relative flex items-center px-1"
-        style={{ background: value ? "rgba(0,245,255,0.25)" : "rgb(var(--ink) / 0.08)" }}>
-        <motion.span animate={{ x: value ? 18 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-          className="w-4 h-4 rounded-full bg-white shadow-sm" />
-      </motion.button>
+      <Toggle value={value} onChange={onChange} label={label} />
     </div>
   );
 }

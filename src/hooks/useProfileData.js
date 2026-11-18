@@ -39,12 +39,14 @@ export default function useProfileData() {
     await base44.auth.updateMe({ full_name: trimmed });
     setUser(u => ({ ...u, full_name: trimmed }));
     sessionStorage.setItem("veritas_display_name", trimmed);
+    window.dispatchEvent(new Event("veritas:profile"));
   };
 
   const uploadAvatar = async (file) => {
     const { file_url } = await base44.integrations.Core.UploadFile({ file });
     await base44.auth.updateMe({ avatar_url: file_url });
     sessionStorage.setItem("veritas_avatar_url", file_url);
+    window.dispatchEvent(new Event("veritas:profile"));
     return file_url;
   };
 

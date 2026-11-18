@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import Toggle from "@/components/ui/Toggle";
 
 export default function ReaderSettingsPanel({
   open,
@@ -88,23 +89,5 @@ function SettingRow({ label, children }) {
       <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{label}</span>
       {children}
     </div>
-  );
-}
-
-function Toggle({ value, onChange }) {
-  return (
-    <motion.button
-      type="button"
-      aria-pressed={value}
-      onClick={onChange}
-      className="w-11 h-6 rounded-full relative flex items-center px-1 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/70"
-      style={{ background: value ? "rgba(0,245,255,0.3)" : "rgb(var(--ink) / 0.08)" }}
-    >
-      <motion.span
-        animate={{ x: value ? 18 : 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 24 }}
-        className="w-4 h-4 rounded-full bg-white shadow-sm"
-      />
-    </motion.button>
   );
 }

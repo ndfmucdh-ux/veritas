@@ -35,7 +35,7 @@ export function deriveViews(interactions = []) {
       highlights.push({ id: i.id, verse_ref: i.verse_ref, book: i.book, chapter: i.chapter, verse: i.verse, translation: i.translation, color: i.highlight_color, _interaction: true });
     }
     if (i.has_note || i.note_text) {
-      notes.push({ id: i.id, verse_ref: i.verse_ref, book: i.book, chapter: i.chapter, verse: i.verse, translation: i.translation, note_text: i.note_text, tags: i.tags || [], _interaction: true });
+      notes.push({ id: i.id, verse_ref: i.verse_ref, book: i.book, chapter: i.chapter, verse: i.verse, translation: i.translation, note_text: i.note_text, note_title: i.note_title, created_date: i.created_date, tags: i.tags || [], _interaction: true });
     }
   }
   return { bookmarks, highlights, notes };
