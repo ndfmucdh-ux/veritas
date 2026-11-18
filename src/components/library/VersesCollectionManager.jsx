@@ -109,7 +109,7 @@ export default function VersesCollectionManager() {
             <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
               placeholder="Collection name (e.g., Comfort, Promises)"
               className="w-full px-3 py-2.5 rounded-lg text-sm font-inter focus:outline-none"
-              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.8)" }} />
+              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.8)" }} />
             <div className="flex flex-wrap gap-2">
               {ICONS.map(ic => (
                 <button key={ic} onClick={() => setNewIcon(ic)}
@@ -134,7 +134,7 @@ export default function VersesCollectionManager() {
               </button>
               <button onClick={() => setShowCreateForm(false)}
                 className="flex-1 py-2.5 rounded-lg font-cinzel text-sm"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                 Cancel
               </button>
             </div>
@@ -165,7 +165,7 @@ export default function VersesCollectionManager() {
                   </motion.button>
                 )}
                 <button onClick={() => setExpandedId(expandedId === col.id ? null : col.id)}
-                  className="p-2 rounded-lg transition-all" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.45)" }}>
+                  className="p-2 rounded-lg transition-all" style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.45)" }}>
                   <ChevronDown className="w-4 h-4 transition-transform" style={{ transform: expandedId === col.id ? "rotate(180deg)" : "none" }} />
                 </button>
                 <button onClick={() => deleteCollection(col.id)} className="p-2 rounded-lg hover:bg-red-500/10 transition-all">
@@ -184,7 +184,7 @@ export default function VersesCollectionManager() {
                     ) : (
                       <div className="space-y-1 max-h-40 overflow-y-auto scrollbar-hide">
                         {(col.verse_refs || []).map((ref, i) => (
-                          <p key={i} className="text-xs font-cinzel px-2 py-1 rounded-lg" style={{ color: "rgba(255,255,255,0.65)", background: "rgba(255,255,255,0.04)" }}>{ref}</p>
+                          <p key={i} className="text-xs font-cinzel px-2 py-1 rounded-lg" style={{ color: "rgba(255,255,255,0.65)", background: "var(--fill-2)" }}>{ref}</p>
                         ))}
                       </div>
                     )}
@@ -208,7 +208,7 @@ export default function VersesCollectionManager() {
                         </div>
                         <button onClick={() => setAddingFolderTo(null)}
                           className="text-xs font-cinzel px-3 py-1.5 rounded-lg"
-                          style={{ color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.04)" }}>
+                          style={{ color: "rgba(255,255,255,0.35)", background: "var(--fill-2)" }}>
                           Cancel
                         </button>
                       </div>

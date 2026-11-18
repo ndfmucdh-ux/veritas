@@ -15,7 +15,7 @@ export default function AudioHistoryTab({ audioHistory, completed, bookmarkSaved
       {audioHistory.map((a, i) => (
         <motion.div key={a.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
           className="flex items-center gap-3 px-4 py-3 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.03)", border: a.completed ? "1px solid rgba(52,211,153,0.2)" : "1px solid rgba(255,255,255,0.06)" }}>
+          style={{ background: "var(--fill-1)", border: a.completed ? "1px solid rgba(52,211,153,0.2)" : "1px solid rgba(255,255,255,0.06)" }}>
           <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ background: a.completed ? "rgba(52,211,153,0.12)" : "rgba(255,255,255,0.05)" }}>
             {a.completed ? <CheckCircle2 className="w-4 h-4" style={{ color: "#34d399" }} /> : <Headphones className="w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />}

@@ -129,7 +129,7 @@ export default function PrayerWall() {
                 placeholder="Share your prayer request with the community…"
                 rows={3}
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter resize-none focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }} />
+                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }} />
               <div className="flex flex-wrap gap-1.5">
                 {CATEGORIES.filter(c => c.id !== "all").map(cat => (
                   <button key={cat.id} onClick={() => setNewCategory(cat.id)}
@@ -146,7 +146,7 @@ export default function PrayerWall() {
               <div className="flex gap-2">
                 <button onClick={() => setShowForm(false)}
                   className="flex-1 py-2.5 rounded-xl font-cinzel text-xs"
-                  style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   Cancel
                 </button>
                 <motion.button whileTap={{ scale: 0.96 }} onClick={submitRequest} disabled={submitting || !newRequest.trim()}
@@ -193,7 +193,7 @@ export default function PrayerWall() {
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.03 }}
                   className="rounded-2xl p-4"
-                  style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${color}22` }}>
+                  style={{ background: "var(--fill-1)", border: `1px solid ${color}22` }}>
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-sm"
                       style={{ background: `${color}12`, border: `1px solid ${color}25` }}>

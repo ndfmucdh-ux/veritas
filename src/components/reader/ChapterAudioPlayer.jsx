@@ -130,7 +130,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             transition={{ duration: 0.22 }}
             className="mb-2 rounded-2xl px-4 py-4 space-y-3"
             style={{
-              background: "rgba(8,12,24,0.97)",
+              background: "var(--popover-surface)",
               border: "1px solid rgba(0,245,255,0.18)",
               backdropFilter: "blur(24px)",
               boxShadow: "0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,245,255,0.08)"
@@ -151,7 +151,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             </div>
 
             {/* Progress bar */}
-            <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+            <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
               <motion.div className="h-full rounded-full"
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4 }}
@@ -220,7 +220,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
         onClick={() => { setOpen(v => !v); if (open && playing) stopAll(); }}
         className="flex items-center gap-2 px-4 py-2.5 rounded-2xl w-full justify-center"
         style={{
-          background: open ? "rgba(8,12,24,0.97)" : "rgba(8,12,24,0.85)",
+          background: open ? "var(--popover-surface)" : "hsl(var(--surface-4) / 0.9)",
           border: `1px solid ${playing ? "rgba(0,245,255,0.35)" : "rgba(255,255,255,0.1)"}`,
           backdropFilter: "blur(16px)",
           boxShadow: playing ? "0 0 20px rgba(0,245,255,0.15)" : "0 4px 20px rgba(0,0,0,0.5)"

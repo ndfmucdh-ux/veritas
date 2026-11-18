@@ -226,7 +226,7 @@ export default function StudyNoteTemplates({ book, chapter }) {
                 onChange={e => setNewTemplateName(e.target.value)}
                 placeholder="Template name (e.g. Prayer Focus)"
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
+                style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
               />
 
               {/* Sections */}
@@ -243,7 +243,7 @@ export default function StudyNoteTemplates({ book, chapter }) {
                       }}
                       placeholder={`Section ${i + 1} name`}
                       className="flex-1 rounded-xl px-3 py-2 text-xs font-inter focus:outline-none"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}
+                      style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.8)" }}
                     />
                     {newTemplateSections.length > 1 && (
                       <button
@@ -258,7 +258,7 @@ export default function StudyNoteTemplates({ book, chapter }) {
                 <button
                   onClick={() => setNewTemplateSections(prev => [...prev, { title: "", placeholder: "Notes..." }])}
                   className="flex items-center gap-1.5 text-xs font-cinzel px-3 py-1.5 rounded-lg"
-                  style={{ color: "rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                  style={{ color: "rgba(255,255,255,0.4)", background: "var(--fill-2)", border: "1px dashed rgba(255,255,255,0.1)" }}>
                   <Plus className="w-3 h-3" /> Add Section
                 </button>
               </div>
@@ -266,7 +266,7 @@ export default function StudyNoteTemplates({ book, chapter }) {
               <div className="flex gap-2">
                 <button onClick={() => setShowCreate(false)}
                   className="flex-1 py-2 rounded-xl text-xs font-cinzel"
-                  style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                   Cancel
                 </button>
                 <button onClick={handleSaveTemplate} disabled={!newTemplateName.trim()}
@@ -330,7 +330,7 @@ export default function StudyNoteTemplates({ book, chapter }) {
                     rows={3}
                     className="w-full rounded-xl px-3 py-2.5 text-sm font-inter resize-none focus:outline-none leading-relaxed transition-all"
                     style={{
-                      background: "rgba(255,255,255,0.04)",
+                      background: "var(--fill-2)",
                       border: "1px solid rgba(255,255,255,0.08)",
                       color: "rgba(255,255,255,0.82)",
                       outline: "none",

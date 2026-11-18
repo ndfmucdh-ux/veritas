@@ -36,7 +36,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
     >
       <div
         className="w-full max-w-sm rounded-2xl p-5 space-y-4"
-        style={{ background: "rgba(12,16,30,0.98)", border: "1px solid rgba(255,255,255,0.1)" }}
+        style={{ background: "var(--popover-surface)", border: "1px solid rgba(255,255,255,0.1)" }}
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -81,7 +81,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
               onKeyDown={e => e.key === "Enter" && addCustom()}
               placeholder="e.g. Morning Devotion"
               className="flex-1 rounded-xl px-3 py-2 text-sm font-inter focus:outline-none"
-              style={{ fontSize: "16px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
+              style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
             />
             <button
               onClick={addCustom}

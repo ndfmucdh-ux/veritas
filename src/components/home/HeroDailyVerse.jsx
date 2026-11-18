@@ -58,9 +58,9 @@ export default function HeroDailyVerse() {
 
         {loading ? (
           <div className="space-y-2 animate-pulse">
-            <div className="h-4 rounded-full" style={{ background: "rgba(255,255,255,0.07)", width: "90%" }} />
-            <div className="h-4 rounded-full" style={{ background: "rgba(255,255,255,0.05)", width: "75%" }} />
-            <div className="h-4 rounded-full" style={{ background: "rgba(255,255,255,0.05)", width: "60%" }} />
+            <div className="h-4 rounded-full" style={{ background: "var(--fill-3)", width: "90%" }} />
+            <div className="h-4 rounded-full" style={{ background: "var(--fill-2)", width: "75%" }} />
+            <div className="h-4 rounded-full" style={{ background: "var(--fill-2)", width: "60%" }} />
           </div>
         ) : (
           <motion.p
@@ -88,7 +88,7 @@ export default function HeroDailyVerse() {
           exit={{ height: 0, opacity: 0 }}
           className="px-5 pb-4"
         >
-          <div className="rounded-xl p-3 mt-1" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="rounded-xl p-3 mt-1" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <p className="text-[10px] font-inter uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>Reflection</p>
             <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>{verse.reflection}</p>
           </div>
@@ -100,7 +100,7 @@ export default function HeroDailyVerse() {
         <button
           onClick={() => setShowReflection(v => !v)}
           className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}
+          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}
         >
           {showReflection ? "Hide" : "Reflect"}
         </button>
@@ -116,7 +116,7 @@ export default function HeroDailyVerse() {
         <button
           onClick={handleShare}
           className="ml-auto flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-          style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}
+          style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}
         >
           <Share2 className="w-3 h-3" /> Share
         </button>

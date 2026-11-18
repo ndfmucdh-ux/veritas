@@ -14,7 +14,7 @@ export default function StartReadingBooks() {
             transition={{ delay: 0.45 + i * 0.04 }}
             whileTap={{ scale: 0.93 }}
             className="flex-shrink-0 px-5 py-3.5 rounded-xl font-cinzel text-sm whitespace-nowrap"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)" }}
+            style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)" }}
           >
             {name}
           </motion.div>

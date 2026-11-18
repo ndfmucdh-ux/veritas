@@ -73,7 +73,7 @@ export default function PrayerCard({
           <div className="flex gap-2">
             <button onClick={() => onSetAnswering(null)}
               className="flex-1 py-1.5 rounded-xl text-xs font-cinzel"
-              style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
+              style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
             <button onClick={() => onMarkAnswered(prayer)}
               className="flex-1 py-1.5 rounded-xl text-xs font-cinzel flex items-center justify-center gap-1.5"
               style={{ background: "rgba(52,211,153,0.15)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}>

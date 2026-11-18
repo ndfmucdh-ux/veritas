@@ -64,7 +64,7 @@ export default function QuietModeSettings() {
             </p>
 
             <div className="flex items-center justify-between px-3 py-3 rounded-xl"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
               <div className="flex items-center gap-2">
                 <Bell className="w-3.5 h-3.5" style={{ color: "#00f5ff" }} />
                 <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>Daily Reading Reminder</p>
@@ -84,7 +84,7 @@ export default function QuietModeSettings() {
               "Streak Alert",
             ].map(label => (
               <div key={label} className="flex items-center justify-between px-3 py-2.5 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.05)" }}>
                 <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.45)" }}>{label}</p>
                 <span className="text-[9px] font-cinzel px-2 py-0.5 rounded-full" style={{ background: "rgba(248,113,113,0.12)", color: "#f87171", border: "1px solid rgba(248,113,113,0.2)" }}>
                   Silenced

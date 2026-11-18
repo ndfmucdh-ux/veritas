@@ -26,7 +26,7 @@ export default function VoiceNotesPanel({ notes, audioRef, playingAudioUrl, onPl
       </div>
       <div className="space-y-2">
         {notes.slice(0, 5).map(note => (
-          <div key={note.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div key={note.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <button
               type="button"
               onClick={() => toggleAudio(note.audio_url)}

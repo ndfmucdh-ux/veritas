@@ -92,7 +92,7 @@ export default function ReadingGoals() {
             const idx = opts.indexOf(target);
             if (idx > 0) setTarget(opts[idx - 1]);
           }} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}>
+            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>
             <ChevronDown className="w-4 h-4" />
           </button>
           <span className="font-cinzel text-2xl font-bold w-10 text-center" style={{ color: accentColor }}>
@@ -103,7 +103,7 @@ export default function ReadingGoals() {
             const idx = opts.indexOf(target);
             if (idx < opts.length - 1) setTarget(opts[idx + 1]);
           }} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}>
+            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>
             <ChevronUp className="w-4 h-4" />
           </button>
         </div>
@@ -115,7 +115,7 @@ export default function ReadingGoals() {
           <span>{progress} of {target} chapters</span>
           <span style={{ color: done ? "#34d399" : accentColor }}>{pct}%{done ? " ✓ Goal met!" : ""}</span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
           <motion.div
             key={`${progress}-${target}`}
             initial={{ width: 0 }}

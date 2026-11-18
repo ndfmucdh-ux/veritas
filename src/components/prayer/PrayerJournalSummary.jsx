@@ -93,7 +93,7 @@ export default function PrayerJournalSummary() {
       {/* Answered progress bar */}
       {summary.total > 0 && (
         <div className="mb-4">
-          <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${answeredPercentage}%` }}
@@ -117,7 +117,7 @@ export default function PrayerJournalSummary() {
           <div className="space-y-1.5">
             {summary.topics.map((topic, idx) => (
               <motion.div key={topic.name} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}
-                className="flex items-center justify-between px-2.5 py-1.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)" }}>
+                className="flex items-center justify-between px-2.5 py-1.5 rounded-lg" style={{ background: "var(--fill-2)" }}>
                 <span className="text-xs font-inter text-white/70">{topic.name}</span>
                 <span className="text-[10px] font-cinzel px-2 py-0.5 rounded" style={{ background: "rgba(167,139,250,0.2)", color: "#a78bfa" }}>
                   {topic.count}

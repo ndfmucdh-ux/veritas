@@ -212,7 +212,7 @@ export default function Profile() {
                     { label: "Verses Highlighted", value: highlights.length, color: "#a78bfa", icon: "✨" },
                     { label: "Notes Written", value: notes.length, color: "#34d399", icon: "✍️" },
                   ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div key={s.label} className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)" }}>
                       <p className="text-xl mb-1">{s.icon}</p>
                       <p className="font-cinzel text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
                       <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>

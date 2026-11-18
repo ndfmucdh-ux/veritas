@@ -93,7 +93,7 @@ export default function SharedReadingPlan() {
                 onKeyDown={e => e.key === "Enter" && handleCreatePlan()}
                 placeholder="Plan name (e.g. 'Daily Psalms')"
                 className="flex-1 px-3 py-2 rounded-lg text-sm font-inter focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.8)" }}
+                style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.8)" }}
               />
               <motion.button whileTap={{ scale: 0.9 }} onClick={handleCreatePlan}
                 className="px-4 py-2 rounded-lg text-sm font-cinzel"

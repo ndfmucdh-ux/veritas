@@ -10,7 +10,7 @@ export default function StudySearchBar({ query, onQueryChange, onSearch, loading
         onKeyDown={e => e.key === "Enter" && onSearch()}
         placeholder={placeholder}
         className="w-full pl-10 pr-12 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
-        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }}
+        style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }}
       />
       <button
         type="button"

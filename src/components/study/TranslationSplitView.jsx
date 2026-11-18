@@ -109,10 +109,10 @@ export default function TranslationSplitView({ book, chapter }) {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
+              style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>−</button>
             <span className="text-sm font-cinzel px-3" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
             <button onClick={() => setFontSize(f => Math.min(24, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
+              style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>+</button>
           </div>
         </div>
       </div>

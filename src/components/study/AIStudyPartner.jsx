@@ -131,7 +131,7 @@ Return JSON with structure as specified.`,
           onKeyDown={e => e.key === "Enter" && analyze()}
           placeholder={ph}
           className="w-full pl-4 pr-14 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }}
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }}
         />
         <motion.button whileTap={{ scale: 0.9 }} onClick={analyze} disabled={loading || !query.trim()}
           className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center"
@@ -274,7 +274,7 @@ Return JSON with structure as specified.`,
 
             {/* Follow-up Q&A */}
             <div className="rounded-2xl p-4"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
               <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
                 <MessageCircle className="w-3 h-3 inline mr-1" />
                 {lang === "es" ? "Pregunta de Seguimiento" : "Ask a Follow-up"}
@@ -284,7 +284,7 @@ Return JSON with structure as specified.`,
                   onKeyDown={e => e.key === "Enter" && askFollowUp()}
                   placeholder={lang === "es" ? "Pregunta algo más sobre este pasaje…" : "Ask something more about this passage…"}
                   className="w-full pl-3 pr-12 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.8)", fontSize: "16px" }} />
+                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.8)", fontSize: "16px" }} />
                 <button onClick={askFollowUp} disabled={followUpLoading || !followUp.trim()}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg flex items-center justify-center"
                   style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", opacity: !followUp.trim() ? 0.4 : 1 }}>
@@ -319,7 +319,7 @@ Return JSON with structure as specified.`,
           ).map(s => (
             <button key={s} onClick={() => { setQuery(s); }}
               className="block w-full text-left px-3 py-2.5 rounded-xl text-xs font-inter transition-all"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}>
+              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}>
               {s}
             </button>
           ))}
@@ -331,7 +331,7 @@ Return JSON with structure as specified.`,
 
 function StudySection({ label, color = "#00f5ff", children }) {
   return (
-    <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+    <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
       <p className="text-[9px] font-cinzel uppercase tracking-widest mb-3" style={{ color }}>{label}</p>
       {children}
     </div>

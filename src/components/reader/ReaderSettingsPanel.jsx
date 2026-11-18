@@ -23,7 +23,7 @@ export default function ReaderSettingsPanel({
         >
           <div
             className="rounded-2xl p-4 space-y-4"
-            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+            style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}
           >
             <SettingRow label="Font Size">
               <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ function Stepper({ children, onClick }) {
       whileTap={{ scale: 0.88 }}
       onClick={onClick}
       className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold font-inter focus:outline-none focus:ring-2 focus:ring-cyan/70"
-      style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.6)" }}
+      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}
     >
       {children}
     </motion.button>

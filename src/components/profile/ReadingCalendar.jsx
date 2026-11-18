@@ -71,14 +71,14 @@ export default function ReadingCalendar() {
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-4">
         <motion.button whileTap={{ scale: 0.9 }} onClick={handlePrevMonth} className="p-1.5 rounded-lg"
-          style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
           <ChevronLeft className="w-4 h-4" />
         </motion.button>
         <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.5)" }}>
           {monthName}
         </p>
         <motion.button whileTap={{ scale: 0.9 }} onClick={handleNextMonth} className="p-1.5 rounded-lg"
-          style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
           <ChevronRight className="w-4 h-4" />
         </motion.button>
       </div>
@@ -136,7 +136,7 @@ export default function ReadingCalendar() {
           <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Days read this month</p>
           <span className="font-cinzel font-bold text-white">{monthGoalPercentage}%</span>
         </div>
-        <div className="h-1.5 rounded-full overflow-hidden mt-2" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="h-1.5 rounded-full overflow-hidden mt-2" style={{ background: "var(--fill-3)" }}>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${monthGoalPercentage}%` }}

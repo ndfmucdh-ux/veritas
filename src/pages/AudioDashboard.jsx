@@ -146,7 +146,7 @@ export default function AudioDashboard() {
     <div className="md:ml-16 min-h-screen pb-28">
       <div className="relative h-44 overflow-hidden">
         <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=80" alt="Audio" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(8,12,24,0.97))" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), hsl(var(--background) / 0.97))" }} />
         <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
           <h1 className="font-cinzel text-2xl font-bold text-white">Audio Dashboard</h1>
           <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Your scripture listening journey</p>
@@ -163,7 +163,7 @@ export default function AudioDashboard() {
               <span className="font-cinzel text-sm" style={{ color: "#a78bfa" }}>Sleep timer: {formatCountdown(sleepCountdown)}</span>
             </div>
             <button onClick={cancelSleepTimer} className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.4)" }}>
+              style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
               <X className="w-3.5 h-3.5" />
             </button>
           </motion.div>
@@ -229,12 +229,12 @@ export default function AudioDashboard() {
               transition={{ type: "spring", stiffness: 380, damping: 28 }}
               onClick={e => e.stopPropagation()}
               className="w-full max-w-sm rounded-3xl p-6"
-              style={{ background: "rgba(8,13,26,0.99)", border: "1px solid rgba(167,139,250,0.2)" }}>
+              style={{ background: "var(--popover-surface)", border: "1px solid rgba(167,139,250,0.2)" }}>
               <div className="flex items-center justify-between mb-4">
                 <p className="font-cinzel text-base font-bold text-white">Sleep Timer</p>
                 <button onClick={() => setShowSleepPicker(false)}
                   className="w-8 h-8 rounded-xl flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+                  style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
                   <X className="w-4 h-4" />
                 </button>
               </div>

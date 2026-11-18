@@ -90,11 +90,11 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
       exit={{ opacity: 0, y: 20 }}
       transition={{ type: "spring", stiffness: 320, damping: 28 }}
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "#06080f" }}
+      style={{ background: "hsl(var(--background))" }}
     >
       {/* Header */}
       <div className="flex-shrink-0 px-4 py-3 flex items-center justify-between"
-        style={{ background: "rgba(6,10,20,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "var(--chrome-surface)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="flex items-center gap-3">
           <Columns className="w-4 h-4" style={{ color: "#00f5ff" }} />
           <span className="font-cinzel text-sm font-semibold text-white/80">Parallel View</span>
@@ -103,16 +103,16 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
         <div className="flex items-center gap-4">
            <div className="flex items-center gap-2.5">
              <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-               style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
+               style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>−</button>
              <span className="text-sm font-cinzel px-3" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
              <button onClick={() => setFontSize(f => Math.min(26, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-               style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
+               style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>+</button>
            </div>
            <select
              value={secondTranslation}
              onChange={e => setSecondTranslation(e.target.value)}
              className="text-xs font-cinzel px-4 py-2 rounded-xl focus:outline-none"
-             style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+             style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
            >
              {ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => (
                <option key={t.code} value={t.code}>{t.label}</option>
@@ -120,7 +120,7 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
            </select>
           <button onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.07)" }}>
+            style={{ background: "var(--fill-3)" }}>
             <X className="w-4 h-4 text-white/50" />
           </button>
         </div>
@@ -128,7 +128,7 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
 
       {/* Column headers */}
       <div className="flex-shrink-0 grid grid-cols-2 gap-px"
-        style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        style={{ background: "var(--fill-2)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="px-4 py-2 text-center">
           <span className="text-[10px] font-cinzel uppercase tracking-widest font-bold" style={{ color: "#fbbf24" }}>{primaryTranslation}</span>
         </div>

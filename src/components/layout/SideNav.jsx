@@ -13,10 +13,10 @@ export default function SideNav() {
     <nav
       className="hidden md:flex fixed left-0 top-[57px] bottom-0 z-40 flex-col items-center py-6 gap-1 w-16"
       style={{
-        background: "rgba(6,10,20,0.92)",
-        backdropFilter: "blur(28px)",
-        WebkitBackdropFilter: "blur(28px)",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        background: "var(--chrome-surface)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderRight: "1px solid var(--hairline)",
       }}
     >
       {navItems.map((item) => (

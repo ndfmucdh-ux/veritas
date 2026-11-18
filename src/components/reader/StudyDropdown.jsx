@@ -83,7 +83,7 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
             style={{
               ...menuStyle,
               transformOrigin: "top",
-              background: "rgba(8,13,26,0.97)",
+              background: "var(--popover-surface)",
               border: "1px solid rgba(0,245,255,0.2)",
               backdropFilter: "blur(16px)",
               WebkitBackdropFilter: "blur(16px)",

@@ -88,7 +88,7 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
   return (
     <div className="space-y-4 mt-4">
       {/* Invite Section */}
-      <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl overflow-hidden" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" style={{ color: accentColor }} />
@@ -107,14 +107,14 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
               className="overflow-hidden px-4 pb-4 space-y-3">
               <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="Friend's email address"
                 className="w-full px-3 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
+                style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
               <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Personal message (optional)" rows={2}
                 className="w-full px-3 py-2 rounded-xl text-sm font-inter resize-none focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }} />
+                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)" }} />
               <div className="flex gap-2">
                 <button onClick={() => setShowForm(false)}
                   className="flex-1 py-2 rounded-xl font-cinzel text-xs"
-                  style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.35)" }}>Cancel</button>
+                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.35)" }}>Cancel</button>
                 <button onClick={sendInvite} disabled={!email.trim() || sending}
                   className="flex-1 py-2 rounded-xl font-cinzel text-xs flex items-center justify-center gap-1.5 transition-all"
                   style={{ background: `${accentColor}15`, color: accentColor, border: `1px solid ${accentColor}30`, opacity: !email.trim() ? 0.5 : 1 }}>
@@ -153,7 +153,7 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
       </div>
 
       {/* Progress Comments */}
-      <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl overflow-hidden" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="flex items-center gap-2 px-4 py-3">
           <MessageSquare className="w-4 h-4" style={{ color: "#a78bfa" }} />
           <p className="font-cinzel text-sm font-semibold text-white">Progress Comments</p>
@@ -176,7 +176,7 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
               </p>
             ) : dayComments.map(c => (
               <div key={c.id} className="rounded-xl px-3 py-2.5"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center justify-between mb-1">
                   <p className="font-cinzel text-xs" style={{ color: "#a78bfa" }}>{c.author_name}</p>
                   <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.2)" }}>
@@ -194,7 +194,7 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
               onKeyDown={e => e.key === "Enter" && !e.shiftKey && postComment()}
               placeholder={`Comment on Day ${selectedDay}...`}
               className="flex-1 px-3 py-2 rounded-xl text-sm font-inter focus:outline-none"
-              style={{ fontSize: "16px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(167,139,250,0.18)", color: "rgba(255,255,255,0.8)" }} />
+              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.18)", color: "rgba(255,255,255,0.8)" }} />
             <button onClick={postComment} disabled={!commentText.trim() || postingComment}
               className="px-3 py-2 rounded-xl transition-all"
               style={{ background: "rgba(167,139,250,0.12)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.2)", opacity: !commentText.trim() ? 0.5 : 1 }}>

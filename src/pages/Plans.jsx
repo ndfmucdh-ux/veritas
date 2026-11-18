@@ -214,10 +214,10 @@ export default function Plans() {
     return (
       <div className="md:ml-16 min-h-screen pb-28">
         <div className="px-4 pt-4 pb-3 flex items-center gap-3"
-          style={{ background: "rgba(6,10,20,0.9)", position: "sticky", top: "57px", zIndex: 20, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          style={{ background: "var(--chrome-surface)", backdropFilter: "blur(20px)", position: "sticky", top: "57px", zIndex: 20, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <button onClick={() => setActiveCustomPlan(null)}
             className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}>
             <ChevronLeft className="w-4 h-4" /> Back
           </button>
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -244,7 +244,7 @@ export default function Plans() {
           </div>
 
           {/* Progress bar */}
-          <div className="h-1.5 rounded-full overflow-hidden mb-6" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div className="h-1.5 rounded-full overflow-hidden mb-6" style={{ background: "var(--fill-3)" }}>
             <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }}
               className="h-full rounded-full" style={{ background: accent }} />
           </div>
@@ -256,7 +256,7 @@ export default function Plans() {
               const allDone = completedInBook === sel.chapters.length;
               return (
                 <div key={sel.book} className="rounded-2xl overflow-hidden"
-                  style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${allDone ? "rgba(52,211,153,0.25)" : "rgba(255,255,255,0.07)"}` }}>
+                  style={{ background: "var(--fill-1)", border: `1px solid ${allDone ? "rgba(52,211,153,0.25)" : "rgba(255,255,255,0.07)"}` }}>
                   <div className="flex items-center justify-between px-4 py-3">
                     <p className="font-cinzel text-sm font-semibold text-white">{sel.book}</p>
                     <span className="text-xs font-cinzel" style={{ color: allDone ? "#34d399" : accent }}>
@@ -298,7 +298,7 @@ export default function Plans() {
         {/* Photo hero header */}
         <div className="relative h-56 md:h-72 overflow-hidden">
           <img src={activePlan.photo} alt={activePlan.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(8,12,24,0.85) 70%, rgb(8,12,24) 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, hsl(var(--background) / 0.85) 70%, hsl(var(--background)) 100%)" }} />
           <button
             onClick={() => { setActivePlan(null); setSelectedDay(null); setGenDevo(null); }}
             className="absolute top-4 left-4 flex items-center gap-1.5 text-white/80 hover:text-white text-sm px-3 py-1.5 rounded-xl transition-colors"
@@ -338,7 +338,7 @@ export default function Plans() {
             <span>{completed} of {activePlan.duration_days} days complete</span>
             <span style={{ color: activePlan.accent }}>{pct}%</span>
           </div>
-          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
@@ -452,7 +452,7 @@ export default function Plans() {
                           {/* Prayer */}
                           {day.prayer && (
                             <div className="mt-4 rounded-xl p-4"
-                              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                               <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
                                 🙏 Prayer
                               </p>
@@ -524,7 +524,7 @@ export default function Plans() {
       {/* Header */}
       <div className="relative h-44 overflow-hidden">
         <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80" alt="Reading Plans" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(8,12,24,0.95))" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), hsl(var(--background) / 0.95))" }} />
         <div className="absolute bottom-0 px-5 pb-5">
           <h1 className="font-cinzel text-2xl font-bold text-white">{t.readingPlansTitle}</h1>
           <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{t.structuredJourneys}</p>
@@ -610,7 +610,7 @@ export default function Plans() {
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold text-white truncate">{plan.title}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
                         <div className="h-full rounded-full" style={{ width: `${pct}%`, background: accent }} />
                       </div>
                       <span className="text-[10px] font-cinzel flex-shrink-0" style={{ color: accent }}>{pct}%</span>
@@ -637,9 +637,9 @@ export default function Plans() {
 
       {/* Divider */}
       <div className="flex items-center gap-3 px-4 mb-3">
-        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+        <div className="flex-1 h-px" style={{ background: "var(--fill-3)" }} />
         <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>{t.curatedPlans}</p>
-        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
+        <div className="flex-1 h-px" style={{ background: "var(--fill-3)" }} />
       </div>
 
       <AnimatePresence>
@@ -668,7 +668,7 @@ export default function Plans() {
               {/* Photo */}
               <div className="relative h-36 overflow-hidden">
                 <img src={plan.photo} alt={plan.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(8,12,24,0.95))" }} />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, hsl(var(--background) / 0.95))" }} />
                 <div className="absolute top-3 right-3 flex gap-2">
                   {plan.lang === "es" && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-inter flex items-center gap-1"
@@ -683,7 +683,7 @@ export default function Plans() {
               </div>
 
               {/* Meta */}
-              <div className="px-4 py-3" style={{ background: "rgba(8,12,24,0.98)" }}>
+              <div className="px-4 py-3" style={{ background: "hsl(var(--surface-2))" }}>
                 <p className="text-xs mb-3 leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{plan.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -699,7 +699,7 @@ export default function Plans() {
                   </div>
                 </div>
                 {started && (
-                  <div className="mt-2.5 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="mt-2.5 h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
                     <div className="h-full rounded-full" style={{ width: `${pct}%`, background: plan.accent }} />
                   </div>
                 )}

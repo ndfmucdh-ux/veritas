@@ -211,14 +211,14 @@ export default function Read() {
   return (
     <motion.div {...pageTransition}
       className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen"}`}
-      style={{ background: oledMode ? "#000000" : immersive ? "#06080f" : undefined }}
+      style={{ background: oledMode ? "#000000" : immersive ? "hsl(var(--background))" : undefined }}
     >
       {/* Reader top bar */}
       <div
         className="sticky z-30 px-4 py-3 space-y-3"
         style={{
           top: immersive ? 0 : "57px",
-          background: oledMode ? "rgba(0,0,0,0.97)" : "rgba(6,10,20,0.9)",
+          background: oledMode ? "rgba(0,0,0,0.97)" : "var(--chrome-surface)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           overflow: "visible",
@@ -449,7 +449,7 @@ export default function Read() {
             onClick={() => containerRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
             className="fixed bottom-24 md:bottom-8 right-4 w-11 h-11 rounded-full flex items-center justify-center z-30"
             style={{
-              background: "rgba(6,10,20,0.85)",
+              background: "hsl(var(--surface-4) / 0.92)",
               backdropFilter: "blur(12px)",
               border: "1px solid rgba(255,255,255,0.1)",
               boxShadow: "0 4px 20px rgba(0,0,0,0.4)",

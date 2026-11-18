@@ -96,7 +96,7 @@ export default function TestimoniesArchive({ prayers }) {
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {prayer.tags.map(tag => (
                   <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full font-inter"
-                    style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                    style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.07)" }}>
                     #{tag}
                   </span>
                 ))}

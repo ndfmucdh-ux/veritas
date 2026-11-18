@@ -55,7 +55,7 @@ export default function CrossReferencePanel({ book, chapter, activeVerses }) {
       className="fixed right-0 top-0 bottom-0 z-40 flex flex-col"
       style={{
         width: "min(320px, 85vw)",
-        background: "rgba(8,13,26,0.97)",
+        background: "var(--panel-surface)",
         backdropFilter: "blur(24px)",
         borderLeft: "1px solid rgba(124,58,237,0.15)",
         boxShadow: "-8px 0 32px rgba(0,0,0,0.5)",

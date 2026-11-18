@@ -30,7 +30,7 @@ export default function AudioSettingsTab({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl p-4 space-y-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4 space-y-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>Listening Goal Notifications</p>
 
         <div className="flex items-center justify-between">
@@ -51,7 +51,7 @@ export default function AudioSettingsTab({
           <input type="time" value={notifPrefs.time}
             onChange={e => setNotifPrefs(p => ({ ...p, time: e.target.value }))}
             className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
+            style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
         </div>
 
         <div>
@@ -113,7 +113,7 @@ export default function AudioSettingsTab({
         <p className="text-[10px] font-inter text-center" style={{ color: "rgba(255,255,255,0.25)" }}>Speed is saved and applied to all audio playback</p>
       </div>
 
-      <div className="rounded-2xl p-4 space-y-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4 space-y-3" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>Sleep Timer</p>
         <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.45)" }}>Auto-stop audio after selected duration</p>
         <div className="grid grid-cols-4 gap-2">

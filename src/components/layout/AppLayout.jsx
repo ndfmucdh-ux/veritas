@@ -26,10 +26,10 @@ export default function AppLayout() {
         <header
           className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between md:pl-20"
           style={{
-            background: "rgba(6,10,20,0.82)",
-            backdropFilter: "blur(28px)",
-            WebkitBackdropFilter: "blur(28px)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
+            background: "var(--chrome-surface)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            borderBottom: "1px solid var(--hairline)",
           }}
         >
           <Link to="/" className="flex items-center gap-2.5">

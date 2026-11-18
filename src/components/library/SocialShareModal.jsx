@@ -152,7 +152,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
       <motion.div initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", stiffness: 340, damping: 28 }}
         className="w-full max-w-sm rounded-t-3xl md:rounded-3xl overflow-hidden"
-        style={{ background: "rgba(8,13,26,0.98)", border: "1px solid rgba(255,255,255,0.1)", maxHeight: "92vh", overflowY: "auto" }}>
+        style={{ background: "var(--popover-surface)", border: "1px solid rgba(255,255,255,0.1)", maxHeight: "92vh", overflowY: "auto" }}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
@@ -162,7 +162,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
           </div>
           <motion.button whileTap={{ scale: 0.9 }} onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.06)" }}>
+            style={{ background: "var(--fill-3)" }}>
             <X className="w-4 h-4" style={{ color: "rgba(255,255,255,0.5)" }} />
           </motion.button>
         </div>

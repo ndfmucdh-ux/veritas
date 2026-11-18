@@ -61,7 +61,7 @@ export default function TranslationDownloadManager() {
     <div className="space-y-4">
       {/* Storage indicator */}
       {storageInfo && (
-        <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="rounded-2xl p-4" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.35)" }}>
               Offline Storage
@@ -70,7 +70,7 @@ export default function TranslationDownloadManager() {
               {(storageInfo.used / 1024 / 1024).toFixed(1)}MB / {(storageInfo.quota / 1024 / 1024).toFixed(0)}MB
             </span>
           </div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+          <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <motion.div
               animate={{ width: `${storageInfo.percent}%` }}
               transition={{ duration: 0.4 }}
@@ -138,7 +138,7 @@ export default function TranslationDownloadManager() {
                           <div
                             key={trans.code}
                             className="flex items-center justify-between px-3 py-2.5 rounded-xl"
-                            style={{ background: "rgba(255,255,255,0.02)" }}
+                            style={{ background: "var(--fill-1)" }}
                           >
                             <div>
                               <p className="text-xs font-cinzel font-semibold text-white">{trans.code}</p>

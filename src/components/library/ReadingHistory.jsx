@@ -63,7 +63,7 @@ export default function ReadingHistory() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
             className="flex items-center gap-3 px-4 py-3.5 rounded-xl group transition-all"
-            style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+            style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
             {/* Number badge */}
             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 font-cinzel text-xs font-bold"

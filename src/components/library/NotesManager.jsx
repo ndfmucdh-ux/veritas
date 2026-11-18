@@ -113,7 +113,7 @@ export default function NotesManager({ notes, onNotesChange }) {
               <input value={newName} onChange={e => setNewName(e.target.value)}
                 placeholder="Folder name (e.g. 'Sermon Notes', 'Romans Study')"
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
                 autoFocus onKeyDown={e => e.key === "Enter" && createFolder()}
               />
               <div className="flex gap-2 flex-wrap">
@@ -129,11 +129,11 @@ export default function NotesManager({ notes, onNotesChange }) {
                 {FOLDER_COLORS.map(c => (
                   <button key={c} onClick={() => setNewColor(c)}
                     className="w-6 h-6 rounded-full transition-all"
-                    style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px #07080f, 0 0 0 3.5px ${c}` : "none" }} />
+                    style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px hsl(var(--surface-4)), 0 0 0 3.5px ${c}` : "none" }} />
                 ))}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setShowCreate(false)} className="flex-1 py-2 rounded-xl text-sm font-cinzel" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
+                <button onClick={() => setShowCreate(false)} className="flex-1 py-2 rounded-xl text-sm font-cinzel" style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
                 <button onClick={createFolder} disabled={!newName.trim()}
                   className="flex-1 py-2 rounded-xl text-sm font-cinzel flex items-center justify-center gap-2"
                   style={{ background: `${newColor}22`, color: newColor, border: `1px solid ${newColor}44` }}>
@@ -151,7 +151,7 @@ export default function NotesManager({ notes, onNotesChange }) {
         const isExpanded = expandedFolder === folder.id;
         return (
           <div key={folder.id} className="rounded-2xl overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${folder.color}22` }}>
+            style={{ background: "var(--fill-1)", border: `1px solid ${folder.color}22` }}>
             <div className="flex items-center gap-3 px-4 py-3">
               <button onClick={() => setExpandedFolder(isExpanded ? null : folder.id)}
                 className="flex items-center gap-3 flex-1 text-left">

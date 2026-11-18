@@ -31,7 +31,7 @@ export default function EmailEngagementDashboard() {
 
       {/* Email types this app sends */}
       <div className="rounded-2xl overflow-hidden"
-        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="flex items-center gap-2 px-4 pt-4 pb-2">
           <Mail className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.4)" }} />
           <p className="font-cinzel text-[9px] uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>

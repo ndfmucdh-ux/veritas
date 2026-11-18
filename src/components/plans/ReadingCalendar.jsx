@@ -51,12 +51,12 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
 
   return (
     <div className="rounded-2xl overflow-visible"
-      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+      style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.08)" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <button onClick={() => { setOffset(o => o - 1); setSelectedDay(null); }}
           className="w-8 h-8 rounded-xl flex items-center justify-center"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
           <ChevronLeft className="w-4 h-4" />
         </button>
         <div className="text-center">
@@ -67,7 +67,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
         </div>
         <button onClick={() => { setOffset(o => Math.min(0, o + 1)); setSelectedDay(null); }}
           className="w-8 h-8 rounded-xl flex items-center justify-center"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}
+          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}
           disabled={offset >= 0}>
           <ChevronRight className="w-4 h-4" style={{ opacity: offset >= 0 ? 0.25 : 1 }} />
         </button>
@@ -165,7 +165,7 @@ export default function ReadingCalendar({ progress, accent = "#00f5ff" }) {
                 <button
                   onClick={() => setSelectedDay(null)}
                   className="w-7 h-7 rounded-xl flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}
+                  style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>

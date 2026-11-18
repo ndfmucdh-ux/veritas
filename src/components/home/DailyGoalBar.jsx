@@ -65,7 +65,7 @@ export default function DailyGoalBar() {
   const unit = goal.type === "chapters" ? "ch" : "vs";
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)" }}>
+    <div className="rounded-2xl overflow-hidden" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
       <div className="px-4 py-3">
         {/* Header row */}
         <div className="flex items-center justify-between mb-2.5">
@@ -90,7 +90,7 @@ export default function DailyGoalBar() {
         </div>
 
         {/* Progress bar */}
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
           <motion.div
             className="h-full rounded-full"
             initial={{ width: 0 }}
@@ -144,7 +144,7 @@ export default function DailyGoalBar() {
               <div className="flex items-center gap-3">
                 <button onClick={() => setEditTarget(v => Math.max(1, parseInt(v) - 1))}
                   className="w-9 h-9 rounded-xl text-lg font-bold flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>−</button>
+                  style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}>−</button>
                 <div className="flex-1 text-center">
                   <span className="text-2xl font-cinzel font-bold text-white">{editTarget}</span>
                   <span className="text-xs font-inter ml-1.5" style={{ color: "rgba(255,255,255,0.35)" }}>
@@ -153,7 +153,7 @@ export default function DailyGoalBar() {
                 </div>
                 <button onClick={() => setEditTarget(v => Math.min(100, parseInt(v) + 1))}
                   className="w-9 h-9 rounded-xl text-lg font-bold flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>+</button>
+                  style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}>+</button>
               </div>
 
               {/* Presets */}

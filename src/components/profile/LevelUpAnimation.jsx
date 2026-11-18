@@ -75,7 +75,7 @@ export default function LevelUpAnimation({ level, show, onComplete }) {
               transition={{ type: "spring", stiffness: 280, damping: 20, delay: 0.1 }}
               className="relative flex flex-col items-center gap-3 px-10 py-8 rounded-3xl text-center"
               style={{
-                background: `linear-gradient(135deg, ${level?.color || "#fbbf24"}15, rgba(8,13,26,0.97))`,
+                background: `linear-gradient(135deg, ${level?.color || "#fbbf24"}15, var(--popover-surface))`,
                 border: `1.5px solid ${level?.color || "#fbbf24"}45`,
                 boxShadow: `0 0 60px ${level?.color || "#fbbf24"}25, 0 20px 60px rgba(0,0,0,0.6)`,
                 minWidth: "240px",

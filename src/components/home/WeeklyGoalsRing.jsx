@@ -133,11 +133,11 @@ export default function WeeklyGoalsRing() {
                   <div className="flex items-center gap-2">
                     <button onClick={() => setEditGoals(g => ({ ...g, [key]: Math.max(1, (g[key] || 1) - 1) }))}
                       className="w-6 h-6 rounded-lg font-bold text-sm flex items-center justify-center"
-                      style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)" }}>−</button>
+                      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>−</button>
                     <span className="font-cinzel text-sm font-bold w-5 text-center" style={{ color }}>{editGoals[key]}</span>
                     <button onClick={() => setEditGoals(g => ({ ...g, [key]: Math.min(max, (g[key] || 1) + 1) }))}
                       className="w-6 h-6 rounded-lg font-bold text-sm flex items-center justify-center"
-                      style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)" }}>+</button>
+                      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.5)" }}>+</button>
                   </div>
                 </div>
               ))}

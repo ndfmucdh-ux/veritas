@@ -38,7 +38,7 @@ export default function ForYouThemeCard({ theme, index, color, isExpanded, onTog
                   <Link key={vi} to={`/read?book=${encodeURIComponent(engBook)}&chapter=${chapter}`}>
                     <motion.div whileTap={{ scale: 0.97 }}
                       className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all"
-                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                      style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
                       <BookOpen className="w-4 h-4 flex-shrink-0" style={{ color }} />
                       <span className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>{verse}</span>
                       <ChevronRight className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgba(255,255,255,0.25)" }} />

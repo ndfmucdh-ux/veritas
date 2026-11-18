@@ -95,7 +95,7 @@ export default function MonthlyProgressChart() {
             />
             <Tooltip
               contentStyle={{
-                background: "rgba(10,15,30,0.95)",
+                background: "var(--popover-surface)",
                 border: "1px solid rgba(0,245,255,0.2)",
                 borderRadius: 12,
                 fontSize: 12,

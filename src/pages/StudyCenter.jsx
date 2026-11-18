@@ -205,7 +205,7 @@ export default function StudyCenter() {
         {activeTab === "analysis" && (
           <>
             {/* Book selector */}
-            <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="rounded-2xl p-4 md:p-6" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
               <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4 text-white/40">Books of the Bible</p>
               <div className="space-y-2">
                 {theologicalGroups.map(group => (

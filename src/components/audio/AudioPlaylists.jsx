@@ -112,7 +112,7 @@ export default function AudioPlaylists() {
               <input value={newName} onChange={e => setNewName(e.target.value)}
                 placeholder="Playlist name…"
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }} />
+                style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }} />
 
               {/* Quick-suggest */}
               <div className="flex gap-2 flex-wrap">
@@ -148,7 +148,7 @@ export default function AudioPlaylists() {
               <div className="flex gap-2">
                 <button onClick={() => setShowCreate(false)}
                   className="flex-1 py-2.5 rounded-xl font-cinzel text-xs"
-                  style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   Cancel
                 </button>
                 <motion.button whileTap={{ scale: 0.96 }} disabled={!newName.trim() || creating}
@@ -182,7 +182,7 @@ export default function AudioPlaylists() {
             return (
               <motion.div key={pl.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.04 }}
                 className="rounded-2xl overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${pl.color || "#00f5ff"}25` }}>
+                style={{ background: "var(--fill-1)", border: `1px solid ${pl.color || "#00f5ff"}25` }}>
                 {/* Header */}
                 <div className="flex items-center gap-3 p-4">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
@@ -203,7 +203,7 @@ export default function AudioPlaylists() {
                     </a>
                     <button onClick={() => setExpandedId(isExpanded ? null : pl.id)}
                       className="w-8 h-8 rounded-xl flex items-center justify-center"
-                      style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                      style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                       <ChevronRight className="w-3.5 h-3.5 transition-transform" style={{ transform: isExpanded ? "rotate(90deg)" : "none" }} />
                     </button>
                     <button onClick={() => deletePlaylist(pl.id)}
@@ -228,7 +228,7 @@ export default function AudioPlaylists() {
                           )}
                           {items.map((item, i) => (
                             <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                              style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.06)" }}>
                               <BookOpen className="w-3.5 h-3.5 flex-shrink-0" style={{ color: pl.color || "#00f5ff" }} />
                               <p className="flex-1 text-xs font-cinzel text-white">{item.label}</p>
                               <span className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{item.translation}</span>
@@ -249,31 +249,31 @@ export default function AudioPlaylists() {
                         {/* Add chapter */}
                         {showAddItem === pl.id ? (
                           <div className="rounded-xl p-3 space-y-2.5"
-                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                            style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
                             <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>Add Chapter</p>
                             <div className="grid grid-cols-3 gap-2">
                               <select value={addBook} onChange={e => setAddBook(e.target.value)}
                                 className="col-span-1 rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"
-                                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>
+                                style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>
                                 {BIBLE_BOOKS.map(b => <option key={b.name} value={b.name}>{b.name}</option>)}
                               </select>
                               <select value={addChapter} onChange={e => setAddChapter(Number(e.target.value))}
                                 className="rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"
-                                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>
+                                style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>
                                 {Array.from({ length: totalChapters }, (_, i) => i + 1).map(ch => (
                                   <option key={ch} value={ch}>{ch}</option>
                                 ))}
                               </select>
                               <select value={addTranslation} onChange={e => setAddTranslation(e.target.value)}
                                 className="rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"
-                                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>
+                                style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}>
                                 {["KJV","NIV","ESV","NKJV","NLT","RVR60","NVI"].map(t => <option key={t} value={t}>{t}</option>)}
                               </select>
                             </div>
                             <div className="flex gap-2">
                               <button onClick={() => setShowAddItem(null)}
                                 className="flex-1 py-1.5 rounded-lg font-cinzel text-xs"
-                                style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)" }}>
+                                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                                 Cancel
                               </button>
                               <motion.button whileTap={{ scale: 0.96 }} disabled={addingItem}
@@ -288,7 +288,7 @@ export default function AudioPlaylists() {
                         ) : (
                           <button onClick={() => setShowAddItem(pl.id)}
                             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-cinzel text-xs mt-1"
-                            style={{ background: "rgba(255,255,255,0.04)", border: "1px dashed rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.4)" }}>
+                            style={{ background: "var(--fill-2)", border: "1px dashed rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.4)" }}>
                             <Plus className="w-3.5 h-3.5" /> Add Chapter
                           </button>
                         )}

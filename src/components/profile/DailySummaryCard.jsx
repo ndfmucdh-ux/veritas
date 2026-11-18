@@ -121,7 +121,7 @@ export default function DailySummaryCard() {
         {!activePlan && (
           <a href="/plans"
             className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-cinzel transition-all w-full"
-            style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+            style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)", border: "1px dashed rgba(255,255,255,0.1)" }}>
             <Play className="w-3.5 h-3.5" />
             Start a Reading Plan
           </a>

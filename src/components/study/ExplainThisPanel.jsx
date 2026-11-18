@@ -16,7 +16,7 @@ export default function ExplainThisPanel({ value, onChange, onExplain, loading, 
           onKeyDown={e => e.key === "Enter" && onExplain()}
           placeholder={placeholder}
           className="flex-1 rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-          style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }}
+          style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }}
         />
         <motion.button
           type="button"

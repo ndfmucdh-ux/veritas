@@ -250,7 +250,7 @@ export default function NotificationStudio() {
                   onChange={e => setSendName(e.target.value)}
                   placeholder="Preview name (e.g. Sarah)"
                   className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
                 />
                 <button onClick={loadPushPreviews} disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel transition-all"
@@ -269,12 +269,12 @@ export default function NotificationStudio() {
                       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                       onClick={() => setSelectedPush(selectedPush?.id === t.id ? null : t)}
                       className="rounded-2xl overflow-hidden cursor-pointer"
-                      style={{ background: "rgba(255,255,255,0.03)", border: selectedPush?.id === t.id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)" }}>
+                      style={{ background: "var(--fill-1)", border: selectedPush?.id === t.id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)" }}>
 
                       <div className="px-4 py-3 flex items-start gap-3">
                         {/* Phone mockup mini */}
                         <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center"
-                          style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                          style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)" }}>
                           <Smartphone className="w-4 h-4" style={{ color: "rgba(255,255,255,0.4)" }} />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -340,7 +340,7 @@ export default function NotificationStudio() {
               <div className="flex gap-2">
                 <input value={sendName} onChange={e => setSendName(e.target.value)} placeholder="Recipient name"
                   className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
+                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
                 <button onClick={() => loadEmailPreview("daily")} disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel"
                   style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.25)" }}>
@@ -350,13 +350,13 @@ export default function NotificationStudio() {
               </div>
 
               {/* Test send */}
-              <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 <p className="text-[10px] font-cinzel uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.25)" }}>Send Test Email</p>
                 <div className="flex gap-2">
                   <input value={sendEmail} onChange={e => setSendEmail(e.target.value)} placeholder="admin@example.com"
                     type="email"
                     className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
                   <button onClick={handleSendTest} disabled={loading || !sendEmail}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel transition-all"
                     style={{ background: sendStatus === "success" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)", color: sendStatus === "success" ? "#34d399" : "#fbbf24", border: `1px solid ${sendStatus === "success" ? "rgba(52,211,153,0.3)" : "rgba(251,191,36,0.3)"}` }}>
@@ -370,7 +370,7 @@ export default function NotificationStudio() {
 
               {previewHtml && (
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "var(--fill-2)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                     <div className="flex gap-1.5">
                       {["#f87171", "#fbbf24", "#34d399"].map(c => <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />)}
                     </div>
@@ -395,7 +395,7 @@ export default function NotificationStudio() {
               <div className="flex gap-2">
                 <input value={sendName} onChange={e => setSendName(e.target.value)} placeholder="Recipient name"
                   className="flex-1 px-4 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
+                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }} />
                 <button onClick={() => loadEmailPreview("weekly")} disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-cinzel"
                   style={{ background: "rgba(167,139,250,0.1)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.25)" }}>
@@ -408,7 +408,7 @@ export default function NotificationStudio() {
 
               {previewHtml && (
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "rgba(255,255,255,0.04)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div className="px-4 py-2 flex items-center gap-2" style={{ background: "var(--fill-2)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                     <div className="flex gap-1.5">
                       {["#f87171", "#fbbf24", "#34d399"].map(c => <div key={c} className="w-2.5 h-2.5 rounded-full" style={{ background: c }} />)}
                     </div>
@@ -516,7 +516,7 @@ export default function NotificationStudio() {
               <SectionHeader icon={Sparkles} label="Design & Brand Specifications" color="#a78bfa" />
 
               {DESIGN_SPECS.map(spec => (
-                <div key={spec.title} className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${spec.color}22` }}>
+                <div key={spec.title} className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: `1px solid ${spec.color}22` }}>
                   <p className="font-cinzel text-sm font-semibold mb-3" style={{ color: spec.color }}>{spec.title}</p>
                   <ul className="space-y-1.5">
                     {spec.specs.map(s => (
@@ -533,7 +533,7 @@ export default function NotificationStudio() {
               <div className="space-y-3">
                 {AUTOMATION_RULES.map(rule => (
                   <div key={rule.title} className="flex items-start gap-3 rounded-2xl p-4"
-                    style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                    style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                     <span className="text-xl flex-shrink-0">{rule.icon}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">

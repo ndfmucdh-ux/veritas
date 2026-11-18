@@ -151,7 +151,7 @@ export default function FlashcardStudy() {
           <span className="text-xs font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>
             {currentIdx + 1} / {dueCards.length}
           </span>
-          <div className="flex-1 mx-4 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div className="flex-1 mx-4 h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <div className="h-full rounded-full bg-cyan" style={{ width: `${((currentIdx) / dueCards.length) * 100}%`, transition: "width 0.3s" }} />
           </div>
           <button onClick={() => setMode("browse")} className="text-xs font-cinzel" style={{ color: "rgba(255,255,255,0.3)" }}>Exit</button>
@@ -163,7 +163,7 @@ export default function FlashcardStudy() {
           initial={{ opacity: 0, rotateY: -15 }}
           animate={{ opacity: 1, rotateY: 0 }}
           className="rounded-2xl p-6 min-h-52 flex flex-col justify-between cursor-pointer"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(0,245,255,0.18)" }}
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.18)" }}
           onClick={() => !flipped && setFlipped(true)}
         >
           <div className="flex items-center justify-between mb-4">
@@ -256,7 +256,7 @@ export default function FlashcardStudy() {
               onChange={e => setNewCard(n => ({ ...n, [key]: e.target.value }))}
               placeholder={placeholder}
               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter resize-none focus:outline-none"
-              style={{ fontSize: "16px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)" }}
+              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)" }}
             />
           </div>
         ))}
@@ -326,7 +326,7 @@ export default function FlashcardStudy() {
             const due = deckCards.filter(c => !c.next_review || c.next_review <= today).length;
             return (
               <div key={deck} className="rounded-2xl overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 <div className="flex items-center justify-between px-4 py-3">
                   <div>
                     <p className="font-cinzel text-sm font-semibold text-white">{deck}</p>

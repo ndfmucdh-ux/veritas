@@ -98,7 +98,7 @@ export default function PrayerStatsChart() {
               <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip
-                contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(244,114,182,0.2)", borderRadius: 8, fontSize: 12, fontFamily: "Cinzel" }}
+                contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(244,114,182,0.2)", borderRadius: 8, fontSize: 12, fontFamily: "Cinzel" }}
                 labelStyle={{ color: "#f472b6" }}
               />
               <Bar dataKey="prayers" fill="#f472b6" radius={[4, 4, 0, 0]} />

@@ -142,7 +142,7 @@ export default function MemorizeMode({ book, chapter }) {
                 onClick={() => selectVerse(v)}
                 className="w-full text-left px-4 py-3 rounded-xl transition-all flex items-start gap-3"
                 style={{
-                  background: "rgba(255,255,255,0.03)",
+                  background: "var(--fill-1)",
                   border: alreadyMemorized(v.verse) ? "1px solid rgba(52,211,153,0.25)" : "1px solid rgba(255,255,255,0.07)",
                 }}>
                 <span className="font-cinzel text-xs font-bold flex-shrink-0 pt-0.5"
@@ -171,7 +171,7 @@ export default function MemorizeMode({ book, chapter }) {
           </p>
 
           {/* Masked verse display */}
-          <div className="rounded-2xl p-5" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(167,139,250,0.18)" }}>
+          <div className="rounded-2xl p-5" style={{ background: "var(--fill-1)", border: "1px solid rgba(167,139,250,0.18)" }}>
             <div className="flex flex-wrap gap-1.5 leading-loose">
               {maskedWords.map((item, idx) => (
                 item.hidden ? (
@@ -195,11 +195,11 @@ export default function MemorizeMode({ book, chapter }) {
             </div>
             <div className="flex items-center gap-2 mt-4">
               <button onClick={revealAll} className="text-[10px] font-cinzel px-3 py-1.5 rounded-lg"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                 <Eye className="w-3 h-3 inline mr-1" />Reveal All
               </button>
               <button onClick={hideAll} className="text-[10px] font-cinzel px-3 py-1.5 rounded-lg"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                 <EyeOff className="w-3 h-3 inline mr-1" />Hide All
               </button>
               <button onClick={() => setShowRecite(!showRecite)}
@@ -226,7 +226,7 @@ export default function MemorizeMode({ book, chapter }) {
                     placeholder="Type the verse from memory..."
                     rows={4}
                     className="w-full rounded-xl p-4 text-sm font-playfair resize-none focus:outline-none"
-                    style={{ fontSize: "16px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)", lineHeight: "1.75" }}
+                    style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)", lineHeight: "1.75" }}
                   />
                   <div className="flex gap-2">
                     <button onClick={checkRecitation} disabled={!userInput.trim()}
@@ -236,7 +236,7 @@ export default function MemorizeMode({ book, chapter }) {
                     </button>
                     <button onClick={() => { setUserInput(""); setResult(null); }}
                       className="px-4 py-3 rounded-xl"
-                      style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)" }}>
+                      style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.35)" }}>
                       <RotateCcw className="w-4 h-4" />
                     </button>
                   </div>

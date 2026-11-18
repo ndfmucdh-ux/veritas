@@ -6,24 +6,38 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 96%;
-    --card: 222 40% 9%;
-    --card-foreground: 210 40% 96%;
-    --popover: 222 40% 9%;
-    --popover-foreground: 210 40% 96%;
+    --background: 223 28% 15%;
+    --foreground: 40 33% 91%;
+    --card: 223 25% 20%;
+    --card-foreground: 40 33% 91%;
+    --popover: 223 23% 27%;
+    --popover-foreground: 40 33% 91%;
     --primary: 187 100% 50%;
-    --primary-foreground: 222 47% 6%;
-    --secondary: 222 30% 14%;
-    --secondary-foreground: 210 40% 96%;
-    --muted: 222 30% 12%;
-    --muted-foreground: 215 20% 55%;
+    --primary-foreground: 223 28% 12%;
+    --secondary: 223 23% 25%;
+    --secondary-foreground: 40 33% 91%;
+    --muted: 223 24% 21%;
+    --muted-foreground: 222 14% 68%;
     --accent: 43 96% 56%;
-    --accent-foreground: 222 47% 6%;
+    --accent-foreground: 223 28% 12%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 96%;
-    --border: 222 30% 16%;
-    --input: 222 30% 14%;
+    --destructive-foreground: 40 33% 91%;
+    --border: 223 20% 28%;
+    --input: 223 22% 26%;
+
+    /* Layered surfaces: page < chrome < cards < nested < overlays */
+    --surface-1: 223 26% 18%;
+    --surface-2: 223 25% 22%;
+    --surface-3: 223 23% 27%;
+    --surface-4: 223 23% 30%;
+    --chrome-surface: hsl(var(--surface-1) / 0.86);
+    --panel-surface: hsl(var(--surface-1) / 0.98);
+    --popover-surface: hsl(var(--surface-4) / 0.98);
+    /* Translucent fills for cards (1), raised cards (2) and nested controls (3) */
+    --fill-1: rgba(214, 224, 255, 0.05);
+    --fill-2: rgba(214, 224, 255, 0.075);
+    --fill-3: rgba(214, 224, 255, 0.105);
+    --hairline: rgba(232, 226, 212, 0.09);
     --ring: 187 100% 50%;
     --radius: 0.75rem;
     --gold: 43 96% 56%;
@@ -44,7 +58,8 @@
 
   body {
     @apply bg-background text-foreground font-inter;
-    background: radial-gradient(ellipse at top, hsl(222, 47%, 9%) 0%, hsl(222, 47%, 4%) 100%);
+    background: radial-gradient(ellipse at top, hsl(223 30% 20%) 0%, hsl(var(--background)) 70%);
+    background-attachment: fixed;
     min-height: 100vh;
 
   }
@@ -66,14 +81,15 @@
   }
 
   .glass {
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--fill-2);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--hairline);
+    box-shadow: 0 8px 24px rgba(8, 11, 20, 0.18);
   }
 
   .glass-strong {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--fill-3);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
     border: 1px solid rgba(255, 255, 255, 0.12);

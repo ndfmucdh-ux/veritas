@@ -35,7 +35,7 @@ export default function AuthGate() {
 
         {/* Features teaser */}
         <div className="w-full rounded-2xl p-4 mb-8 space-y-2.5"
-          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
           {[
             ["🔥", "Daily reading streaks & XP"],
             ["🔖", "Bookmarks, highlights & notes"],

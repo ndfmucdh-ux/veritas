@@ -115,7 +115,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
                 <XAxis dataKey="week" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.4)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(10,15,30,0.97)", border: `1px solid ${GOLD}30`, borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
+                  contentStyle={{ background: "var(--popover-surface)", border: `1px solid ${GOLD}30`, borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
                   labelStyle={{ color: GOLD }}
                   itemStyle={{ color: "rgba(255,255,255,0.7)" }}
                   cursor={{ fill: "rgba(251,191,36,0.06)" }}
@@ -147,7 +147,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
                     <span className="font-cinzel text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>{item.book}</span>
                     <span className="font-cinzel text-xs" style={{ color: GOLD }}>{item.count}</span>
                   </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}

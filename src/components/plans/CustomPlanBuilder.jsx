@@ -135,7 +135,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
         style={{
           maxHeight: "92vh",
           borderRadius: "24px 24px 0 0",
-          background: "rgba(7,10,22,0.99)",
+          background: "var(--popover-surface)",
           border: "1px solid rgba(0,245,255,0.15)",
           boxShadow: "0 -8px 60px rgba(0,0,0,0.7)",
           overflow: "hidden",
@@ -151,7 +151,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
             </p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -206,7 +206,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                       {ACCENT_COLORS.map(c => (
                         <button key={c} onClick={() => setAccentColor(c)}
                           className="w-7 h-7 rounded-full transition-all"
-                          style={{ background: c, boxShadow: accentColor === c ? `0 0 0 2px #07080f, 0 0 0 4px ${c}` : "none" }} />
+                          style={{ background: c, boxShadow: accentColor === c ? `0 0 0 2px hsl(var(--surface-4)), 0 0 0 4px ${c}` : "none" }} />
                       ))}
                     </div>
                   </div>
@@ -220,7 +220,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                     onChange={e => setTitle(e.target.value)}
                     placeholder="e.g. Paul's Letters Deep Dive"
                     className="w-full rounded-xl px-4 py-3 text-sm font-inter focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
                   />
                 </div>
 
@@ -233,7 +233,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                     placeholder="What is the purpose of this plan?"
                     rows={2}
                     className="w-full rounded-xl px-4 py-3 text-sm font-inter resize-none focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }}
                   />
                 </div>
 
@@ -248,7 +248,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                       min={minDate}
                       onChange={e => setStartDate(e.target.value)}
                       className="w-full rounded-xl pl-10 pr-4 py-3 text-sm font-inter focus:outline-none"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }}
+                      style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)", fontSize: "16px" }}
                     />
                   </div>
                   {daysUntilStart > 0 && (
@@ -262,14 +262,14 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                   <div className="flex items-center gap-3">
                     <button onClick={() => setDailyGoal(g => Math.max(1, g - 1))}
                       className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
-                      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>−</button>
+                      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}>−</button>
                     <div className="flex-1 text-center">
                       <p className="font-cinzel text-2xl font-bold" style={{ color: accentColor }}>{dailyGoal}</p>
                       <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>chapter{dailyGoal > 1 ? "s" : ""} / day</p>
                     </div>
                     <button onClick={() => setDailyGoal(g => Math.min(10, g + 1))}
                       className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg"
-                      style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>+</button>
+                      style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.6)" }}>+</button>
                   </div>
                   {estimatedDays && (
                     <p className="text-[10px] font-inter mt-2 text-center" style={{ color: "rgba(255,255,255,0.4)" }}>
@@ -289,7 +289,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                       min={minDate}
                       onChange={e => setTargetDate(e.target.value)}
                       className="w-full rounded-xl pl-10 pr-4 py-3 text-sm font-inter focus:outline-none"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: targetDate ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.3)", fontSize: "16px" }}
+                      style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: targetDate ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.3)", fontSize: "16px" }}
                     />
                   </div>
                   {daysUntilTarget && (
@@ -442,7 +442,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
                   <div className="space-y-1.5">
                     {Object.entries(selections).map(([book, chapters]) => (
                       <div key={book} className="flex items-center justify-between px-3 py-2 rounded-xl"
-                        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                        style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                         <span className="text-sm font-cinzel text-white">{book}</span>
                         <span className="text-xs font-inter" style={{ color: accentColor }}>
                           {chapters.size === BIBLE_BOOKS.find(b => b.name === book)?.chapters ? "All chapters" : `${chapters.size} chapters`}
@@ -463,7 +463,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
             {step !== "details" && (
               <button onClick={() => setStep(step === "confirm" ? "books" : "details")}
                 className="px-4 py-3 rounded-2xl font-cinzel text-sm transition-all"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}>
                 Back
               </button>
             )}
@@ -491,7 +491,7 @@ export default function CustomPlanBuilder({ onClose, onSaved }) {
 
 function Stat({ label, value, color }) {
   return (
-    <div className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+    <div className="rounded-xl p-3 text-center" style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
       <p className="font-cinzel text-base font-bold" style={{ color }}>{value}</p>
       <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{label}</p>
     </div>

@@ -73,7 +73,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
             className="fixed right-0 top-0 bottom-0 z-50 flex flex-col"
             style={{
               width: "min(340px, 88vw)",
-              background: "rgba(8,13,26,0.97)",
+              background: "var(--panel-surface)",
               backdropFilter: "blur(24px)",
               WebkitBackdropFilter: "blur(24px)",
               borderLeft: "1px solid rgba(255,255,255,0.08)",
@@ -92,7 +92,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
               </div>
               <motion.button whileTap={{ scale: 0.88 }} onClick={onClose}
                 className="w-7 h-7 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.06)" }}>
+                style={{ background: "var(--fill-3)" }}>
                 <X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.45)" }} />
               </motion.button>
             </div>
@@ -117,7 +117,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
                 placeholder="Write your thoughts, prayers, questions…"
                 className="flex-1 w-full rounded-xl p-3 text-sm font-inter resize-none focus:outline-none"
                 style={{
-                  background: "rgba(255,255,255,0.04)",
+                  background: "var(--fill-2)",
                   border: "1px solid rgba(167,139,250,0.2)",
                   color: "rgba(255,255,255,0.82)",
                   minHeight: "140px",

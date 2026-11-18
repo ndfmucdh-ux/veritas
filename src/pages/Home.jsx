@@ -24,7 +24,7 @@ export default function Home() {
     <motion.div {...pageTransition} className="md:ml-16 min-h-screen">
       <HomeAmbientBackground />
 
-      <div className="relative z-10 px-4 pt-4 pb-28 space-y-7 max-w-2xl mx-auto">
+      <div className="relative z-10 px-4 md:px-8 pt-6 pb-28 space-y-9 max-w-2xl mx-auto">
 
         <HomeGreeting />
 

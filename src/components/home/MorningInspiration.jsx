@@ -54,7 +54,7 @@ export default function MorningInspiration() {
   if (loading) {
     return (
       <div className="rounded-2xl p-4 flex items-center gap-3"
-        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: "#00f5ff" }} />
         <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Preparing your morning verse…</p>
       </div>
@@ -91,7 +91,7 @@ export default function MorningInspiration() {
               whileTap={{ scale: 0.88 }}
               onClick={() => load(true)}
               className="w-6 h-6 rounded-lg flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.06)" }}
+              style={{ background: "var(--fill-3)" }}
             >
               <RefreshCw className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`}
                 style={{ color: "rgba(255,255,255,0.3)" }} />

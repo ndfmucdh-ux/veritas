@@ -88,7 +88,7 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
       exit={reduceMotion ? { opacity: 0 } : { x: 400, opacity: 0 }}
       transition={reduceMotion ? { duration: 0.01 } : { type: "spring", stiffness: 300, damping: 28 }}
       className="fixed right-0 top-0 bottom-0 z-40 w-full md:w-96"
-      style={{ background: "rgba(6,10,20,0.98)", backdropFilter: "blur(20px)", borderLeft: "1px solid rgba(0,245,255,0.15)" }}
+      style={{ background: "var(--panel-surface)", backdropFilter: "blur(20px)", borderLeft: "1px solid rgba(0,245,255,0.15)" }}
       role="dialog"
       aria-label={isEs ? "Devocional Diario" : "Daily Devotional"}
     >
@@ -145,9 +145,9 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
               <Loader2 className="w-4 h-4 animate-spin" />
               {isEs ? "Generando tu reflexión…" : "Generating your reflection…"}
             </div>
-            <div className="h-3 rounded-full animate-pulse" style={{ background: "rgba(255,255,255,0.07)", width: "95%" }} />
-            <div className="h-3 rounded-full animate-pulse" style={{ background: "rgba(255,255,255,0.05)", width: "80%" }} />
-            <div className="h-3 rounded-full animate-pulse" style={{ background: "rgba(255,255,255,0.05)", width: "65%" }} />
+            <div className="h-3 rounded-full animate-pulse" style={{ background: "var(--fill-3)", width: "95%" }} />
+            <div className="h-3 rounded-full animate-pulse" style={{ background: "var(--fill-2)", width: "80%" }} />
+            <div className="h-3 rounded-full animate-pulse" style={{ background: "var(--fill-2)", width: "65%" }} />
           </div>
         ) : devotional && (
           <motion.div
@@ -161,7 +161,7 @@ export default function DevotionalPanel({ book, chapter, verseRef, verseText, tr
             <p className="text-sm font-inter leading-relaxed text-white/70">{devotional.reflection}</p>
 
             {Array.isArray(devotional.insights) && devotional.insights.length > 0 && (
-              <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="rounded-xl p-3" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                 <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
                   {isEs ? "Ideas Clave" : "Key Insights"}
                 </p>

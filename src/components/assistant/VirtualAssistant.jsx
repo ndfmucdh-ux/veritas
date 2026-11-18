@@ -259,7 +259,7 @@ export default function VirtualAssistant({ onClose }) {
       style={{
         width: showHistory ? "min(640px, calc(100vw - 24px))" : "min(420px, calc(100vw - 24px))",
         height: "min(580px, calc(100vh - 160px))",
-        background: "rgba(7,10,22,0.98)",
+        background: "var(--popover-surface)",
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
         border: "1px solid rgba(251,191,36,0.22)",
@@ -277,7 +277,7 @@ export default function VirtualAssistant({ onClose }) {
             <VeritasLogo size={40} />
           </div>
           <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2"
-            style={{ borderColor: "rgba(7,10,22,1)" }} />
+            style={{ borderColor: "hsl(var(--surface-4))" }} />
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-cinzel text-sm font-bold text-white tracking-wide">{ASSISTANT_NAME}</p>
@@ -318,7 +318,7 @@ export default function VirtualAssistant({ onClose }) {
               <VeritasLogo size={28} />
             </div>
             <div className="rounded-2xl px-4 py-3 flex items-center gap-2"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
               <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: "#fbbf24" }} />
               <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Preparing your personal guidance…</span>
             </div>
@@ -335,7 +335,7 @@ export default function VirtualAssistant({ onClose }) {
               <VeritasLogo size={28} />
             </div>
             <div className="rounded-2xl px-4 py-3 flex items-center gap-2"
-              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }}>
               <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: "#fbbf24" }} />
               <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Seeking wisdom…</span>
             </div>
@@ -350,7 +350,7 @@ export default function VirtualAssistant({ onClose }) {
               {QUICK_PROMPTS.map((q) => (
                 <button key={q.label} onClick={() => sendMessage(q.prompt)}
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all"
-                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                   <span className="text-base flex-shrink-0">{q.icon}</span>
                   <span className="text-[11px] font-inter leading-tight" style={{ color: "rgba(255,255,255,0.58)" }}>{q.label}</span>
                 </button>
@@ -375,7 +375,7 @@ export default function VirtualAssistant({ onClose }) {
             rows={1}
             className="flex-1 resize-none rounded-2xl px-4 py-3 text-sm font-inter focus:outline-none scrollbar-hide"
             style={{
-              background: "rgba(255,255,255,0.05)",
+              background: "var(--fill-2)",
               border: "1px solid rgba(255,255,255,0.09)",
               color: "rgba(255,255,255,0.85)",
               maxHeight: 96,

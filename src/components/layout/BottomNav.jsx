@@ -11,13 +11,14 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden"
+      className="fixed left-3 right-3 z-50 flex md:hidden rounded-3xl"
       style={{
-        background: "rgba(6,10,20,0.92)",
-        backdropFilter: "blur(28px)",
-        WebkitBackdropFilter: "blur(28px)",
-        borderTop: "1px solid rgba(255,255,255,0.07)",
-        paddingBottom: "env(safe-area-inset-bottom)",
+        bottom: "calc(12px + env(safe-area-inset-bottom))",
+        background: "hsl(var(--surface-4) / 0.92)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: "1px solid var(--hairline)",
+        boxShadow: "0 8px 24px rgba(8,11,20,0.28)",
       }}
     >
       {navItems.map((item) => (

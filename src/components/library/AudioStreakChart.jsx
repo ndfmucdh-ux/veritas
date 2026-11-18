@@ -95,7 +95,7 @@ export default function AudioStreakChart() {
       </div>
 
       {/* Weekly streak heatmap */}
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
           This Week's Listening
         </p>
@@ -134,7 +134,7 @@ export default function AudioStreakChart() {
       </div>
 
       {/* Weekly trend chart */}
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
           8-Week Trend
         </p>
@@ -144,7 +144,7 @@ export default function AudioStreakChart() {
               <XAxis dataKey="label" tick={{ fontSize: 9, fill: "rgba(255,255,255,0.3)", fontFamily: "Cinzel" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 9, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip
-                contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 10, fontSize: 11, fontFamily: "Cinzel" }}
+                contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 10, fontSize: 11, fontFamily: "Cinzel" }}
                 labelStyle={{ color: "#00f5ff" }}
                 itemStyle={{ color: "rgba(255,255,255,0.7)" }}
                 cursor={{ fill: "rgba(255,255,255,0.04)" }}
@@ -160,7 +160,7 @@ export default function AudioStreakChart() {
 
       {/* Top books listened to */}
       {topBooks.length > 0 && (
-        <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
           <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
             Most Listened
           </p>
@@ -177,7 +177,7 @@ export default function AudioStreakChart() {
                       <span className="font-cinzel text-xs text-white">{book}</span>
                       <span className="text-[10px] font-inter" style={{ color: colors[i] }}>{count} ch</span>
                     </div>
-                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
                       <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: i * 0.1, duration: 0.6 }}
                         className="h-full rounded-full" style={{ background: colors[i] }} />
                     </div>

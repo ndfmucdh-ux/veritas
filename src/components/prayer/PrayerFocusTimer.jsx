@@ -128,7 +128,7 @@ export default function PrayerFocusTimer() {
               left: panelLeft,
               right: panelRight,
               width: "min(320px, calc(100vw - 32px))",
-              background: "rgba(10,15,30,0.98)",
+              background: "var(--popover-surface)",
               backdropFilter: "blur(20px)",
               border: "1px solid rgba(0,245,255,0.2)",
               boxShadow: "0 12px 40px rgba(0,0,0,0.5)",

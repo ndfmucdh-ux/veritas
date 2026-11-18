@@ -175,7 +175,7 @@ export default function AccountSettings({ user }) {
           <div className="space-y-2">
             {sections.map(({ id, label, icon: Icon, color, sub }) => (
               <div key={id} className="rounded-2xl overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.03)", border: openSection === id ? `1px solid ${color}30` : "1px solid rgba(255,255,255,0.07)" }}>
+                style={{ background: "var(--fill-1)", border: openSection === id ? `1px solid ${color}30` : "1px solid rgba(255,255,255,0.07)" }}>
                 <button className="w-full flex items-center gap-3 px-4 py-3.5 text-left" onClick={() => toggle(id)}>
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: `${color}12`, border: `1px solid ${color}25` }}>
@@ -207,7 +207,7 @@ export default function AccountSettings({ user }) {
                             <input value={newName} onChange={e => setNewName(e.target.value)}
                               placeholder="New display name"
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)" }} />
                             <button onClick={saveName} disabled={!newName.trim() || nameSaving}
                               className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2 transition-all"
                               style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)", opacity: !newName.trim() ? 0.5 : 1 }}>
@@ -227,11 +227,11 @@ export default function AccountSettings({ user }) {
                             <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)}
                               placeholder="New email address"
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }} />
                             <input type="password" value={emailPassword} onChange={e => setEmailPassword(e.target.value)}
                               placeholder="Confirm with your current password"
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.15)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.15)", color: "rgba(255,255,255,0.85)" }} />
                             {emailMsg && <p className="text-xs font-inter" style={{ color: emailMsg.type === "error" ? "#f87171" : "#34d399" }}>{emailMsg.text}</p>}
                             <button onClick={saveEmail} disabled={emailSaving}
                               className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2"
@@ -248,7 +248,7 @@ export default function AccountSettings({ user }) {
                               <input type={showPwd ? "text" : "password"} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)}
                                 placeholder="Current password"
                                 className="w-full rounded-xl px-3 py-2.5 pr-10 text-sm font-inter focus:outline-none"
-                                style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                                style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
                               <button onClick={() => setShowPwd(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.3)" }}>
                                 {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                               </button>
@@ -256,11 +256,11 @@ export default function AccountSettings({ user }) {
                             <input type={showPwd ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)}
                               placeholder="New password (min 8 chars)"
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
                             <input type={showPwd ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
                               placeholder="Confirm new password"
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
                             {newPassword.length > 0 && (
                               <div className="space-y-1">
                                 <div className="flex gap-1">
@@ -379,7 +379,7 @@ export default function AccountSettings({ user }) {
                               { label: "📖 Devotional Plan", key: "devotional", value: devotionalTime, setter: setDevotionalTime, sub: "Reading plan nudge" },
                             ].map(({ label, key, value, setter, sub }) => (
                               <div key={key} className="flex items-center justify-between py-2.5 px-3 rounded-xl"
-                                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                                style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
                                 <div>
                                   <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>{label}</p>
                                   <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>

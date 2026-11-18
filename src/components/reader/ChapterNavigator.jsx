@@ -133,13 +133,13 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
       <div className="flex items-center gap-2">
         <button onClick={prevChapter} disabled={atStart}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: atStart ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.55)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)", color: atStart ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.55)" }}>
           <ChevronLeft className="w-4 h-4" />
         </button>
 
         <button onClick={() => { setSelectedCategory(null); setSelectedBook(null); setModal("books"); }}
           className="flex-1 flex items-center gap-2 px-3 py-2 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)" }}>
           <span className="font-cinzel text-sm font-semibold text-white truncate">{displayBook} {chapter}</span>
           <ChevronDown className="w-3.5 h-3.5 ml-auto flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
         </button>
@@ -152,7 +152,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
 
         <button onClick={nextChapter} disabled={atEnd}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: atEnd ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.55)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)", color: atEnd ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.55)" }}>
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -194,7 +194,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                      maxWidth: "480px",
                      maxHeight: "85vh",
                      padding: "0",
-                     background: "rgba(14,18,32,0.97)",
+                     background: "var(--popover-surface)",
                      backdropFilter: "blur(24px)",
                      borderRadius: "20px",
                      border: "1px solid rgba(255,215,0,0.12)",
@@ -224,7 +224,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                     <button onClick={close}
                       style={{
                         fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 600,
-                        color: "rgba(255,255,255,0.55)", background: "rgba(255,255,255,0.07)",
+                        color: "rgba(255,255,255,0.55)", background: "var(--fill-3)",
                         border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16,
                         padding: "5px 12px", cursor: "pointer",
                       }}>
@@ -330,7 +330,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                                 position: "relative", height: 110, borderRadius: 16, overflow: "hidden", cursor: "pointer",
                                 border: "1.5px solid rgba(255,215,0,0.08)",
                                 boxShadow: "0 2px 12px rgba(0,0,0,0.3)",
-                                padding: 0, background: "rgba(255,255,255,0.03)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
+                                padding: 0, background: "var(--fill-1)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"
                               }}>
                               <span style={{ fontSize: 28 }}>{icon}</span>
                               <p style={{ fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 700, color: "#fff", margin: "6px 0 0" }}>{label}</p>
@@ -395,7 +395,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                         maxWidth: "420px",
                         maxHeight: "85vh",
                         padding: "0",
-                        background: "rgba(14,18,32,0.98)",
+                        background: "var(--popover-surface)",
                         backdropFilter: "blur(24px)",
                         borderRadius: "20px",
                         border: "1.5px solid rgba(251,191,36,0.15)",
@@ -423,7 +423,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                     </div>
                     <button onClick={close}
                       style={{
-                        width: 28, height: 28, borderRadius: 10, background: "rgba(255,255,255,0.08)",
+                        width: 28, height: 28, borderRadius: 10, background: "var(--fill-3)",
                         border: "1px solid rgba(255,255,255,0.12)", cursor: "pointer",
                         display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.5)",
                       }}>

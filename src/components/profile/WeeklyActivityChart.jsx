@@ -68,7 +68,7 @@ export default function WeeklyActivityChart() {
           <XAxis dataKey="day" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
           <Tooltip
-            contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
+            contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
             labelStyle={{ color: "#00f5ff" }}
             itemStyle={{ color: "rgba(255,255,255,0.7)" }}
           />

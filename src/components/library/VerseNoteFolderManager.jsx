@@ -170,7 +170,7 @@ export default function VerseNoteFolderManager({ highlights = [], notes = [] }) 
                 <input value={newName} onChange={e => setNewName(e.target.value)}
                   placeholder="Folder name…"
                   className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+                  style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
                   autoFocus
                   onKeyDown={e => e.key === "Enter" && saveFolder()}
                 />
@@ -194,7 +194,7 @@ export default function VerseNoteFolderManager({ highlights = [], notes = [] }) 
                       {COLORS.map(c => (
                         <button key={c} onClick={() => setNewColor(c)}
                           className="w-6 h-6 rounded-full transition-all"
-                          style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px #07080f, 0 0 0 3.5px ${c}` : "none" }} />
+                          style={{ background: c, boxShadow: newColor === c ? `0 0 0 2px hsl(var(--surface-4)), 0 0 0 3.5px ${c}` : "none" }} />
                       ))}
                     </div>
                   </div>
@@ -203,7 +203,7 @@ export default function VerseNoteFolderManager({ highlights = [], notes = [] }) 
                 <div className="flex gap-2 pt-1">
                   <button onClick={() => { setShowCreate(false); setEditingFolder(null); }}
                     className="flex-1 py-2 rounded-xl font-cinzel text-sm"
-                    style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                    style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                     Cancel
                   </button>
                   <button onClick={saveFolder} disabled={!newName.trim() || saving}
@@ -239,7 +239,7 @@ export default function VerseNoteFolderManager({ highlights = [], notes = [] }) 
 
         {/* ── Draggable Source Pool ── */}
         {(verseItems.length > 0 || noteItems.length > 0) && folders.length > 0 && (
-          <div className="rounded-2xl p-3" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="rounded-2xl p-3" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
             <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.25)" }}>
               🖱️ Drag items below into folders above
             </p>

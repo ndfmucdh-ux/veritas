@@ -52,7 +52,7 @@ export default function VerseImageEditor({ verse_ref, onClose }) {
         onClick={(e) => e.stopPropagation()}
         className="rounded-3xl w-full max-w-md p-6"
         style={{
-          background: "linear-gradient(135deg, rgba(6,10,20,0.98) 0%, rgba(10,15,30,0.95) 100%)",
+          background: "linear-gradient(135deg, hsl(var(--surface-4)) 0%, hsl(var(--surface-3)) 100%)",
           border: "1px solid rgba(0,245,255,0.15)"
         }}
       >
@@ -110,7 +110,7 @@ export default function VerseImageEditor({ verse_ref, onClose }) {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleCopyUrl}
                 className="flex-1 py-2 rounded-xl text-sm font-inter flex items-center justify-center gap-2"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.7)" }}
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.7)" }}
               >
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                 {copied ? "Copied" : "Copy"}

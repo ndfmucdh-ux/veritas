@@ -36,7 +36,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
   return (
     <div className="relative h-52 overflow-hidden">
       <img src={heroUrl || DEFAULT_HERO} alt="" className="w-full h-full object-cover" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(8,12,24,0.92) 80%, rgb(8,12,24) 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, hsl(var(--background) / 0.92) 80%, hsl(var(--background)) 100%)" }} />
 
       <button
         onClick={() => heroInputRef.current?.click()}
@@ -68,7 +68,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
           <button
             onClick={() => avatarInputRef.current?.click()}
             className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl flex items-center justify-center z-10"
-            style={{ background: "rgba(10,15,30,0.95)", border: "1.5px solid rgba(251,191,36,0.35)", boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+            style={{ background: "var(--popover-surface)", border: "1.5px solid rgba(251,191,36,0.35)", boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
           >
             {uploadingAvatar ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Camera className="w-3.5 h-3.5" style={{ color: "#fbbf24" }} />}
           </button>

@@ -19,7 +19,7 @@ export default function PlanTimeline({ plan, completedDays, onSelectDay, selecte
       <div className="relative">
         {/* Vertical connector line */}
         <div className="absolute left-5 top-5 bottom-5 w-0.5"
-          style={{ background: "rgba(255,255,255,0.06)" }} />
+          style={{ background: "var(--fill-3)" }} />
         {/* Progress fill */}
         <motion.div
           className="absolute left-5 top-5 w-0.5"

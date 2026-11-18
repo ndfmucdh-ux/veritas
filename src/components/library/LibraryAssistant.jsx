@@ -64,7 +64,7 @@ export default function LibraryAssistant({ open, onClose }) {
       transition={{ type: "spring", stiffness: 360, damping: 28 }}
       className="fixed bottom-20 left-3 right-3 md:left-auto md:right-6 md:w-96 z-[60] rounded-3xl overflow-hidden flex flex-col"
       style={{
-        background: "rgba(6,9,20,0.98)",
+        background: "var(--popover-surface)",
         border: "1px solid rgba(167,139,250,0.25)",
         boxShadow: "0 24px 80px rgba(0,0,0,0.8), 0 0 40px rgba(167,139,250,0.08)",
         backdropFilter: "blur(28px)",
@@ -85,7 +85,7 @@ export default function LibraryAssistant({ open, onClose }) {
           </div>
         </div>
         <button onClick={onClose} className="w-7 h-7 rounded-xl flex items-center justify-center"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+          style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -118,7 +118,7 @@ export default function LibraryAssistant({ open, onClose }) {
         {sending && (
           <div className="flex justify-start">
             <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.07)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.07)" }}>
               <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: "#a78bfa" }} />
               <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Thinking…</span>
             </div>
@@ -163,7 +163,7 @@ export default function LibraryAssistant({ open, onClose }) {
             onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
             placeholder="Ask about your library…"
             className="flex-1 rounded-2xl px-3.5 py-2.5 text-sm font-inter focus:outline-none"
-            style={{ fontSize: "16px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }}
+            style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }}
           />
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => send()}
             disabled={!input.trim() || sending}

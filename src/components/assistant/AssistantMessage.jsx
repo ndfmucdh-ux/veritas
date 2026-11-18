@@ -36,7 +36,7 @@ function AssistantMessage({ role, content }) {
         className="max-w-[82%] rounded-2xl px-4 py-3"
         style={isUser
           ? { background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.18)" }
-          : { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }
+          : { background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.08)" }
         }
       >
         {isUser ? (

@@ -27,8 +27,8 @@ export default function ConversationHistoryPanel({ conversations, activeId, onSe
 
   return (
     <aside className="w-40 md:w-48 flex-shrink-0 border-r overflow-y-auto scrollbar-hide"
-      style={{ borderColor: "rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.025)" }}>
-      <div className="p-3 sticky top-0 z-10" style={{ background: "rgba(7,10,22,0.98)" }}>
+      style={{ borderColor: "rgba(255,255,255,0.07)", background: "var(--fill-1)" }}>
+      <div className="p-3 sticky top-0 z-10" style={{ background: "var(--popover-surface)" }}>
         <button onClick={onNew}
           className="w-full flex items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-[11px] font-cinzel"
           style={{ background: "rgba(251,191,36,0.12)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.24)" }}>
@@ -38,7 +38,7 @@ export default function ConversationHistoryPanel({ conversations, activeId, onSe
 
       <div className="px-3 pb-3 space-y-4">
         {Object.keys(grouped).length === 0 && (
-          <div className="rounded-xl p-3 text-center" style={{ background: "rgba(255,255,255,0.03)" }}>
+          <div className="rounded-xl p-3 text-center" style={{ background: "var(--fill-1)" }}>
             <MessageSquare className="w-4 h-4 mx-auto mb-2" style={{ color: "rgba(255,255,255,0.25)" }} />
             <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>No saved conversations yet</p>
           </div>

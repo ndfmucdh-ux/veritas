@@ -59,7 +59,7 @@ export default function PrayerStreakTracker({ prayers }) {
 
   return (
     <div className="rounded-2xl overflow-hidden mb-5"
-      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
       {/* Streak header */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function PrayerStreakTracker({ prayers }) {
             <span>Next: {nextBadge.icon} {nextBadge.label} ({nextBadge.days} days)</span>
             <span style={{ color: nextBadge.color }}>{streak}/{nextBadge.days}</span>
           </div>
-          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(100, (streak / nextBadge.days) * 100)}%` }}

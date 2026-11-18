@@ -47,7 +47,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
         onClick={(e) => e.stopPropagation()}
         className="rounded-3xl w-full max-w-md p-6"
         style={{
-          background: "linear-gradient(135deg, rgba(6,10,20,0.98) 0%, rgba(10,15,30,0.95) 100%)",
+          background: "linear-gradient(135deg, hsl(var(--surface-4)) 0%, hsl(var(--surface-3)) 100%)",
           border: "1px solid rgba(0,245,255,0.15)",
           boxShadow: "0 20px 60px rgba(0,245,255,0.2)"
         }}
@@ -106,7 +106,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
               <button
                 onClick={() => setPrayer(null)}
                 className="flex-1 py-2 rounded-xl text-sm font-inter"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.6)" }}
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.6)" }}
               >
                 Back
               </button>

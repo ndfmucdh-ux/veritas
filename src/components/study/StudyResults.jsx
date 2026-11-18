@@ -49,7 +49,7 @@ export function CrossRefsResult({ data }) {
             </a>
             <div>
               <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.7)" }}>{r.connection}</p>
-              <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>{r.theme}</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full mt-1 inline-block" style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>{r.theme}</span>
             </div>
           </div>
         ))}

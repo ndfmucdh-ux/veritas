@@ -22,19 +22,19 @@ export default function AudioOverviewTab({
         ))}
       </div>
 
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <div className="flex items-center justify-between mb-3">
           <p className="font-cinzel text-sm text-white flex items-center gap-2"><Target className="w-4 h-4 text-gold" /> Today's Goal</p>
           <span className="font-cinzel text-xs" style={{ color: todayCount >= goal ? "#34d399" : "#00f5ff" }}>{todayCount}/{goal} chapters</span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
           <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (todayCount / goal) * 100)}%` }} transition={{ duration: 0.8 }}
             className="h-full rounded-full" style={{ background: todayCount >= goal ? "#34d399" : "#00f5ff" }} />
         </div>
         {todayCount >= goal && <p className="text-xs font-inter mt-2" style={{ color: "#34d399" }}>✅ Goal reached today!</p>}
       </div>
 
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgba(255,255,255,0.07)" }}>
         <p className="font-cinzel text-xs uppercase tracking-widest mb-4" style={{ color: "rgba(255,255,255,0.3)" }}>This Week</p>
         <div className="flex items-end gap-2 h-24">
           {weeklyData.map((d, i) => (

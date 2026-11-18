@@ -33,7 +33,7 @@ export default function EmptyState({ icon, title, description, action, className
         <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{title}</p>
       )}
       {description && (
-        <p className="text-xs font-inter max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <p className="text-xs font-inter max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
           {description}
         </p>
       )}

@@ -164,7 +164,7 @@ export default function VerseImageGenerator() {
             </p>
             <input value={verseRef} onChange={e => setVerseRef(e.target.value)}
               className="w-full px-4 py-3 rounded-xl text-sm font-cinzel focus:outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
           </div>
           <div>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
@@ -172,7 +172,7 @@ export default function VerseImageGenerator() {
             </p>
             <textarea value={verseText} onChange={e => setVerseText(e.target.value)} rows={4}
               className="w-full px-4 py-3 rounded-xl text-sm resize-none focus:outline-none"
-              style={{ fontFamily: template.font, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.82)" }} />
+              style={{ fontFamily: template.font, background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.82)" }} />
           </div>
           <div>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
@@ -180,7 +180,7 @@ export default function VerseImageGenerator() {
             </p>
             <input value={highlightedWord} onChange={e => setHighlightedWord(e.target.value)} placeholder={lang === "es" ? "ej. 'amor'" : "e.g., 'loved'"}
               className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
           </div>
         </div>
 
@@ -354,7 +354,7 @@ export default function VerseImageGenerator() {
           <div className="relative">
             <motion.button whileTap={{ scale: 0.96 }} onClick={nativeShare}
               className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.65)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.65)" }}>
               <Share2 className="w-5 h-5" />
               {t.share}
             </motion.button>
@@ -363,7 +363,7 @@ export default function VerseImageGenerator() {
                 <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   className="absolute bottom-full left-0 right-0 mb-2 rounded-2xl p-3 z-30 space-y-1.5"
-                  style={{ background: "rgba(10,15,30,0.97)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(20px)" }}>
+                  style={{ background: "var(--popover-surface)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(20px)" }}>
                   {[
                     { id: "whatsapp", label: "WhatsApp",  color: "#25D366" },
                     { id: "sms",      label: "SMS",        color: "#00f5ff" },
@@ -372,7 +372,7 @@ export default function VerseImageGenerator() {
                   ].map(({ id, label, color }) => (
                     <button key={id} onClick={() => shareVia(id)}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-inter text-left"
-                      style={{ background: "rgba(255,255,255,0.04)" }}>
+                      style={{ background: "var(--fill-2)" }}>
                       <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
                       <span style={{ color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
@@ -384,7 +384,7 @@ export default function VerseImageGenerator() {
           {/* Copy */}
           <motion.button whileTap={{ scale: 0.96 }} onClick={copyText}
             className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
             {copied ? <Check className="w-5 h-5" style={{ color: "#34d399" }} /> : <Copy className="w-5 h-5" />}
             {copied ? "Copied!" : "Copy"}
           </motion.button>

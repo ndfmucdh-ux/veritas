@@ -79,7 +79,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
         className="w-full max-w-sm rounded-3xl overflow-hidden"
-        style={{ maxHeight: "85vh", display: "flex", flexDirection: "column", background: "rgba(8,13,26,0.99)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}
+        style={{ maxHeight: "85vh", display: "flex", flexDirection: "column", background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.15)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4"
@@ -91,7 +91,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
             </p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>
+            style={{ background: "var(--fill-3)", color: "rgba(255,255,255,0.4)" }}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -110,7 +110,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
                     <button key={folder.id} onClick={() => saveToFolder(folder)}
                       disabled={saving === folder.id}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all"
-                      style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${folder.color || "#00f5ff"}22` }}>
+                      style={{ background: "var(--fill-2)", border: `1px solid ${folder.color || "#00f5ff"}22` }}>
                       <span className="text-xl flex-shrink-0">{folder.icon || "📁"}</span>
                       <div className="flex-1 min-w-0">
                         <p className="font-cinzel text-sm text-white">{folder.name}</p>
@@ -151,7 +151,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
                       onChange={e => setNewName(e.target.value)}
                       placeholder="Folder name..."
                       className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                      style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+                      style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
                       autoFocus
                     />
                     <div className="flex gap-2">
@@ -166,7 +166,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
                     <div className="flex gap-2">
                       <button onClick={() => setShowCreate(false)}
                         className="flex-1 py-2 rounded-xl text-sm font-cinzel"
-                        style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
+                        style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>Cancel</button>
                       <button onClick={createAndSave} disabled={!newName.trim() || creating}
                         className="flex-1 py-2 rounded-xl text-sm font-cinzel flex items-center justify-center gap-2"
                         style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.3)" }}>

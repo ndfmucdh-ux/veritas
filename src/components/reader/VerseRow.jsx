@@ -233,7 +233,7 @@ function VerseRow({
             transition={{ type: "spring", stiffness: 380, damping: 24 }}
             onClick={(e) => e.stopPropagation()}
             className="absolute left-0 right-0 z-20 rounded-2xl p-3 mt-1"
-            style={{ background: "rgba(10,15,30,0.97)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
+            style={{ background: "var(--popover-surface)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}
           >
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
               {book} {chapter}:{verseNum}
@@ -317,7 +317,7 @@ function VerseRow({
               </button>
               <button onClick={() => setMenuOpen(false)}
                 className="ml-auto flex items-center justify-center w-9 h-9 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)" }}>
+                style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.3)" }}>
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -357,7 +357,7 @@ function VerseRow({
                       placeholder="Write your reflection..."
                       rows={3}
                       className="w-full rounded-xl p-3 text-sm font-inter resize-none focus:outline-none"
-                      style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
+                      style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)" }}
                     />
                     <button onClick={saveNote}
                       className="mt-2 flex items-center gap-1.5 text-xs px-4 py-2 rounded-xl font-cinzel"

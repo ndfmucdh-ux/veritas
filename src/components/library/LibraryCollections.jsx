@@ -126,10 +126,10 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                 <input value={newName} onChange={e => setNewName(e.target.value)}
                   placeholder="Collection name…"
                   className="flex-1 rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                  style={{ fontSize: "16px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
+                  style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
                 <input value={newEmoji} onChange={e => setNewEmoji(e.target.value)} maxLength={2}
                   className="w-12 text-center rounded-xl px-2 py-2.5 text-lg focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
+                  style={{ background: "var(--fill-3)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
               </div>
 
               <div className="flex gap-2 items-center">
@@ -144,7 +144,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
               <div className="flex gap-2">
                 <button onClick={() => setShowCreate(false)}
                   className="flex-1 py-2.5 rounded-xl font-cinzel text-sm"
-                  style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                  style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.4)" }}>
                   Cancel
                 </button>
                 <button onClick={createCollection} disabled={!newName.trim() || saving}
@@ -173,7 +173,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
       {collections.map((col, i) => (
         <motion.div key={col.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
           className="rounded-2xl overflow-hidden"
-          style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${col.color || "#00f5ff"}22` }}>
+          style={{ background: "var(--fill-1)", border: `1px solid ${col.color || "#00f5ff"}22` }}>
           {/* Collection header */}
           <button className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
             onClick={() => setExpandedId(expandedId === col.id ? null : col.id)}>
@@ -254,7 +254,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                   </div>
                   <button onClick={() => setAddingTo(null)}
                     className="w-full py-2 rounded-xl font-cinzel text-xs"
-                    style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.35)" }}>
+                    style={{ background: "var(--fill-2)", color: "rgba(255,255,255,0.35)" }}>
                     Done
                   </button>
                 </div>
@@ -276,7 +276,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                   )}
                   {(col.verse_refs || []).map(ref => (
                     <div key={ref} className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                      style={{ background: "rgba(255,255,255,0.03)" }}>
+                      style={{ background: "var(--fill-1)" }}>
                       <span className="text-xs font-cinzel flex-1" style={{ color: col.color || "#00f5ff" }}>{ref}</span>
                       <a href={`/read?book=${encodeURIComponent(ref.split(" ").slice(0,-1).join(" "))}&chapter=${ref.split(" ").pop()?.split(":")[0]}`}
                         className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.3)" }}>

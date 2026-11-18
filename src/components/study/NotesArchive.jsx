@@ -36,7 +36,7 @@ export default function NotesArchive() {
       {/* Search + filter bar */}
       <div className="flex gap-2">
         <div className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)" }}>
           <Search className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
           <input
             value={search}
@@ -53,7 +53,7 @@ export default function NotesArchive() {
           value={bookFilter}
           onChange={e => setBookFilter(e.target.value)}
           className="px-3 py-2.5 rounded-xl text-sm font-cinzel focus:outline-none"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: bookFilter ? "#00f5ff" : "rgba(255,255,255,0.4)" }}
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: bookFilter ? "#00f5ff" : "rgba(255,255,255,0.4)" }}
         >
           <option value="">All Books</option>
           {allBooks.map(b => <option key={b} value={b}>{b}</option>)}

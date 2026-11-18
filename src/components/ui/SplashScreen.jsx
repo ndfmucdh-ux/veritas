@@ -20,7 +20,7 @@ export default function SplashScreen({ onComplete }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: "easeInOut" }}
           className="fixed inset-0 z-[9999] flex items-center justify-center"
-          style={{ background: "#000" }}
+          style={{ background: "hsl(var(--background))" }}
         >
           {/* Subtle radial amber glow behind the ring */}
           <div
