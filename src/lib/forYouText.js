@@ -1,3 +1,5 @@
+import { STAGE1_TEXT } from "@/lib/forYouStage1";
+
 // For You text. English and Spanish are complete; other languages show the English text
 // (titles, buttons and book names are translated everywhere).
 // Each theme is [label, description, reflection, practice].
@@ -176,4 +178,9 @@ export const FOR_YOU_TEXT = {
   },
 };
 
-export const getForYouText = (lang, category) => (FOR_YOU_TEXT[lang] || FOR_YOU_TEXT.en)[category];
+// Base text plus the themes added in stages (languages without base text fall back to English).
+export const getForYouText = (lang, category) => {
+  const base = (FOR_YOU_TEXT[lang] || FOR_YOU_TEXT.en)[category];
+  const extra = (STAGE1_TEXT[lang] || STAGE1_TEXT.en)[category] || [];
+  return base && { ...base, themes: [...base.themes, ...extra] };
+};
