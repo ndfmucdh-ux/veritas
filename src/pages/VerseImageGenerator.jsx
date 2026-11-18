@@ -102,9 +102,15 @@ export default function VerseImageGenerator() {
             await navigator.share({ ...shareData, files: [file] });
             return;
           }
-        } catch {}
+        } catch (e) {
+          if (e?.name === "AbortError") return;
+        }
       }
-      await navigator.share(shareData);
+      try {
+        await navigator.share(shareData);
+      } catch (e) {
+        if (e?.name !== "AbortError") setShowShareMenu(true);
+      }
     } else {
       setShowShareMenu(v => !v);
     }
