@@ -1,34 +1,33 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { BookOpen, Crown, Heart, ChevronRight } from "lucide-react";
+import { BookOpen, Map, Heart, ChevronRight } from "lucide-react";
+import { useLang } from "@/lib/LanguageContext";
+import PhotoCard from "@/components/ui/PhotoCard";
 
 const TILES = [
-  { path: "/read", icon: BookOpen, title: "Today's Reading", desc: "Continue your plan with purpose.", bg: "hsl(var(--card))" },
-  { path: "/plans", icon: Crown, title: "Plans", desc: "Grow deeper in His Word.", bg: "hsl(var(--gold) / 0.14)" },
-  { path: "/prayer-journal", icon: Heart, title: "Prayer", desc: "Talk to God about anything.", bg: "hsl(var(--purple) / 0.14)" },
+  { path: "/read", mark: BookOpen, photo: "candle", title: "s4Reading", desc: "s4ReadingD" },
+  { path: "/plans", mark: Map, photo: "desert", title: "s4Plans", desc: "s4PlansD" },
+  { path: "/prayer-journal", mark: Heart, photo: "chapel", title: "s4Prayer", desc: "s4PrayerD" },
 ];
 
 export default function HomeTiles() {
+  const { t } = useLang();
   return (
     <div className="grid grid-cols-3 auto-rows-fr gap-3">
-      {TILES.map((tile, i) => {
-        const Icon = tile.icon;
-        return (
-          <Link key={tile.path} to={tile.path} className="block h-full">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}
-              whileTap={{ scale: 0.97 }}
-              className="h-full min-h-[150px] rounded-2xl p-3.5 flex flex-col"
-              style={{ background: tile.bg, border: "1px solid var(--hairline)" }}
-            >
-              <Icon className="w-7 h-7 mb-3" strokeWidth={1.4} style={{ color: "var(--t-gold)" }} />
-              <p className="font-cinzel text-xl font-semibold leading-tight text-foreground break-words">{tile.title}</p>
-              <p className="font-inter text-sm mt-1 leading-snug break-words" style={{ color: "rgb(var(--ink) / 0.75)" }}>{tile.desc}</p>
-              <ChevronRight className="w-4 h-4 mt-auto pt-0" style={{ color: "rgb(var(--ink) / 0.7)" }} />
-            </motion.div>
-          </Link>
-        );
-      })}
+      {TILES.map((tile, i) => (
+        <Link key={tile.path} to={tile.path} className="block h-full min-w-0">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}
+            whileTap={{ scale: 0.97 }} className="h-full"
+          >
+            <PhotoCard photo={tile.photo} mark={tile.mark} markClass="w-20 h-20" className="h-full min-h-[150px] rounded-2xl" innerClassName="p-3.5 flex flex-col">
+              <p className="font-cinzel text-lg font-semibold leading-tight break-words" style={{ color: "#fff" }}>{t[tile.title]}</p>
+              <p className="font-inter text-xs mt-1 leading-snug break-words" style={{ color: "rgba(255,255,255,0.8)" }}>{t[tile.desc]}</p>
+              <ChevronRight className="w-4 h-4 mt-auto" style={{ color: "#d9b77e" }} />
+            </PhotoCard>
+          </motion.div>
+        </Link>
+      ))}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, RefreshCw, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import { PhotoBackdrop, PHOTO_VARS } from "@/components/ui/PhotoCard";
 
 const CACHE_KEY = "veritas_daily_reflection";
 const CACHE_DATE_KEY = "veritas_daily_reflection_date";
@@ -89,18 +90,20 @@ export default function DailyReflectionCard() {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, rgba(167,139,250,0.09) 0%, rgba(0,245,255,0.05) 100%)",
-          border: "1px solid rgba(167,139,250,0.2)",
+          background: "#141414",
+          border: "1px solid var(--hairline)",
+          ...PHOTO_VARS,
         }}
       >
-        <div className="p-3">
+        <PhotoBackdrop photo="waterfall" mark={Sparkles} markClass="w-24 h-24" />
+        <div className="p-3 relative z-10">
           {/* Header row — compact */}
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{ background: "rgba(167,139,250,0.2)", border: "1px solid rgba(167,139,250,0.3)" }}>
-              <Sparkles className="w-3 h-3" style={{ color: "#a78bfa" }} />
+              <Sparkles className="w-3 h-3" style={{ color: "#d9b77e" }} />
             </div>
-            <p className="font-cinzel text-xs font-semibold flex-1" style={{ color: "#a78bfa" }}>
+            <p className="font-cinzel text-xs font-semibold flex-1" style={{ color: "#d9b77e" }}>
               {(TEXT[lang] || TEXT.en).title}
             </p>
             {/* Refresh + Dismiss side by side */}
@@ -120,7 +123,7 @@ export default function DailyReflectionCard() {
 
           {loading && (
             <div className="flex items-center gap-2 pt-2">
-              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#a78bfa" }} />
+              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#d9b77e" }} />
               <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                 {(TEXT[lang] || TEXT.en).loading}
               </p>
@@ -141,12 +144,12 @@ export default function DailyReflectionCard() {
               <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
                 <a href={`/read?book=${encodeURIComponent(reflection.key_verse?.split(" ").slice(0,-1).join(" "))}&chapter=${reflection.key_verse?.split(" ").pop()?.split(":")[0]}`}
                   className="font-cinzel text-[10px] font-semibold"
-                  style={{ color: "#fbbf24" }}>
+                  style={{ color: "#d9b77e" }}>
                   {reflection.key_verse}
                 </a>
                 {reflection.theme && (
                   <span className="text-[10px] font-cinzel px-2.5 py-1 rounded-xl capitalize max-w-full min-w-0 break-words text-center leading-snug"
-                    style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa" }}>
+                    style={{ background: "rgba(167,139,250,0.15)", color: "#d9b77e" }}>
                     {reflection.theme}
                   </span>
                 )}

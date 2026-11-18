@@ -1,23 +1,25 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Loader2, ChevronRight, RefreshCw } from "lucide-react";
+import { Sparkles, Loader2, ChevronRight, RefreshCw, Sun, Mountain, Feather, Droplets, Heart, Flame } from "lucide-react";
+import { PhotoBackdrop, PHOTO_VARS } from "@/components/ui/PhotoCard";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { useLang } from "@/lib/LanguageContext";
 
+// Each theme gets its own black-and-white photo and golden watermark icon.
 const THEMES = {
-  hope: { color: "#fbbf24", bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)" },
-  strength: { color: "#f97316", bg: "rgba(249,115,22,0.06)", border: "rgba(249,115,22,0.2)" },
-  grace: { color: "#a78bfa", bg: "rgba(167,139,250,0.06)", border: "rgba(167,139,250,0.2)" },
-  peace: { color: "#34d399", bg: "rgba(52,211,153,0.06)", border: "rgba(52,211,153,0.2)" },
-  love: { color: "#f472b6", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)" },
-  faith: { color: "#00f5ff", bg: "rgba(0,245,255,0.06)", border: "rgba(0,245,255,0.2)" },
+  hope: { photo: "sunrise", mark: Sun },
+  strength: { photo: "mountains", mark: Mountain },
+  grace: { photo: "dove", mark: Feather },
+  peace: { photo: "waterfall", mark: Droplets },
+  love: { photo: "lily", mark: Heart },
+  faith: { photo: "chapel", mark: Flame },
 };
 
-const getThemeStyle = (theme) => THEMES[theme?.toLowerCase()] || THEMES.faith;
+const getThemeStyle = (theme) => ({ color: "#d9b77e", ...(THEMES[theme?.toLowerCase()] || THEMES.faith) });
 
 export default function MorningInspiration() {
-  const { lang } = useLang();
+  const { lang, t } = useLang();
   const [inspiration, setInspiration] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -56,7 +58,7 @@ export default function MorningInspiration() {
       <div className="rounded-2xl p-4 flex items-center gap-3"
         style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
         <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" style={{ color: "#00f5ff" }} />
-        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Preparing your morning verse…</p>
+        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{t.s4Preparing}</p>
       </div>
     );
   }
@@ -70,16 +72,17 @@ export default function MorningInspiration() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="rounded-2xl overflow-hidden"
-      style={{ background: theme.bg, border: `1px solid ${theme.border}` }}
+      className="relative rounded-2xl overflow-hidden"
+      style={{ background: "#141414", border: "1px solid var(--hairline)", ...PHOTO_VARS }}
     >
-      <div className="p-4">
+      <PhotoBackdrop photo={theme.photo} mark={theme.mark} markClass="w-28 h-28" />
+      <div className="p-4 relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5" style={{ color: theme.color }} />
             <span className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: theme.color }}>
-              {lang === "es" ? "Inspiración del día" : lang === "pt" ? "Inspiração do dia" : "Morning Inspiration"}
+              {t.s4Inspiration}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -133,8 +136,8 @@ export default function MorningInspiration() {
                 style={{ color: "rgb(var(--ink) / 0.35)" }}
               >
                 {expanded
-                ? (lang === "es" ? "Menos ↑" : lang === "pt" ? "Menos ↑" : "Less ↑")
-                : (lang === "es" ? "Reflexionar ↓" : lang === "pt" ? "Refletir ↓" : "Reflect ↓")
+                ? `${t.s4Less} ↑`
+                : `${t.s4Reflect} ↓`
               }
               </button>
               <div className="flex-1" />
@@ -143,7 +146,7 @@ export default function MorningInspiration() {
                   <motion.div whileTap={{ scale: 0.95 }}
                     className="flex items-center gap-1 text-[11px] font-cinzel px-3 py-1.5 rounded-lg"
                     style={{ background: `${theme.color}15`, color: theme.color, border: `1px solid ${theme.color}30` }}>
-                     {lang === "es" ? "Leer capítulo" : lang === "pt" ? "Ler capítulo" : "Read Chapter"} <ChevronRight className="w-3 h-3" />
+                     {t.s4ReadChapter} <ChevronRight className="w-3 h-3" />
                   </motion.div>
                 </Link>
               )}
