@@ -1,31 +1,55 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, ChevronDown, Plus, Check } from "lucide-react";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 
 const field = "w-full px-3 min-h-11 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring";
 const lbl = "block text-[11px] uppercase tracking-[0.14em] text-muted-foreground mb-1";
+const range = (n) => Array.from({ length: n }, (_, i) => i + 1);
+
+// Compact native dropdown with a chevron.
+function Select({ label, value, onChange, children, className = "" }) {
+  return (
+    <label className={`block min-w-0 ${className}`}>
+      <span className={lbl}>{label}</span>
+      <span className="relative block">
+        <select value={value} onChange={onChange} className={`${field} appearance-none pr-8 truncate`} style={{ fontSize: 16 }}>{children}</select>
+        <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+      </span>
+    </label>
+  );
+}
 
 // Bottom sheet to write a brand-new note for any verse.
-export default function NoteEditorSheet({ onClose, onSave }) {
+export default function NoteEditorSheet({ onClose, onSave, existingTags = [] }) {
   const { t, lang } = useLang();
   const [title, setTitle] = useState("");
   const [book, setBook] = useState("John");
   const [chapter, setChapter] = useState(1);
   const [verse, setVerse] = useState(1);
   const [text, setText] = useState("");
-  const [tag, setTag] = useState("");
+  const [tagList, setTagList] = useState(existingTags);
+  const [picked, setPicked] = useState([]);
+  const [newTag, setNewTag] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   const max = BIBLE_BOOKS.find((b) => b.name === book)?.chapters || 1;
-  const num = (v, hi) => Math.min(hi, Math.max(1, parseInt(v) || 1));
+
+  const toggleTag = (tag) => setPicked((p) => (p.includes(tag) ? p.filter((x) => x !== tag) : [...p, tag]));
+  const addTag = () => {
+    const v = newTag.trim();
+    if (!v) return;
+    if (!tagList.includes(v)) setTagList((l) => [...l, v]);
+    if (!picked.includes(v)) setPicked((p) => [...p, v]);
+    setNewTag("");
+  };
 
   const submit = async () => {
     if (!text.trim()) return setError(t.s6NeedText);
     setSaving(true);
-    await onSave({ title: title.trim(), book, chapter: num(chapter, max), verse: num(verse, 176), text: text.trim(), tag: tag.trim() });
+    await onSave({ title: title.trim(), book, chapter: Number(chapter), verse: Number(verse), text: text.trim(), tags: picked });
     setSaving(false);
   };
 
@@ -37,16 +61,16 @@ export default function NoteEditorSheet({ onClose, onSave }) {
           <button type="button" onClick={onClose} aria-label={t.s6Cancel} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-foreground"><X className="w-4 h-4" /></button>
         </div>
 
-        <div className="grid grid-cols-6 gap-2">
-          <label className="col-span-6"><span className={lbl}>{t.s6Book}</span>
-            <select value={book} onChange={(e) => { setBook(e.target.value); setChapter(1); }} className={field} style={{ fontSize: 16 }}>
-              {BIBLE_BOOKS.map((b) => <option key={b.name} value={b.name}>{getTranslatedBookName(b.name, lang)}</option>)}
-            </select>
-          </label>
-          <label className="col-span-3 min-w-0"><span className={lbl}>{t.s6Chapter}</span>
-            <input type="number" min={1} max={max} value={chapter} onChange={(e) => setChapter(e.target.value)} className={field} style={{ fontSize: 16 }} /></label>
-          <label className="col-span-3 min-w-0"><span className={lbl}>{t.s6Verse}</span>
-            <input type="number" min={1} value={verse} onChange={(e) => setVerse(e.target.value)} className={field} style={{ fontSize: 16 }} /></label>
+        <div className="grid grid-cols-[minmax(0,1fr)_4.5rem_4.5rem] gap-2">
+          <Select label={t.s6Book} value={book} onChange={(e) => { setBook(e.target.value); setChapter(1); }}>
+            {BIBLE_BOOKS.map((b) => <option key={b.name} value={b.name}>{getTranslatedBookName(b.name, lang)}</option>)}
+          </Select>
+          <Select label={t.s6Chapter} value={chapter} onChange={(e) => setChapter(e.target.value)}>
+            {range(max).map((n) => <option key={n} value={n}>{n}</option>)}
+          </Select>
+          <Select label={t.s6Verse} value={verse} onChange={(e) => setVerse(e.target.value)}>
+            {range(176).map((n) => <option key={n} value={n}>{n}</option>)}
+          </Select>
         </div>
 
         <label className="block"><span className={lbl}>{t.s6NoteTitle}</span>
@@ -54,8 +78,30 @@ export default function NoteEditorSheet({ onClose, onSave }) {
         <label className="block"><span className={lbl}>{t.s6NoteText}</span>
           <textarea value={text} onChange={(e) => { setText(e.target.value); setError(""); }} rows={5} className={`${field} py-2 resize-none`} style={{ fontSize: 16 }} />
           {error && <span className="block text-xs mt-1 text-destructive">{error}</span>}</label>
-        <label className="block"><span className={lbl}>{t.s6Tag}</span>
-          <input value={tag} onChange={(e) => setTag(e.target.value)} placeholder={t.s6NoteTag} className={field} style={{ fontSize: 16 }} /></label>
+
+        <div>
+          <span className={lbl}>{t.s7Tags}</span>
+          {tagList.length === 0 && <p className="text-xs text-muted-foreground mb-2">{t.s7NoTags}</p>}
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {tagList.map((tag) => {
+              const on = picked.includes(tag);
+              return (
+                <button key={tag} type="button" onClick={() => toggleTag(tag)} aria-pressed={on}
+                  className={`flex items-center gap-1 px-3 min-h-8 rounded-full text-xs border ${on ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border"}`}>
+                  {on && <Check className="w-3 h-3" />}{tag}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex gap-2">
+            <input value={newTag} onChange={(e) => setNewTag(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
+              placeholder={t.s7NewTag} className={field} style={{ fontSize: 16 }} />
+            <button type="button" onClick={addTag} disabled={!newTag.trim()} aria-label={t.s7AddTag}
+              className="px-4 min-h-11 rounded-xl bg-secondary border border-border text-foreground flex items-center gap-1 text-sm disabled:opacity-50 flex-shrink-0">
+              <Plus className="w-4 h-4" /> {t.s7AddTag}
+            </button>
+          </div>
+        </div>
 
         <button type="button" onClick={submit} disabled={saving}
           className="w-full min-h-12 rounded-full bg-primary text-primary-foreground font-cinzel font-semibold flex items-center justify-center gap-2 disabled:opacity-60">

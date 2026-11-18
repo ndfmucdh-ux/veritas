@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronDown, Sparkles, Loader2, BookOpen } from "lucide-react";
+import { Check, ChevronDown, Sparkles, Loader2, BookOpen, ArrowRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
 
 // One daily reading: small day pill, title, passages, completion check. Tap to expand.
-export default function PlanDayRow({ day, done, category, onComplete }) {
+export default function PlanDayRow({ day, done, category, onComplete, open, onToggle, onNext }) {
   const { t } = useLang();
-  const [open, setOpen] = useState(false);
   const [devo, setDevo] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +26,7 @@ export default function PlanDayRow({ day, done, category, onComplete }) {
   return (
     <div className="rounded-xl bg-card border border-border overflow-hidden">
       <div className="flex items-center gap-2.5 p-2.5">
-        <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="flex-1 min-w-0 flex items-center gap-2.5 text-left">
+        <button type="button" onClick={onToggle} aria-expanded={open} className="flex-1 min-w-0 flex items-center gap-2.5 text-left">
           <span className="flex-shrink-0 px-2 py-0.5 rounded-md bg-primary text-primary-foreground text-[10px] font-semibold tracking-wide uppercase">
             {t.s6Day} {day.day}
           </span>
@@ -68,6 +67,12 @@ export default function PlanDayRow({ day, done, category, onComplete }) {
                 <a href={readHref} className="px-3 min-h-9 rounded-lg bg-secondary text-foreground text-xs font-cinzel font-semibold flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5" /> {t.s6Read}
                 </a>
+                {onNext && (
+                  <button type="button" onClick={() => { if (!done) onComplete(); onNext(); }}
+                    className="px-3 min-h-9 rounded-lg bg-accent text-accent-foreground text-xs font-cinzel font-semibold flex items-center gap-1.5 ml-auto">
+                    {t.s7NextDay} <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>

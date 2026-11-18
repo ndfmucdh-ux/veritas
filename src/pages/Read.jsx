@@ -244,7 +244,7 @@ export default function Read() {
 
   return (
     <motion.div {...pageTransition}
-      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen xl:pl-64"}`}
+      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen md:pl-44 xl:pl-64"}`}
       style={{ background: oledMode ? "#000000" : immersive ? "hsl(var(--background))" : undefined }}
     >
       {!immersive && <BookSidebar book={book} translation={translation} onNavigate={handleNavigate} />}

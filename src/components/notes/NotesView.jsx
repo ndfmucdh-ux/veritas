@@ -6,7 +6,7 @@ import NoteEditorSheet from "@/components/notes/NoteEditorSheet";
 import { EmptyState } from "@/components/ui/states";
 
 // Notes list with an always-visible "Add note" button.
-export default function NotesView({ notes, loading, tagBar, onCreate, onDelete, onTag, onShare }) {
+export default function NotesView({ notes, loading, tagBar, allTags = [], onCreate, onDelete, onTag, onShare }) {
   const { t } = useLang();
   const [editing, setEditing] = useState(false);
 
@@ -35,7 +35,7 @@ export default function NotesView({ notes, loading, tagBar, onCreate, onDelete, 
       </div>
 
       {editing && (
-        <NoteEditorSheet onClose={() => setEditing(false)} onSave={async (data) => { await onCreate(data); setEditing(false); }} />
+        <NoteEditorSheet existingTags={allTags} onClose={() => setEditing(false)} onSave={async (data) => { await onCreate(data); setEditing(false); }} />
       )}
     </div>
   );

@@ -3,10 +3,10 @@ import { BIBLE_BOOKS } from "@/lib/bibleData";
 
 // Creates a note on demand for any verse. If the verse already has saved activity
 // (bookmark, highlight or an older note) the same record is updated, so nothing is duplicated or lost.
-export async function createNote({ title, book, chapter, verse, text, tag }) {
+export async function createNote({ title, book, chapter, verse, text, tags: pickedTags = [] }) {
   const translation = localStorage.getItem("veritas_translation") || "KJV";
   const verseKey = `${translation}|${book}|${chapter}|${verse}`;
-  const tags = tag ? [tag] : [];
+  const tags = pickedTags;
   const now = new Date().toISOString();
 
   const existing = await base44.entities.UserVerseInteraction.filter({ verse_key: verseKey }, { limit: 1 });

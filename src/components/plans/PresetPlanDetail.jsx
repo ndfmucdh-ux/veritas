@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, Leaf } from "lucide-react";
+import { ChevronLeft, Leaf, ArrowRight } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
 import PlanProgressOverview from "@/components/plans/PlanProgressOverview";
 import PlanDayRow from "@/components/plans/PlanDayRow";
@@ -12,6 +12,8 @@ const GOLD = "#d9b77e";
 export default function PresetPlanDetail({ plan, progress, completed, isDayComplete, completeDay, onBack }) {
   const { t } = useLang();
   const [view, setView] = useState("list");
+  const [openDay, setOpenDay] = useState(null);
+  const nextDay = plan.days.find((d) => !isDayComplete(plan.title, d.day));
   const total = plan.duration_days;
   const pct = total ? Math.round((completed / total) * 100) : 0;
 
@@ -49,8 +51,19 @@ export default function PresetPlanDetail({ plan, progress, completed, isDayCompl
         <ReadingCalendar progress={progress} accent={GOLD} />
       ) : (
         <div className="space-y-2">
-          {plan.days.map((day) => (
-            <PlanDayRow key={day.day} day={day} category={plan.category} done={isDayComplete(plan.title, day.day)} onComplete={() => completeDay(plan.title, day.day)} />
+          {nextDay && (
+            <button type="button" onClick={() => setOpenDay(nextDay.day)}
+              className="w-full min-h-11 rounded-xl bg-primary text-primary-foreground font-cinzel text-sm font-semibold flex items-center justify-center gap-2">
+              {t.s7Continue.replace("{n}", nextDay.day)} <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+          {plan.days.map((day, i) => (
+            <PlanDayRow key={day.day} day={day} category={plan.category}
+              done={isDayComplete(plan.title, day.day)}
+              onComplete={() => completeDay(plan.title, day.day)}
+              open={openDay === day.day}
+              onToggle={() => setOpenDay(openDay === day.day ? null : day.day)}
+              onNext={plan.days[i + 1] ? () => setOpenDay(plan.days[i + 1].day) : null} />
           ))}
           {plan.days.length < total && (
             <p className="text-xs text-center text-muted-foreground py-3">{total - plan.days.length} {t.s6Days.toLowerCase()}</p>

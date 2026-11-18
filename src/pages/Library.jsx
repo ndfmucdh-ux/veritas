@@ -237,6 +237,7 @@ export default function Library() {
       <NotesView
         notes={filtered}
         loading={loading}
+        allTags={allTags}
         tagBar={<TagFilterBar tags={allTags} activeTag={activeTagFilter} onSelect={setActiveTagFilter} />}
         onCreate={async (data) => { await createNote(data); await reload(); }}
         onDelete={deleteNote}

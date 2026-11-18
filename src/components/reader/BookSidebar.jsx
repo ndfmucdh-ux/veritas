@@ -7,7 +7,7 @@ export default function BookSidebar({ book, translation, onNavigate }) {
   const { t } = useLang();
   const lang = getTranslationLang(translation);
   return (
-    <aside className="hidden xl:flex flex-col fixed left-56 top-[57px] bottom-0 w-64 border-r border-border bg-background/80 backdrop-blur z-20">
+    <aside className="hidden md:flex flex-col fixed left-56 top-[57px] bottom-0 w-44 xl:w-64 border-r border-border bg-background/80 backdrop-blur z-20">
       <p className="px-4 pt-4 pb-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t.s6ReaderBooks}</p>
       <nav className="flex-1 overflow-y-auto px-2 pb-6">
         {BIBLE_BOOKS.map((b) => {
