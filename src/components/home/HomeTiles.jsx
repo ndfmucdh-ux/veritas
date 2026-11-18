@@ -4,8 +4,8 @@ import { BookOpen, Crown, Heart, ChevronRight } from "lucide-react";
 
 const TILES = [
   { path: "/read", icon: BookOpen, title: "Today's Reading", desc: "Continue your plan with purpose.", bg: "hsl(var(--card))" },
-  { path: "/plans", icon: Crown, title: "Plans", desc: "Grow deeper in His Word.", bg: "hsl(33 45% 90% / 0.9)" },
-  { path: "/prayer-journal", icon: Heart, title: "Prayer", desc: "Talk to God about anything.", bg: "hsl(18 30% 88% / 0.9)" },
+  { path: "/plans", icon: Crown, title: "Plans", desc: "Grow deeper in His Word.", bg: "hsl(var(--gold) / 0.14)" },
+  { path: "/prayer-journal", icon: Heart, title: "Prayer", desc: "Talk to God about anything.", bg: "hsl(var(--purple) / 0.14)" },
 ];
 
 export default function HomeTiles() {
@@ -18,7 +18,7 @@ export default function HomeTiles() {
             <motion.div
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }}
               whileTap={{ scale: 0.97 }}
-              className="h-full min-h-[170px] rounded-2xl p-4 flex flex-col"
+              className="h-full min-h-[150px] rounded-2xl p-3.5 flex flex-col"
               style={{ background: tile.bg, border: "1px solid var(--hairline)" }}
             >
               <Icon className="w-7 h-7 mb-3" strokeWidth={1.4} style={{ color: "var(--t-gold)" }} />

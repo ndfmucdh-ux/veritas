@@ -29,20 +29,15 @@ export default function Home() {
 
         <HomeGreeting />
 
-        {/* Morning Reminder */}
-        <MorningReminder />
-
-        {/* Daily Reading Goal */}
-        <DailyGoalBar />
-
-        {/* Daily Reflection Card */}
-        <DailyReflectionCard />
-
         <HeroDailyVerse />
 
         <HomeTiles />
 
         <ContinueReadingCard />
+
+        <MorningReminder />
+
+        <DailyReflectionCard />
 
         {/* Category Cards */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.28 }}>
@@ -59,7 +54,7 @@ export default function Home() {
         {/* Beloved Verses */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
           <HomeSectionHeader label={t.belovedVerses} linkTo="/search" linkLabel={t.search} />
-          <div className="space-y-3">
+          <div className="space-y-2">
             {(t.featuredVerses || FEATURED_VERSES).slice(0, 5).map((v, i) => (
               <motion.div key={v.ref} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 + i * 0.07 }}>
                 <VersePreviewCard verse={v} />
@@ -78,6 +73,9 @@ export default function Home() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           <MorningInspiration />
         </motion.div>
+
+        {/* Daily Reading Goal — compact, at the bottom */}
+        <DailyGoalBar />
       </div>
     </motion.div>
   );

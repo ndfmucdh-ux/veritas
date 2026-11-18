@@ -1,26 +1,53 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Check, Sun, Moon, Monitor, User } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { useLang } from "@/lib/LanguageContext";
+import { LANGUAGES } from "@/lib/i18n";
+import { getThemeMode, setThemeMode } from "@/lib/theme";
 
+const THEMES = [["light", "Light", Sun], ["dark", "Dark", Moon], ["system", "System", Monitor]];
+
+// One avatar button holds profile, language and theme so the top bar stays calm.
 export default function HeaderProfileLink({ avatarUrl, displayName }) {
+  const { lang, setLang } = useLang();
+  const navigate = useNavigate();
+  const [mode, setMode] = useState(getThemeMode);
+
+  useEffect(() => {
+    const sync = (e) => setMode(e.detail);
+    window.addEventListener("veritas:theme", sync);
+    return () => window.removeEventListener("veritas:theme", sync);
+  }, []);
+
   return (
-    <Link to="/profile" aria-label="Open profile">
-      <motion.div whileTap={{ scale: 0.92 }} whileHover={{ scale: 1.05 }} className="ml-1 flex-shrink-0">
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="Profile and settings" className="flex-shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-ring">
         {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt={displayName || "Profile"}
-            className="w-8 h-8 rounded-xl object-cover"
-            style={{ border: "1.5px solid rgba(251,191,36,0.4)", boxShadow: "0 0 10px rgba(251,191,36,0.15)" }}
-          />
+          <img src={avatarUrl} alt={displayName || "Profile"} className="w-11 h-11 rounded-full object-cover" style={{ border: "2px solid var(--t-gold)" }} />
         ) : (
-          <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center font-cinzel text-sm font-bold"
-            style={{ background: "rgba(251,191,36,0.12)", border: "1.5px solid rgba(251,191,36,0.3)", color: "#fbbf24" }}
-          >
+          <div className="w-11 h-11 rounded-full flex items-center justify-center font-cinzel text-xl font-bold" style={{ background: "var(--fill-3)", border: "2px solid var(--t-gold)", color: "var(--t-gold)" }}>
             {displayName?.[0]?.toUpperCase() || "V"}
           </div>
         )}
-      </motion.div>
-    </Link>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[11rem]">
+        <DropdownMenuItem onSelect={() => navigate("/profile")} className="gap-2 min-h-10"><User className="w-4 h-4" /> Profile</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-xs">Theme</DropdownMenuLabel>
+        {THEMES.map(([id, label, Icon]) => (
+          <DropdownMenuItem key={id} onSelect={() => setThemeMode(id)} className="gap-2 min-h-10">
+            <Icon className="w-4 h-4" /><span className="flex-1">{label}</span>{id === mode && <Check className="w-4 h-4" />}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-xs">Language</DropdownMenuLabel>
+        {LANGUAGES.map((l) => (
+          <DropdownMenuItem key={l.code} onSelect={() => setLang(l.code)} className="gap-2 min-h-10">
+            <span className="flex-1">{l.label}</span>{l.code === lang && <Check className="w-4 h-4" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

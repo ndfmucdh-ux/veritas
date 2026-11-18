@@ -22,14 +22,14 @@ function VersePreviewCard({ verse }) {
       <motion.div
         whileTap={{ scale: 0.985 }}
         transition={{ type: "spring", stiffness: 380, damping: 26 }}
-        className="rounded-2xl p-4 cursor-pointer"
+        className="rounded-xl px-3.5 py-2.5 cursor-pointer"
         style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.06)" }}
       >
-        <p className="font-playfair italic leading-relaxed mb-2.5" style={{ fontSize: "15px", color: "rgb(var(--ink) / 0.82)" }}>
+        <p className="font-playfair italic leading-snug mb-1.5" style={{ fontSize: "14.5px", color: "rgb(var(--ink) / 0.82)" }}>
           "{verse.text.length > 130 ? verse.text.slice(0, 130) + "…" : verse.text}"
         </p>
         <div className="flex items-center justify-between">
-          <span className="font-cinzel text-xs" style={{ color: "#FFD700" }}>{verse.ref}</span>
+          <span className="font-cinzel text-xs" style={{ color: "var(--t-gold)" }}>{verse.ref}</span>
           <span className="text-[10px] font-inter px-2 py-0.5 rounded-full capitalize" style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.3)" }}>{verse.theme}</span>
         </div>
       </motion.div>

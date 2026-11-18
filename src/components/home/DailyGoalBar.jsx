@@ -68,9 +68,9 @@ export default function DailyGoalBar() {
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
-      <div className="px-4 py-3">
+      <div className="px-3.5 py-2">
         {/* Header row */}
-        <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center justify-between mb-1.5">
           <div className="flex items-center gap-2">
             <Target className="w-3.5 h-3.5 flex-shrink-0" style={{ color: done ? "#34d399" : "#fbbf24" }} />
             <span className="text-[10px] font-inter uppercase tracking-[0.15em]" style={{ color: "rgb(var(--ink) / 0.4)" }}>
@@ -92,7 +92,7 @@ export default function DailyGoalBar() {
         </div>
 
         {/* Progress bar */}
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
           <motion.div
             className="h-full rounded-full"
             initial={{ width: 0 }}
