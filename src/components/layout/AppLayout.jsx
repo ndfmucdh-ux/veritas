@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import RouteFallback from "@/components/layout/RouteFallback";
 import { motion } from "framer-motion";
 import { Star, Target } from "lucide-react";
 import BottomNav from "./BottomNav.jsx";
@@ -49,7 +51,9 @@ export default function AppLayout() {
       )}
 
       <main className="flex-1 pt-[57px]">
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
 
       {!isImmersive && <BottomNav />}

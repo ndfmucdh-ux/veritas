@@ -11,7 +11,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
-import RouteFallback from '@/components/layout/RouteFallback';
+import ViewTransitionLinks from '@/components/layout/ViewTransitionLinks';
 import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { warmOfflineCache } from '@/lib/offlineBible';
@@ -65,7 +65,7 @@ const AuthenticatedApp = () => {
 
   return (
     <PageErrorBoundary resetKey={location.pathname}>
-    <Suspense fallback={<RouteFallback />}>
+    <ViewTransitionLinks />
     <Routes>
       <Route element={<AppLayout />}>
         {/* Public routes — no login required */}
@@ -91,7 +91,6 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
-    </Suspense>
     </PageErrorBoundary>
   );
 };

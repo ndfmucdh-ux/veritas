@@ -35,7 +35,7 @@ export default class PageErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="md:ml-16 min-h-screen flex items-center justify-center px-6">
+        <div className="md:ml-16 min-h-screen flex items-center justify-center px-6 bg-background">
           <div className="max-w-sm w-full text-center rounded-2xl p-8"
             style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.15)" }}>
             <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4"
