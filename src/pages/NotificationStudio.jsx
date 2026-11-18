@@ -377,7 +377,7 @@ export default function NotificationStudio() {
                     <span className="text-[10px] font-cinzel ml-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Email Preview · Daily Verse of the Day</span>
                   </div>
                   <iframe
-                    srcDoc={previewHtml}
+                    srcDoc={previewHtml} sandbox=""
                     className="w-full"
                     style={{ height: "700px", border: "none", background: "#06080f" }}
                     title="Email Preview"
@@ -415,7 +415,7 @@ export default function NotificationStudio() {
                     <span className="text-[10px] font-cinzel ml-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Email Preview · Weekly Digest</span>
                   </div>
                   <iframe
-                    srcDoc={previewHtml}
+                    srcDoc={previewHtml} sandbox=""
                     className="w-full"
                     style={{ height: "700px", border: "none", background: "#06080f" }}
                     title="Weekly Email Preview"

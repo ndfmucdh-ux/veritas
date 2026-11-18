@@ -1,6 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 // buildVeritasEmail — inlined (no local imports allowed in Deno deploy)
+const esc = (v) => String(v ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 function buildVeritasEmail({ heroImageUrl, chipLabel="VERITAS · THE WORD", heading, verseRef, bodyLines=[], ctaUrl, ctaLabel="Open →", footerLine="Veritas", previewBlock, date }) {
+  chipLabel = esc(chipLabel); heading = heading ? esc(heading) : heading; verseRef = verseRef ? esc(verseRef) : verseRef;
+  bodyLines = bodyLines.map(esc); footerLine = esc(footerLine); ctaLabel = esc(ctaLabel);
+  if (previewBlock) previewBlock = { label: previewBlock.label ? esc(previewBlock.label) : previewBlock.label, text: esc(previewBlock.text) };
   const heroImg = heroImageUrl || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80";
   const formattedDate = date ? new Date(date).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}) : new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
   const bodyHtml = bodyLines.map(l=>`<p style="font-family:Georgia,serif;font-size:14px;font-style:italic;color:rgba(255,255,255,0.62);line-height:1.78;margin:0 0 10px;">${l}</p>`).join("");

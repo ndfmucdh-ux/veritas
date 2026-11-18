@@ -207,13 +207,15 @@ Deno.serve(async (req) => {
       return true;
     }
 
-    // If called by a logged-in user directly, send only to them
-    if (user) {
+    if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+    // A regular signed-in user only ever receives their own digest
+    if (user.role !== "admin") {
       const sent = await buildAndSendForUser(user);
       return Response.json({ sent, mode: "single_user" });
     }
 
-    // Otherwise (scheduled automation), send to all users
+    // Admin (the scheduled workflow runs as one): send to all users
     const allUsers = await base44.asServiceRole.entities.User.list();
     let sentCount = 0;
     for (const u of allUsers) {

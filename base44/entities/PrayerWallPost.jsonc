@@ -21,7 +21,21 @@
       "items": {
         "type": "string"
       },
-      "description": "Array of user emails who have prayed (for dedup only \u2014 display stays anonymous)"
+      "description": "Array of user emails who have prayed (for dedup only, display stays anonymous)",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "category": {
       "type": "string",

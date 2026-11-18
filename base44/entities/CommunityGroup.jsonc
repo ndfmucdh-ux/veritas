@@ -28,14 +28,42 @@
       "default": false
     },
     "leader_email": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "member_emails": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Emails of users who joined, so each user is counted once"
+      "description": "Emails of users who joined, so each user is counted once",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "plan_selections": {
       "type": "array",

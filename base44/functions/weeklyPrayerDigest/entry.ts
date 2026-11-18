@@ -1,9 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { denyUnlessAdmin } from '../../shared/guard.ts';
 
 // Scheduled weekly: sends each user a digest of their PrayerJournal entries from the past 7 days.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const denied = await denyUnlessAdmin(base44);
+    if (denied) return denied;
 
     // Get all users
     const users = await base44.asServiceRole.entities.User.list();

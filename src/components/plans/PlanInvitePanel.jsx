@@ -45,9 +45,8 @@ export default function PlanInvitePanel({ planTitle, planCategory }) {
         plan_title: planTitle, plan_category: planCategory, invitee_email: email.trim(),
         inviter_name: user?.full_name || "A friend", message: message.trim() || `Join me in the "${planTitle}" reading plan!`, status: "pending",
       });
-      await base44.integrations.Core.SendEmail({
-        to: email.trim(), subject: `You've been invited to join "${planTitle}"`,
-        body: `${user?.full_name || "A friend"} has invited you to join the "${planTitle}" reading plan on Veritas.\n\n${message || "Come grow in the Word together!"}\n\nOpen the Veritas app to get started.`,
+      await base44.functions.invoke("sendPlanInvite", {
+        email: email.trim(), planTitle, message: message.trim(),
       }).catch(() => {});
       setSent(true); setEmail(""); setMessage(""); setShowForm(false);
       loadInvites();

@@ -1,8 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { denyUnlessAdmin } from '../../shared/guard.ts';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const denied = await denyUnlessAdmin(base44);
+    if (denied) return denied;
 
     // Get today's date range
     const todayStart = new Date();

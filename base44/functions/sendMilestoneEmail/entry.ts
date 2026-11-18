@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { escapeHtml } from '../../shared/guard.ts';
 
 const LOGO = "https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/6a1ac5ac1_IMG_1831.jpeg";
 const APP  = "https://veritas.base44.app";
@@ -21,7 +22,7 @@ const MILESTONES = {
 };
 
 function buildMilestoneEmail({ name, streakDays, chaptersRead }) {
-  const firstName = name?.split(" ")[0] || "Beloved";
+  const firstName = escapeHtml(name?.split(" ")[0] || "Beloved");
   const milestone = MILESTONES[streakDays] || {
     label: `${streakDays}-Day Streak`,
     icon: "🔥",
@@ -137,24 +138,25 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
 
     const body = await req.json().catch(() => ({}));
-    const { streakDays, preview, recipientEmail, recipientName, chaptersRead } = body;
+    const { preview } = body;
+    const streakDaysInput = Number(body.streakDays) || 0;
+    const chaptersReadInput = body.chaptersRead === undefined ? undefined : Number(body.chaptersRead) || 0;
 
     // Resolve the recipient two ways:
     // 1. An authenticated user (preview / direct UI calls) → use their identity.
     // 2. A trusted service-role caller (e.g. updateXP) that has NO user context
     //    → it must pass recipientEmail/recipientName explicitly.
     const user = await base44.auth.me().catch(() => null);
-    const toEmail = user?.email || recipientEmail;
-    const toName = user?.full_name || recipientName;
-    if (!toEmail) {
-      return Response.json({ error: 'No recipient: provide recipientEmail or authenticate' }, { status: 400 });
-    }
+    // The recipient is always the signed-in caller; it can never come from the request body.
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const toEmail = user.email;
+    const toName = user.full_name;
 
     const xpData = user
       ? await base44.entities.UserXP.list('-updated_date', 1).catch(() => [])
       : [];
-    const streak = streakDays || xpData?.[0]?.streak_days || 0;
-    const chapters = chaptersRead ?? xpData?.[0]?.chapters_read ?? 0;
+    const streak = streakDaysInput || xpData?.[0]?.streak_days || 0;
+    const chapters = chaptersReadInput ?? xpData?.[0]?.chapters_read ?? 0;
 
     // Only send for known milestones unless preview mode
     const milestoneDays = [7, 14, 21, 30, 60, 100, 365];
@@ -171,7 +173,7 @@ Deno.serve(async (req) => {
     await base44.asServiceRole.integrations.Core.SendEmail({
       from_name: "Veritas · The Word",
       to: toEmail,
-      subject: `${streak >= 30 ? "👑" : "🔥"} ${streak}-Day Streak Achievement — Keep Going, ${toName?.split(" ")[0] || "Beloved"}!`,
+      subject: `${streak >= 30 ? "👑" : "🔥"} ${streak}-Day Streak Achievement — Keep Going, ${(toName?.split(" ")[0] || "Beloved").replace(/[<>\r\n]/g, "")}!`,
       body: html,
     });
 

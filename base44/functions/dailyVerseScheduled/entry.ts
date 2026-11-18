@@ -1,13 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { ensureTodayVerse, sendVerseEmails } from '../../shared/votd.ts';
+import { denyUnlessAdmin } from '../../shared/guard.ts';
 
 // Called every morning by the "Daily Verse Generator" workflow:
 // makes sure today's verse is new, then emails it to every user who has notifications on.
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me().catch(() => null);
-    if (user && user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
+    const denied = await denyUnlessAdmin(base44);
+    if (denied) return denied;
 
     const verse = await ensureTodayVerse(base44);
     const emails = await sendVerseEmails(base44, verse);

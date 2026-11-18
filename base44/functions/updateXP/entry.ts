@@ -81,13 +81,10 @@ Deno.serve(async (req) => {
     const STREAK_MILESTONES = [7, 14, 21, 30, 60, 100, 365];
     if (STREAK_MILESTONES.includes(newStreak) && updates.streak_days) {
       // Call sendMilestoneEmail as service role — fire and forget
-      base44.asServiceRole.functions.invoke('sendMilestoneEmail', {
+      // Invoked with the signed-in user's own session, so the email goes to this user only.
+      base44.functions.invoke('sendMilestoneEmail', {
         streakDays: newStreak,
         preview: false,
-        // Service role has no user context — pass the recipient explicitly so
-        // the milestone email actually reaches this user.
-        recipientEmail: user.email,
-        recipientName: user.full_name,
         chaptersRead: updates.chapters_read ?? xpRecord.chapters_read ?? 0,
       }).catch(() => {});
     }

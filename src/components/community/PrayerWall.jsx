@@ -53,7 +53,6 @@ export default function PrayerWall() {
       request: newRequest.trim(),
       category: newCategory,
       prayer_count: 0,
-      prayed_by: [],
     });
     setNewRequest("");
     setNewCategory("other");
@@ -69,10 +68,9 @@ export default function PrayerWall() {
     setPrayedPosts(updated);
     localStorage.setItem("veritas_prayed_posts", JSON.stringify(updated));
 
-    const prayedBy = Array.isArray(post.prayed_by) ? post.prayed_by : [];
+    // Once-per-person is tracked on this device; the private email list is no longer written.
     await base44.entities.PrayerWallPost.update(post.id, {
       prayer_count: (post.prayer_count || 0) + 1,
-      prayed_by: userEmail ? [...prayedBy, userEmail] : prayedBy,
     });
   };
 

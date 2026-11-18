@@ -22,11 +22,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
     if (!inviteEmail.trim()) return;
     setSending(true);
     try {
-      await base44.integrations.Core.SendEmail({
-        to: inviteEmail,
-        subject: `Join "${planName}" Reading Plan on Veritas`,
-        body: `Hey! I'm reading "${planName}" on Veritas and would love for you to join me. Click here to join: ${inviteLink}\n\nVeritas is a beautiful Bible study app for tracking your reading journey together. 🙏`
-      });
+      await base44.functions.invoke("sendPlanInvite", { email: inviteEmail, planTitle: planName });
       setInviteSent(true);
       setInviteEmail("");
       setTimeout(() => setInviteSent(false), 2000);

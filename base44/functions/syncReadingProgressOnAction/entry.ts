@@ -19,7 +19,9 @@ Deno.serve(async (req) => {
     if (!book || !chapter || !created_by) {
       return Response.json({ skipped: "missing fields" });
     }
-    if (caller?.email && caller.email !== created_by) {
+    // Only the entity automation (runs as an admin) or the record's own owner may write.
+    if (!caller) return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (caller.role !== 'admin' && caller.email !== created_by) {
       return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 

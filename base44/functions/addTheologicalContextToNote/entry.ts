@@ -1,10 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { denyUnlessAdmin } from '../../shared/guard.ts';
 
 // Called by entity automation when a new UserNote is created.
 // Uses AI to append a brief historical context summary to the note's related data.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const denied = await denyUnlessAdmin(base44);
+    if (denied) return denied;
     const body = await req.json();
     const { data, event } = body;
 

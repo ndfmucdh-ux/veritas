@@ -1,10 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { denyUnlessAdmin } from '../../shared/guard.ts';
 
 // Called by entity automation when UserXP is updated.
 // Sends a celebratory message from verse_companion when crossing a 500-pt threshold.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const denied = await denyUnlessAdmin(base44);
+    if (denied) return denied;
     const body = await req.json();
 
     const { data, old_data } = body;

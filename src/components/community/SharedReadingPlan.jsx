@@ -39,7 +39,10 @@ export default function SharedReadingPlan() {
     await loadPlans();
   };
 
-  const isMember = (plan) => !!me?.email && (plan.member_emails || []).includes(me.email);
+  // member_emails is private (creator/admin only), so membership is also remembered per device.
+  const joinedKey = `veritas_joined_groups_${me?.id || ""}`;
+  const getJoined = () => { try { return JSON.parse(localStorage.getItem(joinedKey) || "[]"); } catch { return []; } };
+  const isMember = (plan) => !!me?.email && (getJoined().includes(plan.id) || (plan.member_emails || []).includes(me.email));
 
   // Join / leave toggle: each user is counted once, however many times they tap.
   const handleJoin = async (plan) => {
@@ -47,12 +50,12 @@ export default function SharedReadingPlan() {
     if (!me) return base44.auth.redirectToLogin(window.location.href);
     setJoining(plan.id);
     try {
-      const emails = plan.member_emails || [];
-      const already = emails.includes(me.email);
-      const nextEmails = already ? emails.filter((e) => e !== me.email) : [...emails, me.email];
-      const base = Math.max(plan.member_count || 1, emails.length);
+      const already = isMember(plan);
+      const joined = getJoined();
+      const base = plan.member_count || 1;
       const nextCount = Math.max(1, already ? base - 1 : base + 1);
-      await base44.entities.CommunityGroup.update(plan.id, { member_emails: nextEmails, member_count: nextCount });
+      await base44.entities.CommunityGroup.update(plan.id, { member_count: nextCount });
+      localStorage.setItem(joinedKey, JSON.stringify(already ? joined.filter((id) => id !== plan.id) : [...joined, plan.id]));
       await loadPlans();
     } finally {
       setJoining(null);
