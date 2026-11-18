@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import HeroVerseSlider from "@/components/home/HeroVerseSlider.jsx";
+import HeroDailyVerse from "@/components/home/HeroDailyVerse.jsx";
+import HomeTiles from "@/components/home/HomeTiles.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import MorningReminder from "@/components/home/MorningReminder.jsx";
@@ -24,7 +25,7 @@ export default function Home() {
     <motion.div {...pageTransition} className="md:ml-16 min-h-screen">
       <HomeAmbientBackground />
 
-      <div className="relative z-10 px-4 md:px-8 pt-6 pb-28 space-y-9 max-w-2xl mx-auto">
+      <div className="relative z-10 px-4 md:px-8 pt-6 pb-28 space-y-6 max-w-3xl mx-auto">
 
         <HomeGreeting />
 
@@ -37,8 +38,9 @@ export default function Home() {
         {/* Daily Reflection Card */}
         <DailyReflectionCard />
 
-        {/* Hero Verse Slider */}
-        <HeroVerseSlider />
+        <HeroDailyVerse />
+
+        <HomeTiles />
 
         <ContinueReadingCard />
 

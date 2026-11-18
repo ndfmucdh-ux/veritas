@@ -27,7 +27,7 @@ export default function AppLayout() {
 
       {!isImmersive && (
         <header
-          className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between md:pl-20"
+          className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between md:px-6"
           style={{
             background: "var(--chrome-surface)",
             backdropFilter: "blur(20px)",
@@ -36,10 +36,10 @@ export default function AppLayout() {
           }}
         >
           <Link to="/" className="flex items-center gap-2.5">
-            <motion.div whileHover={{ scale: 1.05 }} style={{ boxShadow: "0 0 18px rgba(255,215,0,0.3)" }} className="rounded-xl">
+            <motion.div whileHover={{ scale: 1.05 }} className="rounded-xl">
               <VeritasLogo size={34} />
             </motion.div>
-            <span className="font-cinzel font-bold text-base tracking-[0.12em] text-foreground">
+            <span className="font-cinzel font-bold text-xl tracking-[0.1em] text-foreground">
               VERITAS
             </span>
           </Link>
@@ -54,7 +54,7 @@ export default function AppLayout() {
         </header>
       )}
 
-      <main className="flex-1 pt-[57px]">
+      <main className={`flex-1 pt-[57px] ${isImmersive ? "" : "md:pl-56"}`}>
         <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>

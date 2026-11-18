@@ -1,168 +1,164 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* Dark: warm charcoal, sage accent, terracotta highlight */
   :root {
-    --background: 223 28% 15%;
-    --foreground: 40 33% 91%;
-    --card: 223 25% 20%;
-    --card-foreground: 40 33% 91%;
-    --popover: 223 23% 27%;
-    --popover-foreground: 40 33% 91%;
-    --primary: 187 100% 50%;
-    --primary-foreground: 223 28% 12%;
-    --secondary: 223 23% 25%;
-    --secondary-foreground: 40 33% 91%;
-    --muted: 223 24% 21%;
-    --muted-foreground: 222 14% 68%;
-    --accent: 43 96% 56%;
-    --accent-foreground: 223 28% 12%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 40 33% 91%;
-    --border: 223 20% 28%;
-    --input: 223 22% 26%;
-
-    /* Layered surfaces: page < chrome < cards < nested < overlays */
-    --surface-1: 223 26% 18%;
-    --surface-2: 223 25% 22%;
-    --surface-3: 223 23% 27%;
-    --surface-4: 223 23% 30%;
-    --chrome-surface: hsl(var(--surface-1) / 0.86);
+    --background: 40 6% 8%;
+    --foreground: 40 25% 90%;
+    --card: 40 5% 12%;
+    --card-foreground: 40 25% 90%;
+    --popover: 40 5% 15%;
+    --popover-foreground: 40 25% 90%;
+    --primary: 114 18% 62%;
+    --primary-foreground: 40 6% 8%;
+    --secondary: 40 5% 16%;
+    --secondary-foreground: 40 25% 90%;
+    --muted: 40 5% 14%;
+    --muted-foreground: 40 8% 66%;
+    --accent: 18 50% 62%;
+    --accent-foreground: 40 6% 8%;
+    --destructive: 8 65% 60%;
+    --destructive-foreground: 40 25% 90%;
+    --border: 40 5% 20%;
+    --input: 40 5% 18%;
+    --surface-1: 40 6% 10%;
+    --surface-2: 40 5% 13%;
+    --surface-3: 40 5% 16%;
+    --surface-4: 40 5% 19%;
+    --chrome-surface: hsl(var(--surface-1) / 0.92);
     --panel-surface: hsl(var(--surface-1) / 0.98);
     --popover-surface: hsl(var(--surface-4) / 0.98);
-    /* Translucent fills for cards (1), raised cards (2) and nested controls (3) */
-    --fill-1: rgba(214, 224, 255, 0.05);
-    --fill-2: rgba(214, 224, 255, 0.075);
-    --fill-3: rgba(214, 224, 255, 0.105);
-    --hairline: rgba(232, 226, 212, 0.09);
-    --ring: 187 100% 50%;
-    --radius: 0.75rem;
-    --gold: 43 96% 56%;
-    --cyan: 187 100% 50%;
-    --purple: 270 60% 65%;
-    --chart-1: 187 100% 50%;
-    --chart-2: 43 96% 56%;
-    --chart-3: 270 60% 65%;
-    --chart-4: 142 71% 45%;
-    --chart-5: 0 84% 60%;
-    --body-glow: 223 30% 20%;
-    --success: 142 71% 45%;
-    --warning: 48 96% 53%;
-    /* Semantic ink (RGB channels): the "white" of text/fills, flips with the theme */
-    --ink: 244 241 232;
+    --fill-1: rgba(240, 230, 210, 0.05);
+    --fill-2: rgba(240, 230, 210, 0.08);
+    --fill-3: rgba(240, 230, 210, 0.11);
+    --hairline: rgba(240, 230, 210, 0.1);
+    --ring: 114 18% 62%;
+    --radius: 0.9rem;
+    --gold: 36 40% 62%;
+    --cyan: 114 18% 62%;
+    --purple: 18 50% 62%;
+    --chart-1: 114 18% 62%;
+    --chart-2: 36 40% 62%;
+    --chart-3: 18 50% 62%;
+    --chart-4: 114 25% 50%;
+    --chart-5: 8 65% 60%;
+    --body-glow: 40 6% 10%;
+    --success: 114 25% 55%;
+    --warning: 36 60% 60%;
+    --ink: 240 233 220;
     --ink-1: rgb(var(--ink) / 0.9);
     --ink-2: rgb(var(--ink) / 0.7);
     --ink-3: rgb(var(--ink) / 0.5);
     --ink-4: rgb(var(--ink) / 0.35);
-    /* Text over photos: always light, with a shadow, in both themes */
     --text-on-image: 255 255 255;
     --text-on-image-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-    /* Text on bright (gold / cyan) fills: always dark */
-    --text-on-bright: 223 28% 12%;
-    /* Accent text colors: bright on dark, deeper (AA on light) in light theme */
-    --t-cyan: #00f5ff;
-    --t-purple: #a78bfa;
-    --t-gold: #fbbf24;
-    --t-green: #34d399;
-    --t-red: #f87171;
-    --t-pink: #f472b6;
-    --t-orange: #fb923c;
-    --t-blue: #60a5fa;
+    --text-on-bright: 40 6% 8%;
+    --t-cyan: #a9c3a6;
+    --t-purple: #e0a083;
+    --t-gold: #d9b77e;
+    --t-green: #a9c3a6;
+    --t-red: #e0866f;
+    --t-pink: #e0a0a0;
+    --t-orange: #e0a083;
+    --t-blue: #9db4c0;
     color-scheme: dark;
   }
 
   /* Light palette: same tokens, re-valued with AA contrast on light surfaces */
+  /* Light: warm cream #F7F3EE, sage #8BA888, charcoal #2C2C2C, terracotta #C17B5C */
   html[data-theme="light"] {
-    --background: 40 25% 97%;
-    --foreground: 223 35% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 223 35% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 223 35% 12%;
-    --primary: 187 90% 28%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 223 20% 92%;
-    --secondary-foreground: 223 35% 12%;
-    --muted: 223 20% 94%;
-    --muted-foreground: 223 12% 36%;
-    --accent: 38 92% 38%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 72% 45%;
+    --background: 33 33% 95%;
+    --foreground: 0 0% 17%;
+    --card: 40 50% 99%;
+    --card-foreground: 0 0% 17%;
+    --popover: 40 50% 99%;
+    --popover-foreground: 0 0% 17%;
+    --primary: 114 18% 40%;
+    --primary-foreground: 40 50% 99%;
+    --secondary: 36 25% 90%;
+    --secondary-foreground: 0 0% 17%;
+    --muted: 36 25% 92%;
+    --muted-foreground: 30 6% 32%;
+    --accent: 18 45% 42%;
+    --accent-foreground: 40 50% 99%;
+    --destructive: 0 65% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 223 15% 84%;
-    --input: 223 15% 86%;
-    --surface-1: 40 20% 98%;
-    --surface-2: 0 0% 100%;
-    --surface-3: 223 20% 96%;
-    --surface-4: 0 0% 100%;
-    --fill-1: rgba(20, 30, 60, 0.035);
-    --fill-2: rgba(20, 30, 60, 0.055);
-    --fill-3: rgba(20, 30, 60, 0.08);
-    --hairline: rgba(20, 30, 60, 0.13);
-    --ring: 187 90% 28%;
-    --gold: 38 92% 34%;
-    --cyan: 187 90% 26%;
-    --purple: 270 50% 42%;
-    --chart-1: 187 90% 28%;
-    --chart-2: 38 92% 38%;
-    --chart-3: 270 50% 45%;
-    --chart-4: 142 71% 32%;
-    --chart-5: 0 72% 45%;
-    --body-glow: 40 30% 100%;
-    --success: 142 71% 30%;
-    --warning: 38 92% 38%;
-    --ink: 20 28 41;
+    --border: 33 20% 84%;
+    --input: 33 20% 86%;
+    --surface-1: 33 33% 96%;
+    --surface-2: 40 50% 99%;
+    --surface-3: 34 30% 93%;
+    --surface-4: 40 50% 99%;
+    --fill-1: rgba(60, 45, 20, 0.035);
+    --fill-2: rgba(60, 45, 20, 0.055);
+    --fill-3: rgba(60, 45, 20, 0.08);
+    --hairline: rgba(60, 45, 20, 0.12);
+    --ring: 114 18% 40%;
+    --gold: 33 50% 36%;
+    --cyan: 114 18% 36%;
+    --purple: 18 45% 40%;
+    --chart-1: 114 18% 40%;
+    --chart-2: 33 50% 40%;
+    --chart-3: 18 45% 46%;
+    --chart-4: 114 25% 32%;
+    --chart-5: 0 65% 42%;
+    --body-glow: 36 40% 98%;
+    --success: 114 25% 30%;
+    --warning: 33 60% 36%;
+    --ink: 44 44 44;
     --text-on-image-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-    --t-cyan: #0e7490;
-    --t-purple: #6d28d9;
-    --t-gold: #92400e;
-    --t-green: #047857;
-    --t-red: #b91c1c;
-    --t-pink: #be185d;
-    --t-orange: #c2410c;
-    --t-blue: #1d4ed8;
+    --text-on-bright: 0 0% 15%;
+    --t-cyan: #4d6b4a;
+    --t-purple: #9a5238;
+    --t-gold: #7d5a22;
+    --t-green: #4d6b4a;
+    --t-red: #a63d2d;
+    --t-pink: #a64d62;
+    --t-orange: #a65a2e;
+    --t-blue: #3f6275;
     color-scheme: light;
   }
 }
 
 /* Light theme: bright accent text colors set inline become deeper, AA-contrast equivalents */
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(0, 245, 255)"], [style*="; color: rgb(0, 245, 255)"],
   [style^="color: rgb(0, 229, 255)"], [style*="; color: rgb(0, 229, 255)"],
   [style^="color: rgb(6, 182, 212)"], [style*="; color: rgb(6, 182, 212)"]) { color: var(--t-cyan) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(167, 139, 250)"], [style*="; color: rgb(167, 139, 250)"],
   [style^="color: rgb(192, 132, 252)"], [style*="; color: rgb(192, 132, 252)"],
   [style^="color: rgb(139, 92, 246)"], [style*="; color: rgb(139, 92, 246)"]) { color: var(--t-purple) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(251, 191, 36)"], [style*="; color: rgb(251, 191, 36)"],
   [style^="color: rgb(255, 215, 0)"], [style*="; color: rgb(255, 215, 0)"],
   [style^="color: rgb(245, 158, 11)"], [style*="; color: rgb(245, 158, 11)"],
   [style^="color: rgb(250, 204, 21)"], [style*="; color: rgb(250, 204, 21)"],
   [style^="color: rgb(201, 168, 76)"], [style*="; color: rgb(201, 168, 76)"]) { color: var(--t-gold) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(52, 211, 153)"], [style*="; color: rgb(52, 211, 153)"]) { color: var(--t-green) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(248, 113, 113)"], [style*="; color: rgb(248, 113, 113)"]) { color: var(--t-red) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(244, 114, 182)"], [style*="; color: rgb(244, 114, 182)"]) { color: var(--t-pink) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(251, 146, 60)"], [style*="; color: rgb(251, 146, 60)"],
   [style^="color: rgb(249, 115, 22)"], [style*="; color: rgb(249, 115, 22)"]) { color: var(--t-orange) !important; }
-html[data-theme="light"] :is(
+html :is(
   [style^="color: rgb(96, 165, 250)"], [style*="; color: rgb(96, 165, 250)"]) { color: var(--t-blue) !important; }
 /* Tailwind palette accents used as text */
-html[data-theme="light"] :is(.text-yellow-300, .text-yellow-400, .text-amber-300, .text-amber-400) { color: var(--t-gold); }
-html[data-theme="light"] :is(.text-cyan-300, .text-cyan-400) { color: var(--t-cyan); }
-html[data-theme="light"] :is(.text-purple-300, .text-purple-400, .text-violet-300, .text-violet-400) { color: var(--t-purple); }
-html[data-theme="light"] :is(.text-green-300, .text-green-400, .text-emerald-300, .text-emerald-400) { color: var(--t-green); }
-html[data-theme="light"] :is(.text-red-300, .text-red-400) { color: var(--t-red); }
-html[data-theme="light"] :is(.text-pink-300, .text-pink-400) { color: var(--t-pink); }
-html[data-theme="light"] :is(.text-orange-300, .text-orange-400) { color: var(--t-orange); }
-html[data-theme="light"] :is(.text-blue-300, .text-blue-400) { color: var(--t-blue); }
+html :is(.text-yellow-300, .text-yellow-400, .text-amber-300, .text-amber-400) { color: var(--t-gold); }
+html :is(.text-cyan-300, .text-cyan-400) { color: var(--t-cyan); }
+html :is(.text-purple-300, .text-purple-400, .text-violet-300, .text-violet-400) { color: var(--t-purple); }
+html :is(.text-green-300, .text-green-400, .text-emerald-300, .text-emerald-400) { color: var(--t-green); }
+html :is(.text-red-300, .text-red-400) { color: var(--t-red); }
+html :is(.text-pink-300, .text-pink-400) { color: var(--t-pink); }
+html :is(.text-orange-300, .text-orange-400) { color: var(--t-orange); }
+html :is(.text-blue-300, .text-blue-400) { color: var(--t-blue); }
 
 /* Readability: faint "ink" text (alpha < 0.6) is raised to AA-friendly levels in both themes */
 :is([style^="color: rgb(var(--ink) / 0.1"], [style*="; color: rgb(var(--ink) / 0.1"],
@@ -175,7 +171,12 @@ html[data-theme="light"] :is(.text-blue-300, .text-blue-400) { color: var(--t-bl
 :is(.text-white\/10, .text-white\/20, .text-white\/25, .text-white\/30, .text-white\/35) { color: rgb(var(--ink) / 0.62); }
 :is(.text-white\/40, .text-white\/45, .text-white\/50, .text-white\/60, .text-white\/70) { color: rgb(var(--ink) / 0.78); }
 :is(.text-muted-foreground) { color: hsl(var(--muted-foreground)); }
-html[data-theme="light"] { --muted-foreground: 223 14% 30%; }
+html[data-theme="light"] { --muted-foreground: 30 6% 30%; }
+
+/* Tablet and up: pages no longer need their own offset for the narrow rail, the sidebar column does it */
+@media (min-width: 768px) {
+  main .md\:ml-16 { margin-left: 0; }
+}
 
 /* Cards: text never spills out of its box, grid cells share the same height */
 body { overflow-wrap: break-word; }
@@ -220,13 +221,13 @@ html.theme-transition, html.theme-transition *, html.theme-transition *::before,
 
 @layer utilities {
   .font-cinzel {
-    font-family: 'Cinzel', serif;
+    font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
   }
   .font-inter {
     font-family: 'Inter', sans-serif;
   }
   .font-playfair {
-    font-family: 'Playfair Display', serif;
+    font-family: 'EB Garamond', Georgia, serif;
   }
 
   .glass {

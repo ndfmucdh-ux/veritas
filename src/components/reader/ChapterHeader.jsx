@@ -2,35 +2,30 @@ import { motion } from "framer-motion";
 import { getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
 
-const TESTAMENT_IMAGES = {
-  OT: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80",
-  NT: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=800&q=80",
-};
-
-export default function ChapterHeader({ book, chapter, testament, translation }) {
+export default function ChapterHeader({ book, chapter, translation }) {
   const { lang } = useLang();
-  const imgSrc = TESTAMENT_IMAGES[testament] || TESTAMENT_IMAGES.OT;
   // Book name follows the CONTENT translation language (BTX3 → "Juan", KJV → "John")
   const displayBook = getTranslatedBookName(book, translation ? getTranslationLang(translation) : lang);
 
   return (
-    <div className="relative h-36 rounded-2xl overflow-hidden mb-6">
-      <img src={imgSrc} alt={book} className="w-full h-full object-cover" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(10,14,26,0.88))" }} />
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
-        <motion.h2
-          key={`${book}-${chapter}`}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="font-cinzel text-2xl font-bold text-on-image"
-        >
-          {displayBook}
-        </motion.h2>
-        <p className="font-inter text-sm mt-0.5 text-on-image">
+    <motion.div
+      key={`${book}-${chapter}`}
+      initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+      className="text-center pt-6 pb-6"
+    >
+      <div className="flex items-center justify-center gap-3" style={{ color: "var(--t-gold)" }}>
+        <span className="h-px w-10" style={{ background: "currentColor", opacity: 0.5 }} />
+        <p className="font-inter text-xs uppercase tracking-[0.25em] font-medium">
           {lang === "es" ? "Capítulo" : "Chapter"} {chapter}
         </p>
+        <span className="h-px w-10" style={{ background: "currentColor", opacity: 0.5 }} />
       </div>
-    </div>
+      <h2 className="font-cinzel text-4xl font-semibold mt-3 text-foreground">{displayBook}</h2>
+      <div className="flex items-center justify-center gap-2 mt-3" style={{ color: "var(--t-gold)" }}>
+        <span className="h-px w-16" style={{ background: "currentColor", opacity: 0.5 }} />
+        <span className="w-1.5 h-1.5 rotate-45" style={{ background: "currentColor" }} />
+        <span className="h-px w-16" style={{ background: "currentColor", opacity: 0.5 }} />
+      </div>
+    </motion.div>
   );
 }

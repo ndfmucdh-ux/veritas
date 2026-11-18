@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark" class="dark">
+<html lang="en" data-theme="light" class="light">
   <head>
     <meta charset="UTF-8" />
     <!-- CRITICAL: resolve theme before first paint so there is no flash of the wrong theme -->
@@ -7,7 +7,7 @@
       (function () {
         var KEY = 'theme', root = document.documentElement;
         var mq = window.matchMedia('(prefers-color-scheme: dark)');
-        function read() { var s = localStorage.getItem(KEY); return (s === 'light' || s === 'dark' || s === 'system') ? s : 'system'; }
+        function read() { var s = localStorage.getItem(KEY); return (s === 'light' || s === 'dark' || s === 'system') ? s : 'light'; }
         function apply(mode) {
           var resolved = mode === 'system' ? (mq.matches ? 'dark' : 'light') : mode;
           root.setAttribute('data-theme', resolved);
@@ -15,7 +15,7 @@
           root.classList.remove('light', 'dark');
           root.classList.add(resolved);
           var m = document.querySelector('meta[name="theme-color"]');
-          if (m) m.setAttribute('content', resolved === 'dark' ? '#1c2231' : '#f7f5f0');
+          if (m) m.setAttribute('content', resolved === 'dark' ? '#141413' : '#f7f3ee');
         }
         try { apply(read()); } catch (e) {}
         var onChange = function () { if (read() === 'system') apply('system'); };
@@ -24,8 +24,9 @@
     </script>
     <!-- CRITICAL CSS: first style in <head> so the correct background is painted before any JS/CSS loads -->
     <style>
-      html, body, #root { background-color: #1c2231; }
-      html[data-theme="light"], html[data-theme="light"] body, html[data-theme="light"] #root { background-color: #f7f5f0; color-scheme: light; }
+      html, body, #root { background-color: #f7f3ee; }
+      html[data-theme="dark"], html[data-theme="dark"] body, html[data-theme="dark"] #root { background-color: #141413; color-scheme: dark; }
+      html[data-theme="light"] { color-scheme: light; }
       html[data-theme="dark"] { color-scheme: dark; }
       html, body {
         margin: 0;
@@ -45,7 +46,7 @@
     <link rel="manifest" href="/manifest.json" />
     <title>Veritas — Know the Truth. Live the Truth.</title>
     <meta name="description" content="Veritas — The most beautiful Bible app. Read, search, highlight and study Scripture with daily devotionals, reading plans, and gamified growth." />
-    <meta name="theme-color" content="#1c2231" />
+    <meta name="theme-color" content="#f7f3ee" />
     <meta name="color-scheme" content="dark light" />
   </head>
   <body>
