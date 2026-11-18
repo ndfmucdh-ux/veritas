@@ -2,17 +2,19 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
 
 export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
+  const { t } = useLang();
   const [mood, setMood] = useState("grateful");
   const [loading, setLoading] = useState(false);
   const [prayer, setPrayer] = useState(null);
 
   const moods = [
-    { id: "grateful", label: "Grateful 🙏", color: "#fbbf24" },
-    { id: "confessing", label: "Confessing 🤲", color: "#f87171" },
-    { id: "interceding", label: "Interceding 💗", color: "#f472b6" },
-    { id: "celebrating", label: "Celebrating 🎉", color: "#34d399" }
+    { id: "grateful", label: t.moodGrateful, color: "#C9A66B" },
+    { id: "confessing", label: t.moodConfessing, color: "#C17B5C" },
+    { id: "interceding", label: t.moodInterceding, color: "#5B8C8C" },
+    { id: "celebrating", label: t.moodCelebrating, color: "#8BA888" }
   ];
 
   const handleGeneratePrayer = async () => {
@@ -61,7 +63,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
 
         {!prayer ? (
           <>
-            <p className="text-sm text-white/60 mb-4">How do you feel right now?</p>
+            <p className="text-sm text-white/60 mb-4">{t.pjHowFeel}</p>
             <div className="grid grid-cols-2 gap-2 mb-6">
               {moods.map(m => (
                 <motion.button
@@ -91,7 +93,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
               }}
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              {loading ? "Creating Prayer..." : "Create Prayer"}
+              {loading ? t.pjCreating : t.pjCreate}
             </motion.button>
           </>
         ) : (
@@ -108,7 +110,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
                 className="flex-1 py-2 rounded-xl text-sm font-inter"
                 style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.6)" }}
               >
-                Back
+                {t.back}
               </button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
@@ -116,7 +118,7 @@ export default function PrayerModal({ verse_ref, onClose, onSuccess }) {
                 className="flex-1 py-2 rounded-xl text-sm font-cinzel font-bold text-white"
                 style={{ background: "linear-gradient(135deg, #00f5ff, #006bb3)" }}
               >
-                Amen
+                {t.pjAmen}
               </motion.button>
             </div>
           </>

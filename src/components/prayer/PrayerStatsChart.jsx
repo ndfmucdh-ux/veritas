@@ -4,8 +4,11 @@ import { base44 } from "@/api/base44Client";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { Calendar, Tag } from "lucide-react";
 import { LoadingState } from "@/components/ui/states";
+import { useLang } from "@/lib/LanguageContext";
+import { DATE_LOCALE } from "@/lib/i18nCommunity";
 
 export default function PrayerStatsChart() {
+  const { t, lang } = useLang();
   const [monthlyData, setMonthlyData] = useState([]);
   const [topTopics, setTopTopics] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +38,7 @@ export default function PrayerStatsChart() {
       });
       
       const chartData = Object.entries(dayMap).map(([date, count]) => ({
-        date: new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        date: new Date(date).toLocaleDateString(DATE_LOCALE[lang], { month: "short", day: "numeric" }),
         prayers: count
       }));
       setMonthlyData(chartData);
@@ -60,23 +63,22 @@ export default function PrayerStatsChart() {
     }
   };
 
-  if (loading) return <LoadingState label="Loading prayer stats…" size="md" />;
+  if (loading) return <LoadingState label={t.pjLoadingStats} size="md" />;
 
   return (
-    <div className="rounded-2xl p-4 md:p-6 space-y-5"
-      style={{ background: "rgba(244,114,182,0.04)", border: "1px solid rgba(244,114,182,0.15)" }}>
+    <div className="rounded-2xl p-4 md:p-6 space-y-5 bg-card border border-border shadow-sm">
       
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {view === "frequency" ? <Calendar className="w-4 h-4" style={{ color: "#f472b6" }} /> : <Tag className="w-4 h-4" style={{ color: "#f472b6" }} />}
           <h3 className="font-cinzel text-sm text-white font-semibold">
-            {view === "frequency" ? "Prayer Frequency (Last 30 Days)" : "Most Prayed Topics"}
+            {view === "frequency" ? t.pjFreq30 : t.pjMostTopics}
           </h3>
         </div>
         <div className="flex gap-1">
           {[
-            { id: "frequency", label: "📈 Frequency" },
-            { id: "topics", label: "🏷️ Topics" }
+            { id: "frequency", label: t.pjFrequency },
+            { id: "topics", label: t.pjTopics }
           ].map(v => (
             <button key={v.id} onClick={() => setView(v.id)}
               className="text-[10px] px-2.5 py-1.5 rounded-lg font-cinzel transition-all"
@@ -110,7 +112,7 @@ export default function PrayerStatsChart() {
       {view === "topics" && (
         <div className="space-y-2">
           {topTopics.length === 0 ? (
-            <p className="text-xs text-white/40 py-6 text-center">No topics recorded yet</p>
+            <p className="text-xs text-white/40 py-6 text-center">{t.pjNoTopics}</p>
           ) : (
             topTopics.map((item, i) => (
               <motion.div key={item.topic} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}

@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Play, Pause, X, Volume2 } from "lucide-react";
+import { useLang } from "@/lib/LanguageContext";
 
 const DURATIONS = [5, 10, 15, 30, 60, 90, 120, 150, 180];
 
 export default function PrayerFocusTimer() {
+  const { t } = useLang();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDuration, setSelectedDuration] = useState(15);
   const [timeLeft, setTimeLeft] = useState(selectedDuration * 60);
@@ -138,7 +140,7 @@ export default function PrayerFocusTimer() {
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <p className="font-cinzel text-sm font-semibold" style={{ color: "#00f5ff" }}>Prayer Focus Timer</p>
+              <p className="font-cinzel text-sm font-semibold" className="text-primary">{t.pjTimer}</p>
               <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
@@ -172,13 +174,13 @@ export default function PrayerFocusTimer() {
                   border: isRunning ? "1px solid rgba(248,113,113,0.3)" : "1px solid rgba(0,245,255,0.3)"
                 }}
               >
-                {isRunning ? <><Pause className="w-3.5 h-3.5 inline mr-1.5" />Pause</> : <><Play className="w-3.5 h-3.5 inline mr-1.5 ml-0.5" />Start</>}
+                {isRunning ? <><Pause className="w-3.5 h-3.5 inline mr-1.5" />{t.pjPause}</> : <><Play className="w-3.5 h-3.5 inline mr-1.5 ml-0.5" />{t.pjStart}</>}
               </motion.button>
             </div>
 
             {!isRunning && (
               <div className="space-y-3">
-                <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>Duration</p>
+                <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.pjDuration}</p>
                 <div className="grid grid-cols-3 gap-2">
                   {DURATIONS.map(d => (
                     <button key={d} onClick={() => handleDurationSelect(d)}
@@ -197,7 +199,7 @@ export default function PrayerFocusTimer() {
 
             <div className="mt-4 pt-4 border-t" style={{ borderColor: "rgb(var(--ink) / 0.1)" }}>
               <p className="text-[10px] font-inter flex items-center gap-2" style={{ color: "rgb(var(--ink) / 0.4)" }}>
-                <Volume2 className="w-3 h-3" /> Chime plays when timer ends
+                <Volume2 className="w-3 h-3" /> {t.pjChime}
               </p>
             </div>
           </motion.div>

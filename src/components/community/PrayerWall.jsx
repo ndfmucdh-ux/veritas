@@ -1,31 +1,24 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Plus, Send, Loader2, X, CheckCircle2 } from "lucide-react";
+import { Heart, Plus, Send, Loader2, CheckCircle2, HandHeart } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { LoadingState, EmptyState } from "@/components/ui/states";
+import { useLang } from "@/lib/LanguageContext";
+import { DATE_LOCALE } from "@/lib/i18nCommunity";
 
 const CATEGORIES = [
-  { id: "all",       label: "All",       emoji: "🙏" },
-  { id: "healing",   label: "Healing",   emoji: "💚" },
-  { id: "family",    label: "Family",    emoji: "👨‍👩‍👧" },
-  { id: "guidance",  label: "Guidance",  emoji: "🌟" },
-  { id: "gratitude", label: "Gratitude", emoji: "🙌" },
-  { id: "strength",  label: "Strength",  emoji: "💪" },
-  { id: "peace",     label: "Peace",     emoji: "🕊️" },
-  { id: "other",     label: "Other",     emoji: "✨" },
+  { id: "all", key: "moodAll" },
+  { id: "healing", key: "catHealing" },
+  { id: "family", key: "catFamily" },
+  { id: "guidance", key: "catGuidance" },
+  { id: "gratitude", key: "catGratitude" },
+  { id: "strength", key: "catStrength" },
+  { id: "peace", key: "catPeace" },
+  { id: "other", key: "catOther" },
 ];
 
-const CATEGORY_COLORS = {
-  healing:   "#34d399",
-  family:    "#60a5fa",
-  guidance:  "#fbbf24",
-  gratitude: "#f472b6",
-  strength:  "#f97316",
-  peace:     "#a78bfa",
-  other:     "#00f5ff",
-};
-
 export default function PrayerWall() {
+  const { t, lang } = useLang();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -70,10 +63,7 @@ export default function PrayerWall() {
   };
 
   const handlePray = async (post) => {
-    const alreadyPrayed = prayedPosts.includes(post.id);
-    if (alreadyPrayed) return;
-
-    // Optimistic update
+    if (prayedPosts.includes(post.id)) return;
     setPosts(prev => prev.map(p => p.id === post.id ? { ...p, prayer_count: (p.prayer_count || 0) + 1 } : p));
     const updated = [...prayedPosts, post.id];
     setPrayedPosts(updated);
@@ -87,8 +77,7 @@ export default function PrayerWall() {
   };
 
   const handleAmen = async (post) => {
-    const alreadyAmened = amenPosts.includes(post.id);
-    if (alreadyAmened) return;
+    if (amenPosts.includes(post.id)) return;
     setPosts(prev => prev.map(p => p.id === post.id ? { ...p, amen_count: (p.amen_count || 0) + 1 } : p));
     const updated = [...amenPosts, post.id];
     setAmenPosts(updated);
@@ -97,153 +86,94 @@ export default function PrayerWall() {
   };
 
   const filtered = activeCategory === "all" ? posts : posts.filter(p => p.category === activeCategory);
+  const catLabel = (id) => t[(CATEGORIES.find(c => c.id === id) || CATEGORIES[7]).key];
+  const totalPrayers = posts.reduce((sum, p) => sum + (p.prayer_count || 0), 0).toLocaleString(DATE_LOCALE[lang]);
 
   return (
     <div className="space-y-4">
-      {/* Header row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="font-cinzel text-base font-bold text-white">Prayer Wall</h2>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
-            {posts.reduce((sum, p) => sum + (p.prayer_count || 0), 0).toLocaleString()} prayers sent · {posts.length} requests
+          <h2 className="font-cinzel text-2xl font-semibold text-foreground">{t.cmWall}</h2>
+          <p className="text-xs mt-0.5 text-muted-foreground">
+            {t.cmPrayersSent.replace("{n}", totalPrayers).replace("{m}", posts.length)}
           </p>
         </div>
-        <motion.button whileTap={{ scale: 0.92 }} onClick={() => setShowForm(v => !v)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-cinzel text-xs"
-          style={{ background: "rgba(167,139,250,0.12)", border: "1px solid rgba(167,139,250,0.3)", color: "#a78bfa" }}>
-          <Plus className="w-3.5 h-3.5" /> Add Request
-        </motion.button>
+        <button onClick={() => setShowForm(v => !v)}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm bg-primary text-primary-foreground hover:opacity-90 transition-opacity flex-shrink-0">
+          <Plus className="w-4 h-4" /> {t.cmAddRequest}
+        </button>
       </div>
 
-      {/* Submit form */}
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-            <div className="rounded-2xl p-4 space-y-3"
-              style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.2)" }}>
-              <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(167,139,250,0.7)" }}>
-                Your request is posted anonymously
-              </p>
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+            <div className="rounded-2xl p-5 space-y-3 bg-card border border-border shadow-sm">
+              <p className="text-xs uppercase tracking-widest text-accent">{t.cmAnon}</p>
               <textarea value={newRequest} onChange={e => setNewRequest(e.target.value)}
-                placeholder="Share your prayer request with the community…"
-                rows={3}
-                className="w-full rounded-xl px-3 py-2.5 text-sm font-inter resize-none focus:outline-none"
-                style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.85)", fontSize: "16px" }} />
-              <div className="flex flex-wrap gap-1.5">
+                placeholder={t.cmSharePh} rows={3}
+                className="w-full rounded-xl px-3 py-2.5 resize-none focus:outline-none focus:ring-1 focus:ring-primary bg-background border border-border text-foreground"
+                style={{ fontSize: "16px" }} />
+              <div className="flex flex-wrap gap-2">
                 {CATEGORIES.filter(c => c.id !== "all").map(cat => (
                   <button key={cat.id} onClick={() => setNewCategory(cat.id)}
-                    className="px-2.5 py-1 rounded-full text-[10px] font-cinzel transition-all"
-                    style={{
-                      background: newCategory === cat.id ? `${CATEGORY_COLORS[cat.id]}20` : "rgb(var(--ink) / 0.04)",
-                      color: newCategory === cat.id ? CATEGORY_COLORS[cat.id] : "rgb(var(--ink) / 0.4)",
-                      border: newCategory === cat.id ? `1px solid ${CATEGORY_COLORS[cat.id]}50` : "1px solid rgb(var(--ink) / 0.07)"
-                    }}>
-                    {cat.emoji} {cat.label}
+                    className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${newCategory === cat.id ? "bg-primary text-primary-foreground border-primary" : "bg-background text-foreground/80 border-border"}`}>
+                    {t[cat.key]}
                   </button>
                 ))}
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setShowForm(false)}
-                  className="flex-1 py-2.5 rounded-xl font-cinzel text-xs"
-                  style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
-                  Cancel
+                <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl text-sm text-muted-foreground border border-border">{t.cancel}</button>
+                <button onClick={submitRequest} disabled={submitting || !newRequest.trim()}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm bg-primary text-primary-foreground disabled:opacity-50">
+                  {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  {t.cmSubmit}
                 </button>
-                <motion.button whileTap={{ scale: 0.96 }} onClick={submitRequest} disabled={submitting || !newRequest.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-cinzel text-xs"
-                  style={{ background: "rgba(167,139,250,0.2)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.35)", opacity: !newRequest.trim() ? 0.5 : 1 }}>
-                  {submitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                  Submit
-                </motion.button>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Category filter */}
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
         {CATEGORIES.map(cat => (
           <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
-            className="flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-cinzel whitespace-nowrap transition-all"
-            style={{
-              background: activeCategory === cat.id ? "rgba(167,139,250,0.15)" : "rgb(var(--ink) / 0.04)",
-              color: activeCategory === cat.id ? "#a78bfa" : "rgb(var(--ink) / 0.4)",
-              border: activeCategory === cat.id ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgb(var(--ink) / 0.07)"
-            }}>
-            {cat.emoji} {cat.label}
+            className={`flex-shrink-0 px-4 py-2 rounded-full text-sm whitespace-nowrap border transition-colors ${activeCategory === cat.id ? "bg-primary text-primary-foreground border-primary" : "bg-card text-foreground/80 border-border hover:border-primary/50"}`}>
+            {t[cat.key]}
           </button>
         ))}
       </div>
 
-      {/* Posts */}
       {loading ? (
-        <LoadingState label="Loading prayer requests…" size="md" minHeight={120} />
+        <LoadingState label={t.cmLoadingReq} size="md" minHeight={120} />
       ) : filtered.length === 0 ? (
-        <EmptyState icon="🙏" title="No requests yet — be the first" minHeight={140} />
+        <EmptyState icon={HandHeart} title={t.cmBeFirst} minHeight={140} />
       ) : (
         <div className="space-y-3">
           <AnimatePresence>
             {filtered.map((post, i) => {
               const hasPrayed = prayedPosts.includes(post.id);
-              const color = CATEGORY_COLORS[post.category] || "#a78bfa";
-              const catInfo = CATEGORIES.find(c => c.id === post.category);
+              const hasAmen = amenPosts.includes(post.id);
               return (
-                <motion.div key={post.id}
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03 }}
-                  className="rounded-2xl p-4"
-                  style={{ background: "var(--fill-1)", border: `1px solid ${color}22` }}>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-sm"
-                      style={{ background: `${color}12`, border: `1px solid ${color}25` }}>
-                      {catInfo?.emoji || "🙏"}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.8)" }}>
-                        {post.request}
-                      </p>
-                      <p className="text-[9px] font-cinzel uppercase tracking-wider mt-1.5"
-                        style={{ color: `${color}99` }}>
-                        {catInfo?.label || "Other"} · {new Date(post.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-3 pt-3"
-                    style={{ borderTop: "1px solid rgb(var(--ink) / 0.05)" }}>
-                    <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.25)" }}>
-                      {post.prayer_count || 0} 🙏 · {post.amen_count || 0} 🕊️
+                <motion.div key={post.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                  className="rounded-2xl p-5 bg-card border border-border shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-accent mb-2">
+                    {catLabel(post.category)} · {new Date(post.created_date).toLocaleDateString(DATE_LOCALE[lang], { month: "short", day: "numeric" })}
+                  </p>
+                  <p className="font-cinzel text-lg leading-relaxed text-foreground">{post.request}</p>
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
+                    <span className="text-xs text-muted-foreground flex items-center gap-3">
+                      <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" /> {post.prayer_count || 0}</span>
+                      <span className="flex items-center gap-1"><HandHeart className="w-3.5 h-3.5" /> {post.amen_count || 0}</span>
                     </span>
-                    <div className="flex items-center gap-1.5">
-                      {/* Amen button */}
-                      <motion.button
-                        whileTap={{ scale: amenPosts.includes(post.id) ? 1 : 0.88 }}
-                        onClick={() => handleAmen(post)}
-                        disabled={amenPosts.includes(post.id)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
-                        style={{
-                          background: amenPosts.includes(post.id) ? "rgba(251,191,36,0.15)" : "rgb(var(--ink) / 0.04)",
-                          color: amenPosts.includes(post.id) ? "#fbbf24" : "rgb(var(--ink) / 0.45)",
-                          border: amenPosts.includes(post.id) ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
-                        }}>
-                        🕊️ Amen
-                      </motion.button>
-                      {/* Praying button */}
-                      <motion.button
-                        whileTap={{ scale: hasPrayed ? 1 : 0.88 }}
-                        onClick={() => handlePray(post)}
-                        disabled={hasPrayed}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl font-cinzel text-[10px] transition-all"
-                        style={{
-                          background: hasPrayed ? "rgba(167,139,250,0.15)" : "rgb(var(--ink) / 0.05)",
-                          color: hasPrayed ? "#a78bfa" : "rgb(var(--ink) / 0.5)",
-                          border: hasPrayed ? "1px solid rgba(167,139,250,0.3)" : "1px solid rgb(var(--ink) / 0.08)",
-                        }}>
-                        {hasPrayed
-                          ? <><CheckCircle2 className="w-3 h-3" /> Praying</>
-                          : <><Heart className="w-3 h-3" /> Pray</>}
-                      </motion.button>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleAmen(post)} disabled={hasAmen}
+                        className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${hasAmen ? "bg-accent/15 text-accent border-accent/40" : "text-foreground/80 border-border hover:border-accent/50"}`}>
+                        {t.cmAmen}
+                      </button>
+                      <button onClick={() => handlePray(post)} disabled={hasPrayed}
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs border transition-colors ${hasPrayed ? "bg-primary/15 text-primary border-primary/40" : "text-foreground/80 border-border hover:border-primary/50"}`}>
+                        {hasPrayed ? <><CheckCircle2 className="w-3.5 h-3.5" /> {t.cmPraying}</> : <><Heart className="w-3.5 h-3.5" /> {t.cmPray}</>}
+                      </button>
                     </div>
                   </div>
                 </motion.div>

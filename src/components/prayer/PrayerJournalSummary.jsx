@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Heart, CheckCircle2, Tag, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
 
 export default function PrayerJournalSummary() {
+  const { t } = useLang();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +52,7 @@ export default function PrayerJournalSummary() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl p-5 flex items-center justify-center" style={{ background: "rgba(167,139,250,0.03)", border: "1px solid rgba(167,139,250,0.15)", height: "150px" }}>
+      <div className="rounded-2xl p-5 flex items-center justify-center" style={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", minHeight: "150px" }}>
         <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#a78bfa" }} />
       </div>
     );
@@ -61,9 +63,9 @@ export default function PrayerJournalSummary() {
   const answeredPercentage = summary.total > 0 ? Math.round((summary.answered / summary.total) * 100) : 0;
 
   return (
-    <div className="rounded-2xl p-5" style={{ background: "rgba(167,139,250,0.03)", border: "1px solid rgba(167,139,250,0.15)" }}>
+    <div className="rounded-2xl p-5 bg-card border border-border shadow-sm">
       <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4" style={{ color: "#a78bfa" }}>
-        Journal Summary
+        {t.pjSummary}
       </p>
 
       {/* Stats grid */}
@@ -72,7 +74,7 @@ export default function PrayerJournalSummary() {
           className="rounded-xl p-3" style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)" }}>
           <div className="flex items-center gap-2 mb-1">
             <Heart className="w-3.5 h-3.5" style={{ color: "#a78bfa" }} />
-            <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Total Prayers</p>
+            <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.pjTotal}</p>
           </div>
           <p className="font-cinzel text-lg font-bold text-white">{summary.total}</p>
         </motion.div>
@@ -81,7 +83,7 @@ export default function PrayerJournalSummary() {
           className="rounded-xl p-3" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "#34d399" }} />
-            <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Answered</p>
+            <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.pjAnswered}</p>
           </div>
           <div className="flex items-baseline gap-2">
             <p className="font-cinzel text-lg font-bold text-white">{summary.answered}</p>
@@ -111,7 +113,7 @@ export default function PrayerJournalSummary() {
           <div className="flex items-center gap-2 mb-2">
             <Tag className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} />
             <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
-              Top Topics
+              {t.pjTopTopics}
             </p>
           </div>
           <div className="space-y-1.5">

@@ -3,11 +3,12 @@ import { base44 } from "@/api/base44Client";
 import { detectLanguage, getDictionary, isSupported, translate } from "@/lib/i18n";
 import { EXTRA } from "@/lib/i18nExtra";
 import { PAGES } from "@/lib/i18nPages";
+import { COMMUNITY } from "@/lib/i18nCommunity";
 import { hydratePrefs } from "@/lib/preferencesSync";
 import { getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 
 // Locale dictionaries (en/es/fr/pt/de) plus extra UI strings; missing keys fall back to English.
-const buildDict = (lang) => ({ ...getDictionary(lang), ...EXTRA.en, ...(EXTRA[lang] || {}), ...PAGES.en, ...(PAGES[lang] || {}) });
+const buildDict = (lang) => ({ ...getDictionary(lang), ...EXTRA.en, ...(EXTRA[lang] || {}), ...PAGES.en, ...(PAGES[lang] || {}), ...COMMUNITY.en, ...(COMMUNITY[lang] || {}) });
 
 const fallbackDict = buildDict("en");
 const LangCtx = createContext({ lang: "en", t: fallbackDict, tr: (key, vars) => translate(fallbackDict, key, vars), setLang: () => {} });

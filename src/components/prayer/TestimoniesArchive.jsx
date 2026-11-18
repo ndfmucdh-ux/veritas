@@ -1,28 +1,18 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, History, Heart } from "lucide-react";
 import { EmptyState } from "@/components/ui/states";
-
-const MOOD_ICONS = {
-  grateful: "🙏",
-  confessing: "🤲",
-  interceding: "💗",
-  celebrating: "🎉",
-};
-
-const MOOD_COLORS = {
-  grateful: "#fbbf24",
-  confessing: "#f87171",
-  interceding: "#f472b6",
-  celebrating: "#34d399",
-};
+import { useLang } from "@/lib/LanguageContext";
+import { DATE_LOCALE } from "@/lib/i18nCommunity";
+import { MOODS } from "@/components/prayer/moods";
 
 export default function TestimoniesArchive({ prayers }) {
+  const { t, lang } = useLang();
   if (prayers.length === 0) {
     return (
       <EmptyState
         icon={Heart}
-        title="No testimonies yet"
-        description="When you mark a prayer as answered, it will appear here as a testimony of God's faithfulness."
+        title={t.pjNoTest}
+        description={t.pjNoTestDesc}
       />
     );
   }
@@ -37,16 +27,16 @@ export default function TestimoniesArchive({ prayers }) {
           <CheckCircle2 className="w-5 h-5" style={{ color: "#34d399" }} />
         </div>
         <div>
-          <p className="font-cinzel text-sm font-semibold text-white">Testimonies Archive</p>
+          <p className="font-cinzel text-sm font-semibold text-white">{t.pjArchive}</p>
           <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(52,211,153,0.7)" }}>
-            {prayers.length} answered prayer{prayers.length !== 1 ? "s" : ""} — God is faithful
+            {t.pjArchiveCount.replace("{n}", prayers.length)}
           </p>
         </div>
       </div>
 
       {prayers.map((prayer, idx) => {
-        const color = MOOD_COLORS[prayer.mood] || "#34d399";
-        const icon = MOOD_ICONS[prayer.mood] || "🙏";
+        const mood = MOODS.find(m => m.id === prayer.mood);
+        const MoodIcon = mood?.Icon;
         return (
           <motion.div
             key={prayer.id}
@@ -59,19 +49,19 @@ export default function TestimoniesArchive({ prayers }) {
             {/* Top row */}
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="font-cinzel text-sm text-white">{prayer.verse_ref || "Personal Prayer"}</p>
+                <p className="font-cinzel text-sm text-white">{prayer.verse_ref || t.pjPersonal}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs">{icon}</span>
-                  <span className="text-[10px] font-inter capitalize" style={{ color: "rgb(var(--ink) / 0.35)" }}>{prayer.mood}</span>
+                  {MoodIcon && <MoodIcon className="w-3.5 h-3.5 text-muted-foreground" />}
+                  <span className="text-xs text-muted-foreground">{mood ? t[mood.labelKey] : ""}</span>
                   <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full flex items-center gap-1"
                     style={{ background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}>
-                    <CheckCircle2 className="w-2.5 h-2.5" /> Answered
+                    <CheckCircle2 className="w-2.5 h-2.5" /> {t.pjAnswered}
                   </span>
                 </div>
               </div>
               {prayer.answered_date && (
                 <span className="text-[10px] font-inter flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.25)" }}>
-                  {new Date(prayer.answered_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  {new Date(prayer.answered_date).toLocaleDateString(DATE_LOCALE[lang], { month: "short", day: "numeric", year: "numeric" })}
                 </span>
               )}
             </div>

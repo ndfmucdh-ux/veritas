@@ -1,11 +1,21 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, MessageCircle, Heart, Shield, Loader2, ChevronRight } from "lucide-react";
+import { Users, Shield, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import PrayerWall from "@/components/community/PrayerWall";
 import { LoadingState, EmptyState } from "@/components/ui/states";
+import { useLang } from "@/lib/LanguageContext";
+
+const CATEGORIES = [
+  { id: "study_group", key: "cmStudy" },
+  { id: "prayer_circle", key: "cmPrayerCircles" },
+  { id: "accountability", key: "cmAccountability" },
+  { id: "mens_group", key: "cmMens" },
+  { id: "womens_group", key: "cmWomens" },
+];
 
 export default function CommunityHub() {
+  const { t } = useLang();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("study_group");
@@ -18,10 +28,7 @@ export default function CommunityHub() {
   const loadGroups = async () => {
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("findStudyGroups", {
-        category: selectedCategory,
-        limit: 20
-      });
+      const res = await base44.functions.invoke("findStudyGroups", { category: selectedCategory, limit: 20 });
       setGroups(res.data.groups || []);
     } catch (err) {
       console.error(err);
@@ -30,122 +37,77 @@ export default function CommunityHub() {
     }
   };
 
-  const categories = [
-    { id: "study_group", label: "Study Groups", icon: "📖" },
-    { id: "prayer_circle", label: "Prayer Circles", icon: "🙏" },
-    { id: "accountability", label: "Accountability", icon: "💪" },
-    { id: "mens_group", label: "Men's Groups", icon: "👨" },
-    { id: "womens_group", label: "Women's Groups", icon: "👩" }
-  ];
-
-  const categoryData = categories.find(c => c.id === selectedCategory);
+  const catLabel = (id) => t[(CATEGORIES.find(c => c.id === id) || CATEGORIES[0]).key];
 
   return (
-    <div className="md:ml-16 min-h-screen pb-28 px-4 md:px-8">
-      {/* Header */}
-      <div className="max-w-4xl mx-auto pt-6 mb-8">
-        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-2">Community</h1>
-        <p className="text-sm text-white/50">Connect with believers worldwide</p>
+    <div className="min-h-screen pb-28 px-4 md:px-8">
+      <div className="max-w-4xl mx-auto pt-8 mb-6">
+        <h1 className="font-cinzel text-4xl font-semibold text-foreground">{t.community}</h1>
+        <p className="text-sm mt-1 text-muted-foreground">{t.cmSub}</p>
+        <div className="mt-4 h-px w-full bg-primary/40" />
       </div>
 
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Main tabs */}
-        <div className="flex gap-2">
-          {[["groups", "👥 Groups"], ["prayer_wall", "🙏 Prayer Wall"]].map(([id, label]) => (
+        <div className="flex gap-2 border-b border-border">
+          {[["groups", t.cmGroups], ["prayer_wall", t.cmWall]].map(([id, label]) => (
             <button key={id} onClick={() => setActiveTab(id)}
-              className="flex-1 py-2.5 rounded-xl font-cinzel text-xs transition-all"
-              style={{
-                background: activeTab === id ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
-                color: activeTab === id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
-                border: activeTab === id ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgb(var(--ink) / 0.07)"
-              }}>
+              className={`px-4 py-2.5 text-sm -mb-px border-b-2 transition-colors ${activeTab === id ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
               {label}
             </button>
           ))}
         </div>
 
-        {/* Prayer Wall tab */}
         {activeTab === "prayer_wall" && <PrayerWall />}
 
-        {/* Groups tab */}
-        {activeTab === "groups" && <>
-        {/* Category tabs */}
-        <div className="flex overflow-x-auto gap-2 pb-2">
-          {categories.map(cat => (
-            <motion.button
-              key={cat.id}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory(cat.id)}
-              className="flex-shrink-0 py-2 px-4 rounded-full text-xs font-cinzel whitespace-nowrap transition-all"
-              style={{
-                background: selectedCategory === cat.id ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)",
-                color: selectedCategory === cat.id ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
-                border: selectedCategory === cat.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent"
-              }}
-            >
-              {cat.icon} {cat.label}
-            </motion.button>
-          ))}
-        </div>
-
-        {/* Groups list */}
-        {loading ? (
-          <LoadingState label="Finding groups…" size="lg" />
-        ) : groups.length === 0 ? (
-          <EmptyState icon={Users} title="No groups in this category yet" />
-        ) : (
-          <div className="space-y-3">
-            <AnimatePresence>
-              {groups.map((group) => (
-                <motion.div
-                  key={group.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="rounded-2xl p-4 group cursor-pointer hover:shadow-lg transition-all"
-                  style={{
-                    background: "rgba(0,245,255,0.05)",
-                    border: "1px solid rgba(0,245,255,0.15)"
-                  }}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <p className="font-cinzel text-sm text-white">{group.name}</p>
-                      {group.verified && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <Shield className="w-3 h-3 text-green-500" />
-                          <span className="text-[10px] text-green-500">Verified</span>
-                        </div>
-                      )}
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40" />
-                  </div>
-                  <p className="text-xs text-white/50 mb-3 line-clamp-2">{group.description}</p>
-                  <div className="flex items-center justify-between text-[10px]">
-                    <div className="flex items-center gap-3">
-                      <span style={{ color: "rgb(var(--ink) / 0.3)" }}>
-                        👥 {group.members_label}
-                      </span>
-                      <span style={{ color: "rgb(var(--ink) / 0.3)" }}>
-                        📧 {group.category.replace(/_/g, " ")}
-                      </span>
-                    </div>
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      className="px-3 py-1 rounded-lg text-white font-inter"
-                      style={{
-                        background: "linear-gradient(135deg, #00f5ff, #006bb3)"
-                      }}
-                    >
-                      Join
-                    </motion.button>
-                  </div>
-                </motion.div>
+        {activeTab === "groups" && (
+          <>
+            <div className="flex overflow-x-auto gap-2 pb-1 scrollbar-hide">
+              {CATEGORIES.map(cat => (
+                <button key={cat.id} onClick={() => setSelectedCategory(cat.id)}
+                  className={`flex-shrink-0 py-2 px-4 rounded-full text-sm whitespace-nowrap border transition-colors ${selectedCategory === cat.id ? "bg-primary text-primary-foreground border-primary" : "bg-card text-foreground/80 border-border hover:border-primary/50"}`}>
+                  {t[cat.key]}
+                </button>
               ))}
-            </AnimatePresence>
-          </div>
+            </div>
+
+            {loading ? (
+              <LoadingState label={t.cmFinding} size="lg" />
+            ) : groups.length === 0 ? (
+              <EmptyState icon={Users} title={t.cmNoGroups} />
+            ) : (
+              <div className="grid md:grid-cols-2 gap-3">
+                <AnimatePresence>
+                  {groups.map((group) => (
+                    <motion.div key={group.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
+                      className="rounded-2xl p-5 flex flex-col bg-card border border-border shadow-sm">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="min-w-0">
+                          <p className="font-cinzel text-lg font-semibold text-foreground">{group.name}</p>
+                          {group.verified && (
+                            <span className="flex items-center gap-1 mt-1 text-xs text-primary">
+                              <Shield className="w-3 h-3" /> {t.cmVerified}
+                            </span>
+                          )}
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      </div>
+                      <p className="text-sm text-foreground/75 mb-4 line-clamp-2 flex-1">{group.description}</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-3 text-xs text-muted-foreground min-w-0">
+                          <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {group.members_label}</span>
+                          <span className="truncate">{catLabel(group.category)}</span>
+                        </span>
+                        <button className="px-4 py-1.5 rounded-full text-sm bg-accent text-accent-foreground hover:opacity-90 transition-opacity flex-shrink-0">
+                          {t.cmJoin}
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </>
         )}
-        </>}
       </div>
     </div>
   );

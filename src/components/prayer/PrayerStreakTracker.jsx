@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Flame } from "lucide-react";
+import { useLang } from "@/lib/LanguageContext";
+import { DATE_LOCALE } from "@/lib/i18nCommunity";
 
 const STREAK_BADGES = [
-  { days: 3,  label: "Faithful",    icon: "🌱", color: "#34d399" },
-  { days: 7,  label: "Devoted",     icon: "🔥", color: "#f97316" },
-  { days: 14, label: "Persistent",  icon: "⭐", color: "#fbbf24" },
-  { days: 30, label: "Steadfast",   icon: "🏆", color: "#a78bfa" },
-  { days: 60, label: "Warrior",     icon: "⚔️", color: "#60a5fa" },
-  { days: 100, label: "Elder",      icon: "👑", color: "#f472b6" },
+  { days: 3,  labelKey: "badgeFaithful",    color: "#8BA888" },
+  { days: 7,  labelKey: "badgeDevoted",     color: "#C17B5C" },
+  { days: 14, labelKey: "badgePersistent",  color: "#C9A66B" },
+  { days: 30, labelKey: "badgeSteadfast",   color: "#5B8C8C" },
+  { days: 60, labelKey: "badgeWarrior",     color: "#C17B5C" },
+  { days: 100, labelKey: "badgeElder",      color: "#C9A66B" },
 ];
 
 function getLast35Days() {
@@ -55,28 +57,28 @@ export default function PrayerStreakTracker({ prayers }) {
     return { streak, longestStreak: longest, activeDays: allDays.map(d => ({ date: d, active: dates.has(d) })), earnedBadges };
   }, [prayers]);
 
+  const { t, lang } = useLang();
   const nextBadge = STREAK_BADGES.find(b => streak < b.days);
 
   return (
-    <div className="rounded-2xl overflow-hidden mb-5"
-      style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+    <div className="rounded-2xl overflow-hidden bg-card border border-border shadow-sm">
       {/* Streak header */}
       <div className="px-4 pt-4 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Flame className="w-4 h-4" style={{ color: streak > 0 ? "#f97316" : "rgb(var(--ink) / 0.2)" }} />
           <span className="font-cinzel text-sm font-bold" style={{ color: streak > 0 ? "#f97316" : "rgb(var(--ink) / 0.4)" }}>
-            {streak} day{streak !== 1 ? "s" : ""} streak
+            {t.pjStreak.replace("{n}", streak)}
           </span>
         </div>
         <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>
-          Best: {longestStreak} days
+          {t.pjBest.replace("{n}", longestStreak)}
         </span>
       </div>
 
       {/* 5-week grid */}
       <div className="px-4 pb-3">
         <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
-          {["S","M","T","W","T","F","S"].map((d, i) => (
+          {Array.from({ length: 7 }, (_, i) => new Date(2024, 0, 7 + i).toLocaleDateString(DATE_LOCALE[lang], { weekday: "narrow" })).map((d, i) => (
             <p key={i} className="text-center text-[8px] font-cinzel mb-1" style={{ color: "rgb(var(--ink) / 0.2)" }}>{d}</p>
           ))}
           {activeDays.map(({ date, active }) => (
@@ -101,7 +103,7 @@ export default function PrayerStreakTracker({ prayers }) {
       {nextBadge && (
         <div className="px-4 pb-3">
           <div className="flex items-center justify-between text-[10px] font-inter mb-1.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
-            <span>Next: {nextBadge.icon} {nextBadge.label} ({nextBadge.days} days)</span>
+            <span>{t.pjNext.replace("{name}", t[nextBadge.labelKey]).replace("{n}", nextBadge.days)}</span>
             <span style={{ color: nextBadge.color }}>{streak}/{nextBadge.days}</span>
           </div>
           <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
@@ -123,7 +125,7 @@ export default function PrayerStreakTracker({ prayers }) {
             <span key={badge.days}
               className="text-[10px] font-cinzel px-2.5 py-1 rounded-full flex items-center gap-1"
               style={{ background: `${badge.color}15`, color: badge.color, border: `1px solid ${badge.color}35` }}>
-              {badge.icon} {badge.label}
+              {t[badge.labelKey]}
             </span>
           ))}
         </div>
