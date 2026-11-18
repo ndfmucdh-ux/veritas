@@ -29,5 +29,8 @@
 /* Assistant button sits above the bottom tab bar when it is shown */
 .assistant-fab { bottom: 6rem; }
 @media (min-width: 768px) and (orientation: landscape), (min-width: 1101px) {
-  .assistant-fab { bottom: 2rem; right: 1.5rem; }
+  .assistant-fab { bottom: 2rem; }
+}
+@media (min-width: 1101px) {
+  .assistant-fab { right: 1.5rem; }
 }

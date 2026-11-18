@@ -38,6 +38,8 @@ export default function AppLayout() {
             <span className="font-cinzel font-bold text-xl tracking-[0.1em] text-foreground">
               VERITAS
             </span>
+            <span className="font-cursive text-lg italic text-foreground/70 ml-1.5">by</span>
+            <img src="https://base44.app/api/apps/69f67135f4b5e8717434ca7b/files/mp/public/69f67135f4b5e8717434ca7b/71f41d31f_awaken-logo.png" alt="Awaken Apostolic Network" className="h-8 w-auto object-contain" />
           </Link>
 
           <div className="flex items-center gap-1">
