@@ -19,6 +19,7 @@ import SharedReadingPlan from "@/components/community/SharedReadingPlan";
 import EmailEngagementDashboard from "@/components/profile/EmailEngagementDashboard";
 import HighlightImageShare from "@/components/verse/HighlightImageShare";
 import AccountSettings from "@/components/profile/AccountSettings";
+import ThemeSelector from "@/components/profile/ThemeSelector";
 import ReadingGoals from "@/components/profile/ReadingGoals";
 import DailySummaryCard from "@/components/profile/DailySummaryCard";
 import ProfileInsights from "@/components/profile/ProfileInsights";
@@ -241,7 +242,7 @@ export default function Profile() {
 
               <Section label="Preferences" icon={Bell}>
                 <ToggleRow icon={Bell} label="Daily Verse Notifications" value={notifEnabled} onChange={() => setNotifEnabled(v => !v)} color="#fbbf24" />
-                <ToggleRow icon={Moon} label="Dark Theme" value={darkMode} onChange={() => setDarkMode(v => !v)} color="#a78bfa" />
+                <ThemeSelector />
                 <NotifTimeRow label="🙏 Prayer Journal Reminder" settingKey="prayer_reminder_time" defaultTime="20:00" />
                 <NotifTimeRow label="📖 Devotional Plan Reminder" settingKey="devotional_reminder_time" defaultTime="19:00" />
               </Section>

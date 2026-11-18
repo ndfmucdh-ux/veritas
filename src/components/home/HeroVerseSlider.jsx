@@ -164,7 +164,7 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
   }, [verse.verse_ref]);
 
   return (
-    <div className="relative rounded-3xl overflow-hidden" style={{ minHeight: 260 }}>
+    <div className="on-photo relative overflow-hidden" style={{ minHeight: 300, borderRadius: "var(--radius)", boxShadow: "var(--shadow)" }}>
       {/* Background photo */}
       <AnimatePresence mode="wait">
         <motion.img
@@ -179,7 +179,7 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
         />
       </AnimatePresence>
       {/* Gradient overlay */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(6,10,20,0.3) 0%, rgba(6,10,20,0.82) 60%, rgba(6,10,20,0.97) 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(28,25,23,0.25) 0%, rgba(28,25,23,0.78) 60%, rgba(28,25,23,0.94) 100%)" }} />
 
       {/* Shimmer on load */}
       {loading && <div className="absolute inset-0 shimmer" />}
@@ -219,8 +219,8 @@ Use the date ${today} as a randomization seed for variety day-to-day.`,
             {showReflection ? t.hide : t.reflect}
           </button>
           <a href={readUrl}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl font-inter"
-            style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff" }}>
+            className="flex items-center gap-1.5 text-xs px-4 min-h-11 rounded-full font-inter"
+            style={{ background: "#D4936F", color: "#1C1917", fontWeight: 600 }}>
             <BookOpen className="w-3 h-3" /> {t.read}
           </a>
           <button onClick={() => navigator.share?.({ text: `"${verse.text}" — ${verse.verse_ref}` }) || navigator.clipboard?.writeText(`"${verse.text}" — ${verse.verse_ref}`)}

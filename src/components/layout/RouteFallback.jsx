@@ -1,17 +1,14 @@
-import VeritasLogo from "@/components/ui/VeritasLogo";
+import { useLang } from "@/lib/LanguageContext";
 
-/**
- * Lightweight fallback shown while a lazily-loaded page chunk is being fetched.
- * Brand-consistent with the initial app boot loader so route transitions feel seamless.
- */
+/** Calm skeleton shown while a lazily-loaded page chunk is fetched. Uses the app background. */
 export default function RouteFallback() {
+  const { t } = useLang();
   return (
-    <div className="md:ml-16 min-h-[60vh] flex items-center justify-center bg-background" role="status" aria-label="Loading page">
-      <div className="flex flex-col items-center gap-4">
-        <div style={{ boxShadow: "0 0 30px rgba(255,215,0,0.25)" }} className="rounded-2xl">
-          <VeritasLogo size={48} className="rounded-2xl" />
-        </div>
-        <div className="w-7 h-7 border-2 border-cyan/30 border-t-cyan rounded-full animate-spin" />
+    <div className="md:ml-16 min-h-[60vh] bg-background px-4 pt-6 max-w-2xl mx-auto space-y-4" role="status" aria-label={t.loading || "Loading"}>
+      <div className="h-6 w-1/2 rounded-full bg-secondary animate-pulse" />
+      <div className="h-48 rounded-[var(--radius)] bg-secondary animate-pulse" />
+      <div className="grid grid-cols-3 gap-3">
+        {[0, 1, 2].map((i) => <div key={i} className="h-24 rounded-[var(--radius)] bg-secondary animate-pulse" />)}
       </div>
     </div>
   );

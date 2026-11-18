@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import useSmoothNavigate from "@/hooks/useSmoothNavigate";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Maximize2, Minimize2, ChevronUp, Copy, Check, Columns, CheckSquare } from "lucide-react";
+import { Settings, Maximize2, Minimize2, ChevronUp, ChevronLeft, Copy, Check, Columns, CheckSquare } from "lucide-react";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
 import { base44 } from "@/api/base44Client";
 import { loadChapterAnnotations, recordReadingSession } from "@/lib/dataAccess";
@@ -236,7 +236,8 @@ export default function Read() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <IconBtn onClick={() => navigate(-1)} title={t.reader_back || "Back"}><ChevronLeft className="w-4 h-4" /></IconBtn>
           <div className="flex-1" />
           <IconBtn onClick={toggleSelectionMode} active={selectionMode} title="Multi-select verses">
             <CheckSquare className="w-4 h-4" />
@@ -268,7 +269,7 @@ export default function Read() {
       </div>
 
       {/* Scrollable reading area */}
-      <div ref={containerRef} className="flex-1 overflow-y-auto overflow-x-visible scrollbar-hide">
+      <div ref={containerRef} className="flex-1 overflow-y-auto overflow-x-visible scrollbar-hide scripture">
         <div className="px-4 md:px-8 max-w-2xl mx-auto w-full pb-32 pt-2">
           {/* Chapter header with parallax */}
           <ChapterHeader

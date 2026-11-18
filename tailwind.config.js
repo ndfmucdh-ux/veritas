@@ -10,13 +10,15 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       fontFamily: {
-        cinzel: ['Cinzel', 'serif'],
-        inter: ['Inter', 'sans-serif'],
-        playfair: ['Playfair Display', 'serif'],
+        cinzel: ['Source Serif 4', 'Georgia', 'serif'],
+        inter: ['system-ui', '-apple-system', 'Inter', 'sans-serif'],
+        playfair: ['Source Serif 4', 'Georgia', 'serif'],
+        scripture: ['Source Serif 4', 'Georgia', 'serif'],
       },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        surface: { DEFAULT: 'var(--surface)', 2: 'var(--surface-2)' },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
@@ -38,14 +40,14 @@ module.exports = {
           foreground: 'hsl(var(--muted-foreground))'
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
+          DEFAULT: 'hsl(var(--accent-hsl))',
           foreground: 'hsl(var(--accent-foreground))'
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'
         },
-        border: 'hsl(var(--border))',
+        border: 'var(--border)',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         gold: 'hsl(var(--gold))',

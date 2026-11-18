@@ -5,11 +5,12 @@ import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import MorningReminder from "@/components/home/MorningReminder.jsx";
 import DailyGoalBar from "@/components/home/DailyGoalBar.jsx";
 import DailyReflectionCard from "@/components/home/DailyReflectionCard.jsx";
-import HomeAmbientBackground from "@/components/home/HomeAmbientBackground.jsx";
 import HomeGreeting from "@/components/home/HomeGreeting.jsx";
 import HomeSectionHeader from "@/components/home/HomeSectionHeader.jsx";
 import ContinueReadingCard from "@/components/home/ContinueReadingCard.jsx";
 import QuickActionsGrid from "@/components/home/QuickActionsGrid.jsx";
+import TodayActionsGrid from "@/components/home/TodayActionsGrid.jsx";
+import RecentlyRead from "@/components/home/RecentlyRead.jsx";
 import VersePreviewCard from "@/components/home/VersePreviewCard.jsx";
 import StartReadingBooks from "@/components/home/StartReadingBooks.jsx";
 import { FEATURED_VERSES } from "@/lib/sampleVerses";
@@ -18,64 +19,58 @@ import { pageTransition } from "@/hooks/useAnimations";
 import { useLang } from "@/lib/LanguageContext";
 
 export default function Home() {
-  const { t } = useLang();
+  const { t, tr } = useLang();
 
   return (
-    <motion.div {...pageTransition} className="md:ml-16 min-h-screen">
-      <HomeAmbientBackground />
-
-      <div className="relative z-10 px-4 pt-4 pb-28 space-y-7 max-w-2xl mx-auto">
-
+    <motion.div {...pageTransition} className="md:ml-16 min-h-screen bg-background">
+      <div className="px-4 pt-5 pb-28 space-y-8 max-w-2xl md:max-w-4xl mx-auto">
         <HomeGreeting />
 
-        {/* Morning Reminder */}
-        <MorningReminder />
-
-        {/* Daily Reading Goal */}
-        <DailyGoalBar />
-
-        {/* Daily Reflection Card */}
-        <DailyReflectionCard />
-
-        {/* Hero Verse Slider */}
+        {/* Verse of the Day — large card */}
         <HeroVerseSlider />
 
+        {/* Quick actions: Today's Reading, Plans, Prayer */}
+        <TodayActionsGrid />
+
+        {/* Recently read */}
+        <section>
+          <HomeSectionHeader label={tr("home_recentlyRead")} />
+          <RecentlyRead />
+        </section>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <MorningReminder />
+          <DailyGoalBar />
+        </div>
+
+        <DailyReflectionCard />
         <ContinueReadingCard />
 
-        {/* Category Cards */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.28 }}>
+        <section>
           <HomeSectionHeader label={t.forYou} />
           <CategoryCards />
-        </motion.div>
+        </section>
 
-        {/* Quick Actions */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+        <section>
           <HomeSectionHeader label={t.quickAccess} />
           <QuickActionsGrid />
-        </motion.div>
+        </section>
 
-        {/* Beloved Verses */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
+        <section>
           <HomeSectionHeader label={t.belovedVerses} linkTo="/search" linkLabel={t.search} />
-          <div className="space-y-3">
-            {(t.featuredVerses || FEATURED_VERSES).slice(0, 5).map((v, i) => (
-              <motion.div key={v.ref} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 + i * 0.07 }}>
-                <VersePreviewCard verse={v} />
-              </motion.div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {(t.featuredVerses || FEATURED_VERSES).slice(0, 5).map((v) => (
+              <VersePreviewCard key={v.ref} verse={v} />
             ))}
           </div>
-        </motion.div>
+        </section>
 
-        {/* Quick start books */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}>
+        <section>
           <HomeSectionHeader label={t.startReading} linkTo="/read" linkLabel={t.allBooks} />
           <StartReadingBooks />
-        </motion.div>
+        </section>
 
-        {/* Morning Inspiration — bottom of page */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-          <MorningInspiration />
-        </motion.div>
+        <MorningInspiration />
       </div>
     </motion.div>
   );

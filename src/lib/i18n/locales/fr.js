@@ -1,4 +1,7 @@
 const fr = {
+  theme_title: "Apparence", theme_light: "Clair", theme_dark: "Sombre", theme_system: "Système", theme_toggle: "Changer de thème",
+  home_todaysReading: "Lecture du Jour", home_todaysReadingSub: "Ouvrir la Bible", home_plansSub: "Reste sur la voie", home_prayerSub: "Parle à Dieu",
+  home_recentlyRead: "Lu Récemment", home_recentlyReadEmpty: "Les chapitres que tu lis apparaîtront ici.", home_recentlyReadCta: "Commencer à lire", reader_back: "Retour",
   home: "Accueil", read: "Lire", readBtn: "Lire", search: "Rechercher", library: "Bibliothèque",
   plans: "Plans", discover: "Découvrir", profile: "Profil", study: "Étude",
   prayer: "Prière", community: "Communauté", studyCenter: "Centre d'Étude",

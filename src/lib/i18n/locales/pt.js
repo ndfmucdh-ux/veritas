@@ -1,4 +1,7 @@
 const pt = {
+  theme_title: "Aparência", theme_light: "Claro", theme_dark: "Escuro", theme_system: "Sistema", theme_toggle: "Mudar tema",
+  home_todaysReading: "Leitura de Hoje", home_todaysReadingSub: "Abrir a Bíblia", home_plansSub: "Siga o ritmo", home_prayerSub: "Fale com Deus",
+  home_recentlyRead: "Lido Recentemente", home_recentlyReadEmpty: "Os capítulos que você ler aparecerão aqui.", home_recentlyReadCta: "Começar a ler", reader_back: "Voltar",
   home: "Início", read: "Ler", readBtn: "Ler", search: "Buscar", library: "Biblioteca",
   plans: "Planos", discover: "Descobrir", profile: "Perfil", study: "Estudo",
   prayer: "Oração", community: "Comunidade", studyCenter: "Centro de Estudo",

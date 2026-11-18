@@ -1,19 +1,14 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 export default function HeaderNavPill({ to, icon: Icon, label }) {
   return (
-    <Link to={to} aria-label={label}>
-      <motion.div
-        whileTap={{ scale: 0.93 }}
-        whileHover={{ scale: 1.04 }}
-        transition={{ type: "spring", stiffness: 400, damping: 24 }}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-inter"
-        style={{ color: "rgba(255,255,255,0.4)" }}
-      >
-        <Icon className="w-4 h-4" />
-        <span className="hidden md:inline">{label}</span>
-      </motion.div>
+    <Link
+      to={to}
+      aria-label={label}
+      className="flex items-center gap-1.5 px-3 min-h-11 rounded-full text-xs font-medium text-muted-foreground hover:text-primary hover:bg-secondary transition-colors duration-200"
+    >
+      <Icon className="w-[18px] h-[18px]" strokeWidth={1.5} />
+      <span className="hidden md:inline">{label}</span>
     </Link>
   );
 }

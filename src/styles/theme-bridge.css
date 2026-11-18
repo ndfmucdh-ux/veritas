@@ -1,0 +1,43 @@
+/*
+ * Theme bridge: maps the older hard-coded colours (navy surfaces, neon cyan, gold, white-alpha text)
+ * onto the Warm & Peaceful tokens so every existing page follows the new theme in Light and Dark.
+ * Elements inside .on-photo (text over photographs) keep their own colours.
+ */
+
+/* Dark navy surfaces → warm surface (both themes) */
+[style*="background: rgba(6, 10, 20"]:not(.on-photo *),
+[style*="background: rgba(8, 12, 22"]:not(.on-photo *),
+[style*="background: rgba(10, 15, 30"]:not(.on-photo *),
+[style*="background: rgb(6, 8, 15)"]:not(.on-photo *),
+[style*="background: rgb(8, 12, 22)"]:not(.on-photo *),
+[style*="background-color: rgba(6, 10, 20"]:not(.on-photo *),
+[style*="background: rgb(10, 15, 30)"]:not(.on-photo *) {
+  background: var(--surface-glass) !important;
+}
+
+/* Neon cyan → terracotta accent (both themes) */
+[style*="color: rgb(0, 245, 255)"], [style*="color: rgb(0, 229, 255)"] { color: var(--accent) !important; }
+[style*="background: rgba(0, 245, 255"]:not(.on-photo *),
+[style*="background: rgba(0, 229, 255"]:not(.on-photo *),
+[style*="linear-gradient(135deg, rgba(0, 245, 255"]:not(.on-photo *) { background: var(--accent-soft) !important; }
+[style*="solid rgba(0, 245, 255"], [style*="solid rgba(0, 229, 255"] { border-color: var(--accent-border) !important; }
+
+/* Gold and violet → warm tones */
+[style*="color: rgb(251, 191, 36)"]:not(.on-photo *) { color: hsl(var(--gold)) !important; }
+[style*="color: rgb(167, 139, 250)"] { color: hsl(var(--purple)) !important; }
+[style*="background: rgba(251, 191, 36"]:not(.on-photo *) { background: var(--highlight) !important; }
+[style*="solid rgba(251, 191, 36"] { border-color: var(--accent-border) !important; }
+
+/* Light theme only: white-alpha text, fills and borders become warm ink on cream */
+html:not(.dark) [style*="color: rgba(255, 255, 255"]:not(.on-photo *) { color: var(--text-muted) !important; }
+html:not(.dark) [style*="color: rgba(255, 255, 255, 0.9"]:not(.on-photo *),
+html:not(.dark) [style*="color: rgba(255, 255, 255, 0.8"]:not(.on-photo *),
+html:not(.dark) [style*="color: rgba(255, 255, 255, 0.7"]:not(.on-photo *),
+html:not(.dark) [style*="color: rgb(255, 255, 255)"]:not(.on-photo *) { color: var(--text) !important; }
+html:not(.dark) [style*="background: rgba(255, 255, 255"]:not(.on-photo *) { background: var(--surface-2) !important; }
+html:not(.dark) [style*="solid rgba(255, 255, 255"]:not(.on-photo *) { border-color: var(--border) !important; }
+html:not(.dark) .text-white:not(.on-photo *):not(.btn-primary) { color: var(--text) !important; }
+html:not(.dark) [class*="text-white/"]:not(.on-photo *) { color: var(--text-muted) !important; }
+html:not(.dark) [class*="bg-white/"]:not(.on-photo *) { background-color: var(--surface-2) !important; }
+html:not(.dark) [class*="border-white/"]:not(.on-photo *) { border-color: var(--border) !important; }
+html:not(.dark) [class*="bg-black/"]:not(.on-photo *):not([class*="fixed"]) { background-color: var(--surface-2) !important; }
