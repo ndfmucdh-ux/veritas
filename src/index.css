@@ -209,6 +209,12 @@ html[data-theme="light"] { --muted-foreground: 30 6% 30%; }
   main .md\:ml-16 { margin-left: 0; }
 }
 
+/* App-like behavior: no rubber-band overscroll, no sideways scroll, no double-tap zoom */
+html, body { overscroll-behavior: none; overflow-x: clip; max-width: 100%; touch-action: pan-x pan-y; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+#root { overflow-x: clip; max-width: 100vw; }
+img { -webkit-user-drag: none; }
+input, textarea, select { font-size: max(16px, 1em); }
+
 /* Cards: text never spills out of its box, grid cells share the same height */
 body { overflow-wrap: break-word; }
 .grid > * { min-width: 0; }

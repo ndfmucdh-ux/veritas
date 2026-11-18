@@ -9,9 +9,9 @@ export default function ProfileStatsRow({ sessions = 0, highlights = 0, notes = 
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-3 px-5 mb-4">
+    <div className="grid grid-cols-4 gap-2 px-5 mb-4">
       {stats.map(({ label, value, icon: Icon, color }) => (
-        <div key={label} className="rounded-2xl p-4 text-center" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+        <div key={label} className="rounded-2xl p-2.5 text-center min-w-0" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
           <Icon className="w-5 h-5 mx-auto mb-1.5" style={{ color }} />
           <p className="font-cinzel text-lg font-bold text-white">{value}</p>
           <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{label}</p>

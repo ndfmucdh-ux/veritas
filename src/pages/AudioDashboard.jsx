@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useLang } from "@/lib/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Timer, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -20,6 +21,7 @@ const formatCountdown = (secs) => {
 };
 
 export default function AudioDashboard() {
+  const { t } = useLang();
   const { audioHistory, streak, notifPrefs, setNotifPrefs, saveNotifPrefs } = useAudioDashboard();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [timestampBookmarks, setTimestampBookmarks] = useState(() => {
@@ -120,8 +122,8 @@ export default function AudioDashboard() {
     try {
       const completed = audioHistory.filter(a => a.completed).length;
       const text = `🎧 I've listened to ${completed} Bible chapters on Veritas with a ${streak}-day streak! Join me: https://app.veritas.com`;
-      if (navigator.share) await navigator.share({ title: "My Veritas Audio Progress", text });
-      else { await navigator.clipboard.writeText(text); alert("Progress copied to clipboard!"); }
+      if (navigator.share) await navigator.share({ title: t.s1ShareTitle, text });
+      else { await navigator.clipboard.writeText(text); alert(t.s1Copied); }
     } catch {}
     setBusy(false);
   };
@@ -148,8 +150,8 @@ export default function AudioDashboard() {
         <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=80" alt="Audio" className="w-full h-full object-cover" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(10,14,26,0.92))" }} />
         <div className="absolute bottom-0 left-0 right-0 px-5 pb-4">
-          <h1 className="font-cinzel text-3xl font-semibold text-foreground">Audio Dashboard</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>Your scripture listening journey</p>
+          <h1 className="font-cinzel text-3xl font-semibold text-foreground">{t.s1AudioTitle}</h1>
+          <p className="text-sm mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.s1AudioSub}</p>
         </div>
       </div>
 
@@ -231,14 +233,14 @@ export default function AudioDashboard() {
               className="w-full max-w-sm rounded-3xl p-6"
               style={{ background: "var(--popover-surface)", border: "1px solid rgba(167,139,250,0.2)" }}>
               <div className="flex items-center justify-between mb-4">
-                <p className="font-cinzel text-base font-bold text-white">Sleep Timer</p>
+                <p className="font-cinzel text-base font-bold text-white">{t.s1Sleep}</p>
                 <button onClick={() => setShowSleepPicker(false)}
                   className="w-8 h-8 rounded-xl flex items-center justify-center"
                   style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-xs font-inter mb-4" style={{ color: "rgb(var(--ink) / 0.4)" }}>Audio will automatically pause after the selected time</p>
+              <p className="text-xs font-inter mb-4" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.s1SleepNote}</p>
               <div className="grid grid-cols-3 gap-3">
                 {SLEEP_TIMER_OPTIONS.map(m => (
                   <button key={m} onClick={() => startSleepTimer(m)}

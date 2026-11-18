@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
+import { useLang } from "@/lib/LanguageContext";
 import { Target, Timer, Share2, Download } from "lucide-react";
 
 export default function AudioOverviewTab({
   completed, streak, booksCompleted, totalMinutes, todayCount, goal,
   weeklyData, maxWeekly, onSleepTimer, onShare, onExportCSV, onExportPDF, busy,
 }) {
+  const { t } = useLang();
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
@@ -50,7 +52,7 @@ export default function AudioOverviewTab({
       <div className="grid grid-cols-2 gap-4">
         <button onClick={onSleepTimer} className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
           style={{ background: "rgba(167,139,250,0.08)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.2)" }}>
-          <Timer className="w-5 h-5" /> Sleep Timer
+          <Timer className="w-5 h-5" /> {t.s1Sleep}
         </button>
         <button onClick={onShare} disabled={busy} className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
           style={{ background: "rgba(251,191,36,0.08)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.2)" }}>

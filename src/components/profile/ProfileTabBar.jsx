@@ -8,12 +8,12 @@ export default function ProfileTabBar({ activeTab, onTabChange, isAdmin = false 
   const tabs = ALL_TABS.filter(tab => tab !== "emails" || isAdmin);
 
   return (
-    <div className="flex gap-2 px-5 mb-5" role="tablist" aria-label="Profile sections">
+    <div className="flex gap-1.5 px-5 mb-5 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Profile sections">
       {tabs.map(tab => {
         const Icon = TAB_ICONS[tab];
         return (
           <button key={tab} type="button" role="tab" aria-selected={activeTab === tab} onClick={() => onTabChange(tab)}
-            className="flex-1 flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all min-h-14"
+            className="flex-1 min-w-[4.25rem] flex flex-col items-center justify-center gap-1.5 py-3 px-1.5 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all min-h-14"
             style={{
               background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgb(var(--ink) / 0.03)",
               color: activeTab === tab ? "#00f5ff" : "rgb(var(--ink) / 0.35)",

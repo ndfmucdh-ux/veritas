@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLang } from "@/lib/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Download, Share2, Check, Loader2 } from "lucide-react";
 
@@ -14,6 +15,7 @@ const BACKGROUNDS = [
 const ACCENT_COLORS = ["#00f5ff", "#fbbf24", "#34d399", "#a78bfa", "#f472b6", "#f87171"];
 
 export default function SocialShareModal({ verseRef, verseText, type = "highlight", onClose }) {
+  const { t } = useLang();
   const [selectedBg, setSelectedBg] = useState(0);
   const [accentColor, setAccentColor] = useState("#fbbf24");
   const [copied, setCopied] = useState(false);
@@ -157,7 +159,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
           <div>
-            <p className="font-cinzel text-sm font-semibold text-white">Compartir Versículo</p>
+            <p className="font-cinzel text-sm font-semibold text-white">{t.s1ShareVerse}</p>
             <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{verseRef}</p>
           </div>
           <motion.button whileTap={{ scale: 0.9 }} onClick={onClose}
@@ -181,7 +183,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
 
           {/* Background selector */}
           <div>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Fondo</p>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>{t.s1Background}</p>
             <div className="flex gap-2">
               {BACKGROUNDS.map((bg, i) => (
                 <motion.button key={bg.id} whileTap={{ scale: 0.9 }}
@@ -198,7 +200,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
 
           {/* Accent color */}
           <div>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Acento</p>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>{t.s1Accent}</p>
             <div className="flex gap-2">
               {ACCENT_COLORS.map(color => (
                 <motion.button key={color} whileTap={{ scale: 0.9 }}
@@ -220,7 +222,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
               className="flex flex-col items-center gap-1.5 py-3 rounded-xl"
               style={{ background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.2)", color: "#00f5ff" }}>
               {downloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
-              <span className="text-[10px] font-cinzel">Guardar</span>
+              <span className="text-[10px] font-cinzel">{t.s1Save}</span>
             </motion.button>
 
             <motion.button whileTap={{ scale: 0.95 }} onClick={handleCopyText}
@@ -229,12 +231,12 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
               {copied ? (
                 <>
                   <Check className="w-5 h-5" style={{ color: "#34d399" }} />
-                  <span className="text-[10px] font-cinzel" style={{ color: "#34d399" }}>¡Copiado!</span>
+                  <span className="text-[10px] font-cinzel" style={{ color: "#34d399" }}>{t.s1CopiedShort}</span>
                 </>
               ) : (
                 <>
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
-                  <span className="text-[10px] font-cinzel">Copiar</span>
+                  <span className="text-[10px] font-cinzel">{t.s1Copy}</span>
                 </>
               )}
             </motion.button>
@@ -243,7 +245,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
               className="flex flex-col items-center gap-1.5 py-3 rounded-xl"
               style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)", color: "#fbbf24" }}>
               <Share2 className="w-5 h-5" />
-              <span className="text-[10px] font-cinzel">Compartir</span>
+              <span className="text-[10px] font-cinzel">{t.s1Share}</span>
             </motion.button>
           </div>
         </div>

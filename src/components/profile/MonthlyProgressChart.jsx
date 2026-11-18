@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useLang } from "@/lib/LanguageContext";
+import { DATE_LOCALE } from "@/lib/i18nCommunity";
 import { motion } from "framer-motion";
 import { Calendar, Loader2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
@@ -35,6 +37,7 @@ const buildDays = (records) => {
 };
 
 export default function MonthlyProgressChart() {
+  const { t, lang } = useLang();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
@@ -72,9 +75,9 @@ export default function MonthlyProgressChart() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4" style={{ color: "#00f5ff" }} />
-          <p className="font-cinzel text-sm font-semibold text-white">Monthly Progress</p>
+          <p className="font-cinzel text-sm font-semibold text-white">{t.s1Monthly}</p>
         </div>
-        <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>Last 30 days</span>
+        <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.s1Last30}</span>
       </div>
 
       {/* Chart */}
@@ -123,11 +126,11 @@ export default function MonthlyProgressChart() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Chapters Read</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.s1ChaptersRead}</p>
           <p className="font-cinzel text-lg font-bold text-white mt-1">{totalChapters}</p>
         </div>
         <div className="rounded-xl p-3" style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Active Days</p>
+          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.s1ActiveDays}</p>
           <p className="font-cinzel text-lg font-bold" style={{ color: "#fbbf24" }} >{activeDays}</p>
         </div>
       </div>
@@ -141,15 +144,15 @@ export default function MonthlyProgressChart() {
           style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)" }}
         >
           <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "#a78bfa" }}>
-            {new Date(selectedData.date + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+            {new Date(selectedData.date + "T00:00:00").toLocaleDateString(DATE_LOCALE[lang], { month: "long", day: "numeric" })}
           </p>
           <div className="space-y-1">
             <div className="flex justify-between">
-              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.6)" }}>Chapters read</span>
+              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.6)" }}>{t.s1ChaptersRead}</span>
               <span className="font-cinzel font-bold text-white">{selectedData.chaptersRead}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.6)" }}>Focused on</span>
+              <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.6)" }}>{t.s1FocusedOn}</span>
               <span className="font-cinzel font-bold text-white">{selectedData.books}</span>
             </div>
           </div>

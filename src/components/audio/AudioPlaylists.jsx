@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLang } from "@/lib/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Play, Trash2, ChevronRight, X, Check, Loader2, BookOpen, Music2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -16,6 +17,7 @@ const SUGGESTED = [
 ];
 
 export default function AudioPlaylists() {
+  const { t } = useLang();
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -90,8 +92,8 @@ export default function AudioPlaylists() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-cinzel text-base font-bold text-white">My Playlists</h2>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>Custom listening queues</p>
+          <h2 className="font-cinzel text-base font-bold text-white">{t.s1Playlists}</h2>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>{t.s1PlaylistsSub}</p>
         </div>
         <motion.button whileTap={{ scale: 0.92 }} onClick={() => setShowCreate(v => !v)}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-cinzel text-xs"
@@ -107,10 +109,10 @@ export default function AudioPlaylists() {
             exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
             <div className="rounded-2xl p-4 space-y-3"
               style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.18)" }}>
-              <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(0,245,255,0.6)" }}>New Playlist</p>
+              <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(0,245,255,0.6)" }}>{t.s1NewPlaylist}</p>
 
               <input value={newName} onChange={e => setNewName(e.target.value)}
-                placeholder="Playlist name…"
+                placeholder={t.s1PlaylistName}
                 className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
                 style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.85)", fontSize: "16px" }} />
 
@@ -166,12 +168,12 @@ export default function AudioPlaylists() {
 
       {/* Playlists */}
       {loading ? (
-        <LoadingState label="Loading playlists…" size="md" minHeight={120} />
+        <LoadingState label={t.s1LoadingPl} size="md" minHeight={120} />
       ) : playlists.length === 0 ? (
         <EmptyState
           icon={Music2}
-          title="No playlists yet"
-          description="Create a playlist and add chapters or verses to build your custom listening queue"
+          title={t.s1NoPl}
+          description={t.s1NoPlDesc}
           minHeight={160}
         />
       ) : (
@@ -250,7 +252,7 @@ export default function AudioPlaylists() {
                         {showAddItem === pl.id ? (
                           <div className="rounded-xl p-3 space-y-2.5"
                             style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
-                            <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>Add Chapter</p>
+                            <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.s1AddChapter}</p>
                             <div className="grid grid-cols-3 gap-2">
                               <select value={addBook} onChange={e => setAddBook(e.target.value)}
                                 className="col-span-1 rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
 import { UserPlus, Mail, Check, Loader2, X, Users, MessageSquare, Send } from "lucide-react";
 
 export default function PlanInvitePanel({ planTitle, planCategory, accentColor = "#00f5ff" }) {
+  const { t } = useLang();
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -92,7 +94,7 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" style={{ color: accentColor }} />
-            <p className="font-cinzel text-sm font-semibold text-white">Study Together</p>
+            <p className="font-cinzel text-sm font-semibold text-white">{t.s1StudyTogether}</p>
           </div>
           <button onClick={() => setShowForm(v => !v)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-cinzel text-xs"
@@ -105,21 +107,21 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
           {showForm && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden px-4 pb-4 space-y-3">
-              <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="Friend's email address"
+              <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder={t.s1FriendEmail}
                 className="w-full px-3 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
                 style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.85)" }} />
-              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Personal message (optional)" rows={2}
+              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder={t.s1PersonalMsg} rows={2}
                 className="w-full px-3 py-2 rounded-xl text-sm font-inter resize-none focus:outline-none"
                 style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)", color: "rgb(var(--ink) / 0.7)" }} />
               <div className="flex gap-2">
                 <button onClick={() => setShowForm(false)}
                   className="flex-1 py-2 rounded-xl font-cinzel text-xs"
-                  style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>Cancel</button>
+                  style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>{t.s1Cancel}</button>
                 <button onClick={sendInvite} disabled={!email.trim() || sending}
                   className="flex-1 py-2 rounded-xl font-cinzel text-xs flex items-center justify-center gap-1.5 transition-all"
                   style={{ background: `${accentColor}15`, color: accentColor, border: `1px solid ${accentColor}30`, opacity: !email.trim() ? 0.5 : 1 }}>
                   {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
-                  Send Invite
+                  {t.s1SendInvite}
                 </button>
               </div>
             </motion.div>
@@ -129,13 +131,13 @@ export default function PlanInvitePanel({ planTitle, planCategory, accentColor =
         {sent && (
           <div className="px-4 pb-3 flex items-center gap-2">
             <Check className="w-3.5 h-3.5" style={{ color: "#34d399" }} />
-            <p className="text-xs font-cinzel" style={{ color: "#34d399" }}>Invite sent!</p>
+            <p className="text-xs font-cinzel" style={{ color: "#34d399" }}>{t.s1InviteSent}</p>
           </div>
         )}
 
         {invites.length > 0 && (
           <div className="px-4 pb-3 space-y-1.5 border-t" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
-            <p className="text-[10px] font-cinzel uppercase tracking-widest pt-3 mb-2" style={{ color: "rgb(var(--ink) / 0.25)" }}>Pending Invites</p>
+            <p className="text-[10px] font-cinzel uppercase tracking-widest pt-3 mb-2" style={{ color: "rgb(var(--ink) / 0.25)" }}>{t.s1Pending}</p>
             {invites.map(inv => (
               <div key={inv.id} className="flex items-center justify-between py-1.5">
                 <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.55)" }}>{inv.invitee_email}</p>

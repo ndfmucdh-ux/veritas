@@ -1,4 +1,5 @@
 import { useState, useEffect, useId } from "react";
+import { useLang } from "@/lib/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FolderPlus, X, Check, Plus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -12,6 +13,7 @@ const FOLDER_SUGGESTIONS = [
 ];
 
 export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
+  const { t } = useLang();
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(null);
@@ -85,7 +87,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
         <div className="flex items-center justify-between px-5 pt-5 pb-4"
           style={{ borderBottom: "1px solid rgb(var(--ink) / 0.07)" }}>
           <div>
-            <p id={titleId} className="font-cinzel text-base font-bold text-white">Save to Folder</p>
+            <p id={titleId} className="font-cinzel text-base font-bold text-white">{t.s1SaveToFolder}</p>
             <p id={descriptionId} className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
               {verseRefs.length} verse{verseRefs.length !== 1 ? "s" : ""} selected
             </p>
@@ -105,7 +107,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
             <>
               {folders.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>Your Folders</p>
+                  <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>{t.s1YourFolders}</p>
                   {folders.map(folder => (
                     <button key={folder.id} onClick={() => saveToFolder(folder)}
                       disabled={saving === folder.id}
@@ -132,11 +134,11 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
                     className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all"
                     style={{ background: "rgba(0,245,255,0.05)", border: "1px dashed rgba(0,245,255,0.2)", color: "#00f5ff" }}>
                     <Plus className="w-4 h-4" />
-                    <span className="font-cinzel text-sm">New Folder</span>
+                    <span className="font-cinzel text-sm">{t.s1NewFolder}</span>
                   </button>
                 ) : (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-3">
-                    <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>Quick suggestions</p>
+                    <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>{t.s1Suggestions}</p>
                     <div className="flex gap-2 flex-wrap">
                       {FOLDER_SUGGESTIONS.map(s => (
                         <button key={s.name} onClick={() => { setNewName(s.name); setNewIcon(s.icon); setNewColor(s.color); }}
@@ -149,7 +151,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
                     <input
                       value={newName}
                       onChange={e => setNewName(e.target.value)}
-                      placeholder="Folder name..."
+                      placeholder={t.s1FolderPh}
                       className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
                       style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.12)", color: "rgb(var(--ink) / 0.85)" }}
                       autoFocus
@@ -166,7 +168,7 @@ export default function FolderSaveModal({ verseRefs, onClose, onSaved }) {
                     <div className="flex gap-2">
                       <button onClick={() => setShowCreate(false)}
                         className="flex-1 py-2 rounded-xl text-sm font-cinzel"
-                        style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>Cancel</button>
+                        style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>{t.s1Cancel}</button>
                       <button onClick={createAndSave} disabled={!newName.trim() || creating}
                         className="flex-1 py-2 rounded-xl text-sm font-cinzel flex items-center justify-center gap-2"
                         style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.3)" }}>
