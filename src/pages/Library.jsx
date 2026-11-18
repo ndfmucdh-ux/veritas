@@ -36,6 +36,7 @@ export default function Library() {
     deleteNote,
     updateBookmarkTags,
     updateNoteTags,
+    updateNote,
     reload,
   } = useLibraryData();
   const [hlDevotional, setHlDevotional] = useState(null);
@@ -240,6 +241,7 @@ export default function Library() {
         allTags={allTags}
         tagBar={<TagFilterBar tags={allTags} activeTag={activeTagFilter} onSelect={setActiveTagFilter} />}
         onCreate={async (data) => { await createNote(data); await reload(); }}
+        onUpdate={updateNote}
         onDelete={deleteNote}
         onTag={(note) => setTagManagerItem({ id: note.id, type: "note", tags: note.tags || [] })}
         onShare={(note) => setShareItem({ verseRef: note.verse_ref, verseText: note.note_text })}

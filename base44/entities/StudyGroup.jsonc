@@ -1,0 +1,87 @@
+{
+  "name": "StudyGroup",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "study_group",
+        "prayer_circle",
+        "accountability",
+        "mens_group",
+        "womens_group"
+      ],
+      "default": "study_group"
+    },
+    "privacy": {
+      "type": "string",
+      "enum": [
+        "public",
+        "private"
+      ],
+      "default": "public"
+    },
+    "owner_id": {
+      "type": "string"
+    },
+    "owner_name": {
+      "type": "string"
+    },
+    "member_count": {
+      "type": "number",
+      "default": 1
+    },
+    "plan_title": {
+      "type": "string"
+    },
+    "plan_selections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "chapters": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "owner_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

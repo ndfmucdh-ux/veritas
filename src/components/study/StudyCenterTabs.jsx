@@ -15,7 +15,7 @@ export default function StudyCenterTabs({ activeTab, onTabChange, showCrossRef, 
   const { t } = useLang();
   return (
     <div className="flex items-center gap-1 border-b border-border">
-      <div className="flex-1 flex gap-1 overflow-x-auto scrollbar-hide">
+      <div className="flex-1 flex gap-1 overflow-x-auto overflow-y-hidden scrollbar-hide" style={{ touchAction: "pan-x", overscrollBehaviorX: "contain" }}>
         {TABS.map(({ id, key, Icon }) => {
           const active = activeTab === id;
           return (

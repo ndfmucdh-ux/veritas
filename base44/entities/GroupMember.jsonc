@@ -1,0 +1,56 @@
+{
+  "name": "GroupMember",
+  "type": "object",
+  "properties": {
+    "group_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "owner",
+        "member"
+      ],
+      "default": "member"
+    },
+    "completed_chapters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Chapters this member finished, as Book:chapter"
+    }
+  },
+  "required": [
+    "group_id",
+    "user_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -215,6 +215,9 @@ html, body { overscroll-behavior: none; overflow-x: clip; max-width: 100%; touch
 img { -webkit-user-drag: none; }
 input, textarea, select { font-size: max(16px, 1em); }
 
+/* Horizontal strips (tabs, chips) stay level: no up/down drift, no chaining into the page scroll */
+.overflow-x-auto:not(.overflow-y-auto), .overflow-x-scroll:not(.overflow-y-scroll) { overflow-y: hidden; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+
 /* Cards: text never spills out of its box, grid cells share the same height */
 body { overflow-wrap: break-word; }
 .grid > * { min-width: 0; }

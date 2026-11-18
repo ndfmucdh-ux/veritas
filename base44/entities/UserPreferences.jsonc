@@ -47,6 +47,11 @@
         "sepia"
       ],
       "default": "dark"
+    },
+    "votd_email_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Receive the Verse of the Day email each morning"
     }
   },
   "required": []

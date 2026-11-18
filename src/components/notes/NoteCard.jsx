@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Leaf, Flower2, Sprout, Calendar, Bookmark, ChevronRight, Tag, Share2, BookOpen, Trash2 } from "lucide-react";
+import { Leaf, Flower2, Sprout, Calendar, Bookmark, ChevronRight, Tag, Share2, BookOpen, Trash2, Pencil } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
 import { DATE_LOCALE } from "@/lib/i18nCommunity";
 
 const ICONS = [Leaf, Flower2, Sprout];
 
 // One note: botanical tile, reference, title, excerpt, date and topic. Tap to open the full note.
-export default function NoteCard({ note, index, onTag, onShare, onDelete }) {
+export default function NoteCard({ note, index, onTag, onShare, onDelete, onEdit }) {
   const { t, lang } = useLang();
   const [open, setOpen] = useState(false);
   const Icon = ICONS[index % ICONS.length];
@@ -44,6 +44,7 @@ export default function NoteCard({ note, index, onTag, onShare, onDelete }) {
                 <div className="flex flex-wrap gap-1.5 mt-2">{note.tags.slice(1).map((tag) => <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{tag}</span>)}</div>
               )}
               <div className="flex items-center gap-2 mt-3">
+                <button type="button" aria-label={t.s9Edit} onClick={onEdit} className="flex items-center gap-1.5 px-4 h-10 rounded-full bg-primary text-primary-foreground text-xs font-cinzel font-semibold"><Pencil className="w-4 h-4" />{t.s9Edit}</button>
                 <button type="button" aria-label={t.s6Tag} onClick={onTag} className={action}><Tag className="w-4 h-4" /></button>
                 <button type="button" aria-label={t.s6Share} onClick={onShare} className={action}><Share2 className="w-4 h-4" /></button>
                 {note.book && <Link to={`/read?book=${encodeURIComponent(note.book)}&chapter=${note.chapter}`} aria-label={t.s6Open} className={action}><BookOpen className="w-4 h-4" /></Link>}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Toggle from "@/components/ui/Toggle";
+import DailyVerseEmailToggle from "@/components/profile/DailyVerseEmailToggle";
 import { savePrefs } from "@/lib/preferencesSync";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -356,6 +357,7 @@ export default function AccountSettings({ user }) {
                         {/* ── NOTIFICATIONS ── */}
                         {id === "notifications" && (
                           <div className="space-y-4 pt-3">
+                            <DailyVerseEmailToggle />
                             {[
                               { label: tr("set_morning"), key: "morning", value: morningTime, setter: setMorningTime, sub: tr("set_morningSub") },
                               { label: tr("set_evening"), key: "evening", value: eveningTime, setter: setEveningTime, sub: tr("set_eveningSub") },

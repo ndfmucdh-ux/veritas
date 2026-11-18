@@ -62,7 +62,18 @@ export default function useLibraryData() {
     setNotes(prev => prev.map(n => n.id === id ? { ...n, tags } : n));
   };
 
+  // Edit a note's title, text and topics in place (works for new and older notes).
+  const updateNote = async (id, { title, text, tags }) => {
+    if (source === "consolidated") {
+      await base44.entities.UserVerseInteraction.update(id, { note_text: text, note_title: title || "", tags, has_note: true, last_interacted_at: new Date().toISOString() });
+    } else {
+      await base44.entities.UserNote.update(id, { note_text: text, tags });
+    }
+    setNotes(prev => prev.map(n => n.id === id ? { ...n, note_text: text, note_title: title, tags } : n));
+  };
+
   return {
+    updateNote,
     bookmarks,
     highlights,
     notes,

@@ -23,15 +23,15 @@ function Select({ label, value, onChange, children, className = "" }) {
 }
 
 // Bottom sheet to write a brand-new note for any verse.
-export default function NoteEditorSheet({ onClose, onSave, existingTags = [] }) {
+export default function NoteEditorSheet({ onClose, onSave, existingTags = [], note = null }) {
   const { t, lang } = useLang();
-  const [title, setTitle] = useState("");
-  const [book, setBook] = useState("John");
-  const [chapter, setChapter] = useState(1);
-  const [verse, setVerse] = useState(1);
-  const [text, setText] = useState("");
-  const [tagList, setTagList] = useState(existingTags);
-  const [picked, setPicked] = useState([]);
+  const [title, setTitle] = useState(note?.note_title || "");
+  const [book, setBook] = useState(note?.book || "John");
+  const [chapter, setChapter] = useState(note?.chapter || 1);
+  const [verse, setVerse] = useState(note?.verse || 1);
+  const [text, setText] = useState(note?.note_text || "");
+  const [tagList, setTagList] = useState([...new Set([...existingTags, ...(note?.tags || [])])]);
+  const [picked, setPicked] = useState(note?.tags || []);
   const [newTag, setNewTag] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -42,6 +42,7 @@ export default function NoteEditorSheet({ onClose, onSave, existingTags = [] }) 
 
   // Exact verse count of the chosen chapter, so the list matches the real book.
   useEffect(() => {
+    if (note) return undefined;
     let live = true;
     setCounting(true);
     const translation = localStorage.getItem("veritas_translation") || "KJV";
@@ -76,11 +77,12 @@ export default function NoteEditorSheet({ onClose, onSave, existingTags = [] }) 
     <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }} onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-t-3xl md:rounded-3xl bg-card border border-border p-5 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-cinzel text-2xl font-semibold text-foreground">{t.s6NewNote}</h2>
+          <h2 className="font-cinzel text-2xl font-semibold text-foreground">{note ? t.s9EditNote : t.s6NewNote}</h2>
           <button type="button" onClick={onClose} aria-label={t.s6Cancel} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-foreground"><X className="w-4 h-4" /></button>
         </div>
 
-        <div className="grid grid-cols-[minmax(0,1fr)_4.5rem_4.5rem] gap-2">
+        {note && <p className="font-cinzel text-sm font-semibold text-primary">{note.verse_ref}</p>}
+        <div className={`grid grid-cols-[minmax(0,1fr)_4.5rem_4.5rem] gap-2 ${note ? "hidden" : ""}`}>
           <Select label={t.s6Book} value={book} onChange={(e) => { setBook(e.target.value); setChapter(1); }}>
             {BIBLE_BOOKS.map((b) => <option key={b.name} value={b.name}>{getTranslatedBookName(b.name, lang)}</option>)}
           </Select>
