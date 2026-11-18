@@ -63,25 +63,25 @@ export default function MonthlyProgressChart() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl p-5 flex items-center justify-center h-48"
-        style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
-        <Loader2 className="w-5 h-5 animate-spin" style={{ color: "#00f5ff" }} />
+      <div className="rounded-2xl flex items-center justify-center min-h-[14rem]"
+        style={{ background: "hsl(var(--card))", border: "1px solid var(--hairline)" }}>
+        <Loader2 className="w-5 h-5 animate-spin" style={{ color: "var(--t-gold)" }} />
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl p-5" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-2xl p-3.5" style={{ background: "hsl(var(--card))", border: "1px solid var(--hairline)" }}>
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4" style={{ color: "#00f5ff" }} />
-          <p className="font-cinzel text-sm font-semibold text-white">{t.s1Monthly}</p>
+          <Calendar className="w-4 h-4" style={{ color: "var(--t-gold)" }} />
+          <p className="font-cinzel text-sm font-semibold text-foreground">{t.s1Monthly}</p>
         </div>
-        <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.s1Last30}</span>
+        <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.75)" }}>{t.s1Last30}</span>
       </div>
 
       {/* Chart */}
-      <div className="mb-4 h-48">
+      <div className="mb-3 h-32">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 8, right: 0, left: -24, bottom: 0 }}>
             <XAxis
@@ -99,12 +99,12 @@ export default function MonthlyProgressChart() {
             <Tooltip
               contentStyle={{
                 background: "var(--popover-surface)",
-                border: "1px solid rgba(0,245,255,0.2)",
+                border: "1px solid var(--hairline)",
                 borderRadius: 12,
                 fontSize: 12,
                 fontFamily: "Cinzel"
               }}
-              labelStyle={{ color: "#00f5ff" }}
+              labelStyle={{ color: "#d9b77e" }}
               itemStyle={{ color: "rgb(var(--ink) / 0.7)" }}
             />
             <Bar
@@ -115,7 +115,7 @@ export default function MonthlyProgressChart() {
               {chartData.map((entry, idx) => (
                 <Cell
                   key={`cell-${idx}`}
-                  fill={selectedDay === entry.date ? "#00f5ff" : "rgba(52,211,153,0.6)"}
+                  fill={selectedDay === entry.date ? "#d9b77e" : "rgba(217,183,126,0.45)"}
                 />
               ))}
             </Bar>
@@ -124,14 +124,14 @@ export default function MonthlyProgressChart() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.s1ChaptersRead}</p>
-          <p className="font-cinzel text-lg font-bold text-white mt-1">{totalChapters}</p>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: "var(--fill-2)" }}>
+          <p className="text-xs font-inter min-w-0" style={{ color: "rgb(var(--ink) / 0.75)" }}>{t.s1ChaptersRead}</p>
+          <p className="font-cinzel text-lg font-bold text-foreground">{totalChapters}</p>
         </div>
-        <div className="rounded-xl p-3" style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.15)" }}>
-          <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{t.s1ActiveDays}</p>
-          <p className="font-cinzel text-lg font-bold" style={{ color: "#fbbf24" }} >{activeDays}</p>
+        <div className="rounded-xl px-3 py-2 flex items-center justify-between gap-2" style={{ background: "var(--fill-2)" }}>
+          <p className="text-xs font-inter min-w-0" style={{ color: "rgb(var(--ink) / 0.75)" }}>{t.s1ActiveDays}</p>
+          <p className="font-cinzel text-lg font-bold" style={{ color: "var(--t-gold)" }}>{activeDays}</p>
         </div>
       </div>
 
@@ -140,10 +140,10 @@ export default function MonthlyProgressChart() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl p-3"
-          style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.2)" }}
+          className="rounded-xl p-3 mt-2"
+          style={{ background: "var(--fill-2)" }}
         >
-          <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "#a78bfa" }}>
+          <p className="text-[11px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "var(--t-gold)" }}>
             {new Date(selectedData.date + "T00:00:00").toLocaleDateString(DATE_LOCALE[lang], { month: "long", day: "numeric" })}
           </p>
           <div className="space-y-1">

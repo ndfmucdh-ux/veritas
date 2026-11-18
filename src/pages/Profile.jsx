@@ -59,7 +59,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="md:ml-16 min-h-screen flex items-center justify-center">
-        <LoadingState label="Loading your profile…" size="xl" minHeight={0} />
+        <LoadingState label={t.s5Loading} size="xl" minHeight={0} />
       </div>
     );
   }
@@ -99,13 +99,13 @@ export default function Profile() {
             <div className="px-5 space-y-5">
               <DailySummaryCard />
 
-              <Section label="Today's Reading Goal" icon={Target}>
+              <Section label={t.s5TodayGoal} icon={Target}>
                 <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/plans")}>
                   <DailyReadingRing chaptersReadToday={0} />
                 </motion.div>
               </Section>
 
-              <Section label="Reading Goals" icon={Target}>
+              <Section label={t.s5Goals} icon={Target}>
                 <ReadingGoals />
               </Section>
 
@@ -113,7 +113,7 @@ export default function Profile() {
 
               <MonthlyProgressChart />
 
-              <Section label="Join the Community" icon={Users}>
+              <Section label={t.s5JoinCommunity} icon={Users}>
                 <SharedReadingPlan />
               </Section>
             </div>

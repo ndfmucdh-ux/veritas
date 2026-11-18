@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Target, Check, ChevronUp, ChevronDown } from "lucide-react";
+import { Target, Check, Minus, Plus } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
 
 const GOAL_OPTIONS = {
   daily: [1, 2, 3, 5, 7, 10],
@@ -9,6 +10,7 @@ const GOAL_OPTIONS = {
 };
 
 export default function ReadingGoals() {
+  const { t } = useLang();
   const [mode, setMode] = useState(() => localStorage.getItem("veritas_goal_mode") || "daily");
   const [target, setTarget] = useState(() => parseInt(localStorage.getItem("veritas_goal_target") || "3"));
   const [progress, setProgress] = useState(0);
@@ -25,23 +27,15 @@ export default function ReadingGoals() {
       if (mode === "daily") {
         since = today.toISOString().split("T")[0];
       } else {
-        // Start of current week (Monday)
         const day = today.getDay();
-        const diff = (day === 0 ? -6 : 1 - day);
+        const diff = day === 0 ? -6 : 1 - day;
         const monday = new Date(today);
         monday.setDate(today.getDate() + diff);
         since = monday.toISOString().split("T")[0];
       }
-
       const all = await base44.entities.ReadingProgress.list("-completed_at", 200).catch(() => []);
-      const inPeriod = (all || []).filter(r => {
-        if (!r.completed_at) return false;
-        const d = r.completed_at.split("T")[0];
-        return d >= since;
-      });
-      // Deduplicate by book+chapter
-      const unique = new Set(inPeriod.map(r => `${r.book}:${r.chapter}`));
-      setProgress(unique.size);
+      const inPeriod = (all || []).filter((r) => r.completed_at && r.completed_at.split("T")[0] >= since);
+      setProgress(new Set(inPeriod.map((r) => `${r.book}:${r.chapter}`)).size);
     } catch {}
   };
 
@@ -52,97 +46,54 @@ export default function ReadingGoals() {
     setTimeout(() => setSaved(false), 1800);
   };
 
+  const step = (dir) => {
+    const opts = GOAL_OPTIONS[mode];
+    const idx = Math.max(0, opts.indexOf(target));
+    const next = opts[Math.min(opts.length - 1, Math.max(0, idx + dir))];
+    setTarget(next);
+  };
+
+  const changeMode = (m) => {
+    setMode(m);
+    if (!GOAL_OPTIONS[m].includes(target)) setTarget(GOAL_OPTIONS[m][2]);
+  };
+
   const pct = Math.min(100, Math.round((progress / target) * 100));
   const done = progress >= target;
-
-  const accentColor = done ? "#34d399" : "#00f5ff";
+  const stepBtn = "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0";
 
   return (
-    <div className="rounded-2xl p-4 space-y-4"
-      style={{ background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.12)" }}>
-
-      {/* Mode toggle */}
-      <div className="flex gap-2">
-        {["daily", "weekly"].map(m => (
-          <button key={m} onClick={() => setMode(m)}
-            className="flex-1 py-2 rounded-xl text-xs font-cinzel uppercase tracking-wider transition-all"
-            style={{
-              background: mode === m ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
-              color: mode === m ? "#00f5ff" : "rgb(var(--ink) / 0.3)",
-              border: mode === m ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.07)"
-            }}>
-            {m}
-          </button>
-        ))}
-      </div>
-
-      {/* Target picker */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-cinzel text-sm text-white font-semibold">
-            {mode === "daily" ? "Daily" : "Weekly"} Chapter Goal
-          </p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
-            How many chapters to read {mode === "daily" ? "per day" : "this week"}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => {
-            const opts = GOAL_OPTIONS[mode];
-            const idx = opts.indexOf(target);
-            if (idx > 0) setTarget(opts[idx - 1]);
-          }} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}>
-            <ChevronDown className="w-4 h-4" />
-          </button>
-          <span className="font-cinzel text-2xl font-bold w-10 text-center" style={{ color: accentColor }}>
-            {target}
-          </span>
-          <button onClick={() => {
-            const opts = GOAL_OPTIONS[mode];
-            const idx = opts.indexOf(target);
-            if (idx < opts.length - 1) setTarget(opts[idx + 1]);
-          }} className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.5)" }}>
-            <ChevronUp className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <div>
-        <div className="flex justify-between text-[11px] mb-1.5 font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
-          <span>{progress} of {target} chapters</span>
-          <span style={{ color: done ? "#34d399" : accentColor }}>{pct}%{done ? " ✓ Goal met!" : ""}</span>
-        </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
-          <motion.div
-            key={`${progress}-${target}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="h-full rounded-full"
-            style={{ background: done ? "linear-gradient(90deg,#34d399,#6ee7b7)" : "linear-gradient(90deg,#00f5ff,#06b6d4)" }}
-          />
-        </div>
-        {/* Chapter dots */}
-        <div className="flex gap-1 mt-2 flex-wrap">
-          {Array.from({ length: Math.min(target, 42) }).map((_, i) => (
-            <div key={i} className="w-2 h-2 rounded-full transition-all"
-              style={{ background: i < progress ? accentColor : "rgb(var(--ink) / 0.08)" }} />
+    <div className="rounded-2xl p-3.5 space-y-3" style={{ background: "hsl(var(--card))", border: "1px solid var(--hairline)" }}>
+      <div className="flex items-center gap-3">
+        <div className="flex p-0.5 rounded-full flex-shrink-0" style={{ background: "var(--fill-2)" }}>
+          {["daily", "weekly"].map((m) => (
+            <button key={m} onClick={() => changeMode(m)} className="px-3 min-h-8 rounded-full text-xs font-cinzel font-semibold transition-all"
+              style={{ background: mode === m ? "#d9b77e" : "transparent", color: mode === m ? "#1a1408" : "rgb(var(--ink) / 0.75)" }}>
+              {m === "daily" ? t.s5Daily : t.s5Weekly}
+            </button>
           ))}
         </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <button onClick={() => step(-1)} aria-label="-" className={stepBtn} style={{ background: "var(--fill-3)", color: "hsl(var(--foreground))" }}><Minus className="w-4 h-4" /></button>
+          <span className="font-cinzel text-2xl font-bold w-8 text-center text-foreground">{target}</span>
+          <button onClick={() => step(1)} aria-label="+" className={stepBtn} style={{ background: "var(--fill-3)", color: "hsl(var(--foreground))" }}><Plus className="w-4 h-4" /></button>
+        </div>
       </div>
 
-      {/* Save button */}
-      <button onClick={saveGoal}
-        className="w-full py-2.5 rounded-xl text-sm font-cinzel font-semibold transition-all flex items-center justify-center gap-2"
-        style={{
-          background: saved ? "rgba(52,211,153,0.15)" : "rgba(0,245,255,0.1)",
-          color: saved ? "#34d399" : "#00f5ff",
-          border: saved ? "1px solid rgba(52,211,153,0.3)" : "1px solid rgba(0,245,255,0.2)"
-        }}>
-        {saved ? <><Check className="w-4 h-4" /> Saved!</> : <><Target className="w-4 h-4" /> Save Goal</>}
+      <div>
+        <div className="flex justify-between text-xs font-inter mb-1.5" style={{ color: "rgb(var(--ink) / 0.75)" }}>
+          <span>{progress} / {target} {mode === "daily" ? t.s5PerDay : t.s5PerWeek}</span>
+          <span style={{ color: done ? "hsl(var(--success))" : "var(--t-gold)" }}>{done ? t.s5GoalMet : `${pct}%`}</span>
+        </div>
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
+          <motion.div key={`${progress}-${target}`} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.7 }}
+            className="h-full rounded-full" style={{ background: done ? "hsl(var(--success))" : "#d9b77e" }} />
+        </div>
+      </div>
+
+      <button onClick={saveGoal} className="w-full min-h-10 rounded-xl text-sm font-cinzel font-semibold flex items-center justify-center gap-2"
+        style={{ background: saved ? "hsl(var(--success) / 0.2)" : "var(--fill-2)", color: saved ? "hsl(var(--success))" : "hsl(var(--foreground))", border: "1px solid var(--hairline)" }}>
+        {saved ? <><Check className="w-4 h-4" /> {t.s5GoalSaved}</> : <><Target className="w-4 h-4" /> {t.s5SaveGoal}</>}
       </button>
     </div>
   );
