@@ -46,7 +46,7 @@ export default function AppLayout() {
         </header>
       )}
 
-      <main className={`flex-1 ${isImmersive ? "" : "md:pl-56"}`}>
+      <main className={`flex-1 ${isImmersive ? "" : "md:pl-[var(--sidenav-w,224px)]"}`}>
         <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>
