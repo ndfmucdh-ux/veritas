@@ -5,11 +5,12 @@ import { EXTRA } from "@/lib/i18nExtra";
 import { PAGES } from "@/lib/i18nPages";
 import { COMMUNITY } from "@/lib/i18nCommunity";
 import { STAGE1 } from "@/lib/i18nStage1";
+import { STAGE2 } from "@/lib/i18nStage2";
 import { hydratePrefs } from "@/lib/preferencesSync";
 import { getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 
 // Locale dictionaries (en/es/fr/pt/de) plus extra UI strings; missing keys fall back to English.
-const buildDict = (lang) => ({ ...getDictionary(lang), ...EXTRA.en, ...(EXTRA[lang] || {}), ...PAGES.en, ...(PAGES[lang] || {}), ...COMMUNITY.en, ...(COMMUNITY[lang] || {}), ...STAGE1.en, ...(STAGE1[lang] || {}) });
+const buildDict = (lang) => ({ ...getDictionary(lang), ...EXTRA.en, ...(EXTRA[lang] || {}), ...PAGES.en, ...(PAGES[lang] || {}), ...COMMUNITY.en, ...(COMMUNITY[lang] || {}), ...STAGE1.en, ...(STAGE1[lang] || {}), ...STAGE2.en, ...(STAGE2[lang] || {}) });
 
 const fallbackDict = buildDict("en");
 const LangCtx = createContext({ lang: "en", t: fallbackDict, tr: (key, vars) => translate(fallbackDict, key, vars), setLang: () => {} });

@@ -397,7 +397,7 @@ export default function Read() {
 
           {/* Bottom nav */}
           {!loading && verses.length > 0 && (
-            <div className="mt-12">
+            <div className="mt-12 pb-44 md:pb-32 pr-16">
               <ChapterNavigator book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
             </div>
           )}

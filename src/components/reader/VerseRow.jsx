@@ -211,8 +211,8 @@ function VerseRow({
             transition: "text-shadow 0.3s ease",
           }}>
           {showNumbers && (
-            <span className="font-cinzel font-bold select-none mr-2.5 inline-block"
-              style={{ color: "rgba(0,245,255,0.6)", fontSize: "clamp(13px, 3vw, 16px)", verticalAlign: "top", lineHeight: "1.4", minWidth: "1.8em", display: "inline-block" }}>
+            <span className="font-cinzel font-bold select-none mr-2 inline-flex items-center justify-center rounded-full align-middle"
+              style={{ color: "hsl(var(--primary))", background: "hsl(var(--primary) / 0.12)", fontSize: "12px", lineHeight: 1, minWidth: "1.7em", height: "1.7em", padding: "0 0.4em" }}>
               {verseNum}
             </span>
           )}

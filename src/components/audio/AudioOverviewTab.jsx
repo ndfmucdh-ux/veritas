@@ -11,10 +11,10 @@ export default function AudioOverviewTab({
     <>
       <div className="grid grid-cols-2 gap-4">
         {[
-          { icon: "🎧", label: "Chapters Done", value: completed, color: "#00f5ff" },
-          { icon: "🔥", label: "Day Streak", value: streak, color: "#fb923c" },
-          { icon: "📚", label: "Books Heard", value: booksCompleted, color: "#a78bfa" },
-          { icon: "⏱️", label: "Total Minutes", value: totalMinutes, color: "#34d399" },
+          { icon: "🎧", label: t.s2Chapters, value: completed, color: "#00f5ff" },
+          { icon: "🔥", label: t.s2Streak, value: streak, color: "#fb923c" },
+          { icon: "📚", label: t.s2Books, value: booksCompleted, color: "#a78bfa" },
+          { icon: "⏱️", label: t.s2Minutes, value: totalMinutes, color: "#34d399" },
         ].map(s => (
           <div key={s.label} className="rounded-2xl p-5 text-center" style={{ background: `${s.color}08`, border: `1px solid ${s.color}20` }}>
             <div className="text-3xl mb-2">{s.icon}</div>
@@ -26,18 +26,18 @@ export default function AudioOverviewTab({
 
       <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
         <div className="flex items-center justify-between mb-3">
-          <p className="font-cinzel text-sm text-white flex items-center gap-2"><Target className="w-4 h-4 text-gold" /> Today's Goal</p>
-          <span className="font-cinzel text-xs" style={{ color: todayCount >= goal ? "#34d399" : "#00f5ff" }}>{todayCount}/{goal} chapters</span>
+          <p className="font-cinzel text-sm text-white flex items-center gap-2"><Target className="w-4 h-4 text-gold" /> {t.s2Goal}</p>
+          <span className="font-cinzel text-xs" style={{ color: todayCount >= goal ? "#34d399" : "#00f5ff" }}>{todayCount}/{goal} {t.s2ChaptersUnit}</span>
         </div>
         <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
           <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (todayCount / goal) * 100)}%` }} transition={{ duration: 0.8 }}
             className="h-full rounded-full" style={{ background: todayCount >= goal ? "#34d399" : "#00f5ff" }} />
         </div>
-        {todayCount >= goal && <p className="text-xs font-inter mt-2" style={{ color: "#34d399" }}>✅ Goal reached today!</p>}
+        {todayCount >= goal && <p className="text-xs font-inter mt-2" style={{ color: "#34d399" }}>{t.s2Reached}</p>}
       </div>
 
       <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
-        <p className="font-cinzel text-xs uppercase tracking-widest mb-4" style={{ color: "rgb(var(--ink) / 0.3)" }}>This Week</p>
+        <p className="font-cinzel text-xs uppercase tracking-widest mb-4" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.s2Week}</p>
         <div className="flex items-end gap-2 h-24">
           {weeklyData.map((d, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -56,15 +56,15 @@ export default function AudioOverviewTab({
         </button>
         <button onClick={onShare} disabled={busy} className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
           style={{ background: "rgba(251,191,36,0.08)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.2)" }}>
-          <Share2 className="w-5 h-5" /> Share Progress
+          <Share2 className="w-5 h-5" /> {t.s2Share}
         </button>
         <button onClick={onExportCSV} disabled={busy} className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
           style={{ background: "rgba(0,245,255,0.06)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.15)" }}>
-          <Download className="w-5 h-5" /> Export CSV
+          <Download className="w-5 h-5" /> {t.s2CSV}
         </button>
         <button onClick={onExportPDF} disabled={busy} className="flex items-center gap-2.5 px-4 py-4 rounded-2xl font-cinzel text-sm transition-all"
           style={{ background: "rgba(52,211,153,0.06)", color: "#34d399", border: "1px solid rgba(52,211,153,0.15)" }}>
-          <Download className="w-5 h-5" /> Export PDF
+          <Download className="w-5 h-5" /> {t.s2PDF}
         </button>
       </div>
 
@@ -75,7 +75,7 @@ export default function AudioOverviewTab({
           </div>
           <div>
             <p className="font-cinzel text-sm font-bold text-white">
-              {streak >= 7 ? "Streak Champion!" : streak >= 3 ? "On Fire!" : streak >= 1 ? "Building Momentum" : "Start Your Streak"}
+              {streak >= 7 ? t.s2Champ : streak >= 3 ? t.s2Fire : streak >= 1 ? t.s2Momentum : t.s2Start}
             </p>
             <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>
               {streak >= 7 ? `${streak} days of consistent listening` : streak >= 3 ? `${streak} days — keep going!` : streak >= 1 ? "Day 1 complete!" : "Listen today to begin"}

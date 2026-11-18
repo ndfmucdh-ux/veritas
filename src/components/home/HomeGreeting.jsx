@@ -17,12 +17,12 @@ export default function HomeGreeting() {
           <h1 className="font-cinzel font-medium leading-[1.05] text-foreground" style={{ fontSize: "clamp(34px, 9vw, 46px)" }}>
             {t[greetingKey]},
             <span className="flex items-center gap-2 font-semibold" style={{ color: "var(--t-gold)" }}>
-              {firstName || t.beloved || "Beloved"}
+              {firstName || t.beloved}
               <Leaf className="w-6 h-6 opacity-70" strokeWidth={1.3} />
             </span>
           </h1>
           <p className="font-inter text-base mt-2" style={{ color: "rgb(var(--ink) / 0.65)" }}>
-            {t.graceAndPeace || "Grace and peace to you."}
+            {t.graceAndPeace}
           </p>
         </div>
         <Link
