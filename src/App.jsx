@@ -15,26 +15,27 @@ import ViewTransitionLinks from '@/components/layout/ViewTransitionLinks';
 import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { warmOfflineCache } from '@/lib/offlineBible';
+import { routeLoaders } from '@/lib/routeLoaders';
 
 // Home is the landing page — keep it eager so first paint is instant.
 import Home from './pages/Home';
 
 // Every other page is code-split into its own chunk, loaded only when visited.
 // This keeps the initial bundle tiny (Home only) for maximum first-load speed.
-const Read = lazy(() => import('./pages/Read'));
-const Search = lazy(() => import('./pages/Search'));
-const Library = lazy(() => import('./pages/Library'));
-const Discover = lazy(() => import('./pages/Discover'));
-const Plans = lazy(() => import('./pages/Plans'));
-const Profile = lazy(() => import('./pages/Profile'));
-const Study = lazy(() => import('./pages/Study'));
-const VerseImageGenerator = lazy(() => import('./pages/VerseImageGenerator'));
-const StudyCenter = lazy(() => import('./pages/StudyCenter'));
-const PrayerJournal = lazy(() => import('./pages/PrayerJournal'));
-const CommunityHub = lazy(() => import('./pages/CommunityHub'));
-const NotificationStudio = lazy(() => import('./pages/NotificationStudio'));
-const AudioDashboard = lazy(() => import('./pages/AudioDashboard'));
-const ForYouSection = lazy(() => import('./pages/ForYouSection'));
+const Read = lazy(routeLoaders["/read"]);
+const Search = lazy(routeLoaders["/search"]);
+const Library = lazy(routeLoaders["/library"]);
+const Discover = lazy(routeLoaders["/discover"]);
+const Plans = lazy(routeLoaders["/plans"]);
+const Profile = lazy(routeLoaders["/profile"]);
+const Study = lazy(routeLoaders["/study"]);
+const VerseImageGenerator = lazy(routeLoaders["/verse-art"]);
+const StudyCenter = lazy(routeLoaders["/study-center"]);
+const PrayerJournal = lazy(routeLoaders["/prayer-journal"]);
+const CommunityHub = lazy(routeLoaders["/community"]);
+const NotificationStudio = lazy(routeLoaders["/notification-studio"]);
+const AudioDashboard = lazy(routeLoaders["/audio-dashboard"]);
+const ForYouSection = lazy(routeLoaders["/for-you"]);
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
