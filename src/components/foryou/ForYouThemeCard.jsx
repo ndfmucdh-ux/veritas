@@ -53,6 +53,16 @@ export default function ForYouThemeCard({ theme, copy, index, isOpen, isDone, on
                     ))}
                   </div>
                 </div>
+                {theme.cross?.length > 0 && (
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.16em] mb-1.5" style={{ color: GOLD }}>{t.fyCrossRefs}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {theme.cross.map((ref) => (
+                        <Link key={ref} to={readHref(ref)} className="px-3 min-h-9 inline-flex items-center rounded-full text-xs font-cinzel" style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.16)" }}>{localRef(ref, lang)}</Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <button type="button" onClick={onDone} aria-pressed={isDone}
                     className="flex items-center justify-center gap-1.5 min-h-11 rounded-full text-xs font-cinzel font-semibold"

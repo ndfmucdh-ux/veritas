@@ -1,4 +1,5 @@
 import { STAGE1_META } from "@/lib/forYouStage1";
+import { FOR_YOU_EXTRA } from "@/lib/forYouExtra";
 import { Shield, Anchor, Users, Zap, Star, Heart, Sprout, BookOpen, Sun, Feather, Compass, Flame, Home, Hammer, Moon, Smile, Church, Wallet, Lock } from "lucide-react";
 
 // Language-independent structure of every For You category. Verses use English book names;
@@ -74,3 +75,11 @@ export const FOR_YOU_META = {
 
 // Staged additions: new themes are appended to each category.
 Object.entries(STAGE1_META).forEach(([cat, themes]) => FOR_YOU_META[cat].themes.push(...themes));
+
+// Extra passages and cross references, matched to themes by position.
+Object.entries(FOR_YOU_EXTRA).forEach(([cat, { more, cross }]) => {
+  FOR_YOU_META[cat].themes.forEach((theme, i) => {
+    theme.verses = [...theme.verses, ...(more[i] || [])];
+    theme.cross = cross[i] || [];
+  });
+});
