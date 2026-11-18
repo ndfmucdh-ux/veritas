@@ -1,26 +1,29 @@
 import { BookOpen, BookMarked, TrendingUp, BarChart3, Mail, Shield } from "lucide-react";
+import { useLang } from "@/lib/LanguageContext";
 
 const ALL_TABS = ["overview", "library", "insights", "stats", "emails", "settings"];
-const TAB_LABELS = { overview: "Overview", library: "Library", insights: "Insights", stats: "Reading", emails: "Emails", settings: "Settings" };
+const TAB_LABELS = { overview: "s5TabOverview", library: "s5TabLibrary", insights: "s5TabInsights", stats: "s5TabReading", emails: "s5TabEmails", settings: "s5TabSettings" };
 const TAB_ICONS = { overview: BookOpen, library: BookMarked, insights: TrendingUp, stats: BarChart3, emails: Mail, settings: Shield };
 
 export default function ProfileTabBar({ activeTab, onTabChange, isAdmin = false }) {
-  const tabs = ALL_TABS.filter(tab => tab !== "emails" || isAdmin);
+  const { t } = useLang();
+  const tabs = ALL_TABS.filter((tab) => tab !== "emails" || isAdmin);
 
   return (
-    <div className="flex gap-1.5 px-5 mb-5 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Profile sections">
-      {tabs.map(tab => {
+    <div className="grid grid-cols-3 gap-2 px-5 mb-5" role="tablist">
+      {tabs.map((tab) => {
         const Icon = TAB_ICONS[tab];
+        const active = activeTab === tab;
         return (
-          <button key={tab} type="button" role="tab" aria-selected={activeTab === tab} onClick={() => onTabChange(tab)}
-            className="flex-1 min-w-[4.25rem] flex flex-col items-center justify-center gap-1.5 py-3 px-1.5 rounded-xl text-[10px] font-cinzel uppercase tracking-wider transition-all min-h-14"
+          <button key={tab} type="button" role="tab" aria-selected={active} onClick={() => onTabChange(tab)}
+            className="min-w-0 flex items-center justify-center gap-2 px-2 min-h-11 rounded-xl text-xs font-cinzel font-semibold transition-all"
             style={{
-              background: activeTab === tab ? "rgba(0,245,255,0.1)" : "rgb(var(--ink) / 0.03)",
-              color: activeTab === tab ? "#00f5ff" : "rgb(var(--ink) / 0.35)",
-              border: activeTab === tab ? "1px solid rgba(0,245,255,0.2)" : "1px solid rgb(var(--ink) / 0.06)",
+              background: active ? "hsl(var(--primary) / 0.16)" : "hsl(var(--card))",
+              color: active ? "hsl(var(--primary))" : "rgb(var(--ink) / 0.75)",
+              border: active ? "1px solid hsl(var(--primary) / 0.5)" : "1px solid var(--hairline)",
             }}>
-            <Icon className="w-5 h-5" />
-            {TAB_LABELS[tab]}
+            <Icon className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate">{t[TAB_LABELS[tab]]}</span>
           </button>
         );
       })}
