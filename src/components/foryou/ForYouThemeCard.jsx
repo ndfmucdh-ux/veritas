@@ -56,9 +56,13 @@ export default function ForYouThemeCard({ theme, copy, index, isOpen, isDone, on
                 {theme.cross?.length > 0 && (
                   <div>
                     <p className="text-[11px] uppercase tracking-[0.16em] mb-1.5" style={{ color: GOLD }}>{t.fyCrossRefs}</p>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="space-y-1.5">
                       {theme.cross.map((ref) => (
-                        <Link key={ref} to={readHref(ref)} className="px-3 min-h-9 inline-flex items-center rounded-full text-xs font-cinzel" style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.16)" }}>{localRef(ref, lang)}</Link>
+                        <Link key={ref} to={readHref(ref)} className="flex items-center gap-2.5 px-3 min-h-11 rounded-xl" style={{ background: "rgba(255,255,255,0.1)" }}>
+                          <BookOpen className="w-4 h-4 flex-shrink-0" style={{ color: GOLD }} />
+                          <span className="font-cinzel text-sm flex-1 min-w-0 truncate" style={{ color: "#fff" }}>{localRef(ref, lang)}</span>
+                          <ChevronRight className="w-4 h-4" style={{ color: "rgba(255,255,255,0.5)" }} />
+                        </Link>
                       ))}
                     </div>
                   </div>

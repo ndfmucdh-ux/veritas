@@ -1,5 +1,15 @@
 import { STAGE1_TEXT } from "@/lib/forYouStage1";
 import { NEW_TEXT } from "@/lib/forYouNew";
+import { FOR_YOU_TEXT_PT } from "@/lib/forYouTextPt";
+import { FOR_YOU_TEXT_FR } from "@/lib/forYouTextFr";
+import { NEW_TEXT_FR } from "@/lib/forYouNewTextFr";
+import { FOR_YOU_TEXT_DE } from "@/lib/forYouTextDe";
+import { NEW_TEXT_DE } from "@/lib/forYouNewTextDe";
+
+// Languages whose original themes live in their own files (English and Spanish are below).
+const EXTRA_LANG_TEXT = { pt: FOR_YOU_TEXT_PT, fr: FOR_YOU_TEXT_FR, de: FOR_YOU_TEXT_DE };
+// Languages that keep every added theme (stage 1 and newer) in one list per category.
+const ADDED_LANG_TEXT = { fr: NEW_TEXT_FR, de: NEW_TEXT_DE };
 
 // For You text. English and Spanish are complete; other languages show the English text
 // (titles, buttons and book names are translated everywhere).
@@ -181,8 +191,8 @@ export const FOR_YOU_TEXT = {
 
 // Base text plus the themes added in stages (languages without base text fall back to English).
 export const getForYouText = (lang, category) => {
-  const base = (FOR_YOU_TEXT[lang] || FOR_YOU_TEXT.en)[category];
-  const extra = [
+  const base = (EXTRA_LANG_TEXT[lang] || FOR_YOU_TEXT[lang] || FOR_YOU_TEXT.en)[category];
+  const extra = ADDED_LANG_TEXT[lang]?.[category] || [
     ...((STAGE1_TEXT[lang] || STAGE1_TEXT.en)[category] || []),
     ...((NEW_TEXT[lang] || NEW_TEXT.en)[category] || []),
   ];

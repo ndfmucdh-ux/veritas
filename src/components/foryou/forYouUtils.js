@@ -6,7 +6,9 @@ export function parseRef(ref) {
   const i = ref.lastIndexOf(" ");
   const cv = ref.slice(i + 1);
   const [c, v] = cv.split(":");
-  return { book: ref.slice(0, i), chapter: Number(c), verse: v ? Number(v.split("-")[0]) : null, cv };
+  const name = ref.slice(0, i);
+  // The reader and book-name tables use "Psalms"; theme data writes the singular "Psalm".
+  return { book: name === "Psalm" ? "Psalms" : name, chapter: Number(c), verse: v ? Number(v.split("-")[0]) : null, cv };
 }
 
 export const localRef = (ref, lang) => {
