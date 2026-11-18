@@ -148,13 +148,13 @@ export default function FlashcardStudy() {
       <div className="space-y-4">
         {/* Progress */}
         <div className="flex items-center justify-between">
-          <span className="text-xs font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>
+          <span className="text-xs font-cinzel" style={{ color: "rgb(var(--ink) / 0.4)" }}>
             {currentIdx + 1} / {dueCards.length}
           </span>
-          <div className="flex-1 mx-4 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div className="flex-1 mx-4 h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
             <div className="h-full rounded-full bg-cyan" style={{ width: `${((currentIdx) / dueCards.length) * 100}%`, transition: "width 0.3s" }} />
           </div>
-          <button onClick={() => setMode("browse")} className="text-xs font-cinzel" style={{ color: "rgba(255,255,255,0.3)" }}>Exit</button>
+          <button onClick={() => setMode("browse")} className="text-xs font-cinzel" style={{ color: "rgb(var(--ink) / 0.3)" }}>Exit</button>
         </div>
 
         {/* Card */}
@@ -163,11 +163,11 @@ export default function FlashcardStudy() {
           initial={{ opacity: 0, rotateY: -15 }}
           animate={{ opacity: 1, rotateY: 0 }}
           className="rounded-2xl p-6 min-h-52 flex flex-col justify-between cursor-pointer"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(0,245,255,0.18)" }}
+          style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.18)" }}
           onClick={() => !flipped && setFlipped(true)}
         >
           <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
+            <span className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>
               {flipped ? "Answer" : "Reference"}
             </span>
             <span className="text-[10px] px-2 py-0.5 rounded-full font-cinzel"
@@ -179,14 +179,14 @@ export default function FlashcardStudy() {
           <AnimatePresence mode="wait">
             <motion.div key={flipped ? "back" : "front"} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               <p className={flipped ? "text-sm font-inter leading-relaxed" : "font-cinzel text-lg font-semibold"}
-                style={{ color: flipped ? "rgba(255,255,255,0.8)" : "white" }}>
+                style={{ color: flipped ? "rgb(var(--ink) / 0.8)" : "rgb(var(--ink))" }}>
                 {flipped ? card.back : card.front}
               </p>
             </motion.div>
           </AnimatePresence>
 
           {!flipped && (
-            <p className="text-xs font-inter mt-4 text-center" style={{ color: "rgba(255,255,255,0.25)" }}>
+            <p className="text-xs font-inter mt-4 text-center" style={{ color: "rgb(var(--ink) / 0.25)" }}>
               Tap to reveal answer
             </p>
           )}
@@ -221,7 +221,7 @@ export default function FlashcardStudy() {
           <Zap className="w-8 h-8" style={{ color: "#34d399" }} />
         </div>
         <h2 className="font-cinzel text-xl font-bold text-white">Session Complete!</h2>
-        <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>
+        <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
           {sessionStats.seen} cards reviewed · {sessionStats.correct} correct
         </p>
         <div className="flex gap-2 justify-center">
@@ -240,7 +240,7 @@ export default function FlashcardStudy() {
     return (
       <div className="space-y-4">
         <button onClick={() => setMode("browse")} className="flex items-center gap-1.5 text-xs font-cinzel"
-          style={{ color: "rgba(255,255,255,0.35)" }}>
+          style={{ color: "rgb(var(--ink) / 0.35)" }}>
           <ChevronRight className="w-3.5 h-3.5 rotate-180" /> Back
         </button>
         <h2 className="font-cinzel text-base font-semibold text-white">New Flashcard</h2>
@@ -250,13 +250,13 @@ export default function FlashcardStudy() {
           { key: "deck", label: "Deck", placeholder: "General" },
         ].map(({ key, label, placeholder }) => (
           <div key={key}>
-            <label className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5 block" style={{ color: "rgba(255,255,255,0.35)" }}>{label}</label>
+            <label className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5 block" style={{ color: "rgb(var(--ink) / 0.35)" }}>{label}</label>
             <textarea rows={key === "back" ? 3 : 1}
               value={newCard[key]}
               onChange={e => setNewCard(n => ({ ...n, [key]: e.target.value }))}
               placeholder={placeholder}
               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter resize-none focus:outline-none"
-              style={{ fontSize: "16px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)" }}
+              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.85)" }}
             />
           </div>
         ))}
@@ -277,7 +277,7 @@ export default function FlashcardStudy() {
         <div className="flex items-center justify-between mb-3">
           <div>
             <p className="font-cinzel text-sm font-semibold text-white">Flashcard Decks</p>
-            <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <p className="text-xs font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>
               {cards.length} cards · {dueCards.length} due today
             </p>
           </div>
@@ -326,11 +326,11 @@ export default function FlashcardStudy() {
             const due = deckCards.filter(c => !c.next_review || c.next_review <= today).length;
             return (
               <div key={deck} className="rounded-2xl overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                 <div className="flex items-center justify-between px-4 py-3">
                   <div>
                     <p className="font-cinzel text-sm font-semibold text-white">{deck}</p>
-                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                       {deckCards.length} cards{due > 0 ? ` · ${due} due` : " · all caught up"}
                     </p>
                   </div>
@@ -344,19 +344,19 @@ export default function FlashcardStudy() {
                 <div className="px-4 pb-3 space-y-1.5 max-h-48 overflow-y-auto scrollbar-hide">
                   {deckCards.slice(0, 5).map(card => (
                     <div key={card.id} className="flex items-center gap-3 py-1.5 border-t"
-                      style={{ borderColor: "rgba(255,255,255,0.04)" }}>
+                      style={{ borderColor: "rgb(var(--ink) / 0.04)" }}>
                       <div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                         style={{ background: SOURCE_COLORS[card.source] || "#00f5ff" }} />
-                      <p className="text-xs font-inter flex-1 truncate" style={{ color: "rgba(255,255,255,0.6)" }}>
+                      <p className="text-xs font-inter flex-1 truncate" style={{ color: "rgb(var(--ink) / 0.6)" }}>
                         {card.front}
                       </p>
                       <button onClick={() => deleteCard(card.id)}>
-                        <Trash2 className="w-3 h-3" style={{ color: "rgba(255,255,255,0.2)" }} />
+                        <Trash2 className="w-3 h-3" style={{ color: "rgb(var(--ink) / 0.2)" }} />
                       </button>
                     </div>
                   ))}
                   {deckCards.length > 5 && (
-                    <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.2)" }}>
+                    <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.2)" }}>
                       +{deckCards.length - 5} more cards
                     </p>
                   )}

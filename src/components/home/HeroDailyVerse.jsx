@@ -1,126 +1,103 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Share2, BookOpen, Loader2 } from "lucide-react";
+import { Share2, ChevronRight, Sun, Leaf } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLang } from "@/lib/LanguageContext";
+import { pickVersePhoto } from "@/lib/verseImagery";
+
+const FALLBACK = {
+  verse_ref: "1 Peter 5:7",
+  text: "Cast all your anxiety on him because he cares for you.",
+  reflection: "You are carried. Bring today's worries to Him, one by one.",
+};
+const GOLD = "#d9b77e";
 
 export default function HeroDailyVerse() {
+  const { t } = useLang();
   const [verse, setVerse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showReflection, setShowReflection] = useState(false);
 
   useEffect(() => {
     base44.functions.invoke("getVerseOfTheDay", {})
-      .then(res => {
+      .then((res) => {
         const data = res.data?.dailyVerse || res.data;
-        setVerse({
-          verse_ref: data?.verse_ref || data?.ref,
-          text: data?.text,
-          reflection: data?.reflection,
-          theme: data?.theme,
-        });
+        setVerse({ verse_ref: data?.verse_ref || data?.ref, text: data?.text, reflection: data?.reflection });
       })
-      .catch(() => setVerse({
-        verse_ref: "John 3:16",
-        text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
-        reflection: "God's love is not passive — it is sacrificial. Today, rest in the truth that you are loved completely.",
-        theme: "love",
-      }))
+      .catch(() => setVerse(FALLBACK))
       .finally(() => setLoading(false));
   }, []);
+
+  const photo = useMemo(() => pickVersePhoto(`${verse?.text || ""} ${verse?.reflection || ""}`), [verse]);
 
   const handleShare = () => {
     if (!verse) return;
     const text = `"${verse.text}" — ${verse.verse_ref}`;
-    if (navigator.share) {
-      navigator.share({ text });
-    } else {
-      navigator.clipboard?.writeText(text);
-    }
+    if (navigator.share) navigator.share({ text }).catch(() => {});
+    else navigator.clipboard?.writeText(text);
   };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="relative rounded-2xl overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, rgba(0,245,255,0.07) 0%, rgba(255,215,0,0.05) 100%)",
-        border: "1px solid rgba(255,255,255,0.09)",
-        boxShadow: "0 0 40px rgba(0,245,255,0.06)",
-      }}
-    >
-      {/* Header */}
-      <div className="px-5 pt-5 pb-3">
-        <p className="text-[10px] font-inter uppercase tracking-[0.2em] mb-4" style={{ color: "rgba(255,255,255,0.3)" }}>
-          ✦ Verse of the Day
-        </p>
+  const parts = verse?.verse_ref?.split(" ") || [];
+  const book = parts.slice(0, -1).join(" ");
+  const chapter = parts[parts.length - 1]?.split(":")[0];
+  const readHref = book ? `/read?book=${encodeURIComponent(book)}&chapter=${chapter}` : "/read";
 
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+      className="relative rounded-3xl overflow-hidden px-5 pt-5 pb-6"
+      style={{ background: "#141414", border: "1px solid var(--hairline)", boxShadow: "0 6px 24px rgba(0,0,0,0.25)", minHeight: 250 }}
+    >
+      <img src={photo} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: "grayscale(1) contrast(1.05)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.82) 100%)" }} />
+      <Leaf className="absolute -right-3 -bottom-3 w-32 h-32 opacity-[0.22] rotate-[-20deg]" strokeWidth={0.8} style={{ color: GOLD }} />
+      <p className="relative flex items-center gap-2 text-xs font-inter uppercase tracking-[0.16em]" style={{ color: "rgba(255,255,255,0.8)" }}>
+        <Sun className="w-5 h-5 flex-shrink-0" style={{ color: GOLD }} strokeWidth={1.4} /> {t.s3Votd}
+      </p>
+
+      <div className="relative text-center mt-5">
         {loading ? (
-          <div className="space-y-2 animate-pulse">
-            <div className="h-4 rounded-full" style={{ background: "rgba(255,255,255,0.07)", width: "90%" }} />
-            <div className="h-4 rounded-full" style={{ background: "rgba(255,255,255,0.05)", width: "75%" }} />
-            <div className="h-4 rounded-full" style={{ background: "rgba(255,255,255,0.05)", width: "60%" }} />
+          <div className="space-y-2 animate-pulse py-2">
+            <div className="h-6 rounded-full mx-auto" style={{ background: "rgba(255,255,255,0.18)", width: "85%" }} />
+            <div className="h-6 rounded-full mx-auto" style={{ background: "rgba(255,255,255,0.12)", width: "65%" }} />
           </div>
         ) : (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="font-playfair italic leading-relaxed"
-            style={{ fontSize: "clamp(15px, 3.5vw, 18px)", color: "rgba(255,255,255,0.88)" }}
-          >
-            "{verse?.text}"
-          </motion.p>
-        )}
-
-        {verse && (
-          <p className="font-cinzel text-sm font-semibold mt-3" style={{ color: "#fbbf24" }}>
-            — {verse.verse_ref}
+          <p className="font-cinzel font-medium leading-snug text-onimage" style={{ fontSize: "clamp(24px, 6vw, 32px)" }}>
+            {verse?.text}
           </p>
         )}
-      </div>
 
-      {/* Reflection */}
-      {showReflection && verse?.reflection && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="px-5 pb-4"
-        >
-          <div className="rounded-xl p-3 mt-1" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <p className="text-[10px] font-inter uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>Reflection</p>
-            <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.7)" }}>{verse.reflection}</p>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Actions */}
-      <div className="flex items-center gap-2 px-5 pb-5">
-        <button
-          onClick={() => setShowReflection(v => !v)}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-          style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}
-        >
-          {showReflection ? "Hide" : "Reflect"}
-        </button>
         {verse && (
-          <a
-            href={`/read?book=${verse.verse_ref?.split(" ").slice(0, -1).join(" ")}&chapter=${verse.verse_ref?.split(" ").pop()?.split(":")[0]}`}
-            className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-            style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff" }}
-          >
-            <BookOpen className="w-3 h-3" /> Read
-          </a>
+          <div className="flex items-center gap-3 mt-4 justify-center">
+            <span className="h-px flex-1 max-w-[110px]" style={{ background: GOLD, opacity: 0.6 }} />
+            <span className="font-cinzel text-xl font-medium" style={{ color: GOLD }}>{verse.verse_ref}</span>
+            <span className="h-px flex-1 max-w-[110px]" style={{ background: GOLD, opacity: 0.6 }} />
+          </div>
         )}
-        <button
-          onClick={handleShare}
-          className="ml-auto flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors"
-          style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}
-        >
-          <Share2 className="w-3 h-3" /> Share
-        </button>
+
+        {showReflection && verse?.reflection && (
+          <p className="text-sm font-inter leading-relaxed mt-4 text-left rounded-2xl p-3" style={{ background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.92)" }}>
+            {verse.reflection}
+          </p>
+        )}
+
+        <div className="flex items-center justify-center gap-1.5 mt-5">
+          <Link to={readHref} className="inline-flex items-center justify-center gap-1.5 px-5 min-h-11 rounded-full font-inter text-base whitespace-nowrap flex-shrink-0"
+            style={{ border: "1px solid rgba(217,183,126,0.6)", color: GOLD, background: "rgba(0,0,0,0.25)" }}>
+            {t.s3ReadMore} <ChevronRight className="w-4 h-4" />
+          </Link>
+          {verse?.reflection && (
+            <button onClick={() => setShowReflection((v) => !v)} className="px-3 min-h-11 rounded-full font-inter text-sm whitespace-nowrap flex-shrink-0" style={{ color: "rgba(255,255,255,0.9)" }}>
+              {showReflection ? t.s3Hide : t.s3Reflect}
+            </button>
+          )}
+          <button onClick={handleShare} aria-label={t.s3ShareVerse} className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ color: "rgba(255,255,255,0.85)" }}>
+            <Share2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

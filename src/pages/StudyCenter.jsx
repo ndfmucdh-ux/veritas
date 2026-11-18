@@ -21,7 +21,7 @@ import ExplainThisPanel from "@/components/study/ExplainThisPanel.jsx";
 import VoiceNotesPanel from "@/components/study/VoiceNotesPanel.jsx";
 
 export default function StudyCenter() {
-  const { lang } = useLang();
+  const { lang, t } = useLang();
   const location = useLocation();
   const isMountedRef = useRef(true);
 
@@ -143,14 +143,14 @@ export default function StudyCenter() {
   }, [selectedBook, depth, lang]);
 
   const theologicalGroups = [
-    { id: "Pentateuch", name: "📖 The Law (Pentateuch)", books: BIBLE_BOOKS.filter(b => [1,2,3,4,5].includes(b.num)) },
-    { id: "Historical", name: "⚔️ Historical Books", books: BIBLE_BOOKS.filter(b => [6,7,8,9,10,11,12,13,14,15,16,17].includes(b.num)) },
-    { id: "Wisdom", name: "💎 Wisdom & Poetry", books: BIBLE_BOOKS.filter(b => [18,19,20,21,22].includes(b.num)) },
-    { id: "Prophetic", name: "🔥 Major Prophets", books: BIBLE_BOOKS.filter(b => [23,24,25,26,27].includes(b.num)) },
-    { id: "MinorProphets", name: "⚡ Minor Prophets", books: BIBLE_BOOKS.filter(b => [28,29,30,31,32,33,34,35,36,37,38,39].includes(b.num)) },
-    { id: "Gospels", name: "✝️ The Gospels", books: BIBLE_BOOKS.filter(b => [40,41,42,43].includes(b.num)) },
-    { id: "Acts", name: "🌍 Acts & Epistles", books: BIBLE_BOOKS.filter(b => [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65].includes(b.num)) },
-    { id: "Revelation", name: "👑 Revelation", books: BIBLE_BOOKS.filter(b => b.num === 66) }
+    { id: "Pentateuch", name: t.grpLaw, books: BIBLE_BOOKS.filter(b => [1,2,3,4,5].includes(b.num)) },
+    { id: "Historical", name: t.grpHistory, books: BIBLE_BOOKS.filter(b => [6,7,8,9,10,11,12,13,14,15,16,17].includes(b.num)) },
+    { id: "Wisdom", name: t.grpWisdom, books: BIBLE_BOOKS.filter(b => [18,19,20,21,22].includes(b.num)) },
+    { id: "Prophetic", name: t.grpMajor, books: BIBLE_BOOKS.filter(b => [23,24,25,26,27].includes(b.num)) },
+    { id: "MinorProphets", name: t.grpMinor, books: BIBLE_BOOKS.filter(b => [28,29,30,31,32,33,34,35,36,37,38,39].includes(b.num)) },
+    { id: "Gospels", name: t.grpGospels, books: BIBLE_BOOKS.filter(b => [40,41,42,43].includes(b.num)) },
+    { id: "Acts", name: t.grpActs, books: BIBLE_BOOKS.filter(b => [44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65].includes(b.num)) },
+    { id: "Revelation", name: t.grpRevelation, books: BIBLE_BOOKS.filter(b => b.num === 66) }
   ];
 
 
@@ -158,8 +158,9 @@ export default function StudyCenter() {
     <div className="md:ml-16 min-h-screen pb-28 px-4 md:px-8">
       {/* Header */}
       <div className="max-w-4xl mx-auto pt-6 mb-6">
-        <h1 className="font-cinzel text-2xl font-bold text-white mb-1">Study Center</h1>
-        <p className="text-sm text-white/50 mb-5">Deep dive into scripture with AI-powered analysis</p>
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">{t.studyCenter}</h1>
+        <p className="text-sm text-muted-foreground">{t.studySub}</p>
+        <div className="mt-3 mb-5 h-px w-16" style={{ background: "var(--t-gold)", opacity: 0.6 }} />
 
         <StudyCenterTabs
           activeTab={activeTab}
@@ -205,29 +206,24 @@ export default function StudyCenter() {
         {activeTab === "analysis" && (
           <>
             {/* Book selector */}
-            <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="text-[10px] font-cinzel uppercase tracking-widest mb-4 text-white/40">Books of the Bible</p>
+            <div className="rounded-2xl p-4 md:p-6 bg-card border border-border">
+              <p className="text-xs font-inter uppercase tracking-widest mb-4 text-muted-foreground">{t.booksOfBible}</p>
               <div className="space-y-2">
                 {theologicalGroups.map(group => (
                   <div key={group.id}>
                     <motion.button
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setExpandedCategory(expandedCategory === group.id ? null : group.id)}
-                      className="w-full flex items-center gap-2 px-4 py-3.5 rounded-xl transition-all text-left"
-                      style={{
-                        background: expandedCategory === group.id ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)",
-                        borderLeft: expandedCategory === group.id ? "3px solid #00f5ff" : "3px solid transparent"
-                      }}
+                      className={`w-full flex items-center gap-2 px-4 py-3.5 rounded-xl transition-all text-left border ${expandedCategory === group.id ? "bg-primary/10 border-primary/40" : "bg-secondary border-transparent"}`}
                     >
                       <ChevronDown
-                        className="w-4 h-4 flex-shrink-0"
+                        className={`w-4 h-4 flex-shrink-0 ${expandedCategory === group.id ? "text-primary" : "text-muted-foreground"}`}
                         style={{
-                          color: expandedCategory === group.id ? "#00f5ff" : "rgba(255,255,255,0.3)",
                           transform: expandedCategory === group.id ? "rotate(0deg)" : "rotate(-90deg)",
                           transition: "transform 0.2s"
                         }}
                       />
-                      <span className="text-sm font-cinzel text-white flex-1">{group.name}</span>
+                      <span className="text-base font-cinzel font-semibold text-foreground flex-1">{group.name}</span>
                     </motion.button>
 
                     <AnimatePresence>
@@ -249,12 +245,7 @@ export default function StudyCenter() {
                                   setExpandedVerses(new Set());
                                   setVerseData({});
                                 }}
-                                className="py-4 px-2 rounded-xl text-xs font-cinzel transition-all text-center font-bold"
-                                style={{
-                                  background: selectedBook === b.name ? "rgba(0,245,255,0.25)" : "rgba(255,255,255,0.06)",
-                                  color: selectedBook === b.name ? "#00f5ff" : "rgba(255,255,255,0.55)",
-                                  border: selectedBook === b.name ? "2px solid rgba(0,245,255,0.4)" : "1px solid rgba(255,255,255,0.08)"
-                                }}
+                                className={`py-3.5 px-1 rounded-xl text-xs font-cinzel transition-all text-center font-bold border ${selectedBook === b.name ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground/80 border-border"}`}
                               >
                                 {getTranslatedBookName(b.name, lang).substring(0, 7)}
                               </motion.button>
@@ -273,11 +264,10 @@ export default function StudyCenter() {
               <StudyDropdown
                 label={getTranslatedBookName(selectedBook, lang)}
                 value={selectedChapter}
-                icon="📖"
                 onChange={setSelectedChapter}
                 items={Array.from({ length: BIBLE_BOOKS.find(b => b.name === selectedBook)?.chapters || 1 }, (_, i) => ({
                   value: i + 1,
-                  label: `Chapter ${i + 1}`
+                  label: `${t.chapterLabel} ${i + 1}`
                 }))}
               />
             )}
@@ -287,9 +277,8 @@ export default function StudyCenter() {
             {/* Verse dropdown */}
             {selectedChapter && !loading && (
               <StudyDropdown
-                label="Explore Verses"
+                label={t.exploreVerses}
                 value={expandedVerses.size > 0 ? Array.from(expandedVerses)[0] : null}
-                icon="✨"
                 onChange={(verse) => {
                   const verseKey = `${selectedChapter}:${verse}`;
                   loadVerse(verseKey);
@@ -329,26 +318,26 @@ export default function StudyCenter() {
             {/* Outline */}
             {loading ? (
               <LoadingState
-                label={`Analyzing ${getTranslatedBookName(selectedBook, lang)}…`}
+                label={`${t.analyzing} ${getTranslatedBookName(selectedBook, lang)}…`}
                 size="xl"
                 minHeight={240}
               />
             ) : error ? (
               <ErrorState
-                title="Analysis Failed"
+                title={t.analysisFailed}
                 description={error}
                 onRetry={() => loadOutline(selectedBook)}
               />
             ) : outline && typeof outline === "object" ? (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                <div className="rounded-2xl p-4 md:p-6" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                  <h2 className="font-cinzel text-lg text-white mb-4">{outline.book || getTranslatedBookName(selectedBook, lang)}</h2>
+                <div className="rounded-2xl p-4 md:p-6 bg-card border border-border">
+                  <h2 className="font-cinzel text-2xl font-semibold text-foreground mb-4">{outline.book || getTranslatedBookName(selectedBook, lang)}</h2>
                   {outline.themes?.length > 0 && (
                     <div className="mb-6">
-                      <p className="text-xs font-cinzel text-white/60 mb-2">THEMES</p>
+                      <p className="text-xs font-inter uppercase tracking-widest text-muted-foreground mb-2">{t.themesLabel}</p>
                       <div className="flex flex-wrap gap-2">
                         {outline.themes.map((theme, idx) => (
-                          <span key={idx} className="text-xs px-3 py-1.5 rounded-full" style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff" }}>{theme}</span>
+                          <span key={idx} className="text-xs px-3 py-1.5 rounded-full bg-primary/12 text-primary border border-primary/25">{theme}</span>
                         ))}
                       </div>
                     </div>
@@ -356,12 +345,12 @@ export default function StudyCenter() {
                   {outline.sections?.length > 0 && (
                     <div className="space-y-4">
                       {outline.sections.map((section, idx) => (
-                        <div key={idx} className="pb-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-                          <p className="font-cinzel text-white mb-2">{section.title || `Section ${idx + 1}`}</p>
-                          <p className="text-sm text-white/50 leading-relaxed mb-2">{section.summary || ""}</p>
+                        <div key={idx} className="pb-4 border-b" style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
+                          <p className="font-cinzel text-lg font-semibold text-foreground mb-2">{section.title || `${idx + 1}`}</p>
+                          <p className="text-sm text-foreground/75 leading-relaxed mb-2">{section.summary || ""}</p>
                           {section.key_verses?.length > 0 && (
-                            <div className="text-[11px] text-white/40">
-                              <p className="font-inter font-semibold mb-1">Key verses:</p>
+                            <div className="text-xs text-muted-foreground">
+                              <p className="font-inter font-semibold mb-1">{t.keyVersesLabel}:</p>
                               <ul className="list-disc list-inside space-y-0.5">
                                 {section.key_verses.slice(0, 3).map((v, vi) => <li key={vi}>{v}</li>)}
                               </ul>
@@ -373,8 +362,8 @@ export default function StudyCenter() {
                   )}
                   {outline.theology && (
                     <div>
-                      <p className="text-xs font-cinzel text-white/60 mb-2">THEOLOGICAL SIGNIFICANCE</p>
-                      <p className="text-sm leading-relaxed text-white/60">{outline.theology}</p>
+                      <p className="text-xs font-inter uppercase tracking-widest text-muted-foreground mb-2">{t.theologyLabel}</p>
+                      <p className="text-sm leading-relaxed text-foreground/75">{outline.theology}</p>
                     </div>
                   )}
                 </div>

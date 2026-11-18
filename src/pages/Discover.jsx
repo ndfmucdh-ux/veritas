@@ -87,7 +87,7 @@ export default function Discover() {
   return (
     <div className="md:ml-16 min-h-screen px-4 pt-6">
       <div className="mb-6">
-        <h1 className="font-cinzel text-2xl font-bold mb-1">{t.discover}</h1>
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">{t.discover}</h1>
         <p className="text-muted-foreground text-sm">{t.curatedVerses}</p>
       </div>
 

@@ -53,11 +53,11 @@ export default function DailySummaryCard() {
       style={{ background: "linear-gradient(135deg, rgba(0,245,255,0.06), rgba(251,191,36,0.04))", border: "1px solid rgba(0,245,255,0.15)" }}
     >
       {/* Header */}
-      <div className="px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+      <div className="px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgb(var(--ink) / 0.06)" }}>
+        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           Daily Summary
         </p>
-        <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>{today}</p>
+        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{today}</p>
       </div>
 
       {/* Stats */}
@@ -69,7 +69,7 @@ export default function DailySummaryCard() {
             <Flame className="w-4.5 h-4.5" style={{ color: "#f97316" }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Current Streak</p>
+            <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Current Streak</p>
             <p className="font-cinzel text-base font-bold" style={{ color: "#f97316" }}>
               {streak} {streak === 1 ? "day" : "days"} 🔥
             </p>
@@ -83,7 +83,7 @@ export default function DailySummaryCard() {
             <BookOpen className="w-4 h-4" style={{ color: "#00f5ff" }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Last Read</p>
+            <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Last Read</p>
             {lastVerse ? (
               <a href={`/read?book=${lastVerse.book}&chapter=${lastVerse.chapter}`}
                 className="font-cinzel text-sm font-semibold flex items-center gap-1 hover:opacity-80 transition-opacity"
@@ -92,7 +92,7 @@ export default function DailySummaryCard() {
                 <ChevronRight className="w-3 h-3" />
               </a>
             ) : (
-              <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>Nothing yet today</p>
+              <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>Nothing yet today</p>
             )}
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function DailySummaryCard() {
               <Play className="w-4 h-4" style={{ color: "#a78bfa" }} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Active Plan</p>
+              <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Active Plan</p>
               <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "#a78bfa" }}>
                 {activePlan.title.length > 22 ? activePlan.title.slice(0, 22) + "…" : activePlan.title}
               </p>
@@ -121,7 +121,7 @@ export default function DailySummaryCard() {
         {!activePlan && (
           <a href="/plans"
             className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-cinzel transition-all w-full"
-            style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.4)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+            style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)", border: "1px dashed rgb(var(--ink) / 0.1)" }}>
             <Play className="w-3.5 h-3.5" />
             Start a Reading Plan
           </a>

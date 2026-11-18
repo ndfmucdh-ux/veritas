@@ -1,4 +1,7 @@
 import { useState } from "react";
+import Toggle from "@/components/ui/Toggle";
+import DailyVerseEmailToggle from "@/components/profile/DailyVerseEmailToggle";
+import { savePrefs } from "@/lib/preferencesSync";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail, Lock, User, Shield, Eye, EyeOff, Check, Loader2, ChevronDown,
@@ -138,6 +141,7 @@ export default function AccountSettings({ user }) {
     localStorage.setItem("veritas_red_letter", String(redLetterOn));
     localStorage.setItem("veritas_verse_numbers", String(verseNumbers));
     localStorage.setItem("veritas_audio_autoplay", String(audioAutoplay));
+    savePrefs({ default_translation: defaultTranslation, show_red_letter: redLetterOn, show_verse_numbers: verseNumbers });
     setReadingSaved(true);
     setTimeout(() => setReadingSaved(false), 2500);
   };
@@ -159,22 +163,22 @@ export default function AccountSettings({ user }) {
       {SECTION_GROUPS.map(({ group, sections }) => (
         <div key={group}>
           <p className="text-[9px] font-cinzel uppercase tracking-[0.25em] mb-2.5 px-1"
-            style={{ color: "rgba(255,255,255,0.2)" }}>{tr(group)}</p>
+            style={{ color: "rgb(var(--ink) / 0.2)" }}>{tr(group)}</p>
           <div className="space-y-2">
             {sections.map(({ id, label, icon: Icon, color, sub }) => (
               <div key={id} className="rounded-2xl overflow-hidden"
-                style={{ background: "rgba(255,255,255,0.03)", border: openSection === id ? `1px solid ${color}30` : "1px solid rgba(255,255,255,0.07)" }}>
+                style={{ background: "var(--fill-1)", border: openSection === id ? `1px solid ${color}30` : "1px solid rgb(var(--ink) / 0.07)" }}>
                 <button className="w-full flex items-center gap-3 px-4 py-3.5 text-left" onClick={() => toggle(id)}>
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                     style={{ background: `${color}12`, border: `1px solid ${color}25` }}>
                     <Icon className="w-4 h-4" style={{ color }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-cinzel font-semibold" style={{ color: "rgba(255,255,255,0.85)" }}>{tr(label)}</p>
-                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{tr(sub)}</p>
+                    <p className="text-sm font-cinzel font-semibold" style={{ color: "rgb(var(--ink) / 0.85)" }}>{tr(label)}</p>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{tr(sub)}</p>
                   </div>
                   <motion.div animate={{ rotate: openSection === id ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                    <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)" }} />
+                    <ChevronDown className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.25)" }} />
                   </motion.div>
                 </button>
 
@@ -182,20 +186,20 @@ export default function AccountSettings({ user }) {
                   {openSection === id && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                      <div className="px-4 pb-5 pt-1 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div className="px-4 pb-5 pt-1 space-y-3" style={{ borderTop: "1px solid rgb(var(--ink) / 0.05)" }}>
 
                         {/* ── NAME ── */}
                         {id === "name" && (
                           <div className="space-y-3 pt-3">
                             <div className="px-3 py-2 rounded-xl" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.1)" }}>
-                              <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
+                              <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                                 {tr("set_currentName")} <span style={{ color: "#00f5ff" }}>{user?.full_name || "—"}</span>
                               </p>
                             </div>
                             <input value={newName} onChange={e => setNewName(e.target.value)}
                               placeholder={tr("set_newNamePh")}
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.85)" }} />
                             <button onClick={saveName} disabled={!newName.trim() || nameSaving}
                               className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2 transition-all"
                               style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)", opacity: !newName.trim() ? 0.5 : 1 }}>
@@ -208,18 +212,18 @@ export default function AccountSettings({ user }) {
                         {id === "email" && (
                           <div className="space-y-3 pt-3">
                             <div className="px-3 py-2 rounded-xl" style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.15)" }}>
-                              <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
+                              <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                                 {tr("set_current")} <span style={{ color: "#fbbf24" }}>{user?.email}</span>
                               </p>
                             </div>
                             <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)}
                               placeholder={tr("set_newEmailPh")}
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.2)", color: "rgb(var(--ink) / 0.85)" }} />
                             <input type="password" value={emailPassword} onChange={e => setEmailPassword(e.target.value)}
                               placeholder={tr("set_confirmPwdPh")}
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(251,191,36,0.15)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(251,191,36,0.15)", color: "rgb(var(--ink) / 0.85)" }} />
                             {emailMsg && <p className="text-xs font-inter" style={{ color: emailMsg.type === "error" ? "#f87171" : "#34d399" }}>{emailMsg.text}</p>}
                             <button onClick={saveEmail} disabled={emailSaving}
                               className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2"
@@ -236,25 +240,25 @@ export default function AccountSettings({ user }) {
                               <input type={showPwd ? "text" : "password"} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)}
                                 placeholder={tr("set_currentPwdPh")}
                                 className="w-full rounded-xl px-3 py-2.5 pr-10 text-sm font-inter focus:outline-none"
-                                style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
-                              <button onClick={() => setShowPwd(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.3)" }}>
+                                style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgb(var(--ink) / 0.85)" }} />
+                              <button onClick={() => setShowPwd(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                                 {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                               </button>
                             </div>
                             <input type={showPwd ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)}
                               placeholder={tr("set_newPwdPh")}
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgb(var(--ink) / 0.85)" }} />
                             <input type={showPwd ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
                               placeholder={tr("set_confirmNewPwdPh")}
                               className="w-full rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(167,139,250,0.2)", color: "rgba(255,255,255,0.85)" }} />
+                              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(167,139,250,0.2)", color: "rgb(var(--ink) / 0.85)" }} />
                             {newPassword.length > 0 && (
                               <div className="space-y-1">
                                 <div className="flex gap-1">
                                   {[1,2,3,4].map(i => (
                                     <div key={i} className="h-1.5 flex-1 rounded-full transition-all"
-                                      style={{ background: i <= pwdStrength ? pwdStrengthColors[pwdStrength] : "rgba(255,255,255,0.07)" }} />
+                                      style={{ background: i <= pwdStrength ? pwdStrengthColors[pwdStrength] : "rgb(var(--ink) / 0.07)" }} />
                                   ))}
                                 </div>
                                 <p className="text-[10px] font-cinzel" style={{ color: pwdStrengthColors[pwdStrength] }}>
@@ -276,30 +280,30 @@ export default function AccountSettings({ user }) {
                           <div className="space-y-4 pt-3">
                             {/* Default Translation */}
                             <div>
-                              <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>{tr("set_defaultTranslation")}</p>
+                              <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>{tr("set_defaultTranslation")}</p>
                               <div className="flex flex-wrap gap-2">
                                 {TRANSLATIONS.map(t => (
                                   <button key={t} onClick={() => setDefaultTranslation(t)}
                                     className="px-3 py-1.5 rounded-xl text-xs font-cinzel transition-all"
                                     style={{
-                                      background: defaultTranslation === t ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.05)",
-                                      color: defaultTranslation === t ? "#34d399" : "rgba(255,255,255,0.45)",
-                                      border: defaultTranslation === t ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(255,255,255,0.08)"
+                                      background: defaultTranslation === t ? "rgba(52,211,153,0.15)" : "rgb(var(--ink) / 0.05)",
+                                      color: defaultTranslation === t ? "#34d399" : "rgb(var(--ink) / 0.45)",
+                                      border: defaultTranslation === t ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgb(var(--ink) / 0.08)"
                                     }}>{t}</button>
                                 ))}
                               </div>
                             </div>
                             {/* Font Size */}
                             <div>
-                              <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>{tr("set_fontSize")}</p>
+                              <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>{tr("set_fontSize")}</p>
                               <div className="flex gap-2">
                                 {FONT_SIZES.map(s => (
                                   <button key={s} onClick={() => setFontSize(s)}
                                     className="flex-1 py-2 rounded-xl text-xs font-cinzel transition-all"
                                     style={{
-                                      background: fontSize === s ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-                                      color: fontSize === s ? "#00f5ff" : "rgba(255,255,255,0.35)",
-                                      border: fontSize === s ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)"
+                                      background: fontSize === s ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
+                                      color: fontSize === s ? "#00f5ff" : "rgb(var(--ink) / 0.35)",
+                                      border: fontSize === s ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.07)"
                                     }}>{tr(`set_fs_${s.replace(" ", "")}`)}</button>
                                 ))}
                               </div>
@@ -311,14 +315,9 @@ export default function AccountSettings({ user }) {
                                 { label: "set_verseNumbers", key: "verseNumbers", value: verseNumbers, setter: setVerseNumbers, color: "#00f5ff" },
                                 { label: "set_audioAutoplay", key: "audioAutoplay", value: audioAutoplay, setter: setAudioAutoplay, color: "#a78bfa" },
                               ].map(({ label, value, setter, color }) => (
-                                <div key={label} className="flex items-center justify-between py-2 border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                                  <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.65)" }}>{tr(label)}</p>
-                                  <motion.button onClick={() => setter(v => !v)}
-                                    className="w-11 h-6 rounded-full relative flex items-center px-1"
-                                    style={{ background: value ? `${color}30` : "rgba(255,255,255,0.08)" }}>
-                                    <motion.span animate={{ x: value ? 18 : 0 }} transition={{ type: "spring", stiffness: 400, damping: 24 }}
-                                      className="w-4 h-4 rounded-full bg-white shadow-sm" />
-                                  </motion.button>
+                                <div key={label} className="flex items-center justify-between py-2 border-b" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
+                                  <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.65)" }}>{tr(label)}</p>
+                                  <Toggle value={value} onChange={() => setter(v => !v)} label={tr(label)} />
                                 </div>
                               ))}
                             </div>
@@ -334,23 +333,23 @@ export default function AccountSettings({ user }) {
                         {id === "language" && (
                           <div className="space-y-4 pt-3">
                             <div>
-                              <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>{tr("set_appLanguage")}</p>
+                              <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>{tr("set_appLanguage")}</p>
                               <div className="space-y-1.5" role="radiogroup" aria-label={tr("set_appLanguage")}>
                                 {LANGUAGES.map(({ code, label: langLabel }) => (
                                   <button key={code} role="radio" aria-checked={currentLang === code} lang={code}
                                     onClick={() => setLang(code)}
                                     className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-inter transition-all min-h-11"
                                     style={{
-                                      background: currentLang === code ? "rgba(96,165,250,0.1)" : "rgba(255,255,255,0.03)",
-                                      color: currentLang === code ? "#60a5fa" : "rgba(255,255,255,0.55)",
-                                      border: currentLang === code ? "1px solid rgba(96,165,250,0.3)" : "1px solid rgba(255,255,255,0.06)"
+                                      background: currentLang === code ? "rgba(96,165,250,0.1)" : "rgb(var(--ink) / 0.03)",
+                                      color: currentLang === code ? "#60a5fa" : "rgb(var(--ink) / 0.55)",
+                                      border: currentLang === code ? "1px solid rgba(96,165,250,0.3)" : "1px solid rgb(var(--ink) / 0.06)"
                                     }}>
                                     {langLabel}
                                     {currentLang === code && <Check className="w-3.5 h-3.5" />}
                                   </button>
                                 ))}
                               </div>
-                              <p className="text-[10px] font-inter mt-2" style={{ color: "rgba(255,255,255,0.3)" }}>{tr("set_langHint")}</p>
+                              <p className="text-[10px] font-inter mt-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>{tr("set_langHint")}</p>
                             </div>
                           </div>
                         )}
@@ -358,16 +357,17 @@ export default function AccountSettings({ user }) {
                         {/* ── NOTIFICATIONS ── */}
                         {id === "notifications" && (
                           <div className="space-y-4 pt-3">
+                            <DailyVerseEmailToggle />
                             {[
                               { label: tr("set_morning"), key: "morning", value: morningTime, setter: setMorningTime, sub: tr("set_morningSub") },
                               { label: tr("set_evening"), key: "evening", value: eveningTime, setter: setEveningTime, sub: tr("set_eveningSub") },
                               { label: tr("set_devotional"), key: "devotional", value: devotionalTime, setter: setDevotionalTime, sub: tr("set_devotionalSub") },
                             ].map(({ label, key, value, setter, sub }) => (
                               <div key={key} className="flex items-center justify-between py-2.5 px-3 rounded-xl"
-                                style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                                style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                                 <div>
-                                  <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>{label}</p>
-                                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>
+                                  <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.75)" }}>{label}</p>
+                                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{sub}</p>
                                 </div>
                                 <input type="time" value={value} onChange={e => setter(e.target.value)}
                                   className="text-xs font-cinzel px-3 py-1.5 rounded-xl focus:outline-none"
@@ -390,21 +390,21 @@ export default function AccountSettings({ user }) {
                                 <Shield className="w-3.5 h-3.5" style={{ color: "#34d399" }} />
                                 <p className="text-xs font-cinzel" style={{ color: "#34d399" }}>{tr("set_protected")}</p>
                               </div>
-                              <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
+                              <p className="text-xs font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.45)" }}>
                                 {tr("set_protectedText")}
                               </p>
                             </div>
                             {[
                               { label: tr("set_emailVerified"), value: tr("set_yes"), color: "#34d399" },
                               { label: tr("set_role"), value: user?.role || "user", color: "#00f5ff" },
-                              { label: tr("set_email"), value: user?.email || "—", color: "rgba(255,255,255,0.5)" },
+                              { label: tr("set_email"), value: user?.email || "—", color: "rgb(var(--ink) / 0.5)" },
                               { label: tr("set_encryption"), value: tr("set_enabled"), color: "#34d399" },
                               { label: tr("set_privateNotes"), value: tr("set_onDefault"), color: "#34d399" },
-                              { label: tr("set_lastSignIn"), value: tr("set_thisSession"), color: "rgba(255,255,255,0.4)" },
+                              { label: tr("set_lastSignIn"), value: tr("set_thisSession"), color: "rgb(var(--ink) / 0.4)" },
                             ].map(({ label, value, color }) => (
                               <div key={label} className="flex items-center justify-between py-2 border-b"
-                                style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                                <span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>{label}</span>
+                                style={{ borderColor: "rgb(var(--ink) / 0.05)" }}>
+                                <span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>{label}</span>
                                 <span className="text-xs font-cinzel capitalize" style={{ color }}>{value}</span>
                               </div>
                             ))}
@@ -419,7 +419,7 @@ export default function AccountSettings({ user }) {
                               <Smartphone className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-cinzel text-white">{tr("set_currentDevice")}</p>
-                                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+                                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                                   {navigator.userAgent.includes("Mobile") ? tr("set_mobile") : tr("set_desktop")} · {tr("set_activeNow")}
                                 </p>
                               </div>
@@ -437,7 +437,7 @@ export default function AccountSettings({ user }) {
                         {/* ── DATA & EXPORT ── */}
                         {id === "data" && (
                           <div className="space-y-3 pt-3">
-                            <p className="text-xs font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
+                            <p className="text-xs font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                               {tr("set_dataText")}
                             </p>
                             {[
@@ -449,8 +449,8 @@ export default function AccountSettings({ user }) {
                                 style={{ background: `${color}07`, border: `1px solid ${color}20` }}>
                                 <Ico className="w-4 h-4 flex-shrink-0" style={{ color }} />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>{label}</p>
-                                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</p>
+                                  <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.75)" }}>{label}</p>
+                                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{sub}</p>
                                 </div>
                               </button>
                             ))}
@@ -459,7 +459,7 @@ export default function AccountSettings({ user }) {
                                 <AlertTriangle className="w-3.5 h-3.5" style={{ color: "#f87171" }} />
                                 <p className="text-xs font-cinzel" style={{ color: "#f87171" }}>{tr("set_danger")}</p>
                               </div>
-                              <p className="text-[10px] font-inter leading-relaxed mb-2.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+                              <p className="text-[10px] font-inter leading-relaxed mb-2.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                                 {tr("set_dangerText")}
                               </p>
                               <button className="w-full py-2 rounded-xl font-cinzel text-xs flex items-center justify-center gap-2"

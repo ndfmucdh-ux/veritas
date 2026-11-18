@@ -22,7 +22,7 @@ export default function EmailEngagementDashboard() {
           <p className="font-cinzel text-xs font-semibold mb-1" style={{ color: "#00f5ff" }}>
             Engagement tracking not yet available
           </p>
-          <p className="font-inter text-[11px] leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>
+          <p className="font-inter text-[11px] leading-relaxed" style={{ color: "rgb(var(--ink) / 0.45)" }}>
             Open and click-through rates require an email provider webhook integration. Until that's connected,
             no engagement metrics are recorded. Below are the email types your app can send.
           </p>
@@ -31,10 +31,10 @@ export default function EmailEngagementDashboard() {
 
       {/* Email types this app sends */}
       <div className="rounded-2xl overflow-hidden"
-        style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+        style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
         <div className="flex items-center gap-2 px-4 pt-4 pb-2">
-          <Mail className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.4)" }} />
-          <p className="font-cinzel text-[9px] uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <Mail className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.4)" }} />
+          <p className="font-cinzel text-[9px] uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             Available Email Types
           </p>
         </div>
@@ -47,15 +47,15 @@ export default function EmailEngagementDashboard() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
               className="flex items-center gap-3 px-4 py-3"
-              style={{ borderTop: i > 0 ? "1px solid rgba(255,255,255,0.05)" : "none" }}
+              style={{ borderTop: i > 0 ? "1px solid rgb(var(--ink) / 0.05)" : "none" }}
             >
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={{ background: `${e.color}15`, border: `1px solid ${e.color}30` }}>
                 <Icon className="w-4 h-4" style={{ color: e.color }} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-inter text-sm" style={{ color: "rgba(255,255,255,0.75)" }}>{e.label}</p>
-                <p className="font-inter text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.25)" }}>{e.fn}</p>
+                <p className="font-inter text-sm" style={{ color: "rgb(var(--ink) / 0.75)" }}>{e.label}</p>
+                <p className="font-inter text-[10px] mt-0.5" style={{ color: "rgb(var(--ink) / 0.25)" }}>{e.fn}</p>
               </div>
             </motion.div>
           );

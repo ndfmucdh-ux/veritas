@@ -55,12 +55,12 @@ export default function DashboardSummary({ readingProgress = 0, notesCount = 0, 
         >
           <div className="flex items-center gap-2 mb-2">
             <s.icon className="w-4 h-4" style={{ color: s.color }} />
-            <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.35)" }}>
               {s.label}
             </p>
           </div>
           <p className="font-cinzel text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{s.sub}</p>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{s.sub}</p>
         </motion.div>
       ))}
     </div>

@@ -171,13 +171,10 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       {/* Hero */}
-      <div className="relative h-40 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80" alt="Study" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(8,12,24,0.95))" }} />
-        <div className="absolute bottom-0 px-5 pb-4">
-          <h1 className="font-cinzel text-2xl font-bold text-white">{t.studyCenter}</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Commentary · Cross-refs · Dictionary · Topical</p>
-        </div>
+      <div className="px-5 pt-6 pb-2">
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground">{t.studyCenter}</h1>
+        <p className="text-sm mt-1 text-muted-foreground">Commentary · Cross-refs · Dictionary · Topical</p>
+        <div className="mt-3 h-px w-16" style={{ background: "var(--t-gold)", opacity: 0.6 }} />
       </div>
 
       {/* AI Insights Button */}
@@ -196,17 +193,17 @@ Return JSON: { themes: [{ theme, description, suggested_verses: [string], devoti
               style={{ background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.2)" }}>
               <div className="flex items-center justify-between px-4 pt-3 pb-1">
                 <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "#a78bfa" }}>✦ Personal Devotional Themes</p>
-                <button onClick={() => setInsights(null)}><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+                <button onClick={() => setInsights(null)}><X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} /></button>
               </div>
               {insights.length === 0 ? (
-                <p className="px-4 pb-4 text-sm font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <p className="px-4 pb-4 text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   {lang === "es" ? "Añade más notas y subrayados para obtener perspectivas." : "Add more highlights and notes to get insights."}
                 </p>
               ) : insights.map((item, i) => (
-                <div key={i} className="px-4 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                <div key={i} className="px-4 py-3 border-t" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
                   <p className="font-cinzel text-sm font-semibold mb-1" style={{ color: "#a78bfa" }}>✦ {item.theme}</p>
-                  <p className="text-xs font-inter leading-relaxed mb-2" style={{ color: "rgba(255,255,255,0.65)" }}>{item.description}</p>
-                  <p className="text-xs font-inter italic mb-2" style={{ color: "rgba(255,255,255,0.45)" }}>💡 {item.devotional_prompt}</p>
+                  <p className="text-xs font-inter leading-relaxed mb-2" style={{ color: "rgb(var(--ink) / 0.65)" }}>{item.description}</p>
+                  <p className="text-xs font-inter italic mb-2" style={{ color: "rgb(var(--ink) / 0.45)" }}>💡 {item.devotional_prompt}</p>
                   <div className="flex flex-wrap gap-1.5">
                     {(item.suggested_verses || []).map((v, j) => (
                       <a key={j} href={`/study`}

@@ -54,7 +54,7 @@ export default function HighlightedVerseCard({ highlight, index = 0 }) {
       style={{
         background: theme.bg,
         border: `1px solid ${theme.border}`,
-        boxShadow: `0 4px 24px ${theme.glow}, 0 1px 0 rgba(255,255,255,0.04) inset`,
+        boxShadow: `0 4px 24px ${theme.glow}, 0 1px 0 rgb(var(--ink) / 0.04) inset`,
       }}
     >
       {/* Colored left stripe */}
@@ -80,25 +80,25 @@ export default function HighlightedVerseCard({ highlight, index = 0 }) {
                 style={{ background: `${theme.accent}15`, color: theme.accent }}>
                 {highlight.color}
               </span>
-              <ChevronRight className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.2)" }} />
+              <ChevronRight className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.2)" }} />
             </div>
           </div>
 
           {/* Verse text or fallback */}
           {highlight.verse_text ? (
             <p className="font-playfair italic text-sm leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.78)" }}>
+              style={{ color: "rgb(var(--ink) / 0.78)" }}>
               "{highlight.verse_text.length > 140 ? highlight.verse_text.slice(0, 140) + "…" : highlight.verse_text}"
             </p>
           ) : (
-            <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>
+            <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>
               {highlight.book} · Chapter {highlight.chapter}
             </p>
           )}
 
           {/* Translation tag */}
           {highlight.translation && (
-            <p className="text-[10px] font-inter mt-2" style={{ color: "rgba(255,255,255,0.25)" }}>
+            <p className="text-[10px] font-inter mt-2" style={{ color: "rgb(var(--ink) / 0.25)" }}>
               {highlight.translation}
             </p>
           )}

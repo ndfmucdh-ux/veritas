@@ -1,145 +1,97 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Loader2, BarChart3 } from "lucide-react";
 import { listReadingHistory } from "@/lib/dataAccess";
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { useLang } from "@/lib/LanguageContext";
+
+const GOLD = "#d9b77e";
+const tick = { fontSize: 10, fill: "rgb(var(--ink) / 0.7)" };
 
 export default function ReadingStatsChart() {
+  const { t } = useLang();
   const [dailyData, setDailyData] = useState([]);
-  const [booksCompleted, setBooksCompleted] = useState(0);
+  const [books, setBooks] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [chartType, setChartType] = useState("time"); // "time" or "books"
+  const [chartType, setChartType] = useState("line");
 
   useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
-    try {
+    (async () => {
       const today = new Date();
-      const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      // Consolidated reading history (ReadingSession-first, legacy fallback)
       const progress = await listReadingHistory({ limit: 300 }).catch(() => []);
-
-      // Group by date and calculate time spent per day
-      const dateMap = {};
-      (progress || []).forEach(p => {
+      const map = {};
+      (progress || []).forEach((p) => {
         const stamp = p.completed_at || p.created_date;
         if (!stamp) return;
-        const date = new Date(stamp).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        dateMap[date] = (dateMap[date] || 0) + (p.reading_time_seconds || 300) / 60; // Convert to minutes
+        const key = new Date(stamp).toDateString();
+        map[key] = (map[key] || 0) + (p.reading_time_seconds || 300) / 60;
       });
-
-      // Generate last 30 days with data
-      const chartData = [];
-      for (let i = 29; i >= 0; i--) {
+      setDailyData(Array.from({ length: 30 }, (_, i) => {
         const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        chartData.push({
-          date: dateStr,
-          time_minutes: Math.round(dateMap[dateStr] || 0),
-        });
-      }
-
-      setDailyData(chartData);
-
-      // Count unique books completed
-      const uniqueBooks = new Set((progress || []).map(p => p.book)).size;
-      setBooksCompleted(uniqueBooks);
-    } catch (err) {
-      console.error(err);
-    } finally {
+        d.setDate(d.getDate() - (29 - i));
+        return { date: String(d.getDate()), time_minutes: Math.round(map[d.toDateString()] || 0) };
+      }));
+      setBooks(new Set((progress || []).map((p) => p.book)).size);
       setLoading(false);
-    }
-  };
+    })();
+  }, []);
 
-  const stats = useMemo(() => {
-    const totalMinutes = dailyData.reduce((sum, d) => sum + d.time_minutes, 0);
-    const avgMinutes = Math.round(totalMinutes / 30);
-    const maxDay = Math.max(...dailyData.map(d => d.time_minutes), 0);
-    return { totalMinutes, avgMinutes, maxDay };
+  const totals = useMemo(() => {
+    const total = dailyData.reduce((s, d) => s + d.time_minutes, 0);
+    return { total, avg: Math.round(total / 30) };
   }, [dailyData]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="w-5 h-5 animate-spin text-cyan" />
-      </div>
-    );
-  }
+  const stats = [[t.s6TotalTime, `${totals.total}m`], [t.s6DailyAvg, `${totals.avg}m`], [t.s6Books, books]];
+  const tip = { background: "var(--popover-surface)", border: "1px solid var(--hairline)", borderRadius: 12, fontSize: 12 };
 
   return (
-    <div className="rounded-2xl p-5 space-y-5" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Total Time", value: `${stats.totalMinutes}m`, color: "#00f5ff" },
-          { label: "Daily Avg", value: `${stats.avgMinutes}m`, color: "#fbbf24" },
-          { label: "Books", value: booksCompleted, color: "#34d399" },
-        ].map(s => (
-          <div key={s.label} className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <p className="text-[10px] font-cinzel text-white/40 mb-1">{s.label}</p>
-            <p className="font-cinzel text-lg font-bold" style={{ color: s.color }}>{s.value}</p>
+    <section className="rounded-2xl bg-card border border-border p-3.5">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <BarChart3 className="w-4 h-4 flex-shrink-0 text-primary" />
+          <p className="font-cinzel text-sm font-semibold text-foreground truncate">{t.s6Insights}</p>
+        </div>
+        <div className="flex p-0.5 rounded-full bg-secondary flex-shrink-0">
+          {[["line", "~"], ["bar", "▮"]].map(([id, glyph]) => (
+            <button key={id} type="button" onClick={() => setChartType(id)} aria-label={id}
+              className={`w-9 min-h-8 rounded-full text-xs ${chartType === id ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{glyph}</button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="h-36 flex items-center justify-center"><Loader2 className="w-5 h-5 animate-spin text-primary" /></div>
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            {stats.map(([label, value]) => (
+              <div key={label} className="rounded-xl bg-secondary px-2.5 py-1.5 min-w-0">
+                <p className="text-[11px] text-muted-foreground truncate">{label}</p>
+                <p className="font-cinzel text-base font-bold text-foreground leading-tight">{value}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* Chart type toggle */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setChartType("time")}
-          className="flex-1 py-2 rounded-lg text-xs font-cinzel transition-all"
-          style={{
-            background: chartType === "time" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-            color: chartType === "time" ? "#00f5ff" : "rgba(255,255,255,0.4)",
-            border: chartType === "time" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
-          }}
-        >
-          📊 Time Per Day
-        </button>
-        <button
-          onClick={() => setChartType("books")}
-          className="flex-1 py-2 rounded-lg text-xs font-cinzel transition-all"
-          style={{
-            background: chartType === "books" ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-            color: chartType === "books" ? "#00f5ff" : "rgba(255,255,255,0.4)",
-            border: chartType === "books" ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
-          }}
-        >
-          📖 Completion
-        </button>
-      </div>
-
-      {/* Chart */}
-      <div className="h-48">
-        <ResponsiveContainer width="100%" height="100%">
-          {chartType === "time" ? (
-            <LineChart data={dailyData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
-              <defs>
-                <linearGradient id="timeGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#00f5ff" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#00f5ff" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} label={{ value: "Minutes", angle: -90, position: "insideLeft" }} />
-              <Tooltip contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12, fontFamily: "Inter" }} />
-              <Line type="monotone" dataKey="time_minutes" stroke="#00f5ff" strokeWidth={2} dot={{ fill: "#00f5ff", r: 3 }} />
-            </LineChart>
-          ) : (
-            <BarChart data={dailyData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, fontSize: 12 }} />
-              <Bar dataKey="time_minutes" fill="#a78bfa" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          )}
-        </ResponsiveContainer>
-      </div>
-
-      <p className="text-[10px] font-inter text-white/35 text-center">Last 30 days of reading activity</p>
-    </div>
+          <div className="h-28">
+            <ResponsiveContainer width="100%" height="100%">
+              {chartType === "line" ? (
+                <LineChart data={dailyData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                  <XAxis dataKey="date" tick={tick} axisLine={false} tickLine={false} interval={4} />
+                  <YAxis tick={tick} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip contentStyle={tip} />
+                  <Line type="monotone" dataKey="time_minutes" stroke={GOLD} strokeWidth={2} dot={false} />
+                </LineChart>
+              ) : (
+                <BarChart data={dailyData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                  <XAxis dataKey="date" tick={tick} axisLine={false} tickLine={false} interval={4} />
+                  <YAxis tick={tick} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip contentStyle={tip} />
+                  <Bar dataKey="time_minutes" fill={GOLD} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              )}
+            </ResponsiveContainer>
+          </div>
+          <p className="text-[11px] text-muted-foreground text-center mt-1">{t.s6TimePerDay} · {t.s6Last30}</p>
+        </>
+      )}
+    </section>
   );
 }

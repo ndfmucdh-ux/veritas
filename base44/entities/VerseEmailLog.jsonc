@@ -1,0 +1,41 @@
+{
+  "name": "VerseEmailLog",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the verse email was sent (YYYY-MM-DD)"
+    },
+    "email": {
+      "type": "string",
+      "description": "Recipient email"
+    }
+  },
+  "required": [
+    "date",
+    "email"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

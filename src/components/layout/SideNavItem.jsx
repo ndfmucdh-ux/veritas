@@ -1,20 +1,18 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 export default function SideNavItem({ path, icon: Icon, label, active }) {
   return (
-    <Link key={path} to={path} title={label} aria-label={label}>
-      <motion.div
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.92 }}
-        className="w-12 h-12 rounded-xl flex items-center justify-center transition-colors"
-        style={{
-          background: active ? "rgba(251,191,36,0.12)" : "transparent",
-          border: active ? "1px solid rgba(251,191,36,0.25)" : "1px solid transparent",
-        }}
-      >
-        <Icon style={{ width: 24, height: 24, color: active ? "#fbbf24" : "rgba(255,255,255,0.35)" }} />
-      </motion.div>
+    <Link
+      to={path}
+      aria-label={label}
+      aria-current={active ? "page" : undefined}
+      className="flex items-center gap-3 px-3 min-h-11 rounded-xl transition-colors hover:bg-[var(--fill-2)]"
+      style={{ background: active ? "hsl(var(--primary) / 0.16)" : undefined }}
+    >
+      <Icon style={{ width: 20, height: 20, color: active ? "var(--t-green)" : "rgb(var(--ink) / 0.65)" }} strokeWidth={1.7} />
+      <span className="font-cinzel text-[17px] leading-tight truncate" style={{ color: active ? "hsl(var(--foreground))" : "rgb(var(--ink) / 0.8)", fontWeight: active ? 700 : 500 }}>
+        {label}
+      </span>
     </Link>
   );
 }

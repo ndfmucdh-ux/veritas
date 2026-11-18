@@ -3,9 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, RefreshCw, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import { PhotoBackdrop, PHOTO_VARS } from "@/components/ui/PhotoCard";
 
 const CACHE_KEY = "veritas_daily_reflection";
 const CACHE_DATE_KEY = "veritas_daily_reflection_date";
+const LANG_NAMES = { en: "English", es: "Spanish", fr: "French", pt: "Portuguese", de: "German" };
+const TEXT = {
+  en: { title: "Daily Reflection", loading: "Crafting your reflection…", empty: "Add highlights and notes to get your personal reflection." },
+  es: { title: "Reflexión Diaria", loading: "Generando…", empty: "Añade notas y versículos para tu reflexión personal." },
+  fr: { title: "Réflexion du jour", loading: "Préparation de votre réflexion…", empty: "Ajoutez des surlignages et des notes pour votre réflexion personnelle." },
+  pt: { title: "Reflexão Diária", loading: "Gerando sua reflexão…", empty: "Adicione destaques e notas para sua reflexão pessoal." },
+  de: { title: "Tägliche Besinnung", loading: "Deine Besinnung wird erstellt…", empty: "Füge Markierungen und Notizen hinzu, um deine persönliche Besinnung zu erhalten." },
+};
 
 export default function DailyReflectionCard() {
   const { lang } = useLang();
@@ -17,8 +26,9 @@ export default function DailyReflectionCard() {
   useEffect(() => {
     // Check cache — only generate once per day
     const today = new Date().toISOString().slice(0, 10);
-    const cached = sessionStorage.getItem(CACHE_KEY);
-    const cachedDate = sessionStorage.getItem(CACHE_DATE_KEY);
+    // Cache is per language so switching language regenerates the reflection and verse.
+    const cached = sessionStorage.getItem(`${CACHE_KEY}_${lang}`);
+    const cachedDate = sessionStorage.getItem(`${CACHE_DATE_KEY}_${lang}`);
     if (cached && cachedDate === today) {
       try { setReflection(JSON.parse(cached)); return; } catch {}
     }
@@ -36,7 +46,8 @@ export default function DailyReflectionCard() {
 
       const hlRefs = (highlights || []).slice(0, 10).map(h => h.verse_ref).filter(Boolean).join(", ");
       const noteSnippets = (notes || []).slice(0, 5).map(n => n.note_text?.slice(0, 80)).filter(Boolean).join("; ");
-      const langInst = lang === "es" ? "Respond entirely in Spanish." : "Respond in English.";
+      const langName = LANG_NAMES[lang] || "English";
+      const langInst = `Respond entirely in ${langName}, including the book name in key_verse and the theme.`;
 
       const res = await base44.integrations.Core.InvokeLLM({
         prompt: `${langInst} You are a personal spiritual guide. Based on this user's most highlighted verses (${hlRefs || "John 3:16, Psalm 23:1"}) and recent notes (${noteSnippets || "general reflections"}), generate a unique, personalized daily reflection prompt.
@@ -59,8 +70,8 @@ export default function DailyReflectionCard() {
       });
 
       const today = new Date().toISOString().slice(0, 10);
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify(res));
-      sessionStorage.setItem(CACHE_DATE_KEY, today);
+      sessionStorage.setItem(`${CACHE_KEY}_${lang}`, JSON.stringify(res));
+      sessionStorage.setItem(`${CACHE_DATE_KEY}_${lang}`, today);
       setReflection(res);
     } catch {
       setError(true);
@@ -79,30 +90,32 @@ export default function DailyReflectionCard() {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="relative rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, rgba(167,139,250,0.09) 0%, rgba(0,245,255,0.05) 100%)",
-          border: "1px solid rgba(167,139,250,0.2)",
+          background: "#141414",
+          border: "1px solid var(--hairline)",
+          ...PHOTO_VARS,
         }}
       >
-        <div className="p-3">
+        <PhotoBackdrop photo="waterfall" mark={Sparkles} markClass="w-24 h-24" />
+        <div className="p-3 relative z-10">
           {/* Header row — compact */}
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{ background: "rgba(167,139,250,0.2)", border: "1px solid rgba(167,139,250,0.3)" }}>
-              <Sparkles className="w-3 h-3" style={{ color: "#a78bfa" }} />
+              <Sparkles className="w-3 h-3" style={{ color: "#d9b77e" }} />
             </div>
-            <p className="font-cinzel text-xs font-semibold flex-1" style={{ color: "#a78bfa" }}>
-              {lang === "es" ? "Reflexión Diaria" : "Daily Reflection"}
+            <p className="font-cinzel text-xs font-semibold flex-1" style={{ color: "#d9b77e" }}>
+              {(TEXT[lang] || TEXT.en).title}
             </p>
             {/* Refresh + Dismiss side by side */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <button onClick={generateReflection} disabled={loading}
                 className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                 <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
               </button>
               <button onClick={() => setDismissed(true)}
                 className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                 <X className="w-3 h-3" />
               </button>
             </div>
@@ -110,33 +123,33 @@ export default function DailyReflectionCard() {
 
           {loading && (
             <div className="flex items-center gap-2 pt-2">
-              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#a78bfa" }} />
-              <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>
-                {lang === "es" ? "Generando…" : "Crafting your reflection…"}
+              <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" style={{ color: "#d9b77e" }} />
+              <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
+                {(TEXT[lang] || TEXT.en).loading}
               </p>
             </div>
           )}
 
           {error && !loading && (
-            <p className="text-xs font-inter pt-2" style={{ color: "rgba(255,255,255,0.4)" }}>
-              {lang === "es" ? "Añade notas y versículos para tu reflexión personal." : "Add highlights and notes to get your personal reflection."}
+            <p className="text-xs font-inter pt-2" style={{ color: "rgb(var(--ink) / 0.4)" }}>
+              {(TEXT[lang] || TEXT.en).empty}
             </p>
           )}
 
           {reflection && !loading && (
             <div className="mt-2.5 space-y-2">
-              <p className="text-xs font-playfair italic leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.82)" }}>
+              <p className="text-xs font-playfair italic leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.82)" }}>
                 "{reflection.prompt}"
               </p>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
                 <a href={`/read?book=${encodeURIComponent(reflection.key_verse?.split(" ").slice(0,-1).join(" "))}&chapter=${reflection.key_verse?.split(" ").pop()?.split(":")[0]}`}
                   className="font-cinzel text-[10px] font-semibold"
-                  style={{ color: "#fbbf24" }}>
+                  style={{ color: "#d9b77e" }}>
                   {reflection.key_verse}
                 </a>
                 {reflection.theme && (
-                  <span className="text-[9px] font-cinzel px-2 py-0.5 rounded-full capitalize"
-                    style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa" }}>
+                  <span className="text-[10px] font-cinzel px-2.5 py-1 rounded-xl capitalize max-w-full min-w-0 break-words text-center leading-snug"
+                    style={{ background: "rgba(167,139,250,0.15)", color: "#d9b77e" }}>
                     {reflection.theme}
                   </span>
                 )}

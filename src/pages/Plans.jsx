@@ -2,7 +2,9 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronRight, ChevronLeft, Sparkles, Loader2, BookOpen, Heart, Globe, CalendarDays, List, Plus, Trash2, Target, Check, LayoutGrid, Shield, Flower2, Zap, Star, Gem, Sprout } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
-import PlanTimeline from "@/components/plans/PlanTimeline";
+import PlansListView from "@/components/plans/PlansListView";
+import PresetPlanDetail from "@/components/plans/PresetPlanDetail";
+import CustomPlanDetail from "@/components/plans/CustomPlanDetail";
 import ReadingCalendar from "@/components/plans/ReadingCalendar";
 import CustomPlanBuilder from "@/components/plans/CustomPlanBuilder";
 import ReadingStatsChart from "@/components/plans/ReadingStatsChart";
@@ -10,6 +12,7 @@ import { base44 } from "@/api/base44Client";
 import PlanInvitePanel from "@/components/plans/PlanInvitePanel";
 import PlanDownloadButton from "@/components/plans/PlanDownloadButton";
 import usePlansData from "@/hooks/usePlansData";
+import { useAccentTint } from "@/lib/accent";
 
 // Real-life Unsplash photo headers per plan
 const PRESET_PLANS = [
@@ -149,6 +152,7 @@ const LANG_FILTER = ["all", "en", "es"];
 
 export default function Plans() {
   const { t, lang } = useLang();
+  const tint = useAccentTint();
   const urlParams = new URLSearchParams(window.location.search);
   const urlCat = urlParams.get("cat") || "all";
 
@@ -199,515 +203,38 @@ export default function Plans() {
 
   // ── Custom Plan Detail View ────────────────────────────────────
   if (activeCustomPlan) {
-    const plan = activeCustomPlan;
-    const totalCh = plan.total_chapters || 0;
-    const doneCh = (plan.completed_chapters || []).length;
-    const pct = totalCh > 0 ? Math.round((doneCh / totalCh) * 100) : 0;
-    const daysLeft = plan.target_date
-      ? Math.ceil((new Date(plan.target_date) - new Date()) / (1000 * 60 * 60 * 24))
-      : null;
-    const accent = plan.accent_color || "#00f5ff";
-    const dailyGoal = parseInt(localStorage.getItem(`veritas_plan_daily_${plan.id}`) || localStorage.getItem(`veritas_plan_daily_${plan.title}`) || "1");
-    const remainingCh = totalCh - doneCh;
-    const daysToFinish = dailyGoal > 0 ? Math.ceil(remainingCh / dailyGoal) : null;
-
-    return (
-      <div className="md:ml-16 min-h-screen pb-28">
-        <div className="px-4 pt-4 pb-3 flex items-center gap-3"
-          style={{ background: "rgba(6,10,20,0.9)", position: "sticky", top: "57px", zIndex: 20, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <button onClick={() => setActiveCustomPlan(null)}
-            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl"
-            style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.6)" }}>
-            <ChevronLeft className="w-4 h-4" /> Back
-          </button>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="text-xl">{plan.icon || "📖"}</span>
-            <span className="font-cinzel text-sm font-semibold text-white truncate">{plan.title}</span>
-          </div>
-        </div>
-
-        <div className="px-4 pt-5">
-          {/* Stats */}
-          <div className="grid grid-cols-4 gap-2 mb-5">
-            {[
-              { label: "Chapters", value: `${doneCh}/${totalCh}` },
-              { label: "Progress", value: `${pct}%` },
-              { label: "Daily Goal", value: `${dailyGoal}ch` },
-              { label: daysLeft !== null ? (daysLeft > 0 ? "Deadline" : "Overdue") : "Est. Done", value: daysLeft !== null ? `${Math.abs(daysLeft)}d` : daysToFinish ? `${daysToFinish}d` : "—" },
-            ].map(s => (
-              <div key={s.label} className="rounded-2xl p-3 text-center"
-                style={{ background: `${accent}08`, border: `1px solid ${accent}20` }}>
-                <p className="font-cinzel text-base font-bold" style={{ color: accent }}>{s.value}</p>
-                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Progress bar */}
-          <div className="h-1.5 rounded-full overflow-hidden mb-6" style={{ background: "rgba(255,255,255,0.07)" }}>
-            <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1 }}
-              className="h-full rounded-full" style={{ background: accent }} />
-          </div>
-
-          {/* Book + chapters */}
-          <div className="space-y-3">
-            {(plan.selections || []).map(sel => {
-              const completedInBook = (plan.completed_chapters || []).filter(k => k.startsWith(`${sel.book}:`)).length;
-              const allDone = completedInBook === sel.chapters.length;
-              return (
-                <div key={sel.book} className="rounded-2xl overflow-hidden"
-                  style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${allDone ? "rgba(52,211,153,0.25)" : "rgba(255,255,255,0.07)"}` }}>
-                  <div className="flex items-center justify-between px-4 py-3">
-                    <p className="font-cinzel text-sm font-semibold text-white">{sel.book}</p>
-                    <span className="text-xs font-cinzel" style={{ color: allDone ? "#34d399" : accent }}>
-                      {completedInBook}/{sel.chapters.length}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 px-4 pb-4">
-                    {sel.chapters.map(ch => {
-                      const done = (plan.completed_chapters || []).includes(`${sel.book}:${ch}`);
-                      return (
-                        <button key={ch} onClick={() => handleToggleCustomChapter(plan, sel.book, ch)}
-                          className="w-9 h-9 rounded-xl font-cinzel text-xs font-semibold flex items-center justify-center transition-all"
-                          style={{
-                            background: done ? "rgba(52,211,153,0.15)" : `${accent}10`,
-                            color: done ? "#34d399" : accent,
-                            border: done ? "1px solid rgba(52,211,153,0.35)" : `1px solid ${accent}30`,
-                          }}>
-                          {done ? <Check className="w-3 h-3" /> : ch}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
+    return <CustomPlanDetail plan={activeCustomPlan} onBack={() => setActiveCustomPlan(null)} onToggleChapter={handleToggleCustomChapter} />;
   }
 
   // ── Plan Detail View ───────────────────────────────────────────
   if (activePlan) {
-    const completed = getCompletedDays(activePlan.title);
-    const pct = Math.round((completed / activePlan.duration_days) * 100);
-
     return (
-      <div className="md:ml-16 min-h-screen pb-28">
-        {/* Photo hero header */}
-        <div className="relative h-56 md:h-72 overflow-hidden">
-          <img src={activePlan.photo} alt={activePlan.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(8,12,24,0.85) 70%, rgb(8,12,24) 100%)" }} />
-          <button
-            onClick={() => { setActivePlan(null); setSelectedDay(null); setGenDevo(null); }}
-            className="absolute top-4 left-4 flex items-center gap-1.5 text-white/80 hover:text-white text-sm px-3 py-1.5 rounded-xl transition-colors"
-            style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(8px)" }}
-          >
-            <ChevronLeft className="w-4 h-4" /> Back
-          </button>
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-inter uppercase tracking-widest px-2.5 py-1 rounded-full"
-                style={{ background: `${activePlan.accent}22`, color: activePlan.accent, border: `1px solid ${activePlan.accent}44` }}>
-                {activePlan.lang === "es" ? "Español" : "English"} · {activePlan.duration_days} days
-              </span>
-            </div>
-            <h1 className="font-cinzel text-2xl font-bold text-white leading-tight">{activePlan.title}</h1>
-            <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.5)" }}>{activePlan.description}</p>
-          </div>
-        </div>
-
-        {/* View toggle */}
-        <div className="flex gap-2 px-5 pt-4">
-          <button onClick={() => setShowCalendar(false)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
-            style={{ background: !showCalendar ? `${activePlan.accent}22` : "rgba(255,255,255,0.04)", color: !showCalendar ? activePlan.accent : "rgba(255,255,255,0.35)", border: !showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgba(255,255,255,0.07)" }}>
-            <List className="w-3.5 h-3.5" /> Timeline
-          </button>
-          <button onClick={() => setShowCalendar(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel"
-            style={{ background: showCalendar ? `${activePlan.accent}22` : "rgba(255,255,255,0.04)", color: showCalendar ? activePlan.accent : "rgba(255,255,255,0.35)", border: showCalendar ? `1px solid ${activePlan.accent}44` : "1px solid rgba(255,255,255,0.07)" }}>
-            <CalendarDays className="w-3.5 h-3.5" /> Calendar
-          </button>
-        </div>
-
-        {/* Progress bar */}
-        <div className="px-5 pt-5 mb-6">
-          <div className="flex justify-between text-xs mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>
-            <span>{completed} of {activePlan.duration_days} days complete</span>
-            <span style={{ color: activePlan.accent }}>{pct}%</span>
-          </div>
-          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${pct}%` }}
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="h-full rounded-full"
-              style={{ background: `linear-gradient(90deg, ${activePlan.accent}, ${activePlan.accent}88)` }}
-            />
-          </div>
-        </div>
-
-        {/* Offline download */}
-        <div className="px-5 mb-6">
-          <PlanDownloadButton plan={activePlan} accentColor={activePlan.accent} />
-        </div>
-
-        {/* Calendar or Timeline */}
-        {showCalendar ? (
-          <div className="px-5 mb-6">
-            <ReadingCalendar progress={progress} accent={activePlan.accent} />
-          </div>
-        ) : (
-          <PlanTimeline
-            plan={activePlan}
-            completedDays={completed}
-            onSelectDay={setSelectedDay}
-            selectedDay={selectedDay}
-          />
-        )}
-
-        {/* Days expanded content */}
-        <div className="px-4 space-y-3">
-          {activePlan.days.map((day, i) => {
-            const done = isDayComplete(activePlan.title, day.day);
-            const open = selectedDay?.day === day.day;
-            return (
-              <motion.div key={day.day}
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                className="rounded-2xl overflow-hidden transition-all"
-                style={{
-                  background: open ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-                  border: done ? `1px solid rgba(52,211,153,0.25)` : open ? `1px solid ${activePlan.accent}33` : "1px solid rgba(255,255,255,0.06)",
-                }}
-              >
-                <button className="w-full flex items-center gap-3 p-4 text-left" onClick={() => setSelectedDay(open ? null : day)}>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: done ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.06)" }}>
-                    {done
-                      ? <CheckCircle2 className="w-4 h-4" style={{ color: "#34d399" }} />
-                      : <span className="text-xs font-cinzel font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>{day.day}</span>
-                    }
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>Day {day.day}</p>
-                    <p className="font-cinzel text-sm font-semibold text-white truncate">{day.title}</p>
-                    <div className="flex gap-1 mt-1.5 flex-wrap">
-                      {day.verses.map(v => (
-                        <span key={v} className="text-[10px] px-2 py-0.5 rounded-full font-inter"
-                          style={{ background: `${activePlan.accent}15`, color: activePlan.accent }}>
-                          {v}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 flex-shrink-0 transition-transform"
-                    style={{ color: "rgba(255,255,255,0.25)", transform: open ? "rotate(90deg)" : "none" }} />
-                </button>
-
-                <AnimatePresence>
-                  {open && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-4 pb-5 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
-                        {/* Devotional text */}
-                        <div className="pt-4">
-                          <p className="text-[10px] font-inter uppercase tracking-widest mb-3" style={{ color: activePlan.accent }}>
-                            ✦ Devotional
-                          </p>
-                          <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
-                            {(genDevo && selectedDay?.day === day.day) ? genDevo.reflection : day.devotional}
-                          </p>
-
-                          {/* AI-generated expanded devo */}
-                          {genDevo && selectedDay?.day === day.day && (
-                            <div className="mt-4 space-y-3">
-                              {genDevo.insights?.length > 0 && (
-                                <div>
-                                  <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "#FFD700" }}>Key Insights</p>
-                                  <ul className="space-y-1.5">
-                                    {genDevo.insights.map((ins, i) => (
-                                      <li key={i} className="text-sm flex gap-2" style={{ color: "rgba(255,255,255,0.6)" }}>
-                                        <span style={{ color: "#FFD700" }}>·</span>{ins}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                              {genDevo.application && (
-                                <div className="rounded-xl p-3" style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                                  <p className="text-[10px] font-inter uppercase tracking-widest mb-1" style={{ color: "#00f5ff" }}>Apply Today</p>
-                                  <p className="text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>{genDevo.application}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Prayer */}
-                          {day.prayer && (
-                            <div className="mt-4 rounded-xl p-4"
-                              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                              <p className="text-[10px] font-inter uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
-                                🙏 Prayer
-                              </p>
-                              <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
-                                {day.prayer}
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Actions */}
-                          <div className="flex flex-wrap gap-2 mt-4">
-                            {!done && (
-                              <motion.button whileTap={{ scale: 0.95 }}
-                                onClick={(e) => { e.stopPropagation(); completeDay(activePlan.title, day.day); }}
-                                className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-cinzel transition-colors"
-                                style={{ background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
-                              >
-                                <CheckCircle2 className="w-4 h-4" /> Mark Complete
-                              </motion.button>
-                            )}
-                            <motion.button whileTap={{ scale: 0.95 }}
-                              onClick={(e) => { e.stopPropagation(); generateAIDevo(day); }}
-                              disabled={genLoading}
-                              className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-cinzel transition-colors"
-                              style={{ background: "rgba(167,139,250,0.1)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.2)" }}
-                            >
-                              {genLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                              AI Devotional
-                            </motion.button>
-                            <a href={`/read?book=${encodeURIComponent(day.verses[0]?.split(' ').slice(0,-1).join(' ') || 'John')}&chapter=${day.verses[0]?.split(':')[0]?.split(' ').slice(-1)[0] || 1}`}
-                              onClick={e => e.stopPropagation()}
-                              className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-cinzel transition-colors"
-                              style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.18)" }}>
-                              <BookOpen className="w-4 h-4" /> Read
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-
-          {activePlan.days.length < activePlan.duration_days && (
-            <div className="rounded-2xl p-8 text-center" style={{ border: "1px dashed rgba(255,255,255,0.1)" }}>
-              <Heart className="w-8 h-8 mx-auto mb-3" style={{ color: "rgba(255,255,255,0.2)" }} />
-              <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-                {activePlan.duration_days - activePlan.days.length} more days of scripture & devotions
-              </p>
-            </div>
-          )}
-
-          {/* Invite friends & progress comments */}
-          <PlanInvitePanel
-            planTitle={activePlan.title}
-            planCategory={activePlan.category}
-            accentColor={activePlan.accent}
-          />
-        </div>
-      </div>
+      <PresetPlanDetail
+        plan={activePlan}
+        progress={progress}
+        completed={getCompletedDays(activePlan.title)}
+        isDayComplete={isDayComplete}
+        completeDay={completeDay}
+        onBack={() => setActivePlan(null)}
+      />
     );
   }
 
   // ── Plans List View ────────────────────────────────────────────
   return (
-    <div className="md:ml-16 min-h-screen pb-28">
-      {/* Header */}
-      <div className="relative h-44 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800&q=80" alt="Reading Plans" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(8,12,24,0.95))" }} />
-        <div className="absolute bottom-0 px-5 pb-5">
-          <h1 className="font-cinzel text-2xl font-bold text-white">{t.readingPlansTitle}</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{t.structuredJourneys}</p>
-        </div>
-      </div>
-
-      {/* Language filter */}
-      <div className="flex gap-2 px-4 pt-4 pb-2 overflow-x-auto scrollbar-hide">
-        {[["all", "All", "🌍"], ["en", "English", "🇺🇸"], ["es", "Español", "🇲🇽"]].map(([v, l, flag]) => (
-          <button key={v} onClick={() => setLangFilter(v)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-inter transition-all"
-            style={{
-              background: langFilter === v ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-              border: langFilter === v ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
-              color: langFilter === v ? "#00f5ff" : "rgba(255,255,255,0.45)",
-            }}>
-            <span>{flag}</span><span>{l}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Category filter */}
-      <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
-        {[
-          ["all", "All", LayoutGrid],
-          ["men", "Men", Shield],
-          ["women", "Women", Flower2],
-          ["youth", "Youth", Zap],
-          ["kids", "Kids", Star],
-          ["marriage", "Marriage", Gem],
-          ["new_believer", "New Believer", Sprout],
-          ["general", "General", BookOpen],
-        ].map(([v, l, CatIcon]) => (
-          <button key={v} onClick={() => setCatFilter(v)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-inter transition-all"
-            style={{
-              background: catFilter === v ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)",
-              border: catFilter === v ? "1px solid rgba(251,191,36,0.3)" : "1px solid rgba(255,255,255,0.07)",
-              color: catFilter === v ? "#fbbf24" : "rgba(255,255,255,0.4)",
-            }}>
-            <CatIcon className="w-3.5 h-3.5" /><span>{l}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Custom Plans */}
-      <div className="px-4 pt-2 pb-1">
-        <div className="flex items-center justify-between mb-3">
-          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>{t.customPlans}</p>
-          <button onClick={() => setShowBuilder(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-cinzel text-xs transition-all"
-            style={{ background: "rgba(0,245,255,0.1)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}>
-            <Plus className="w-3.5 h-3.5" /> {t.buildPlan}
-          </button>
-        </div>
-
-        {customPlans.length === 0 ? (
-          <button onClick={() => setShowBuilder(true)}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded-2xl text-left transition-all mb-4"
-            style={{ background: "rgba(0,245,255,0.04)", border: "1px dashed rgba(0,245,255,0.2)" }}>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: "rgba(0,245,255,0.1)", border: "1px solid rgba(0,245,255,0.2)" }}>
-              <Target className="w-5 h-5" style={{ color: "#00f5ff" }} />
-            </div>
-            <div>
-              <p className="font-cinzel text-sm font-semibold text-white">Build Your Own Plan</p>
-              <p className="text-xs font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>Select books, chapters & a target date</p>
-            </div>
-          </button>
-        ) : (
-          <div className="space-y-2 mb-4">
-            {customPlans.map((plan, i) => {
-              const total = plan.total_chapters || 0;
-              const done = (plan.completed_chapters || []).length;
-              const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-              const accent = plan.accent_color || "#00f5ff";
-              return (
-                <motion.div key={plan.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl cursor-pointer"
-                  style={{ background: `${accent}08`, border: `1px solid ${accent}20` }}
-                  onClick={() => setActiveCustomPlan(plan)}>
-                  <span className="text-xl flex-shrink-0">{plan.icon || "📖"}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-cinzel text-sm font-semibold text-white truncate">{plan.title}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
-                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: accent }} />
-                      </div>
-                      <span className="text-[10px] font-cinzel flex-shrink-0" style={{ color: accent }}>{pct}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button onClick={e => { e.stopPropagation(); deleteCustomPlan(plan.id); }}
-                      className="p-1.5 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                    <ChevronRight className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)" }} />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Reading Stats */}
-      <div className="px-4 mb-6">
-        <ReadingStatsChart />
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-3 px-4 mb-3">
-        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
-        <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>{t.curatedPlans}</p>
-        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.07)" }} />
-      </div>
-
+    <>
+      <PlansListView
+        presets={PRESET_PLANS}
+        customPlans={customPlans}
+        getCompletedDays={getCompletedDays}
+        onOpenPreset={setActivePlan}
+        onOpenCustom={setActiveCustomPlan}
+        onDeleteCustom={deleteCustomPlan}
+        onBuild={() => setShowBuilder(true)}
+      />
       <AnimatePresence>
-        {showBuilder && (
-          <CustomPlanBuilder
-            onClose={() => setShowBuilder(false)}
-            onSaved={loadPlansData}
-          />
-        )}
+        {showBuilder && <CustomPlanBuilder onClose={() => setShowBuilder(false)} onSaved={loadPlansData} />}
       </AnimatePresence>
-
-      {/* Plan cards */}
-      <div className="px-4 space-y-4 pt-2">
-        {filtered.map((plan, i) => {
-          const completed = getCompletedDays(plan.title);
-          const pct = Math.round((completed / plan.duration_days) * 100);
-          const started = completed > 0;
-
-          return (
-            <motion.div key={plan.title}
-              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
-              onClick={() => setActivePlan(plan)}
-              className="rounded-2xl overflow-hidden cursor-pointer"
-              style={{ border: "1px solid rgba(255,255,255,0.07)" }}
-            >
-              {/* Photo */}
-              <div className="relative h-36 overflow-hidden">
-                <img src={plan.photo} alt={plan.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(8,12,24,0.95))" }} />
-                <div className="absolute top-3 right-3 flex gap-2">
-                  {plan.lang === "es" && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-inter flex items-center gap-1"
-                      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)", color: "rgba(255,255,255,0.7)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                      <Globe className="w-2.5 h-2.5" /> Español
-                    </span>
-                  )}
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 px-4 pb-3">
-                  <h3 className="font-cinzel text-base font-bold text-white leading-tight">{plan.title}</h3>
-                </div>
-              </div>
-
-              {/* Meta */}
-              <div className="px-4 py-3" style={{ background: "rgba(8,12,24,0.98)" }}>
-                <p className="text-xs mb-3 leading-relaxed" style={{ color: "rgba(255,255,255,0.45)" }}>{plan.description}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-inter capitalize"
-                      style={{ background: `${plan.accent}15`, color: plan.accent, border: `1px solid ${plan.accent}30` }}>
-                      {plan.category.replace("_", " ")}
-                    </span>
-                    <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{plan.duration_days} days</span>
-                    {started && <span className="text-[10px] font-inter" style={{ color: plan.accent }}>{pct}%</span>}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs font-cinzel" style={{ color: plan.accent }}>
-                    Start <ChevronRight className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-                {started && (
-                  <div className="mt-2.5 h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: plan.accent }} />
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
-    </div>
+    </>
   );
 }

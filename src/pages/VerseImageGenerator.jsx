@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share2, Copy, Check, QrCode, Upload, Loader2, Download } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
-import { base44 } from "@/api/base44Client";
+import { renderCardBlob, saveBlob } from "@/lib/verseCardImage";
 import { TEMPLATES, ELEGANT_THEMES, SEMANTIC_IMAGES, POPULAR_EN, POPULAR_ES } from "@/components/verse/verseArtData";
 import QRCodeDisplay from "@/components/verse/QRCodeDisplay";
 import VerseSelector from "@/components/verse/VerseSelector";
@@ -16,6 +16,8 @@ export default function VerseImageGenerator() {
   const [activeThemeId, setActiveThemeId] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const uploadRef = useRef(null);
+  const cardRef = useRef(null);
+  const [busy, setBusy] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const preRef = urlParams.get("ref") || "John 3:16";
@@ -38,28 +40,22 @@ export default function VerseImageGenerator() {
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUploadingImage(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setUploadedImage(file_url);
+    // Kept on the device only: the picture is just a background for the card being made.
+    setUploadedImage(URL.createObjectURL(file));
     setBgMode("upload");
-    setUploadingImage(false);
   };
 
+  const fileName = `veritas-${verseRef.replace(/[^a-z0-9]/gi, "-")}.png`;
+
   const downloadImage = async () => {
-    const imgUrl = bgMode === "image" && selectedImage ? selectedImage
-      : bgMode === "upload" && uploadedImage ? uploadedImage
-      : null;
-    if (imgUrl) {
-      // Download the background image with verse overlay as best effort
-      const a = document.createElement("a");
-      a.href = imgUrl;
-      a.download = `veritas-verse-${verseRef.replace(/[^a-z0-9]/gi, "-")}.jpg`;
-      a.target = "_blank";
-      a.click();
-    } else {
-      // For gradient: copy text to clipboard and notify
-      await navigator.clipboard.writeText(`"${verseText}" — ${verseRef}`);
-      alert("Verse text copied! For gradient cards, use a screenshot to save the image.");
+    setBusy(true);
+    try {
+      const blob = await renderCardBlob(cardRef.current);
+      saveBlob(blob, fileName);
+    } catch {
+      alert(t.s3SaveFail);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -80,33 +76,27 @@ export default function VerseImageGenerator() {
       email:    `mailto:?subject=${encodeURIComponent(`Verse: ${verseRef}`)}&body=${encoded}`,
       instagram: null,
     };
-    if (channel === "instagram") { copyText(); alert("Text copied! Paste it into your Instagram story or post."); return; }
+    if (channel === "instagram") { copyText(); alert(t.s3IgCopied); return; }
     if (urls[channel]) window.open(urls[channel], "_blank");
     setShowShareMenu(false);
   };
 
   const nativeShare = async () => {
-    // Try to share the actual background image if one is selected
-    const imgUrl = bgMode === "image" && selectedImage ? selectedImage
-      : bgMode === "upload" && uploadedImage ? uploadedImage
-      : null;
-
-    if (navigator.share) {
-      const shareData = { title: `Verse: ${verseRef}`, text: shareText };
-      if (imgUrl) {
-        try {
-          const resp = await fetch(imgUrl);
-          const blob = await resp.blob();
-          const file = new File([blob], "verse-art.jpg", { type: blob.type || "image/jpeg" });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ ...shareData, files: [file] });
-            return;
-          }
-        } catch {}
+    setBusy(true);
+    try {
+      const blob = await renderCardBlob(cardRef.current);
+      const file = new File([blob], fileName, { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: `Verse: ${verseRef}`, text: shareText });
+        return;
       }
-      await navigator.share(shareData);
-    } else {
-      setShowShareMenu(v => !v);
+      // This device cannot share files: save the finished image and offer the text share options.
+      saveBlob(blob, fileName);
+      setShowShareMenu(true);
+    } catch (e) {
+      if (e?.name !== "AbortError") setShowShareMenu(true);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -116,11 +106,11 @@ export default function VerseImageGenerator() {
         {/* Header */}
         <div className="flex items-center gap-2 mb-6">
           <span className="text-xl">🖼️</span>
-          <h1 className="font-cinzel text-xl font-bold text-white">Verse Art</h1>
+          <h1 className="font-cinzel text-xl font-bold text-white">{t.s3ArtTitle}</h1>
         </div>
 
         {/* Preview Card */}
-        <div className="relative rounded-3xl overflow-hidden mb-6 flex flex-col items-center justify-center text-center p-8"
+        <div ref={cardRef} className="relative rounded-3xl overflow-hidden mb-6 flex flex-col items-center justify-center text-center p-8"
           style={{ background: activeBg, minHeight: 280, boxShadow: "0 24px 64px rgba(0,0,0,0.55)" }}>
           {(bgMode === "image" || bgMode === "upload") && (
             <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.45)" }} />
@@ -151,7 +141,7 @@ export default function VerseImageGenerator() {
         {/* Verse Reference Selector */}
         <div className="mb-4">
           <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
-            {lang === "es" ? "Seleccionar Versículo" : "Select Verse"}
+            {t.s3SelectVerse}
           </p>
           <VerseSelector lang={lang} onSelect={v => { setVerseRef(v.ref); setVerseText(v.text); }} />
         </div>
@@ -160,34 +150,34 @@ export default function VerseImageGenerator() {
         <div className="space-y-3 mb-5">
           <div>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-              {lang === "es" ? "Referencia" : "Reference"}
+              {t.s3Reference}
             </p>
             <input value={verseRef} onChange={e => setVerseRef(e.target.value)}
               className="w-full px-4 py-3 rounded-xl text-sm font-cinzel focus:outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
           </div>
           <div>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-              {lang === "es" ? "Texto del Versículo" : "Verse Text"}
+              {t.s3VerseText}
             </p>
             <textarea value={verseText} onChange={e => setVerseText(e.target.value)} rows={4}
               className="w-full px-4 py-3 rounded-xl text-sm resize-none focus:outline-none"
-              style={{ fontFamily: template.font, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.82)" }} />
+              style={{ fontFamily: template.font, background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.82)" }} />
           </div>
           <div>
             <p className="text-[10px] font-cinzel uppercase tracking-widest mb-1.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-              {lang === "es" ? "Resaltar Palabra (Opcional)" : "Highlight Word (Optional)"}
+              {t.s3HighlightWord}
             </p>
-            <input value={highlightedWord} onChange={e => setHighlightedWord(e.target.value)} placeholder={lang === "es" ? "ej. 'amor'" : "e.g., 'loved'"}
+            <input value={highlightedWord} onChange={e => setHighlightedWord(e.target.value)} placeholder={t.s3HighlightPh}
               className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }} />
           </div>
         </div>
 
         {/* Elegant Pre-designed Themes */}
         <div className="mb-5">
           <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-            {lang === "es" ? "✦ Temas Elegantes" : "✦ Elegant Themes"}
+            {t.s3Themes}
           </p>
           <div className="grid grid-cols-4 gap-2">
             {ELEGANT_THEMES.map(theme => (
@@ -230,7 +220,7 @@ export default function VerseImageGenerator() {
         {/* Background mode tabs */}
         <div className="mb-4">
           <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-            {lang === "es" ? "Personalizar Fondo" : "Customize Background"}
+            {t.s3CustomBg}
           </p>
           <div className="flex gap-2 mb-4">
             {[["gradient","🎨 Colors"],["image","🖼️ Images"],["upload","📷 Upload"]].map(([mode, label]) => (
@@ -310,12 +300,12 @@ export default function VerseImageGenerator() {
                   style={{ aspectRatio: "1/1", background: "rgba(251,191,36,0.07)", border: "1px dashed rgba(251,191,36,0.35)" }}>
                   {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#fbbf24" }} /> : <Upload className="w-4 h-4" style={{ color: "#fbbf24" }} />}
                   <span className="font-cinzel text-[8px]" style={{ color: "#fbbf24" }}>
-                    {uploadedImage ? (lang === "es" ? "Cambiar" : "Change") : (lang === "es" ? "Subir" : "Upload")}
+                    {uploadedImage ? t.s3Change : t.s3Upload}
                   </span>
                 </motion.button>
               </div>
               <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>
-                {lang === "es" ? "Tu imagen se usará como fondo" : "Your image will be used as the background"}
+                {t.s3UseImage}
               </p>
             </div>
           )}
@@ -324,7 +314,7 @@ export default function VerseImageGenerator() {
         {/* Quick pick */}
         <div className="mb-6">
           <p className="text-[10px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>
-            {lang === "es" ? "Selección Rápida" : "Quick Pick"}
+            {t.s3QuickPick}
           </p>
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             {popularVerses.map(v => (
@@ -344,17 +334,17 @@ export default function VerseImageGenerator() {
         {/* Action buttons */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           {/* Download */}
-          <motion.button whileTap={{ scale: 0.96 }} onClick={downloadImage}
+          <motion.button whileTap={{ scale: 0.96 }} onClick={downloadImage} disabled={busy}
             className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
             style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.08))", border: "1px solid rgba(251,191,36,0.35)", color: "#fbbf24" }}>
-            <Download className="w-5 h-5" />
-            Download
+            {busy ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+            {t.s3Download}
           </motion.button>
           {/* Share */}
           <div className="relative">
-            <motion.button whileTap={{ scale: 0.96 }} onClick={nativeShare}
+            <motion.button whileTap={{ scale: 0.96 }} onClick={nativeShare} disabled={busy}
               className="w-full flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.65)" }}>
+              style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.65)" }}>
               <Share2 className="w-5 h-5" />
               {t.share}
             </motion.button>
@@ -363,7 +353,7 @@ export default function VerseImageGenerator() {
                 <motion.div initial={{ opacity: 0, y: 8, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   className="absolute bottom-full left-0 right-0 mb-2 rounded-2xl p-3 z-30 space-y-1.5"
-                  style={{ background: "rgba(10,15,30,0.97)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(20px)" }}>
+                  style={{ background: "var(--popover-surface)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(20px)" }}>
                   {[
                     { id: "whatsapp", label: "WhatsApp",  color: "#25D366" },
                     { id: "sms",      label: "SMS",        color: "#00f5ff" },
@@ -372,7 +362,7 @@ export default function VerseImageGenerator() {
                   ].map(({ id, label, color }) => (
                     <button key={id} onClick={() => shareVia(id)}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-inter text-left"
-                      style={{ background: "rgba(255,255,255,0.04)" }}>
+                      style={{ background: "var(--fill-2)" }}>
                       <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
                       <span style={{ color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
@@ -384,16 +374,16 @@ export default function VerseImageGenerator() {
           {/* Copy */}
           <motion.button whileTap={{ scale: 0.96 }} onClick={copyText}
             className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
+            style={{ background: "var(--fill-2)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.6)" }}>
             {copied ? <Check className="w-5 h-5" style={{ color: "#34d399" }} /> : <Copy className="w-5 h-5" />}
-            {copied ? "Copied!" : "Copy"}
+            {copied ? t.s3Copied : t.s3Copy}
           </motion.button>
           {/* QR */}
           <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowQR(true)}
             className="flex items-center justify-center gap-2.5 py-4 rounded-2xl font-cinzel text-sm font-semibold"
             style={{ background: "rgba(0,245,255,0.06)", border: "1px solid rgba(0,245,255,0.15)", color: "#00f5ff" }}>
             <QrCode className="w-5 h-5" />
-            QR Code
+            {t.s3QR}
           </motion.button>
         </div>
       </div>

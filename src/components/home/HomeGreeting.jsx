@@ -1,42 +1,38 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Bell, Leaf } from "lucide-react";
 import useCurrentUserDisplay from "@/hooks/useCurrentUserDisplay";
 import { useLang } from "@/lib/LanguageContext";
 
 export default function HomeGreeting() {
   const { t } = useLang();
-  const { displayName, displayAvatar, firstName } = useCurrentUserDisplay();
+  const { firstName } = useCurrentUserDisplay();
   const hour = new Date().getHours();
-  const period = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
-  const greetingKey = period === "morning" ? "goodMorning" : period === "afternoon" ? "goodAfternoon" : "goodEvening";
+  const greetingKey = hour < 12 ? "goodMorning" : hour < 17 ? "goodAfternoon" : "goodEvening";
 
   return (
-    <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-cinzel font-bold text-white leading-tight" style={{ fontSize: "clamp(16px, 4.5vw, 21px)" }}>
-            {t[greetingKey]}{firstName ? `, ${firstName}` : ""}
+    <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="font-cinzel font-medium leading-[1.05] text-foreground" style={{ fontSize: "clamp(34px, 9vw, 46px)" }}>
+            {t[greetingKey]},
+            <span className="flex items-center gap-2 font-semibold" style={{ color: "var(--t-gold)" }}>
+              {firstName || t.beloved}
+              <Leaf className="w-6 h-6 opacity-70" strokeWidth={1.3} />
+            </span>
           </h1>
-          <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
-            "{t.slogan}"
+          <p className="font-inter text-base mt-2" style={{ color: "rgb(var(--ink) / 0.65)" }}>
+            {t.graceAndPeace}
           </p>
         </div>
-        <Link to="/profile" aria-label="Open profile">
-          {displayAvatar ? (
-            <img
-              src={displayAvatar}
-              alt="avatar"
-              className="w-9 h-9 rounded-xl object-cover flex-shrink-0"
-              style={{ border: "1.5px solid rgba(251,191,36,0.3)", boxShadow: "0 0 10px rgba(251,191,36,0.15)" }}
-            />
-          ) : (
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 font-cinzel text-base font-bold"
-              style={{ background: "rgba(251,191,36,0.1)", border: "1.5px solid rgba(251,191,36,0.2)", color: "#fbbf24" }}
-            >
-              {displayName?.[0]?.toUpperCase() || "V"}
-            </div>
-          )}
+        <Link
+          to="/notification-studio"
+          aria-label={t.notifications || "Notifications"}
+          className="relative w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: "var(--fill-3)" }}
+        >
+          <Bell className="w-5 h-5" style={{ color: "rgb(var(--ink) / 0.85)" }} strokeWidth={1.6} />
+          <span className="absolute top-3 right-3.5 w-2 h-2 rounded-full" style={{ background: "var(--t-gold)" }} />
         </Link>
       </div>
     </motion.div>

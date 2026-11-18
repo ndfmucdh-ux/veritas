@@ -78,14 +78,14 @@ export default function TranslationSplitView({ book, chapter }) {
 
   const TransPicker = ({ value, onChange }) => (
     <div className="space-y-2 mb-3">
-      <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.2)" }}>Translations</p>
+      <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.2)" }}>Translations</p>
       <div className="flex gap-1.5 flex-wrap">
         {QUICK_TRANSLATIONS.map(t => (
           <button key={t.code} onClick={() => onChange(t.code)}
             className="px-2.5 py-1.5 rounded-lg text-[11px] font-cinzel transition-all"
             style={{
-              background: value === t.code ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-              color: value === t.code ? "#00f5ff" : "rgba(255,255,255,0.4)",
+              background: value === t.code ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)",
+              color: value === t.code ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
               border: value === t.code ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent",
             }}>
             {t.label}
@@ -99,7 +99,7 @@ export default function TranslationSplitView({ book, chapter }) {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
       className="rounded-2xl overflow-hidden"
       style={{ border: "1px solid rgba(0,245,255,0.15)", background: "rgba(0,245,255,0.03)" }}>
-      <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+      <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: "rgb(var(--ink) / 0.07)" }}>
         <div className="flex items-center gap-2">
           <Columns className="w-4 h-4" style={{ color: "#00f5ff" }} />
           <p className="font-cinzel text-sm font-semibold" style={{ color: "#00f5ff" }}>
@@ -109,15 +109,15 @@ export default function TranslationSplitView({ book, chapter }) {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <button onClick={() => setFontSize(f => Math.max(12, f - 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>−</button>
-            <span className="text-sm font-cinzel px-3" style={{ color: "rgba(255,255,255,0.3)" }}>{fontSize}</span>
+              style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>−</button>
+            <span className="text-sm font-cinzel px-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>{fontSize}</span>
             <button onClick={() => setFontSize(f => Math.min(24, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
-              style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)" }}>+</button>
+              style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>+</button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 divide-x" style={{ divideColor: "rgba(255,255,255,0.07)" }}>
+      <div className="grid grid-cols-2 divide-x" style={{ divideColor: "rgb(var(--ink) / 0.07)" }}>
         {/* Left */}
         <div ref={leftScrollRef} className="p-3 overflow-y-auto max-h-[60vh] scrollbar-hide" onScroll={handleLeftScroll}>
           <TransPicker value={leftTrans} onChange={setLeftTrans} side="left" />
@@ -126,8 +126,8 @@ export default function TranslationSplitView({ book, chapter }) {
           ) : (
             <div className="space-y-2">
               {leftVerses.map(v => (
-                <div key={v.verse} className="font-inter leading-relaxed" style={{ fontSize: `${fontSize}px`, color: v.red_letter ? "#f87171" : "rgba(255,255,255,0.8)" }}>
-                  <span className="font-cinzel mr-1.5" style={{ color: "rgba(255,255,255,0.25)", verticalAlign: "super", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
+                <div key={v.verse} className="font-inter leading-relaxed" style={{ fontSize: `${fontSize}px`, color: v.red_letter ? "#f87171" : "rgb(var(--ink) / 0.8)" }}>
+                  <span className="font-cinzel mr-1.5" style={{ color: "rgb(var(--ink) / 0.25)", verticalAlign: "super", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
                   {v.text}
                 </div>
               ))}
@@ -143,8 +143,8 @@ export default function TranslationSplitView({ book, chapter }) {
           ) : (
             <div className="space-y-2">
               {rightVerses.map(v => (
-                <div key={v.verse} className="font-inter leading-relaxed" style={{ fontSize: `${fontSize}px`, color: v.red_letter ? "#f87171" : "rgba(255,255,255,0.8)" }}>
-                  <span className="font-cinzel mr-1.5" style={{ color: "rgba(255,255,255,0.25)", verticalAlign: "super", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
+                <div key={v.verse} className="font-inter leading-relaxed" style={{ fontSize: `${fontSize}px`, color: v.red_letter ? "#f87171" : "rgb(var(--ink) / 0.8)" }}>
+                  <span className="font-cinzel mr-1.5" style={{ color: "rgb(var(--ink) / 0.25)", verticalAlign: "super", fontSize: `${fontSize - 3}px` }}>{v.verse}</span>
                   {v.text}
                 </div>
               ))}

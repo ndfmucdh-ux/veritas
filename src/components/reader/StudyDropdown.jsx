@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Check } from "lucide-react";
 
-export default function StudyDropdown({ label, value, items, onChange, icon = "ðŸ“–", placeholder = "Selectâ€¦" }) {
+export default function StudyDropdown({ label, value, items, onChange, placeholder = "Selectâ€¦" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState({});
   const triggerRef = useRef(null);
@@ -52,19 +52,12 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
         ref={triggerRef}
         whileTap={{ scale: 0.98 }}
         onClick={(e) => { e.stopPropagation(); setIsOpen(v => !v); }}
-        className="w-full flex items-center justify-between rounded-xl font-cinzel font-semibold transition-all"
-        style={{
-          padding: "10px 14px",
-          background: isOpen ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-          border: isOpen ? "1px solid rgba(0,245,255,0.35)" : "1px solid rgba(255,255,255,0.1)",
-          color: isOpen ? "#00f5ff" : "rgba(255,255,255,0.75)"
-        }}
+        className={`w-full flex items-center justify-between rounded-xl font-cinzel font-semibold transition-all bg-card border px-4 py-3 ${isOpen ? "border-primary text-primary" : "border-border text-foreground"}`}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-base flex-shrink-0">{icon}</span>
           <div className="text-left min-w-0">
-            <p className="text-[9px] text-white/35 uppercase tracking-wider font-inter leading-none mb-0.5">{label}</p>
-            <p className="text-xs truncate">{selectedItem?.label || placeholder}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-inter leading-none mb-1">{label}</p>
+            <p className="text-sm truncate">{selectedItem?.label || placeholder}</p>
           </div>
         </div>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 22 }} className="flex-shrink-0 ml-2">
@@ -83,11 +76,9 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
             style={{
               ...menuStyle,
               transformOrigin: "top",
-              background: "rgba(8,13,26,0.97)",
-              border: "1px solid rgba(0,245,255,0.2)",
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              boxShadow: "0 12px 40px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,245,255,0.05)",
+              background: "hsl(var(--popover))",
+              border: "1px solid hsl(var(--border))",
+              boxShadow: "0 12px 32px rgba(40,30,15,0.28)",
               borderRadius: "0.875rem",
               overflow: "hidden",
             }}
@@ -103,15 +94,15 @@ export default function StudyDropdown({ label, value, items, onChange, icon = "ð
                   onClick={(e) => { e.stopPropagation(); onChange(item.value); setIsOpen(false); }}
                   className="w-full px-3.5 py-2.5 text-left flex items-center justify-between gap-2 group transition-colors"
                   style={{
-                    background: value === item.value ? "rgba(0,245,255,0.1)" : "transparent",
-                    borderLeft: value === item.value ? "2px solid #00f5ff" : "2px solid transparent",
+                    background: value === item.value ? "hsl(var(--primary) / 0.12)" : "transparent",
+                    borderLeft: value === item.value ? "2px solid hsl(var(--primary))" : "2px solid transparent",
                   }}
                 >
                   <div className="min-w-0">
-                    <p className="text-xs font-inter text-white/85 group-hover:text-white transition-colors truncate">{item.label}</p>
-                    {item.subtitle && <p className="text-[10px] text-white/30 mt-0.5 truncate">{item.subtitle}</p>}
+                    <p className="text-sm text-foreground truncate">{item.label}</p>
+                    {item.subtitle && <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{item.subtitle}</p>}
                   </div>
-                  {value === item.value && <Check className="w-3 h-3 flex-shrink-0" style={{ color: "#00f5ff" }} />}
+                  {value === item.value && <Check className="w-3.5 h-3.5 flex-shrink-0 text-primary" />}
                 </motion.button>
               ))}
             </div>

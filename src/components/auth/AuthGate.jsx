@@ -29,13 +29,13 @@ export default function AuthGate() {
         </div>
 
         <h1 className="font-cinzel text-2xl font-bold text-white mb-2">Sign In to Continue</h1>
-        <p className="font-inter text-sm leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>
+        <p className="font-inter text-sm leading-relaxed mb-8" style={{ color: "rgb(var(--ink) / 0.45)" }}>
           Create a free account or sign in to track your streaks, highlights, notes, bookmarks, and spiritual growth.
         </p>
 
         {/* Features teaser */}
         <div className="w-full rounded-2xl p-4 mb-8 space-y-2.5"
-          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
           {[
             ["🔥", "Daily reading streaks & XP"],
             ["🔖", "Bookmarks, highlights & notes"],
@@ -45,7 +45,7 @@ export default function AuthGate() {
           ].map(([icon, text]) => (
             <div key={text} className="flex items-center gap-3">
               <span className="text-lg">{icon}</span>
-              <span className="font-inter text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>{text}</span>
+              <span className="font-inter text-sm" style={{ color: "rgb(var(--ink) / 0.55)" }}>{text}</span>
             </div>
           ))}
         </div>
@@ -60,7 +60,7 @@ export default function AuthGate() {
           Sign In / Create Account
         </motion.button>
 
-        <p className="font-inter text-xs mt-4" style={{ color: "rgba(255,255,255,0.2)" }}>
+        <p className="font-inter text-xs mt-4" style={{ color: "rgb(var(--ink) / 0.2)" }}>
           Free to use. No credit card required.
         </p>
       </div>

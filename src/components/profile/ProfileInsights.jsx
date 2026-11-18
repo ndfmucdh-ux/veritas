@@ -8,7 +8,7 @@ import { TrendingUp, Highlighter, BookOpen, Tag } from "lucide-react";
 
 const GOLD = "#fbbf24";
 const GOLD_DIM = "#92400e";
-const DARK_CARD = "rgba(255,255,255,0.03)";
+const DARK_CARD = "rgb(var(--ink) / 0.03)";
 const BORDER = "rgba(251,191,36,0.15)";
 
 // Derive books from highlights / bookmarks / notes
@@ -87,7 +87,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
             style={{ background: `${color}08`, border: `1px solid ${color}20` }}>
             <Icon className="w-4 h-4 mx-auto mb-1.5" style={{ color }} />
             <p className="font-cinzel text-sm font-bold truncate" style={{ color }}>{value}</p>
-            <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</p>
+            <p className="text-[9px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{label}</p>
           </div>
         ))}
       </div>
@@ -99,7 +99,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
           <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: GOLD }}>Reading Frequency (Last 4 Weeks)</p>
         </div>
         {freqData.every(d => d.sessions === 0) ? (
-          <p className="text-xs font-inter text-center py-6" style={{ color: "rgba(255,255,255,0.25)" }}>
+          <p className="text-xs font-inter text-center py-6" style={{ color: "rgb(var(--ink) / 0.25)" }}>
             Start reading to see your frequency chart
           </p>
         ) : (
@@ -112,12 +112,12 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
                     <stop offset="100%" stopColor={GOLD_DIM} stopOpacity={0.5} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="week" tick={{ fontSize: 10, fill: "rgba(255,255,255,0.4)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <XAxis dataKey="week" tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.4)", fontFamily: "Inter" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "rgb(var(--ink) / 0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip
-                  contentStyle={{ background: "rgba(10,15,30,0.97)", border: `1px solid ${GOLD}30`, borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
+                  contentStyle={{ background: "var(--popover-surface)", border: `1px solid ${GOLD}30`, borderRadius: 12, fontSize: 12, fontFamily: "Cinzel" }}
                   labelStyle={{ color: GOLD }}
-                  itemStyle={{ color: "rgba(255,255,255,0.7)" }}
+                  itemStyle={{ color: "rgb(var(--ink) / 0.7)" }}
                   cursor={{ fill: "rgba(251,191,36,0.06)" }}
                 />
                 <Bar dataKey="sessions" fill="url(#goldGrad)" radius={[6, 6, 0, 0]} />
@@ -134,7 +134,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
           <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: GOLD }}>Most Interacted Books</p>
         </div>
         {booksData.length === 0 ? (
-          <p className="text-xs font-inter text-center py-6" style={{ color: "rgba(255,255,255,0.25)" }}>
+          <p className="text-xs font-inter text-center py-6" style={{ color: "rgb(var(--ink) / 0.25)" }}>
             Bookmark or highlight verses to see your top books
           </p>
         ) : (
@@ -144,10 +144,10 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
               return (
                 <motion.div key={item.book} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-cinzel text-xs" style={{ color: "rgba(255,255,255,0.75)" }}>{item.book}</span>
+                    <span className="font-cinzel text-xs" style={{ color: "rgb(var(--ink) / 0.75)" }}>{item.book}</span>
                     <span className="font-cinzel text-xs" style={{ color: GOLD }}>{item.count}</span>
                   </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
@@ -170,7 +170,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
           <p className="text-[10px] font-cinzel uppercase tracking-[0.2em]" style={{ color: GOLD }}>Topics You Engage With Most</p>
         </div>
         {topicsData.length === 0 ? (
-          <p className="text-xs font-inter text-center py-6" style={{ color: "rgba(255,255,255,0.25)" }}>
+          <p className="text-xs font-inter text-center py-6" style={{ color: "rgb(var(--ink) / 0.25)" }}>
             Tag your notes or add highlights to reveal your spiritual themes
           </p>
         ) : (
@@ -225,7 +225,7 @@ export default function ProfileInsights({ highlights = [], notes = [], bookmarks
                 <div key={label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-                    <span className="font-inter text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>{label}</span>
+                    <span className="font-inter text-xs" style={{ color: "rgb(var(--ink) / 0.55)" }}>{label}</span>
                   </div>
                   <span className="font-cinzel text-sm font-bold" style={{ color }}>{value}</span>
                 </div>

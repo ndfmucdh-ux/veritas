@@ -9,7 +9,7 @@ export default function PlanTimeline({ plan, completedDays, onSelectDay, selecte
     <div className="px-4 pb-4">
       {/* Compact progress summary */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs font-cinzel" style={{ color: "rgba(255,255,255,0.4)" }}>
+        <p className="text-xs font-cinzel" style={{ color: "rgb(var(--ink) / 0.4)" }}>
           {completedDays} / {totalDays} days
         </p>
         <p className="font-cinzel text-sm font-bold" style={{ color: plan.accent }}>{progressPct}%</p>
@@ -19,7 +19,7 @@ export default function PlanTimeline({ plan, completedDays, onSelectDay, selecte
       <div className="relative">
         {/* Vertical connector line */}
         <div className="absolute left-5 top-5 bottom-5 w-0.5"
-          style={{ background: "rgba(255,255,255,0.06)" }} />
+          style={{ background: "var(--fill-3)" }} />
         {/* Progress fill */}
         <motion.div
           className="absolute left-5 top-5 w-0.5"
@@ -58,21 +58,21 @@ export default function PlanTimeline({ plan, completedDays, onSelectDay, selecte
                         ? `linear-gradient(135deg, ${plan.accent}33, ${plan.accent}11)`
                         : isCurrent
                         ? `linear-gradient(135deg, ${plan.accent}22, ${plan.accent}0a)`
-                        : "rgba(255,255,255,0.04)",
+                        : "rgb(var(--ink) / 0.04)",
                       border: done
                         ? `1.5px solid ${plan.accent}55`
                         : isCurrent
                         ? `1.5px solid ${plan.accent}44`
-                        : "1.5px solid rgba(255,255,255,0.08)",
+                        : "1.5px solid rgb(var(--ink) / 0.08)",
                     }}
                   >
                     {done ? (
                       <CheckCircle2 className="w-4 h-4" style={{ color: plan.accent }} />
                     ) : isLocked ? (
-                      <Lock className="w-3 h-3" style={{ color: "rgba(255,255,255,0.15)" }} />
+                      <Lock className="w-3 h-3" style={{ color: "rgb(var(--ink) / 0.15)" }} />
                     ) : (
                       <span className="text-[11px] font-cinzel font-bold"
-                        style={{ color: isCurrent ? plan.accent : "rgba(255,255,255,0.3)" }}>
+                        style={{ color: isCurrent ? plan.accent : "rgb(var(--ink) / 0.3)" }}>
                         {day.day}
                       </span>
                     )}
@@ -85,7 +85,7 @@ export default function PlanTimeline({ plan, completedDays, onSelectDay, selecte
                       background: isOpen
                         ? `${plan.accent}0a`
                         : done
-                        ? "rgba(255,255,255,0.025)"
+                        ? "rgb(var(--ink) / 0.025)"
                         : isCurrent
                         ? `${plan.accent}07`
                         : "transparent",
@@ -97,15 +97,15 @@ export default function PlanTimeline({ plan, completedDays, onSelectDay, selecte
                       opacity: isLocked ? 0.35 : 1,
                     }}
                   >
-                    <p className="text-[10px] font-inter mb-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    <p className="text-[10px] font-inter mb-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                       Day {day.day}
                     </p>
                     <p className="font-cinzel text-sm font-semibold"
-                      style={{ color: done ? plan.accent : isCurrent ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.55)" }}>
+                      style={{ color: done ? plan.accent : isCurrent ? "rgb(var(--ink) / 0.9)" : "rgb(var(--ink) / 0.55)" }}>
                       {day.title}
                     </p>
                     {day.verses?.length > 0 && (
-                      <p className="text-[10px] font-inter mt-1" style={{ color: "rgba(255,255,255,0.25)" }}>
+                      <p className="text-[10px] font-inter mt-1" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                         {day.verses[0]}{day.verses.length > 1 ? ` +${day.verses.length - 1}` : ""}
                       </p>
                     )}

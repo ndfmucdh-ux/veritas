@@ -59,7 +59,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="md:ml-16 min-h-screen flex items-center justify-center">
-        <LoadingState label="Loading your profile…" size="xl" minHeight={0} />
+        <LoadingState label={t.s5Loading} size="xl" minHeight={0} />
       </div>
     );
   }
@@ -99,13 +99,13 @@ export default function Profile() {
             <div className="px-5 space-y-5">
               <DailySummaryCard />
 
-              <Section label="Today's Reading Goal" icon={Target}>
+              <Section label={t.s5TodayGoal} icon={Target}>
                 <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/plans")}>
                   <DailyReadingRing chaptersReadToday={0} />
                 </motion.div>
               </Section>
 
-              <Section label="Reading Goals" icon={Target}>
+              <Section label={t.s5Goals} icon={Target}>
                 <ReadingGoals />
               </Section>
 
@@ -113,7 +113,7 @@ export default function Profile() {
 
               <MonthlyProgressChart />
 
-              <Section label="Join the Community" icon={Users}>
+              <Section label={t.s5JoinCommunity} icon={Users}>
                 <SharedReadingPlan />
               </Section>
             </div>
@@ -156,7 +156,7 @@ export default function Profile() {
                   : notes.slice(0, 4).map(n => (
                     <div key={n.id} className="rounded-xl p-3 mb-2" style={{ background: "rgba(167,139,250,0.06)", border: "1px solid rgba(167,139,250,0.15)" }}>
                       <p className="font-cinzel text-xs mb-1" style={{ color: "#a78bfa" }}>{n.verse_ref}</p>
-                      <p className="text-sm font-inter leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.7)" }}>{n.note_text}</p>
+                      <p className="text-sm font-inter leading-relaxed line-clamp-2" style={{ color: "rgb(var(--ink) / 0.7)" }}>{n.note_text}</p>
                     </div>
                   ))
                 }
@@ -212,10 +212,10 @@ export default function Profile() {
                     { label: "Verses Highlighted", value: highlights.length, color: "#a78bfa", icon: "✨" },
                     { label: "Notes Written", value: notes.length, color: "#34d399", icon: "✍️" },
                   ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div key={s.label} className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.06)" }}>
                       <p className="text-xl mb-1">{s.icon}</p>
                       <p className="font-cinzel text-xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                      <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
+                      <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>{s.label}</p>
                     </div>
                   ))}
                 </div>
@@ -254,11 +254,11 @@ export default function Profile() {
                 <SettingLink icon={Shield} label="Private Notes" sub="All notes are encrypted by default" color="#34d399" tag="On" />
                 <button onClick={downloadLibrary}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-inter text-left transition-colors border-b"
-                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                  style={{ borderColor: "rgb(var(--ink) / 0.05)" }}>
                   <FileText className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.75)" }}>Download My Library</p>
-                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.75)" }}>Download My Library</p>
+                    <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                       Bookmarks, highlights &amp; notes as a beautiful Markdown file
                     </p>
                   </div>

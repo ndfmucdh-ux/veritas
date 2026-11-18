@@ -6,6 +6,8 @@ import AudioStreakChart from "@/components/library/AudioStreakChart";
 import VerseNoteFolderManager from "@/components/library/VerseNoteFolderManager";
 import SocialShareModal from "@/components/library/SocialShareModal";
 import TagManager from "@/components/library/TagManager";
+import NotesView from "@/components/notes/NotesView";
+import { createNote } from "@/lib/services/notesService";
 import ReadingHistory from "@/components/library/ReadingHistory";
 import LibraryCollections from "@/components/library/LibraryCollections";
 import LibraryAssistant from "@/components/library/LibraryAssistant";
@@ -14,6 +16,7 @@ import LibraryTabs from "@/components/library/LibraryTabs.jsx";
 import TagFilterBar from "@/components/library/TagFilterBar.jsx";
 import useLibraryData from "@/hooks/useLibraryData";
 import { LoadingState, EmptyState } from "@/components/ui/states";
+import { useLang } from "@/lib/LanguageContext";
 
 const HIGHLIGHT_COLOR_HEX = {
   yellow: "#fbbf24", cyan: "#00e5ff", purple: "#a78bfa",
@@ -21,6 +24,7 @@ const HIGHLIGHT_COLOR_HEX = {
 };
 
 export default function Library() {
+  const { t } = useLang();
   const [activeTab, setActiveTab] = useState("bookmarks");
   const {
     bookmarks,
@@ -32,6 +36,8 @@ export default function Library() {
     deleteNote,
     updateBookmarkTags,
     updateNoteTags,
+    updateNote,
+    reload,
   } = useLibraryData();
   const [hlDevotional, setHlDevotional] = useState(null);
   const [hlDevLoading, setHlDevLoading] = useState(false);
@@ -121,7 +127,7 @@ export default function Library() {
               <div className="flex items-center gap-1">
                 <button onClick={() => setTagManagerItem({ id: bm.id, type: "bookmark", tags: bm.tags || [] })}
                   className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
-                  style={{ color: (bm.tags?.length > 0) ? "#00f5ff" : "rgba(255,255,255,0.25)" }}>
+                  style={{ color: (bm.tags?.length > 0) ? "#00f5ff" : "rgb(var(--ink) / 0.25)" }}>
                   <Tag className="w-3.5 h-3.5" />
                 </button>
                 <a href={`/read?book=${bm.book}&chapter=${bm.chapter}`}
@@ -178,11 +184,11 @@ export default function Library() {
             style={{ background: "rgba(167,139,250,0.07)", border: "1px solid rgba(167,139,250,0.2)" }}>
             <div className="flex items-center justify-between mb-2">
               <p className="font-cinzel text-xs" style={{ color: "#a78bfa" }}>✦ Devotional · {hlDevotional.ref}</p>
-              <button onClick={() => setHlDevotional(null)}><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+              <button onClick={() => setHlDevotional(null)}><X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} /></button>
             </div>
             {hlDevLoading
-              ? <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" style={{ color: "#a78bfa" }} /><span className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.4)" }}>Seeking wisdom…</span></div>
-              : <p className="text-sm font-inter leading-relaxed whitespace-pre-line" style={{ color: "rgba(255,255,255,0.75)" }}>{hlDevotional.text}</p>
+              ? <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" style={{ color: "#a78bfa" }} /><span className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>Seeking wisdom…</span></div>
+              : <p className="text-sm font-inter leading-relaxed whitespace-pre-line" style={{ color: "rgb(var(--ink) / 0.75)" }}>{hlDevotional.text}</p>
             }
           </motion.div>
         )}
@@ -229,56 +235,17 @@ export default function Library() {
       ? notes.filter(n => (n.tags || []).includes(activeTagFilter))
       : notes;
     return (
-      <div className="space-y-3">
-        <TagFilterBar tags={allTags} activeTag={activeTagFilter} onSelect={setActiveTagFilter} />
-        {filtered.length === 0 && !loading && (
-          <EmptyState icon="✍️" title={activeTagFilter ? `No notes tagged "${activeTagFilter}"` : "No notes yet"} description="Tap any verse and add a personal note or reflection" />
-        )}
-        {filtered.map((note, i) => (
-          <motion.div key={note.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-            className="glass rounded-xl p-4 border border-border/50">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="font-cinzel text-xs text-cyan mb-2">{note.verse_ref}</p>
-                <p className="text-sm text-foreground/90 leading-relaxed font-inter">{note.note_text}</p>
-                <p className="text-xs text-muted-foreground/60 mt-2">
-                  {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </p>
-                {note.tags?.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {note.tags.map(tag => (
-                      <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full font-inter"
-                        style={{ background: "rgba(0,245,255,0.08)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)" }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <button onClick={() => setTagManagerItem({ id: note.id, type: "note", tags: note.tags || [] })}
-                  className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
-                  style={{ color: (note.tags?.length > 0) ? "#00f5ff" : "rgba(255,255,255,0.25)" }}>
-                  <Tag className="w-3.5 h-3.5" />
-                </button>
-                <button onClick={() => setShareItem({ verseRef: note.verse_ref, verseText: note.note_text })}
-                  className="p-1.5 rounded-lg transition-colors hover:bg-cyan/10"
-                  style={{ color: "#00f5ff" }}>
-                  <Share2 className="w-3.5 h-3.5" />
-                </button>
-                <a href={`/read?book=${note.book}&chapter=${note.chapter}`}
-                  className="text-xs text-cyan hover:text-cyan/80 p-1.5 rounded-lg hover:bg-cyan/10 transition-colors">
-                  <BookOpen className="w-3.5 h-3.5" />
-                </a>
-                <button onClick={() => deleteNote(note.id)}
-                  className="text-xs text-muted-foreground hover:text-destructive p-1.5 rounded-lg hover:bg-destructive/10 transition-colors">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      <NotesView
+        notes={filtered}
+        loading={loading}
+        allTags={allTags}
+        tagBar={<TagFilterBar tags={allTags} activeTag={activeTagFilter} onSelect={setActiveTagFilter} />}
+        onCreate={async (data) => { await createNote(data); await reload(); }}
+        onUpdate={updateNote}
+        onDelete={deleteNote}
+        onTag={(note) => setTagManagerItem({ id: note.id, type: "note", tags: note.tags || [] })}
+        onShare={(note) => setShareItem({ verseRef: note.verse_ref, verseText: note.note_text })}
+      />
     );
   };
 
@@ -286,8 +253,8 @@ export default function Library() {
     <div className="md:ml-16 min-h-screen px-4 pt-6">
       <div className="mb-6 flex items-start justify-between gap-3">
         <div>
-          <h1 className="font-cinzel text-2xl font-bold mb-1">My Library</h1>
-          <p className="text-muted-foreground text-sm">Your saved verses, highlights, and notes</p>
+          <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">{t.myLibrary}</h1>
+          <p className="text-muted-foreground text-sm">{t.librarySub}</p>
         </div>
         <LibraryHeaderActions
           showAI={showAI}

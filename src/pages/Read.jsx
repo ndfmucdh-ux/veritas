@@ -7,7 +7,7 @@ import { base44 } from "@/api/base44Client";
 import { loadChapterAnnotations, recordReadingSession } from "@/lib/dataAccess";
 import { SAMPLE_VERSES } from "@/lib/sampleVerses";
 import { getOfflineVerse, getOfflineVerseAsync } from "@/lib/offlineBible";
-import { BIBLE_BOOKS } from "@/lib/bibleData";
+import { BIBLE_BOOKS, getTranslatedBookName, toEnglishBookName, getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 import VerseRow from "@/components/reader/VerseRow.jsx";
 import ChapterHeader from "@/components/reader/ChapterHeader.jsx";
 import ChapterNavigator from "@/components/reader/ChapterNavigator.jsx";
@@ -19,6 +19,7 @@ import ParallelPanel from "@/components/reader/ParallelPanel.jsx";
 import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
 import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
 import ChapterAudioPlayer from "@/components/reader/ChapterAudioPlayer";
+import { savePrefs } from "@/lib/preferencesSync";
 import GuidedReflection from "@/components/prayer/GuidedReflection";
 import MultiSelectActionBar from "@/components/reader/MultiSelectActionBar.jsx";
 import ReaderSettingsPanel from "@/components/reader/ReaderSettingsPanel.jsx";
@@ -26,24 +27,57 @@ import IconBtn from "@/components/reader/ReaderIconButton.jsx";
 import ChapterDownloadButton from "@/components/reader/ChapterDownloadButton.jsx";
 import useVerseSelection from "@/hooks/useVerseSelection";
 import { useLang } from "@/lib/LanguageContext";
+import ChapterPager from "@/components/reader/ChapterPager";
+import BookSidebar from "@/components/reader/BookSidebar";
 
 
 export default function Read() {
   const { lang, t } = useLang();
   const params = new URLSearchParams(window.location.search);
-  const [book, setBook] = useState(params.get("book") || "John");
+  const [book, setBook] = useState(toEnglishBookName(params.get("book") || "John"));
   const [chapter, setChapter] = useState(Number(params.get("chapter")) || 3);
-  const [translation, setTranslation] = useState(
-    params.get("translation") || localStorage.getItem("veritas_translation") || "KJV"
-  );
+  const [translation, setTranslation] = useState(() => {
+    const explicit = params.get("translation");
+    if (explicit) return explicit;
+    const stored = localStorage.getItem("veritas_translation");
+    // The user's explicit choice always wins; the app-language default is only a first-run fallback.
+    return stored || DEFAULT_TRANSLATION_BY_LANG[lang] || "KJV";
+  });
+
+  // Persist the Bible version choice (local + saved preferences).
+  useEffect(() => {
+    if (localStorage.getItem("veritas_translation") === translation) return;
+    localStorage.setItem("veritas_translation", translation);
+    savePrefs({ default_translation: translation });
+  }, [translation]);
+
+  // Language switched elsewhere → Bible text follows.
+  useEffect(() => {
+    const onTranslation = (e) => setTranslation(e.detail);
+    window.addEventListener("veritas:translation", onTranslation);
+    return () => window.removeEventListener("veritas:translation", onTranslation);
+  }, []);
   const targetVerse = Number(params.get("verse")) || null;
   const [verses, setVerses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [immersive, setImmersive] = useState(params.get("immersive") === "1");
   const [showSettings, setShowSettings] = useState(false);
-  const [fontSize, setFontSize] = useState(18);
-  const [fontFamily, setFontFamily] = useState("playfair");
-  const [showNumbers, setShowNumbers] = useState(true);
+  const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem("veritas_reader_font_size")) || 18);
+  const [fontFamily, setFontFamily] = useState(() => localStorage.getItem("veritas_reader_font_family") || "playfair");
+  const [showNumbers, setShowNumbers] = useState(() => localStorage.getItem("veritas_verse_numbers") !== "false");
+
+  // Persist reading settings (local + saved preferences).
+  useEffect(() => {
+    const changed = localStorage.getItem("veritas_reader_font_size") !== String(fontSize)
+      || localStorage.getItem("veritas_reader_font_family") !== fontFamily
+      || localStorage.getItem("veritas_verse_numbers") !== String(showNumbers);
+    if (!changed) return;
+    localStorage.setItem("veritas_reader_font_size", String(fontSize));
+    localStorage.setItem("veritas_reader_font_family", fontFamily);
+    localStorage.setItem("veritas_verse_numbers", String(showNumbers));
+    const ff = ["inter", "playfair", "cinzel"].includes(fontFamily) ? { font_family: fontFamily } : {};
+    savePrefs({ font_size: fontSize, show_verse_numbers: showNumbers, ...ff });
+  }, [fontSize, fontFamily, showNumbers]);
   const [oledMode, setOledMode] = useState(() => localStorage.getItem("veritas_oled_mode") === "true");
   const [highlights, setHighlights] = useState({});
   const [bookmarks, setBookmarks] = useState({});
@@ -210,17 +244,18 @@ export default function Read() {
 
   return (
     <motion.div {...pageTransition}
-      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen"}`}
-      style={{ background: oledMode ? "#000000" : immersive ? "#06080f" : undefined }}
+      className={`flex flex-col ${immersive ? "fixed inset-0 z-50" : "md:ml-16 min-h-screen md:pl-44 xl:pl-64"}`}
+      style={{ background: oledMode ? "#000000" : immersive ? "hsl(var(--background))" : undefined }}
     >
+      {!immersive && <BookSidebar book={book} translation={translation} onNavigate={handleNavigate} />}
       {/* Reader top bar */}
       <div
         className="sticky z-30 px-4 py-3 space-y-3"
         style={{
           top: immersive ? 0 : "57px",
-          background: oledMode ? "rgba(0,0,0,0.97)" : "rgba(6,10,20,0.9)",
+          background: oledMode ? "rgba(0,0,0,0.97)" : "var(--chrome-surface)",
           backdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "1px solid rgb(var(--ink) / 0.06)",
           overflow: "visible",
         }}
       >
@@ -238,17 +273,17 @@ export default function Read() {
 
         <div className="flex items-center gap-2">
           <div className="flex-1" />
-          <IconBtn onClick={toggleSelectionMode} active={selectionMode} title="Multi-select verses">
+          <IconBtn onClick={toggleSelectionMode} active={selectionMode} title={t.multiSelect}>
             <CheckSquare className="w-4 h-4" />
           </IconBtn>
-          <IconBtn onClick={() => copyChapter()} title="Copy chapter">
+          <IconBtn onClick={() => copyChapter()} title={t.copyChapter}>
             {copied ? <Check className="w-4 h-4" style={{ color: "#34d399" }} /> : <Copy className="w-4 h-4" />}
           </IconBtn>
           <ChapterDownloadButton book={book} chapter={chapter} translation={translation} />
-          <IconBtn onClick={() => setShowParallel(true)} title="Parallel view"><Columns className="w-4 h-4" /></IconBtn>
-          <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title="AI Devotional">✨</IconBtn>
-          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title="Reader settings"><Settings className="w-4 h-4" /></IconBtn>
-          <IconBtn onClick={toggleImmersive} title={immersive ? "Exit focus mode" : "Enter focus mode"}>
+          <IconBtn onClick={() => setShowParallel(true)} title={t.parallelView}><Columns className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={() => setDevotionalVerse(verses[0] ? { verse_ref: `${book} ${chapter}:${verses[0].verse}`, verse_text: verses[0].text } : null)} title={t.aiDevotional}>✨</IconBtn>
+          <IconBtn onClick={() => setShowSettings(v => !v)} active={showSettings} title={t.readerSettings}><Settings className="w-4 h-4" /></IconBtn>
+          <IconBtn onClick={toggleImmersive} title={immersive ? t.exitFocus : t.enterFocus}>
             {immersive ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </IconBtn>
         </div>
@@ -269,7 +304,7 @@ export default function Read() {
 
       {/* Scrollable reading area */}
       <div ref={containerRef} className="flex-1 overflow-y-auto overflow-x-visible scrollbar-hide">
-        <div className="px-4 md:px-8 max-w-2xl mx-auto w-full pb-32 pt-2">
+        <div className="mx-3 sm:mx-auto sm:w-full max-w-2xl my-3 mb-40 rounded-3xl bg-card border border-border px-4 md:px-8 pb-6 pt-1" style={{ boxShadow: "0 4px 24px rgba(40,30,15,0.08)" }}>
           {/* Chapter header with parallax */}
           <ChapterHeader
             book={book}
@@ -284,7 +319,7 @@ export default function Read() {
             <div className="mb-6 mt-4">
               <StudyDropdown
                 label={t.jumpToVerse || "Jump to Verse"}
-                placeholder={lang === "es" ? "Seleccionar…" : "Select…"}
+                placeholder={t.select}
                 value={selectedVerse}
                 icon="✨"
                 onChange={(verseNum) => {
@@ -312,8 +347,8 @@ export default function Read() {
           ) : verses.length === 0 ? (
             <EmptyState
               icon="📖"
-              title={`${book} ${chapter} isn't available offline`}
-              description="This translation isn't downloaded yet. Connect to the internet, or switch to KJV which works offline."
+              title={`${getTranslatedBookName(book, getTranslationLang(translation))} ${chapter} ${t.notOfflineTitle}`}
+              description={t.notOfflineDesc}
             />
           ) : (
             <motion.div
@@ -365,9 +400,7 @@ export default function Read() {
 
           {/* Bottom nav */}
           {!loading && verses.length > 0 && (
-            <div className="mt-12">
-              <ChapterNavigator book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
-            </div>
+            <ChapterPager book={book} chapter={chapter} translation={translation} onNavigate={handleNavigate} />
           )}
         </div>
       </div>
@@ -449,9 +482,9 @@ export default function Read() {
             onClick={() => containerRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
             className="fixed bottom-24 md:bottom-8 right-4 w-11 h-11 rounded-full flex items-center justify-center z-30"
             style={{
-              background: "rgba(6,10,20,0.85)",
+              background: "hsl(var(--surface-4) / 0.92)",
               backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              border: "1px solid rgb(var(--ink) / 0.1)",
               boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
             }}
           >

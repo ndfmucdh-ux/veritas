@@ -24,16 +24,16 @@ export default function EmptyState({ icon, title, description, action, className
     >
       {icon != null && (
         isComponentIcon ? (
-          <IconComp className="w-10 h-10" style={{ color: "rgba(255,255,255,0.18)" }} aria-hidden="true" />
+          <IconComp className="w-10 h-10" style={{ color: "rgb(var(--ink) / 0.18)" }} aria-hidden="true" />
         ) : (
           <span className="text-5xl" aria-hidden="true">{icon}</span>
         )
       )}
       {title && (
-        <p className="font-cinzel text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{title}</p>
+        <p className="font-cinzel text-sm" style={{ color: "rgb(var(--ink) / 0.6)" }}>{title}</p>
       )}
       {description && (
-        <p className="text-xs font-inter max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <p className="text-xs font-inter max-w-xs leading-relaxed" style={{ color: "rgb(var(--ink) / 0.5)" }}>
           {description}
         </p>
       )}

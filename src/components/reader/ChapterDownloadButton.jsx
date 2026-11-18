@@ -42,9 +42,9 @@ export default function ChapterDownloadButton({ book, chapter, translation }) {
       aria-label={title}
       className="w-9 h-9 rounded-xl flex items-center justify-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
       style={{
-        background: isDone ? "rgba(52,211,153,0.12)" : "rgba(255,255,255,0.05)",
-        border: `1px solid ${isDone ? "rgba(52,211,153,0.3)" : "rgba(255,255,255,0.08)"}`,
-        color: isDone ? "#34d399" : isError ? "#f87171" : "rgba(255,255,255,0.55)",
+        background: isDone ? "rgba(52,211,153,0.12)" : "rgb(var(--ink) / 0.05)",
+        border: `1px solid ${isDone ? "rgba(52,211,153,0.3)" : "rgb(var(--ink) / 0.08)"}`,
+        color: isDone ? "#34d399" : isError ? "#f87171" : "rgb(var(--ink) / 0.55)",
       }}
     >
       {isDownloading ? (

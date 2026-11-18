@@ -87,7 +87,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-cinzel text-base font-bold text-white">Thematic Collections</h2>
-          <p className="text-[11px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-[11px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
             Organize verses by theme — Comfort, Strength, Wisdom…
           </p>
         </div>
@@ -113,9 +113,9 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                   <button key={p.name} onClick={() => { setNewName(p.name); setNewEmoji(p.emoji); setNewColor(p.color); }}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-cinzel transition-all"
                     style={{
-                      background: newName === p.name ? `${p.color}20` : "rgba(255,255,255,0.04)",
-                      color: newName === p.name ? p.color : "rgba(255,255,255,0.5)",
-                      border: newName === p.name ? `1px solid ${p.color}50` : "1px solid rgba(255,255,255,0.08)",
+                      background: newName === p.name ? `${p.color}20` : "rgb(var(--ink) / 0.04)",
+                      color: newName === p.name ? p.color : "rgb(var(--ink) / 0.5)",
+                      border: newName === p.name ? `1px solid ${p.color}50` : "1px solid rgb(var(--ink) / 0.08)",
                     }}>
                     {p.emoji} {p.name}
                   </button>
@@ -126,10 +126,10 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                 <input value={newName} onChange={e => setNewName(e.target.value)}
                   placeholder="Collection name…"
                   className="flex-1 rounded-xl px-3 py-2.5 text-sm font-inter focus:outline-none"
-                  style={{ fontSize: "16px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.85)" }} />
+                  style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.85)" }} />
                 <input value={newEmoji} onChange={e => setNewEmoji(e.target.value)} maxLength={2}
                   className="w-12 text-center rounded-xl px-2 py-2.5 text-lg focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }} />
+                  style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "#fff" }} />
               </div>
 
               <div className="flex gap-2 items-center">
@@ -144,7 +144,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
               <div className="flex gap-2">
                 <button onClick={() => setShowCreate(false)}
                   className="flex-1 py-2.5 rounded-xl font-cinzel text-sm"
-                  style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                  style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>
                   Cancel
                 </button>
                 <button onClick={createCollection} disabled={!newName.trim() || saving}
@@ -173,7 +173,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
       {collections.map((col, i) => (
         <motion.div key={col.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
           className="rounded-2xl overflow-hidden"
-          style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${col.color || "#00f5ff"}22` }}>
+          style={{ background: "var(--fill-1)", border: `1px solid ${col.color || "#00f5ff"}22` }}>
           {/* Collection header */}
           <button className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
             onClick={() => setExpandedId(expandedId === col.id ? null : col.id)}>
@@ -183,7 +183,7 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-cinzel text-sm font-semibold text-white">{col.name}</p>
-              <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+              <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                 {col.verse_count || 0} verse{col.verse_count !== 1 ? "s" : ""}
               </p>
             </div>
@@ -195,10 +195,10 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
               </button>
               <button onClick={e => { e.stopPropagation(); deleteCollection(col.id); }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ color: "rgba(255,255,255,0.25)" }}>
+                style={{ color: "rgb(var(--ink) / 0.25)" }}>
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
-              <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.25)",
+              <ChevronDown className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.25)",
                 transform: expandedId === col.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
             </div>
           </button>
@@ -209,9 +209,9 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                 <div className="px-4 pb-3 pt-1 space-y-2"
-                  style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                  style={{ borderTop: "1px solid rgb(var(--ink) / 0.05)" }}>
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                       Add to {col.name}
                     </p>
                     <div className="flex gap-1">
@@ -219,9 +219,9 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                         <button key={type} onClick={() => setItemType(type)}
                           className="px-2 py-1 rounded-lg text-[10px] font-cinzel transition-all"
                           style={{
-                            background: itemType === type ? `${col.color}20` : "rgba(255,255,255,0.04)",
-                            color: itemType === type ? col.color : "rgba(255,255,255,0.35)",
-                            border: itemType === type ? `1px solid ${col.color}40` : "1px solid rgba(255,255,255,0.07)"
+                            background: itemType === type ? `${col.color}20` : "rgb(var(--ink) / 0.04)",
+                            color: itemType === type ? col.color : "rgb(var(--ink) / 0.35)",
+                            border: itemType === type ? `1px solid ${col.color}40` : "1px solid rgb(var(--ink) / 0.07)"
                           }}>
                           {emoji} {type}
                         </button>
@@ -235,26 +235,26 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
                         <button key={item.id} onClick={() => !alreadyIn && addItemToCollection(col, item)}
                           className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-all"
                           style={{
-                            background: alreadyIn ? `${col.color}12` : "rgba(255,255,255,0.03)",
+                            background: alreadyIn ? `${col.color}12` : "rgb(var(--ink) / 0.03)",
                             opacity: alreadyIn ? 0.6 : 1
                           }}>
                           <span className="text-sm">{itemType === "bookmark" ? "🔖" : itemType === "highlight" ? "✨" : "✍️"}</span>
                           <span className="text-xs font-cinzel flex-1 truncate text-white">{item.verse_ref}</span>
                           {alreadyIn
                             ? <Check className="w-3 h-3 flex-shrink-0" style={{ color: col.color }} />
-                            : <Plus className="w-3 h-3 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />}
+                            : <Plus className="w-3 h-3 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />}
                         </button>
                       );
                     })}
                     {allItems.filter(it => it._type === itemType).length === 0 && (
-                      <p className="text-xs font-inter text-center py-3" style={{ color: "rgba(255,255,255,0.25)" }}>
+                      <p className="text-xs font-inter text-center py-3" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                         No {itemType}s yet
                       </p>
                     )}
                   </div>
                   <button onClick={() => setAddingTo(null)}
                     className="w-full py-2 rounded-xl font-cinzel text-xs"
-                    style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.35)" }}>
+                    style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                     Done
                   </button>
                 </div>
@@ -268,22 +268,22 @@ export default function LibraryCollections({ bookmarks, highlights, notes }) {
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                 <div className="px-4 pb-4 pt-1 space-y-2"
-                  style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                  style={{ borderTop: "1px solid rgb(var(--ink) / 0.05)" }}>
                   {(!col.verse_refs || col.verse_refs.length === 0) && (
-                    <p className="text-xs font-inter text-center py-3" style={{ color: "rgba(255,255,255,0.25)" }}>
+                    <p className="text-xs font-inter text-center py-3" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                       No verses yet — tap + to add
                     </p>
                   )}
                   {(col.verse_refs || []).map(ref => (
                     <div key={ref} className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                      style={{ background: "rgba(255,255,255,0.03)" }}>
+                      style={{ background: "var(--fill-1)" }}>
                       <span className="text-xs font-cinzel flex-1" style={{ color: col.color || "#00f5ff" }}>{ref}</span>
                       <a href={`/read?book=${encodeURIComponent(ref.split(" ").slice(0,-1).join(" "))}&chapter=${ref.split(" ").pop()?.split(":")[0]}`}
-                        className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.3)" }}>
+                        className="p-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                         <BookOpen className="w-3.5 h-3.5" />
                       </a>
                       <button onClick={() => removeFromCollection(col, ref)}
-                        className="p-1 rounded-lg" style={{ color: "rgba(255,255,255,0.25)" }}>
+                        className="p-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                         <X className="w-3.5 h-3.5" />
                       </button>
                     </div>

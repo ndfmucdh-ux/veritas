@@ -10,11 +10,20 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       fontFamily: {
-        cinzel: ['Cinzel', 'serif'],
+        cinzel: ['Cormorant Garamond', 'EB Garamond', 'Georgia', 'serif'],
         inter: ['Inter', 'sans-serif'],
-        playfair: ['Playfair Display', 'serif'],
+        playfair: ['EB Garamond', 'Georgia', 'serif'],
       },
       colors: {
+        // Theme-aware ink: `text-white/70`, `bg-white/5`, `border-white/10` follow the active theme
+        // (light text on dark, dark text on light). Use `onimage` for text over photos.
+        white: 'rgb(var(--ink) / <alpha-value>)',
+        onimage: 'rgb(var(--text-on-image) / <alpha-value>)',
+        onbright: 'hsl(var(--text-on-bright))',
+        onprimary: 'hsl(var(--primary-foreground))',
+        success: 'hsl(var(--success))',
+        warning: 'hsl(var(--warning))',
+        danger: 'hsl(var(--destructive))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

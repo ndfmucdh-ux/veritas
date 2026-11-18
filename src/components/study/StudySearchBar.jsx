@@ -3,14 +3,14 @@ import { Loader2, Search } from "lucide-react";
 export default function StudySearchBar({ query, onQueryChange, onSearch, loading, placeholder }) {
   return (
     <div className="relative">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "rgb(var(--ink) / 0.3)" }} />
       <input
         value={query}
         onChange={e => onQueryChange(e.target.value)}
         onKeyDown={e => e.key === "Enter" && onSearch()}
         placeholder={placeholder}
         className="w-full pl-10 pr-12 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
-        style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: "rgba(255,255,255,0.85)" }}
+        style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.85)" }}
       />
       <button
         type="button"

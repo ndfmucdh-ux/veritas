@@ -1,29 +1,26 @@
-import { motion } from "framer-motion";
+import { useLang } from "@/lib/LanguageContext";
 
 const DEPTHS = [
-  { id: "overview", label: "Overview", icon: "📄" },
-  { id: "detailed", label: "Detailed", icon: "📖" },
-  { id: "advanced", label: "Advanced", icon: "🎓" },
+  { id: "overview", key: "depthOverview" },
+  { id: "detailed", key: "depthDetailed" },
+  { id: "advanced", key: "depthAdvanced" },
 ];
 
 export default function StudyDepthSelector({ depth, onChange }) {
+  const { t } = useLang();
   return (
-    <div className="flex gap-2">
-      {DEPTHS.map(d => (
-        <motion.button
+    <div className="flex rounded-xl p-1 bg-secondary border border-border">
+      {DEPTHS.map((d) => (
+        <button
           type="button"
           key={d.id}
-          whileTap={{ scale: 0.95 }}
           onClick={() => onChange(d.id)}
-          className="flex-1 py-4 rounded-xl text-sm font-cinzel transition-all font-semibold"
-          style={{
-            background: depth === d.id ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)",
-            color: depth === d.id ? "#00f5ff" : "rgba(255,255,255,0.4)",
-            border: depth === d.id ? "1px solid rgba(0,245,255,0.25)" : "1px solid transparent",
-          }}
+          className={`flex-1 py-2.5 rounded-lg text-sm font-cinzel font-semibold transition-colors ${
+            depth === d.id ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+          }`}
         >
-          {d.icon} {d.label}
-        </motion.button>
+          {t[d.key]}
+        </button>
       ))}
     </div>
   );

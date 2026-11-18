@@ -120,7 +120,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
 
   return (
-    <div className="fixed bottom-36 md:bottom-24 left-4 right-4 md:left-auto md:right-6 md:w-80 z-40">
+    <div className={`fixed bottom-40 md:bottom-28 right-4 md:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -130,7 +130,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             transition={{ duration: 0.22 }}
             className="mb-2 rounded-2xl px-4 py-4 space-y-3"
             style={{
-              background: "rgba(8,12,24,0.97)",
+              background: "var(--popover-surface)",
               border: "1px solid rgba(0,245,255,0.18)",
               backdropFilter: "blur(24px)",
               boxShadow: "0 16px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,245,255,0.08)"
@@ -140,18 +140,18 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-cinzel text-sm font-semibold text-white">{displayBook} {chapter}</p>
-                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>
                   {voiceName} · {translation}
                 </p>
               </div>
               <div className="text-[10px] font-cinzel px-2 py-1 rounded-full"
-                style={{ background: playing ? "rgba(0,245,255,0.1)" : "rgba(255,255,255,0.05)", color: playing ? "#00f5ff" : "rgba(255,255,255,0.3)", border: playing ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)" }}>
+                style={{ background: playing ? "rgba(0,245,255,0.1)" : "rgb(var(--ink) / 0.05)", color: playing ? "#00f5ff" : "rgb(var(--ink) / 0.3)", border: playing ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.07)" }}>
                 {playing ? `v.${currentVerse + 1}` : (isEs ? "Pausado" : "Paused")}
               </div>
             </div>
 
             {/* Progress bar */}
-            <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+            <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
               <motion.div className="h-full rounded-full"
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4 }}
@@ -162,7 +162,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             {/* Verse preview */}
             {verses?.[currentVerse] && (
               <p className="text-xs font-playfair italic leading-relaxed line-clamp-2"
-                style={{ color: "rgba(255,255,255,0.5)" }}>
+                style={{ color: "rgb(var(--ink) / 0.5)" }}>
                 "{verses[currentVerse].text?.substring(0, 100)}…"
               </p>
             )}
@@ -175,8 +175,8 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
                   <button key={s} onClick={() => setSpeed(s)}
                     className="px-2 py-1 rounded-lg font-inter text-[10px] transition-all"
                     style={{
-                      background: speed === s ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.04)",
-                      color: speed === s ? "#00f5ff" : "rgba(255,255,255,0.3)",
+                      background: speed === s ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.04)",
+                      color: speed === s ? "#00f5ff" : "rgb(var(--ink) / 0.3)",
                       border: speed === s ? "1px solid rgba(0,245,255,0.3)" : "1px solid transparent"
                     }}>
                     {s}x
@@ -187,7 +187,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
               {/* Main controls */}
               <div className="flex items-center gap-2">
                 <button onClick={skipBack} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
-                  style={{ color: "rgba(255,255,255,0.4)" }}>
+                  style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   <SkipBack className="w-3.5 h-3.5" />
                 </button>
                 <motion.button
@@ -199,14 +199,14 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
                   {playing ? <Pause className="w-5 h-5 text-cyan" /> : <Play className="w-5 h-5 text-white ml-0.5" />}
                 </motion.button>
                 <button onClick={skipForward} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
-                  style={{ color: "rgba(255,255,255,0.4)" }}>
+                  style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   <SkipForward className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* Mute */}
               <button onClick={toggleMute} className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ color: muted ? "#f87171" : "rgba(255,255,255,0.4)" }}>
+                style={{ color: muted ? "#f87171" : "rgb(var(--ink) / 0.4)" }}>
                 {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </button>
             </div>
@@ -218,10 +218,11 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={() => { setOpen(v => !v); if (open && playing) stopAll(); }}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-2xl w-full justify-center"
+        aria-label={isEs ? "Escuchar Capítulo" : "Listen to Chapter"}
+        className={`flex items-center gap-2 h-12 rounded-full justify-center ${open ? "w-full px-4 rounded-2xl" : playing ? "px-4" : "w-12"}`}
         style={{
-          background: open ? "rgba(8,12,24,0.97)" : "rgba(8,12,24,0.85)",
-          border: `1px solid ${playing ? "rgba(0,245,255,0.35)" : "rgba(255,255,255,0.1)"}`,
+          background: open ? "var(--popover-surface)" : "hsl(var(--surface-4) / 0.9)",
+          border: `1px solid ${playing ? "rgba(0,245,255,0.35)" : "rgb(var(--ink) / 0.1)"}`,
           backdropFilter: "blur(16px)",
           boxShadow: playing ? "0 0 20px rgba(0,245,255,0.15)" : "0 4px 20px rgba(0,0,0,0.5)"
         }}
@@ -235,12 +236,14 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
             ))}
           </span>
         ) : (
-          <Headphones className="w-4 h-4" style={{ color: "#00f5ff" }} />
+          <Headphones className="w-5 h-5" style={{ color: "#00f5ff" }} />
         )}
-        <span className="font-cinzel text-xs font-semibold" style={{ color: playing ? "#00f5ff" : "rgba(255,255,255,0.6)" }}>
-          {playing ? (isEs ? `Escuchando · v.${currentVerse + 1}` : `Listening · v.${currentVerse + 1}`) : (isEs ? "Escuchar Capítulo" : "Listen to Chapter")}
-        </span>
-        <ChevronDown className="w-3.5 h-3.5 ml-auto" style={{ color: "rgba(255,255,255,0.3)", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+        {(open || playing) && (
+          <span className="font-cinzel text-xs font-semibold" style={{ color: playing ? "#00f5ff" : "rgb(var(--ink) / 0.75)" }}>
+            {playing ? (isEs ? `Escuchando · v.${currentVerse + 1}` : `Listening · v.${currentVerse + 1}`) : (isEs ? "Escuchar Capítulo" : "Listen to Chapter")}
+          </span>
+        )}
+        {open && <ChevronDown className="w-4 h-4 ml-auto" style={{ color: "rgb(var(--ink) / 0.6)", transform: "rotate(180deg)" }} />}
       </motion.button>
 
       {/* Hidden audio element for YouVersion audio playback */}

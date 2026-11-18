@@ -88,17 +88,17 @@ export default function ReadingPlanCacheSettings() {
       <button onClick={() => setExpanded(v => !v)} className="w-full flex items-center gap-3 px-4 py-3.5">
         <BookOpen className="w-4 h-4 flex-shrink-0" style={{ color: "#a78bfa" }} />
         <div className="flex-1 text-left">
-          <p className="text-sm font-inter" style={{ color: "rgba(255,255,255,0.8)" }}>Reading Plan Cache</p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.8)" }}>Reading Plan Cache</p>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
             {meta ? `Cached ${meta.totalChapters} chapters · ${new Date(meta.cachedAt).toLocaleDateString()}` : "Cache key chapters for offline reading"}
           </p>
         </div>
-        {expanded ? <ChevronUp className="w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} /> : <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.3)" }} />}
+        {expanded ? <ChevronUp className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.3)" }} /> : <ChevronDown className="w-4 h-4" style={{ color: "rgb(var(--ink) / 0.3)" }} />}
       </button>
 
       {expanded && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 pb-4 border-t space-y-3" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-          <p className="text-[10px] font-inter pt-3" style={{ color: "rgba(255,255,255,0.35)" }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 pb-4 border-t space-y-3" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
+          <p className="text-[10px] font-inter pt-3" style={{ color: "rgb(var(--ink) / 0.35)" }}>
             Caches John, Psalms, Romans, Matthew & Proverbs key chapters (KJV) so they load instantly offline.
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -113,7 +113,7 @@ export default function ReadingPlanCacheSettings() {
           {status === "downloading" && (
             <div className="flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" style={{ color: "#a78bfa" }} />
-              <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.5)" }}>{progress}</p>
+              <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>{progress}</p>
             </div>
           )}
           {status === "error" && <p className="text-xs font-inter" style={{ color: "#f87171" }}>{progress}</p>}

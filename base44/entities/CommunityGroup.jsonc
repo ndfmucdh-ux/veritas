@@ -29,6 +29,40 @@
     },
     "leader_email": {
       "type": "string"
+    },
+    "member_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of users who joined, so each user is counted once"
+    },
+    "plan_selections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "book": {
+            "type": "string"
+          },
+          "chapters": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "description": "Reading plan content: list of { book, chapters[] }"
+    },
+    "plan_total_chapters": {
+      "type": "number",
+      "default": 0
+    },
+    "plan_days": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of days the plan is meant to take"
     }
   },
   "required": [

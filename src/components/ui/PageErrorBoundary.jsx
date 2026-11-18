@@ -43,7 +43,7 @@ export default class PageErrorBoundary extends React.Component {
               <AlertTriangle className="w-6 h-6" style={{ color: "#f87171" }} />
             </div>
             <h2 className="font-cinzel text-lg font-bold text-white mb-2">This page hit a snag</h2>
-            <p className="text-sm font-inter mb-4" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <p className="text-sm font-inter mb-4" style={{ color: "rgb(var(--ink) / 0.5)" }}>
               Please reload to try again. If it keeps happening, restart the app.
             </p>
             {this.state.message && (

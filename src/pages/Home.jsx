@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import HeroVerseSlider from "@/components/home/HeroVerseSlider.jsx";
+import HeroDailyVerse from "@/components/home/HeroDailyVerse.jsx";
+import HomeTiles from "@/components/home/HomeTiles.jsx";
 import CategoryCards from "@/components/home/CategoryCards.jsx";
 import MorningInspiration from "@/components/home/MorningInspiration.jsx";
 import MorningReminder from "@/components/home/MorningReminder.jsx";
@@ -24,23 +25,19 @@ export default function Home() {
     <motion.div {...pageTransition} className="md:ml-16 min-h-screen">
       <HomeAmbientBackground />
 
-      <div className="relative z-10 px-4 pt-4 pb-28 space-y-7 max-w-2xl mx-auto">
+      <div className="relative z-10 px-4 md:px-8 pt-6 pb-28 space-y-6 max-w-3xl mx-auto">
 
         <HomeGreeting />
 
-        {/* Morning Reminder */}
-        <MorningReminder />
+        <HeroDailyVerse />
 
-        {/* Daily Reading Goal */}
-        <DailyGoalBar />
-
-        {/* Daily Reflection Card */}
-        <DailyReflectionCard />
-
-        {/* Hero Verse Slider */}
-        <HeroVerseSlider />
+        <HomeTiles />
 
         <ContinueReadingCard />
+
+        <MorningReminder />
+
+        <DailyReflectionCard />
 
         {/* Category Cards */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.28 }}>
@@ -57,7 +54,7 @@ export default function Home() {
         {/* Beloved Verses */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
           <HomeSectionHeader label={t.belovedVerses} linkTo="/search" linkLabel={t.search} />
-          <div className="space-y-3">
+          <div className="space-y-2">
             {(t.featuredVerses || FEATURED_VERSES).slice(0, 5).map((v, i) => (
               <motion.div key={v.ref} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 + i * 0.07 }}>
                 <VersePreviewCard verse={v} />
@@ -76,6 +73,9 @@ export default function Home() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           <MorningInspiration />
         </motion.div>
+
+        {/* Daily Reading Goal — compact, at the bottom */}
+        <DailyGoalBar />
       </div>
     </motion.div>
   );

@@ -194,10 +194,10 @@ export default function EmblemBadges({ streak = 0, prayerCount = 0, highlightCou
     <div>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+          <p className="font-cinzel text-xs uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             Emblems & Honours
           </p>
-          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.2)" }}>
+          <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.2)" }}>
             {unlockedCount} of {EMBLEMS.length} earned
           </p>
         </div>
@@ -222,20 +222,20 @@ export default function EmblemBadges({ streak = 0, prayerCount = 0, highlightCou
               style={{
                 background: unlocked
                   ? `linear-gradient(160deg, ${emblem.color}0d 0%, ${emblem.color}04 100%)`
-                  : "rgba(255,255,255,0.02)",
+                  : "rgb(var(--ink) / 0.02)",
                 border: unlocked
                   ? `1px solid ${emblem.color}30`
-                  : "1px solid rgba(255,255,255,0.05)",
+                  : "1px solid rgb(var(--ink) / 0.05)",
               }}
               title={emblem.desc}
             >
               {/* Tier indicator */}
               <div className="absolute top-2 right-2 w-4 h-4 rounded-sm flex items-center justify-center"
                 style={{
-                  background: unlocked ? `${TIER_COLORS[emblem.tier]}22` : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${unlocked ? TIER_COLORS[emblem.tier] + "40" : "rgba(255,255,255,0.07)"}`,
+                  background: unlocked ? `${TIER_COLORS[emblem.tier]}22` : "rgb(var(--ink) / 0.04)",
+                  border: `1px solid ${unlocked ? TIER_COLORS[emblem.tier] + "40" : "rgb(var(--ink) / 0.07)"}`,
                 }}>
-                <span className="font-cinzel" style={{ fontSize: "6px", color: unlocked ? TIER_COLORS[emblem.tier] : "rgba(255,255,255,0.2)" }}>
+                <span className="font-cinzel" style={{ fontSize: "6px", color: unlocked ? TIER_COLORS[emblem.tier] : "rgb(var(--ink) / 0.2)" }}>
                   {emblem.tier}
                 </span>
               </div>
@@ -245,13 +245,13 @@ export default function EmblemBadges({ streak = 0, prayerCount = 0, highlightCou
 
               {/* Name */}
               <p className="font-cinzel text-[10px] text-center leading-tight font-semibold"
-                style={{ color: unlocked ? emblem.color : "rgba(255,255,255,0.2)" }}>
+                style={{ color: unlocked ? emblem.color : "rgb(var(--ink) / 0.2)" }}>
                 {emblem.name}
               </p>
 
               {/* Desc */}
               <p className="text-[8px] font-inter text-center leading-tight"
-                style={{ color: unlocked ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.15)" }}>
+                style={{ color: unlocked ? "rgb(var(--ink) / 0.4)" : "rgb(var(--ink) / 0.15)" }}>
                 {emblem.desc}
               </p>
 

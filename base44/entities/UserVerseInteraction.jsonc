@@ -62,6 +62,10 @@
     "last_interacted_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "note_title": {
+      "type": "string",
+      "description": "Optional title of a note written from the Notes page"
     }
   },
   "required": [

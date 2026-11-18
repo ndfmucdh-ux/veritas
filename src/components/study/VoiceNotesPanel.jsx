@@ -22,11 +22,11 @@ export default function VoiceNotesPanel({ notes, audioRef, playingAudioUrl, onPl
       <div className="flex items-center gap-2 mb-3">
         <Mic className="w-4 h-4" style={{ color: "#00f5ff" }} />
         <p className="font-cinzel text-sm font-semibold text-white">Voice Notes</p>
-        <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{notes.length} recordings</p>
+        <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{notes.length} recordings</p>
       </div>
       <div className="space-y-2">
         {notes.slice(0, 5).map(note => (
-          <div key={note.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div key={note.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
             <button
               type="button"
               onClick={() => toggleAudio(note.audio_url)}
@@ -37,7 +37,7 @@ export default function VoiceNotesPanel({ notes, audioRef, playingAudioUrl, onPl
             </button>
             <div className="flex-1 min-w-0">
               <p className="font-cinzel text-xs text-white truncate">{note.verse_ref}</p>
-              <p className="text-[10px] font-inter capitalize" style={{ color: "rgba(255,255,255,0.35)" }}>{note.mood} · {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+              <p className="text-[10px] font-inter capitalize" style={{ color: "rgb(var(--ink) / 0.35)" }}>{note.mood} · {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
             </div>
           </div>
         ))}

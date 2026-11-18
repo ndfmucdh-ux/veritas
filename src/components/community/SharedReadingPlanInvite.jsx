@@ -65,7 +65,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={e => e.stopPropagation()}
               className="rounded-2xl max-w-sm w-full p-5"
-              style={{ background: "rgba(6,10,20,0.95)", border: "1px solid rgba(0,245,255,0.15)" }}
+              style={{ background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.15)" }}
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
@@ -76,19 +76,19 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                 <button
                   onClick={() => setShowModal(false)}
                   className="p-1 rounded-lg hover:opacity-70"
-                  style={{ background: "rgba(255,255,255,0.05)" }}
+                  style={{ background: "var(--fill-2)" }}
                 >
                   <X className="w-4 h-4 text-white/50" />
                 </button>
               </div>
 
-              <p className="text-sm font-inter mb-4" style={{ color: "rgba(255,255,255,0.6)" }}>
+              <p className="text-sm font-inter mb-4" style={{ color: "rgb(var(--ink) / 0.6)" }}>
                 Share this reading plan with friends
               </p>
 
               {/* Copy Link */}
               <div className="mb-4">
-                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
+                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                   Copy Link
                 </p>
                 <div className="flex gap-2">
@@ -97,7 +97,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                     value={inviteLink}
                     readOnly
                     className="flex-1 px-3 py-2.5 rounded-lg text-xs font-inter focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.7)" }}
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.7)" }}
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
@@ -112,7 +112,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
 
               {/* Email Invite */}
               <div>
-                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
+                <p className="text-xs font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                   Send Email
                 </p>
                 <div className="flex gap-2">
@@ -123,7 +123,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                     onKeyDown={e => e.key === "Enter" && handleSendEmail()}
                     placeholder="friend@example.com"
                     className="flex-1 px-3 py-2.5 rounded-lg text-xs font-inter focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.7)" }}
+                    style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.7)" }}
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}

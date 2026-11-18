@@ -88,7 +88,7 @@ export default function Search() {
     <div className="md:ml-16 min-h-screen px-4 pt-6 pb-28">
       {/* Header */}
       <div className="mb-5">
-        <h1 className="font-cinzel text-2xl font-bold mb-1">{t.search}</h1>
+        <h1 className="font-cinzel text-3xl font-semibold text-foreground mb-1">{t.search}</h1>
         <p className="text-muted-foreground text-sm">{t.scripture} · {t.myNotes} · {t.prayerJournalTab}</p>
       </div>
 
@@ -193,7 +193,7 @@ export default function Search() {
                       </a>
                     </div>
                   )}
-                  <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+                  <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                     <Highlight text={n.note_text || ""} query={query} />
                   </p>
                 </motion.div>
@@ -214,9 +214,9 @@ export default function Search() {
                     <div className="flex items-center gap-2 mb-2">
                       {p.mood && <span className="text-[10px] font-cinzel px-2 py-0.5 rounded-full capitalize"
                         style={{ background: `${c}18`, color: c, border: `1px solid ${c}33` }}>{p.mood}</span>}
-                      {p.verse_ref && <span className="text-[10px] font-cinzel" style={{ color: "rgba(255,255,255,0.35)" }}>{p.verse_ref}</span>}
+                      {p.verse_ref && <span className="text-[10px] font-cinzel" style={{ color: "rgb(var(--ink) / 0.35)" }}>{p.verse_ref}</span>}
                     </div>
-                    <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
+                    <p className="text-sm font-playfair italic leading-relaxed" style={{ color: "rgb(var(--ink) / 0.72)" }}>
                       "<Highlight text={p.prayer_text || ""} query={query} />"
                     </p>
                   </motion.div>

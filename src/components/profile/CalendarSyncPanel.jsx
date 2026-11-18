@@ -86,7 +86,7 @@ export default function CalendarSyncPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="p-4 rounded-2xl" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="p-4 rounded-2xl" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
         <div className="flex items-center gap-3 mb-4">
           <Calendar className="w-5 h-5 text-cyan" />
           <h3 className="font-cinzel font-semibold text-white">Calendar Sync</h3>
@@ -102,7 +102,7 @@ export default function CalendarSyncPanel() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="p-3 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
+                style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.05)" }}
               >
                 <div className="flex items-center justify-between">
                   <div>

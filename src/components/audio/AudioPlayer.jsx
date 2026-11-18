@@ -45,7 +45,7 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
       exit={{ y: 100, opacity: 0 }}
       className="fixed bottom-28 left-4 right-4 rounded-2xl p-4 z-40"
       style={{
-        background: "rgba(6,10,20,0.95)",
+        background: "var(--popover-surface)",
         backdropFilter: "blur(20px)",
         border: "1px solid rgba(0,245,255,0.15)",
         boxShadow: "0 8px 32px rgba(0,245,255,0.1)"

@@ -36,24 +36,24 @@ export default function NotesArchive() {
       {/* Search + filter bar */}
       <div className="flex gap-2">
         <div className="flex-1 flex items-center gap-2 px-3 py-2.5 rounded-xl"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}>
-          <Search className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(255,255,255,0.3)" }} />
+          style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)" }}>
+          <Search className="w-4 h-4 flex-shrink-0" style={{ color: "rgb(var(--ink) / 0.3)" }} />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search notes, verses, keywords…"
             className="flex-1 bg-transparent text-sm font-inter focus:outline-none"
-            style={{ color: "rgba(255,255,255,0.8)", fontSize: "16px" }}
+            style={{ color: "rgb(var(--ink) / 0.8)", fontSize: "16px" }}
           />
           {search && (
-            <button onClick={() => setSearch("")}><X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.3)" }} /></button>
+            <button onClick={() => setSearch("")}><X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} /></button>
           )}
         </div>
         <select
           value={bookFilter}
           onChange={e => setBookFilter(e.target.value)}
           className="px-3 py-2.5 rounded-xl text-sm font-cinzel focus:outline-none"
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", color: bookFilter ? "#00f5ff" : "rgba(255,255,255,0.4)" }}
+          style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: bookFilter ? "#00f5ff" : "rgb(var(--ink) / 0.4)" }}
         >
           <option value="">All Books</option>
           {allBooks.map(b => <option key={b} value={b}>{b}</option>)}
@@ -61,7 +61,7 @@ export default function NotesArchive() {
       </div>
 
       {/* Count */}
-      <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
+      <p className="text-[10px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.25)" }}>
         {filtered.length} {filtered.length === 1 ? "note" : "notes"}{bookFilter ? ` in ${bookFilter}` : ""}{search ? ` matching "${search}"` : ""}
       </p>
 
@@ -93,7 +93,7 @@ export default function NotesArchive() {
                     <p className="font-cinzel text-xs font-semibold" style={{ color: "#a78bfa" }}>{note.verse_ref}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.25)" }}>
+                    <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.25)" }}>
                       {new Date(note.created_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </p>
                     {note.book && note.chapter && (
@@ -106,7 +106,7 @@ export default function NotesArchive() {
                     )}
                   </div>
                 </div>
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
+                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.75)" }}>
                   {note.note_text}
                 </p>
                 {note.tags?.length > 0 && (

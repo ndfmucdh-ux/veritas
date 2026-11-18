@@ -94,17 +94,17 @@ export default function StudyProgressMap() {
           <button onClick={() => setActivePlan(null)}
             className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-cinzel transition-all"
             style={{
-              background: !activePlan ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.05)",
-              color: !activePlan ? "#00f5ff" : "rgba(255,255,255,0.4)",
-              border: !activePlan ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgba(255,255,255,0.07)",
+              background: !activePlan ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.05)",
+              color: !activePlan ? "#00f5ff" : "rgb(var(--ink) / 0.4)",
+              border: !activePlan ? "1px solid rgba(0,245,255,0.3)" : "1px solid rgb(var(--ink) / 0.07)",
             }}>All Plans</button>
           {allPlans.map(plan => (
             <button key={plan.id} onClick={() => setActivePlan(plan.id === activePlan ? null : plan.id)}
               className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-cinzel transition-all"
               style={{
-                background: activePlan === plan.id ? `${plan.accent}18` : "rgba(255,255,255,0.05)",
-                color: activePlan === plan.id ? plan.accent : "rgba(255,255,255,0.4)",
-                border: activePlan === plan.id ? `1px solid ${plan.accent}40` : "1px solid rgba(255,255,255,0.07)",
+                background: activePlan === plan.id ? `${plan.accent}18` : "rgb(var(--ink) / 0.05)",
+                color: activePlan === plan.id ? plan.accent : "rgb(var(--ink) / 0.4)",
+                border: activePlan === plan.id ? `1px solid ${plan.accent}40` : "1px solid rgb(var(--ink) / 0.07)",
               }}>
               {plan.title.length > 18 ? plan.title.slice(0, 18) + "…" : plan.title}
             </button>
@@ -129,21 +129,21 @@ function PlanProgressMap({ plan }) {
 
   return (
     <div className="rounded-2xl overflow-hidden"
-      style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${accent}18` }}>
+      style={{ background: "var(--fill-1)", border: `1px solid ${accent}18` }}>
       <div className="px-5 pt-5 pb-4" style={{ borderBottom: `1px solid ${accent}12` }}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
             {icon && <span className="text-xl flex-shrink-0">{icon}</span>}
             <div className="min-w-0">
               <h3 className="font-cinzel text-sm font-bold text-white truncate">{title}</h3>
-              <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
                 {completedDays} of {totalDays} {plan.type === "custom" ? "chapters" : "days"} · {pct}%
               </p>
             </div>
           </div>
           <span className="font-cinzel text-lg font-bold flex-shrink-0" style={{ color: accent }}>{pct}%</span>
         </div>
-        <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
           <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             className="h-full rounded-full"
@@ -152,7 +152,7 @@ function PlanProgressMap({ plan }) {
       </div>
 
       <div className="px-5 py-5">
-        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-5" style={{ color: "rgba(255,255,255,0.25)" }}>
+        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-5" style={{ color: "rgb(var(--ink) / 0.25)" }}>
           Journey Milestones
         </p>
 
@@ -172,7 +172,7 @@ function PlanProgressMap({ plan }) {
               return (
                 <div key={milestone} className="flex items-center">
                   <div className="relative" style={{ width: 60, height: 6, marginTop: isFinal ? 23 : 18 }}>
-                    <div className="absolute inset-0 rounded-full" style={{ background: "rgba(255,255,255,0.07)" }} />
+                    <div className="absolute inset-0 rounded-full" style={{ background: "var(--fill-3)" }} />
                     <motion.div className="absolute inset-y-0 left-0 rounded-full"
                       initial={{ width: 0 }} animate={{ width: `${segmentPct}%` }}
                       transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: milestoneIdx * 0.08 }}
@@ -185,8 +185,8 @@ function PlanProgressMap({ plan }) {
                     <div className="relative flex items-center justify-center rounded-full"
                       style={{
                         width: isFinal ? 52 : 42, height: isFinal ? 52 : 42,
-                        background: isDone ? `linear-gradient(135deg, ${accent}33, ${accent}18)` : isActive ? `${accent}12` : "rgba(255,255,255,0.04)",
-                        border: isDone ? `2px solid ${accent}70` : isActive ? `1.5px solid ${accent}40` : "1.5px solid rgba(255,255,255,0.1)",
+                        background: isDone ? `linear-gradient(135deg, ${accent}33, ${accent}18)` : isActive ? `${accent}12` : "rgb(var(--ink) / 0.04)",
+                        border: isDone ? `2px solid ${accent}70` : isActive ? `1.5px solid ${accent}40` : "1.5px solid rgb(var(--ink) / 0.1)",
                         boxShadow: isDone ? `0 0 16px ${accent}30` : isActive ? `0 0 8px ${accent}18` : "none",
                       }}>
                       {isFinal ? <span className="text-xl">{isDone ? "👑" : "🏆"}</span>
@@ -195,7 +195,7 @@ function PlanProgressMap({ plan }) {
                           <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 2, repeat: Infinity }}>
                             <Flame className="w-4 h-4" style={{ color: accent }} />
                           </motion.div>
-                        ) : <Lock className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.18)" }} />
+                        ) : <Lock className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.18)" }} />
                       }
                       {isDone && (
                         <motion.div className="absolute inset-0 rounded-full"
@@ -206,7 +206,7 @@ function PlanProgressMap({ plan }) {
                     </div>
                     <div className="text-center">
                       <p className="text-[9px] font-cinzel font-bold"
-                        style={{ color: isDone ? accent : isActive ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.2)" }}>
+                        style={{ color: isDone ? accent : isActive ? "rgb(var(--ink) / 0.6)" : "rgb(var(--ink) / 0.2)" }}>
                         {isFinal ? "Finish" : `Day ${milestone}`}
                       </p>
                       {isDone && !isFinal && <p className="text-[8px] font-inter" style={{ color: accent, opacity: 0.7 }}>✓ Done</p>}
@@ -226,10 +226,10 @@ function PlanProgressMap({ plan }) {
             { label: "Milestones", value: `${milestones.filter(m => completedDays >= m).length}/${milestones.length}`, icon: <Star className="w-3.5 h-3.5" />, color: "#fbbf24" },
           ].map(stat => (
             <div key={stat.label} className="rounded-xl p-3 flex flex-col items-center gap-1"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.06)" }}>
               <div style={{ color: stat.color }}>{stat.icon}</div>
               <p className="font-cinzel text-base font-bold" style={{ color: stat.color }}>{stat.value}</p>
-              <p className="text-[9px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{stat.label}</p>
+              <p className="text-[9px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{stat.label}</p>
             </div>
           ))}
         </div>
@@ -245,7 +245,7 @@ function PlanProgressMap({ plan }) {
               <Zap className="w-4 h-4 flex-shrink-0" style={{ color: accent }} />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-cinzel font-semibold" style={{ color: accent }}>Next milestone: Day {nextMilestone}</p>
-                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+                <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   {remaining} {plan.type === "custom" ? "chapter" : "day"}{remaining !== 1 ? "s" : ""} to go
                 </p>
               </div>

@@ -89,14 +89,14 @@ export default function AudioStreakChart() {
           <div key={s.label} className="rounded-2xl p-3 text-center"
             style={{ background: `${s.color}08`, border: `1px solid ${s.color}20` }}>
             <p className="font-cinzel text-base font-bold" style={{ color: s.color }}>{s.value}</p>
-            <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{s.label}</p>
+            <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Weekly streak heatmap */}
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-        <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+        <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           This Week's Listening
         </p>
         <div className="flex gap-2">
@@ -106,13 +106,13 @@ export default function AudioStreakChart() {
                 initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: i * 0.06 }}
                 className="w-full aspect-square rounded-xl flex items-center justify-center"
                 style={{
-                  background: d.active ? "rgba(251,146,60,0.25)" : "rgba(255,255,255,0.04)",
-                  border: d.active ? "1.5px solid rgba(251,146,60,0.5)" : "1px solid rgba(255,255,255,0.07)",
+                  background: d.active ? "rgba(251,146,60,0.25)" : "rgb(var(--ink) / 0.04)",
+                  border: d.active ? "1.5px solid rgba(251,146,60,0.5)" : "1px solid rgb(var(--ink) / 0.07)",
                   boxShadow: d.active ? "0 0 14px rgba(251,146,60,0.2)" : "none",
                 }}>
                 {d.active && <Flame className="w-4 h-4" style={{ color: "#fb923c" }} />}
               </motion.div>
-              <span className="text-[9px] font-cinzel" style={{ color: d.active ? "#fb923c" : "rgba(255,255,255,0.25)" }}>{d.day}</span>
+              <span className="text-[9px] font-cinzel" style={{ color: d.active ? "#fb923c" : "rgb(var(--ink) / 0.25)" }}>{d.day}</span>
             </div>
           ))}
         </div>
@@ -124,9 +124,9 @@ export default function AudioStreakChart() {
           <button key={v} onClick={() => setView(v)}
             className="flex-1 py-2 rounded-xl font-cinzel text-xs transition-all"
             style={{
-              background: view === v ? "rgba(0,245,255,0.12)" : "rgba(255,255,255,0.04)",
-              color: view === v ? "#00f5ff" : "rgba(255,255,255,0.35)",
-              border: view === v ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgba(255,255,255,0.07)",
+              background: view === v ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
+              color: view === v ? "#00f5ff" : "rgb(var(--ink) / 0.35)",
+              border: view === v ? "1px solid rgba(0,245,255,0.25)" : "1px solid rgb(var(--ink) / 0.07)",
             }}>
             {l}
           </button>
@@ -134,20 +134,20 @@ export default function AudioStreakChart() {
       </div>
 
       {/* Weekly trend chart */}
-      <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-        <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
+      <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+        <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>
           8-Week Trend
         </p>
         <div className="h-28">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={weeklyData} margin={{ top: 2, right: 2, left: -28, bottom: 0 }}>
-              <XAxis dataKey="label" tick={{ fontSize: 9, fill: "rgba(255,255,255,0.3)", fontFamily: "Cinzel" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 9, fill: "rgba(255,255,255,0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 9, fill: "rgb(var(--ink) / 0.3)", fontFamily: "Cinzel" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "rgb(var(--ink) / 0.3)" }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip
-                contentStyle={{ background: "rgba(10,15,30,0.95)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 10, fontSize: 11, fontFamily: "Cinzel" }}
+                contentStyle={{ background: "var(--popover-surface)", border: "1px solid rgba(0,245,255,0.2)", borderRadius: 10, fontSize: 11, fontFamily: "Cinzel" }}
                 labelStyle={{ color: "#00f5ff" }}
-                itemStyle={{ color: "rgba(255,255,255,0.7)" }}
-                cursor={{ fill: "rgba(255,255,255,0.04)" }}
+                itemStyle={{ color: "rgb(var(--ink) / 0.7)" }}
+                cursor={{ fill: "rgb(var(--ink) / 0.04)" }}
               />
               <Bar dataKey={view === "streak" ? "chapters" : "minutes"} radius={[4, 4, 0, 0]}
                 fill={view === "streak" ? "#00f5ff" : "#a78bfa"}
@@ -160,8 +160,8 @@ export default function AudioStreakChart() {
 
       {/* Top books listened to */}
       {topBooks.length > 0 && (
-        <div className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-          <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <div className="rounded-2xl p-4" style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
+          <p className="font-cinzel text-[10px] uppercase tracking-widest mb-3" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             Most Listened
           </p>
           <div className="space-y-2">
@@ -177,7 +177,7 @@ export default function AudioStreakChart() {
                       <span className="font-cinzel text-xs text-white">{book}</span>
                       <span className="text-[10px] font-inter" style={{ color: colors[i] }}>{count} ch</span>
                     </div>
-                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--fill-3)" }}>
                       <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: i * 0.1, duration: 0.6 }}
                         className="h-full rounded-full" style={{ background: colors[i] }} />
                     </div>

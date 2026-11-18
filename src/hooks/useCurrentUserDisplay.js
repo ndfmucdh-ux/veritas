@@ -24,6 +24,16 @@ export default function useCurrentUserDisplay() {
     });
   }, []);
 
+  // Profile page saves a new photo or name: refresh the top bar right away.
+  useEffect(() => {
+    const sync = () => {
+      setDisplayName(sessionStorage.getItem("veritas_display_name") || "");
+      setDisplayAvatar(sessionStorage.getItem("veritas_avatar_url") || null);
+    };
+    window.addEventListener("veritas:profile", sync);
+    return () => window.removeEventListener("veritas:profile", sync);
+  }, []);
+
   return {
     user,
     displayName,

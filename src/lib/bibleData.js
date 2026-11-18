@@ -1,3 +1,5 @@
+import { BOOK_NAMES_DE } from "@/lib/bookNamesDe";
+
 // Bible book data: canonical order, abbreviations, chapter counts
 export const BIBLE_BOOKS = [
   // Old Testament
@@ -147,8 +149,22 @@ export const getTranslatedBookName = (englishName, lang) => {
   if (lang === "pt") return BOOK_NAMES_PT[englishName] || englishName;
   if (lang === "fr") return BOOK_NAMES_FR[englishName] || englishName;
   if (lang === "it") return BOOK_NAMES_IT[englishName] || englishName;
+  if (lang === "de") return BOOK_NAMES_DE[englishName] || englishName;
   return englishName;
 };
+
+// Reverse lookup: any localized book name (es/pt/fr/it) or singular alias → canonical English name.
+const REVERSE_BOOKS = (() => {
+  const map = { Salmo: "Psalms", Psalm: "Psalms", Cantares: "Song of Solomon", "Cantar de los Cantares": "Song of Solomon" };
+  [BOOK_NAMES_ES, BOOK_NAMES_PT, BOOK_NAMES_FR, BOOK_NAMES_IT, BOOK_NAMES_DE].forEach(dict => {
+    Object.entries(dict).forEach(([en, loc]) => { map[loc] = en; });
+  });
+  return map;
+})();
+export const toEnglishBookName = (name = "") => REVERSE_BOOKS[name] || name;
+
+// Default translation for an app language (Spanish → BTX3 Biblia Textual, English → KJV).
+export const DEFAULT_TRANSLATION_BY_LANG = { en: "KJV", es: "BTX3", fr: "LSG", pt: "ARA", de: "LUT" };
 
 // Language of a translation's CONTENT (e.g. BTX3 → "es", KJV → "en").
 export const getTranslationLang = (code = "KJV") =>

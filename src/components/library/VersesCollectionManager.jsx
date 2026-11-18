@@ -78,7 +78,7 @@ export default function VersesCollectionManager() {
     <div className="space-y-4">
       {/* Preset quick-create row */}
       <div>
-        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)" }}>Quick create</p>
+        <p className="text-[9px] font-cinzel uppercase tracking-widest mb-2" style={{ color: "rgb(var(--ink) / 0.3)" }}>Quick create</p>
         <div className="flex flex-wrap gap-2">
           {PRESET_COLLECTIONS.filter(p => !collections.find(c => c.name === p.name)).map(p => (
             <button key={p.name} onClick={() => createCollection(p.name, p.icon, p.color)}
@@ -109,12 +109,12 @@ export default function VersesCollectionManager() {
             <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
               placeholder="Collection name (e.g., Comfort, Promises)"
               className="w-full px-3 py-2.5 rounded-lg text-sm font-inter focus:outline-none"
-              style={{ fontSize: "16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.2)", color: "rgba(255,255,255,0.8)" }} />
+              style={{ fontSize: "16px", background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.8)" }} />
             <div className="flex flex-wrap gap-2">
               {ICONS.map(ic => (
                 <button key={ic} onClick={() => setNewIcon(ic)}
                   className="text-xl p-2 rounded-lg transition-all"
-                  style={{ background: newIcon === ic ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)" }}>
+                  style={{ background: newIcon === ic ? "rgba(0,245,255,0.15)" : "rgb(var(--ink) / 0.05)" }}>
                   {ic}
                 </button>
               ))}
@@ -123,7 +123,7 @@ export default function VersesCollectionManager() {
               {COLORS.map(c => (
                 <button key={c} onClick={() => setNewColor(c)}
                   className="w-8 h-8 rounded-lg transition-all"
-                  style={{ background: c, border: newColor === c ? "2px solid rgba(255,255,255,0.5)" : "1px solid transparent", transform: newColor === c ? "scale(1.1)" : "scale(1)" }} />
+                  style={{ background: c, border: newColor === c ? "2px solid rgb(var(--ink) / 0.5)" : "1px solid transparent", transform: newColor === c ? "scale(1.1)" : "scale(1)" }} />
               ))}
             </div>
             <div className="flex gap-2">
@@ -134,7 +134,7 @@ export default function VersesCollectionManager() {
               </button>
               <button onClick={() => setShowCreateForm(false)}
                 className="flex-1 py-2.5 rounded-lg font-cinzel text-sm"
-                style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.4)" }}>
+                style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.4)" }}>
                 Cancel
               </button>
             </div>
@@ -155,7 +155,7 @@ export default function VersesCollectionManager() {
               <span className="text-2xl">{col.icon}</span>
               <div className="flex-1 min-w-0">
                 <p className="font-cinzel font-semibold text-white">{col.name}</p>
-                <p className="text-xs font-inter" style={{ color: "rgba(255,255,255,0.35)" }}>{col.verse_count || 0} verses</p>
+                <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>{col.verse_count || 0} verses</p>
               </div>
               <div className="flex items-center gap-1.5">
                 {(col.verse_refs?.length > 0) && (
@@ -165,7 +165,7 @@ export default function VersesCollectionManager() {
                   </motion.button>
                 )}
                 <button onClick={() => setExpandedId(expandedId === col.id ? null : col.id)}
-                  className="p-2 rounded-lg transition-all" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.45)" }}>
+                  className="p-2 rounded-lg transition-all" style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.45)" }}>
                   <ChevronDown className="w-4 h-4 transition-transform" style={{ transform: expandedId === col.id ? "rotate(180deg)" : "none" }} />
                 </button>
                 <button onClick={() => deleteCollection(col.id)} className="p-2 rounded-lg hover:bg-red-500/10 transition-all">
@@ -184,7 +184,7 @@ export default function VersesCollectionManager() {
                     ) : (
                       <div className="space-y-1 max-h-40 overflow-y-auto scrollbar-hide">
                         {(col.verse_refs || []).map((ref, i) => (
-                          <p key={i} className="text-xs font-cinzel px-2 py-1 rounded-lg" style={{ color: "rgba(255,255,255,0.65)", background: "rgba(255,255,255,0.04)" }}>{ref}</p>
+                          <p key={i} className="text-xs font-cinzel px-2 py-1 rounded-lg" style={{ color: "rgb(var(--ink) / 0.65)", background: "var(--fill-2)" }}>{ref}</p>
                         ))}
                       </div>
                     )}
@@ -192,23 +192,23 @@ export default function VersesCollectionManager() {
                     {/* Add from folder */}
                     {addingFolderTo === col.id ? (
                       <div className="space-y-2 pt-1">
-                        <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>Add from folder</p>
+                        <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>Add from folder</p>
                         <div className="space-y-1 max-h-36 overflow-y-auto scrollbar-hide">
                           {folders.length === 0 ? (
                             <p className="text-xs text-white/30 font-inter">No folders yet. Save verses to a folder first.</p>
                           ) : folders.map(f => (
                             <button key={f.id} onClick={() => addFolderVerses(col, f)}
                               className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-all"
-                              style={{ background: selectedFolder === f.id ? `${f.color || "#00f5ff"}15` : "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                              style={{ background: selectedFolder === f.id ? `${f.color || "#00f5ff"}15` : "rgb(var(--ink) / 0.04)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
                               <span>{f.icon || "📁"}</span>
                               <span className="font-cinzel text-xs text-white flex-1">{f.name}</span>
-                              <span className="text-[10px] font-inter" style={{ color: "rgba(255,255,255,0.3)" }}>{(f.verse_refs || []).length} verses</span>
+                              <span className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{(f.verse_refs || []).length} verses</span>
                             </button>
                           ))}
                         </div>
                         <button onClick={() => setAddingFolderTo(null)}
                           className="text-xs font-cinzel px-3 py-1.5 rounded-lg"
-                          style={{ color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.04)" }}>
+                          style={{ color: "rgb(var(--ink) / 0.35)", background: "var(--fill-2)" }}>
                           Cancel
                         </button>
                       </div>
