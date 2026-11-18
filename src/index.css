@@ -51,6 +51,17 @@
     --body-glow: 223 30% 20%;
     --success: 142 71% 45%;
     --warning: 48 96% 53%;
+    /* Semantic ink (RGB channels): the "white" of text/fills, flips with the theme */
+    --ink: 244 241 232;
+    --ink-1: rgb(var(--ink) / 0.9);
+    --ink-2: rgb(var(--ink) / 0.7);
+    --ink-3: rgb(var(--ink) / 0.5);
+    --ink-4: rgb(var(--ink) / 0.35);
+    /* Text over photos: always light, with a shadow, in both themes */
+    --text-on-image: 255 255 255;
+    --text-on-image-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    /* Text on bright (gold / cyan) fills: always dark */
+    --text-on-bright: 223 28% 12%;
     color-scheme: dark;
   }
 
@@ -94,6 +105,8 @@
     --body-glow: 40 30% 100%;
     --success: 142 71% 30%;
     --warning: 38 92% 38%;
+    --ink: 20 28 41;
+    --text-on-image-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     color-scheme: light;
   }
 }
@@ -103,22 +116,7 @@ html.theme-transition, html.theme-transition *, html.theme-transition *::before,
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, fill 0.2s ease !important;
 }
 
-/* Light-mode remap of hardcoded light-on-dark colors (Tailwind text-white/* and inline rgba whites/accents) */
-html[data-theme="light"] [class^="text-white"],
-html[data-theme="light"] [class*=" text-white"] { color: hsl(var(--foreground) / 0.82); }
-html[data-theme="light"] [class*=" border-white"],
-html[data-theme="light"] [class^="border-white"] { border-color: var(--hairline); }
-html[data-theme="light"] [style^="color: rgba(255, 255, 255"],
-html[data-theme="light"] [style*="; color: rgba(255, 255, 255"],
-html[data-theme="light"] [style^="color: rgb(255, 255, 255"],
-html[data-theme="light"] [style*="; color: rgb(255, 255, 255"] { color: hsl(var(--foreground) / 0.78) !important; }
-html[data-theme="light"] [style^="color: rgb(251, 191, 36"], html[data-theme="light"] [style*="; color: rgb(251, 191, 36"] { color: hsl(var(--gold)) !important; }
-html[data-theme="light"] [style^="color: rgb(167, 139, 250"], html[data-theme="light"] [style*="; color: rgb(167, 139, 250"] { color: hsl(var(--purple)) !important; }
-html[data-theme="light"] [style^="color: rgb(0, 245, 255"], html[data-theme="light"] [style*="; color: rgb(0, 245, 255"],
-html[data-theme="light"] [style^="color: rgb(0, 229, 255"], html[data-theme="light"] [style*="; color: rgb(0, 229, 255"] { color: hsl(var(--cyan)) !important; }
-html[data-theme="light"] [style^="color: rgb(52, 211, 153"], html[data-theme="light"] [style*="; color: rgb(52, 211, 153"] { color: hsl(var(--success)) !important; }
-html[data-theme="light"] [style^="color: rgb(248, 113, 113"], html[data-theme="light"] [style*="; color: rgb(248, 113, 113"] { color: hsl(var(--destructive)) !important; }
-html[data-theme="light"] .red-letter { color: hsl(var(--destructive)); }
+
 
 @layer base {
   * {
@@ -214,7 +212,11 @@ html[data-theme="light"] .red-letter { color: hsl(var(--destructive)); }
   .verse-highlight-green  { background: rgba(52, 211, 153, 0.2);  border-left: 3px solid #34d399; }
   .verse-highlight-red    { background: rgba(248, 113, 113, 0.2); border-left: 3px solid #f87171; }
 
-  .red-letter { color: #f87171; }
+  .red-letter { color: hsl(var(--destructive)); }
+
+  .text-on-image { color: rgb(var(--text-on-image)); text-shadow: var(--text-on-image-shadow); }
+  .text-on-primary { color: hsl(var(--primary-foreground)); }
+  .text-on-bright { color: hsl(var(--text-on-bright)); }
 
   .scrollbar-hide {
     -ms-overflow-style: none;

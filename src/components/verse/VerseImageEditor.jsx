@@ -92,7 +92,7 @@ export default function VerseImageEditor({ verse_ref, onClose }) {
               whileTap={{ scale: 0.95 }}
               onClick={handleGenerate}
               disabled={loading}
-              className="w-full py-3 rounded-xl font-cinzel text-white flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl font-cinzel text-on-bright flex items-center justify-center gap-2"
               style={{
                 background: "linear-gradient(135deg, #00f5ff, #006bb3)",
                 opacity: loading ? 0.6 : 1
@@ -117,7 +117,7 @@ export default function VerseImageEditor({ verse_ref, onClose }) {
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 py-2 rounded-xl text-sm font-cinzel font-bold text-white flex items-center justify-center gap-2"
+                className="flex-1 py-2 rounded-xl text-sm font-cinzel font-bold text-on-bright flex items-center justify-center gap-2"
                 style={{ background: "linear-gradient(135deg, #00f5ff, #006bb3)" }}
               >
                 <Share2 className="w-3.5 h-3.5" />

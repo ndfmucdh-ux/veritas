@@ -23,11 +23,11 @@ export default function ChapterHeader({ book, chapter, testament, translation })
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="font-cinzel text-2xl font-bold text-white"
+          className="font-cinzel text-2xl font-bold text-on-image"
         >
           {displayBook}
         </motion.h2>
-        <p className="font-inter text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+        <p className="font-inter text-sm mt-0.5 text-on-image">
           {lang === "es" ? "Capítulo" : "Chapter"} {chapter}
         </p>
       </div>
