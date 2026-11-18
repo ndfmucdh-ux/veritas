@@ -1,4 +1,5 @@
 import { STAGE1_TEXT } from "@/lib/forYouStage1";
+import { NEW_TEXT } from "@/lib/forYouNew";
 
 // For You text. English and Spanish are complete; other languages show the English text
 // (titles, buttons and book names are translated everywhere).
@@ -181,6 +182,9 @@ export const FOR_YOU_TEXT = {
 // Base text plus the themes added in stages (languages without base text fall back to English).
 export const getForYouText = (lang, category) => {
   const base = (FOR_YOU_TEXT[lang] || FOR_YOU_TEXT.en)[category];
-  const extra = (STAGE1_TEXT[lang] || STAGE1_TEXT.en)[category] || [];
+  const extra = [
+    ...((STAGE1_TEXT[lang] || STAGE1_TEXT.en)[category] || []),
+    ...((NEW_TEXT[lang] || NEW_TEXT.en)[category] || []),
+  ];
   return base && { ...base, themes: [...base.themes, ...extra] };
 };

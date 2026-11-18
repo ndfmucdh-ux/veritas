@@ -1,0 +1,47 @@
+import { Shield, Lock, Flame, Feather, Heart, Users, Compass, Sprout } from "lucide-react";
+
+// Men: 8 more themes (with the 2 added in stage 1 this makes 10 new). 15 passages and 5 cross references each.
+export const MEN_NEW_META = [
+  { icon: Shield, photo: "desert", verses: ["Psalm 27:1", "Psalm 56:3-4", "Isaiah 41:13", "Psalm 118:6", "2 Timothy 1:7", "Deuteronomy 20:4", "Psalm 91:1-2", "Isaiah 35:4", "Joshua 10:25", "1 Chronicles 28:20", "Psalm 112:7", "Proverbs 28:1", "Matthew 14:27", "John 14:27", "Revelation 1:17-18"], cross: ["1 John 4:18", "Romans 8:31", "Numbers 13:30", "Daniel 3:17-18", "Acts 4:29"] },
+  { icon: Lock, photo: "candle", verses: ["Psalm 119:9-11", "Job 31:1", "Matthew 5:28", "1 Corinthians 6:18", "Proverbs 4:25-27", "Genesis 39:9", "1 Thessalonians 4:3-5", "Romans 13:14", "Matthew 26:41", "James 1:13-15", "1 John 2:16-17", "Hebrews 4:15-16", "Galatians 5:16", "Ephesians 5:3", "Psalm 101:2-3"], cross: ["1 Corinthians 10:13", "Psalm 51:10", "Matthew 5:8", "2 Timothy 2:22", "1 Peter 2:11"] },
+  { icon: Flame, photo: "ocean", verses: ["Proverbs 14:29", "Proverbs 15:18", "Proverbs 16:32", "James 1:19-20", "Ephesians 4:26-27", "Proverbs 29:11", "Ecclesiastes 7:9", "Psalm 37:8", "Proverbs 15:1", "Colossians 3:8", "Proverbs 19:11", "Galatians 5:22-23", "Romans 12:19", "Proverbs 22:24-25", "Psalm 4:4"], cross: ["Proverbs 12:16", "Matthew 5:22", "Numbers 20:10-12", "1 Peter 2:23", "Romans 12:21"] },
+  { icon: Feather, photo: "chapel", verses: ["Matthew 6:6", "Luke 18:1", "1 Thessalonians 5:16-18", "Philippians 4:6-7", "Mark 1:35", "Luke 5:16", "James 5:16", "Jeremiah 33:3", "Psalm 5:3", "Colossians 4:2", "Ephesians 6:18", "Ezekiel 22:30", "1 Timothy 2:1-2", "Daniel 6:10", "Hebrews 4:16"], cross: ["Matthew 7:7-8", "1 John 5:14-15", "Psalm 55:17", "Romans 8:26", "Acts 6:4"] },
+  { icon: Heart, photo: "dove", verses: ["Ephesians 5:25-28", "1 Peter 3:7", "Colossians 3:19", "Proverbs 5:18-19", "Proverbs 18:22", "Ecclesiastes 9:9", "Genesis 2:24", "Proverbs 31:28-29", "1 Corinthians 13:4-7", "Song of Solomon 2:16", "Proverbs 12:4", "Malachi 2:14-15", "Ephesians 5:33", "Proverbs 19:14", "1 Corinthians 7:3"], cross: ["John 13:34", "Philippians 2:3-4", "Mark 10:6-9", "1 John 3:18", "Hosea 3:1"] },
+  { icon: Users, photo: "wheat", verses: ["Philippians 2:3-8", "Mark 10:43-45", "John 13:14-15", "James 4:10", "1 Peter 5:5-6", "Proverbs 11:2", "Proverbs 22:4", "Micah 6:8", "Matthew 23:11-12", "Luke 14:11", "Proverbs 15:33", "Colossians 3:12", "Isaiah 57:15", "Romans 12:3", "Galatians 5:13"], cross: ["Matthew 20:26-28", "Psalm 25:9", "Numbers 12:3", "2 Corinthians 12:9", "Zephaniah 2:3"] },
+  { icon: Compass, photo: "starfield", verses: ["Romans 12:2", "Philippians 4:8", "2 Corinthians 10:5", "Colossians 3:2", "Isaiah 26:3", "Proverbs 23:7", "Ephesians 4:23", "Psalm 1:2", "Joshua 1:8", "Psalm 19:14", "1 Corinthians 2:16", "Psalm 139:23-24", "Romans 8:5-6", "Proverbs 4:23", "Colossians 3:16"], cross: ["2 Timothy 1:7", "Psalm 94:19", "Matthew 22:37", "1 Peter 1:13", "Titus 3:5"] },
+  { icon: Sprout, photo: "forest", verses: ["Psalm 78:4-7", "2 Timothy 2:2", "Proverbs 13:22", "Deuteronomy 4:9", "Titus 2:6-8", "Psalm 145:4", "Joel 1:3", "1 Thessalonians 2:11-12", "Psalm 71:18", "Proverbs 20:7", "1 Corinthians 11:1", "Philippians 4:9", "Acts 20:35", "Hebrews 13:7", "2 Timothy 4:7"], cross: ["Exodus 12:26-27", "2 Kings 2:9", "Proverbs 22:6", "3 John 1:4", "Matthew 28:19-20"] },
+];
+
+// [label, description, reflection, practice]
+export const MEN_NEW_TEXT = {
+  en: [
+    ["Courage over Fear", "Standing firm when the odds look big", "Courage is not the absence of fear but obedience in spite of it. God's presence is the reason you can stand.", "Name one fear and take one step toward it today with prayer."],
+    ["Purity and Temptation", "Guarding your eyes, heart and mind", "Purity is protected by small decisions made early. Run from what drags you down and run to what lifts you up.", "Remove one trigger from your phone or routine today."],
+    ["Anger and Patience", "Slow to anger, quick to listen", "Anger tells you something matters but never gives you permission to wound. Patience is strength under control.", "When you feel tension rise today, pause for ten seconds before you answer."],
+    ["Prayer and Intercession", "Standing in the gap for others", "A praying man changes a home. Time alone with God fuels every other part of your day.", "Pray for your wife, children or closest friend by name before work."],
+    ["Husband and Love", "Loving as Christ loved", "Christ gave Himself up for the church. A husband's love is measured by sacrifice, gentleness and attention.", "Do one thing today for your wife that costs you time or comfort."],
+    ["Humility and Servant Leadership", "The greatest is the servant of all", "Jesus washed feet. Real authority serves without needing credit.", "Quietly serve someone today who cannot repay you."],
+    ["Renewing the Mind", "Thoughts shape the man", "What you dwell on becomes what you do. Renewal is a daily choice to think God's thoughts.", "Memorize Philippians 4:8 and replace one negative thought with it."],
+    ["Legacy and Mentoring", "Pass on what you have received", "A legacy is what others carry forward because of how you lived. Invest in the next generation while you can.", "Invite a younger man for coffee and share one lesson God taught you."],
+  ],
+  es: [
+    ["Valor sobre el Miedo", "Mantenerse firme cuando todo parece grande", "El valor no es la ausencia de miedo sino obedecer a pesar de él. La presencia de Dios es la razón por la que puedes mantenerte firme.", "Nombra un miedo y da hoy un paso hacia él con oración."],
+    ["Pureza y Tentación", "Guardar tus ojos, corazón y mente", "La pureza se protege con pequeñas decisiones tomadas a tiempo. Huye de lo que te hunde y corre hacia lo que te levanta.", "Quita hoy un detonante de tu teléfono o rutina."],
+    ["Ira y Paciencia", "Tardo para airarse, pronto para escuchar", "El enojo señala que algo importa, pero nunca da permiso para herir. La paciencia es fuerza bajo control.", "Cuando sientas tensión hoy, espera diez segundos antes de responder."],
+    ["Oración e Intercesión", "Interceder por otros", "Un hombre que ora transforma un hogar. El tiempo a solas con Dios alimenta cada parte de tu día.", "Ora por tu esposa, tus hijos o tu mejor amigo por nombre antes del trabajo."],
+    ["Esposo y Amor", "Amar como Cristo amó", "Cristo se entregó por la iglesia. El amor de un esposo se mide por sacrificio, ternura y atención.", "Haz hoy algo por tu esposa que te cueste tiempo o comodidad."],
+    ["Humildad y Liderazgo de Servicio", "El mayor es el siervo de todos", "Jesús lavó pies. La verdadera autoridad sirve sin necesitar reconocimiento.", "Sirve hoy en silencio a alguien que no pueda devolverte el favor."],
+    ["Renovar la Mente", "Los pensamientos forman al hombre", "Lo que meditas se convierte en lo que haces. La renovación es elegir cada día los pensamientos de Dios.", "Memoriza Filipenses 4:8 y reemplaza con él un pensamiento negativo."],
+    ["Legado y Mentoría", "Transmite lo que has recibido", "Un legado es lo que otros llevan adelante por cómo viviste. Invierte en la siguiente generación mientras puedas.", "Invita a un joven a un café y comparte una lección que Dios te enseñó."],
+  ],
+  pt: [
+    ["Coragem sobre o Medo", "Permanecer firme quando tudo parece grande", "Coragem não é ausência de medo, mas obediência apesar dele. A presença de Deus é o motivo pelo qual você pode permanecer firme.", "Nomeie um medo e dê hoje um passo em direção a ele com oração."],
+    ["Pureza e Tentação", "Guardar os olhos, o coração e a mente", "A pureza é protegida por pequenas decisões tomadas cedo. Fuja do que o derruba e corra para o que o levanta.", "Remova hoje um gatilho do seu celular ou da sua rotina."],
+    ["Ira e Paciência", "Tardio para irar-se, pronto para ouvir", "A raiva mostra que algo importa, mas nunca dá permissão para ferir. Paciência é força sob controle.", "Quando sentir a tensão subir hoje, espere dez segundos antes de responder."],
+    ["Oração e Intercessão", "Clamar a Deus pelos outros", "Um homem que ora transforma um lar. O tempo a sós com Deus alimenta cada parte do seu dia.", "Ore pela sua esposa, filhos ou melhor amigo pelo nome antes do trabalho."],
+    ["Marido e Amor", "Amar como Cristo amou", "Cristo se entregou pela igreja. O amor de um marido se mede por sacrifício, ternura e atenção.", "Faça hoje algo pela sua esposa que lhe custe tempo ou conforto."],
+    ["Humildade e Liderança de Serviço", "O maior é o servo de todos", "Jesus lavou pés. A verdadeira autoridade serve sem precisar de reconhecimento.", "Sirva hoje em silêncio alguém que não pode retribuir."],
+    ["Renovar a Mente", "Os pensamentos formam o homem", "O que você medita se torna o que você faz. Renovação é escolher a cada dia os pensamentos de Deus.", "Memorize Filipenses 4:8 e substitua um pensamento negativo por ele."],
+    ["Legado e Mentoria", "Passe adiante o que você recebeu", "Legado é o que os outros levam adiante pelo modo como você viveu. Invista na próxima geração enquanto pode.", "Convide um jovem para um café e compartilhe uma lição que Deus lhe ensinou."],
+  ],
+};
