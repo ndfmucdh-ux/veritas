@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { setBookmark, setHighlight, setNote } from "@/lib/dataAccess";
 import { createReflection } from "@/lib/services/audioReflectionService";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
 
 const COLORS = ["yellow", "cyan", "purple", "green", "red", "orange", "pink"];
 const COLOR_STYLES = {
@@ -23,6 +24,7 @@ function VerseRow({
   highlight, isBookmarked, note, showNumbers, fontSize, onUpdate, onOpenNote,
   isSelected, onToggleSelect, selectionMode, isJumped
 }) {
+  const navigate = useSmoothNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [noteMode, setNoteMode] = useState(false);
   const [noteText, setNoteText] = useState(note || "");
@@ -293,7 +295,7 @@ function VerseRow({
                   setMenuOpen(false);
                   const ref = encodeURIComponent(`${book} ${chapter}:${verseNum}`);
                   const txt = encodeURIComponent(text);
-                  window.location.href = `/verse-art?ref=${ref}&text=${txt}`;
+                  navigate(`/verse-art?ref=${ref}&text=${txt}`);
                 }}
                 className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl font-inter transition-colors min-h-[36px]"
                 style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}>

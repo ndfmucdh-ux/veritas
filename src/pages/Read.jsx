@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Maximize2, Minimize2, ChevronUp, Copy, Check, Columns, CheckSquare } from "lucide-react";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
@@ -57,7 +57,7 @@ export default function Read() {
   const [jumpedVerse, setJumpedVerse] = useState(null);
   const [devotionalVerse, setDevotionalVerse] = useState(null);
   const [showReflection, setShowReflection] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
   const containerRef = useRef(null);
   const glowTimerRef = useRef(null);
 

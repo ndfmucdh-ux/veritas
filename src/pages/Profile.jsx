@@ -35,8 +35,11 @@ import {
   Section, LibraryRow, ToggleRow, SettingLink, NotifTimeRow, EmptyMsg, SeeAll,
 } from "@/components/profile/ProfileListItems";
 
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
+
 export default function Profile() {
   const { t } = useLang();
+  const navigate = useSmoothNavigate();
   const {
     user, bookmarks, highlights, notes, plans, loading,
     saveName, uploadAvatar, uploadHero, downloadLibrary,
@@ -97,7 +100,7 @@ export default function Profile() {
               <DailySummaryCard />
 
               <Section label="Today's Reading Goal" icon={Target}>
-                <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => window.location.href = "/plans"}>
+                <motion.div className="flex justify-center py-2 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => navigate("/plans")}>
                   <DailyReadingRing chaptersReadToday={0} />
                 </motion.div>
               </Section>

@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
 import { ArrowLeft, BookOpen, ChevronRight } from "lucide-react";
 import { SECTIONS } from "@/components/foryou/forYouSections";
 import ForYouThemeCard from "@/components/foryou/ForYouThemeCard";
 
 export default function ForYouSection() {
   const { category } = useParams();
-  const navigate = useNavigate();
+  const navigate = useSmoothNavigate();
   const [expandedTheme, setExpandedTheme] = useState(null);
 
   const section = SECTIONS[category];
