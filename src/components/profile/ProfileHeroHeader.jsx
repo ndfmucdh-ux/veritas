@@ -10,15 +10,24 @@ const GOLD = "#d9b77e";
 export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName, onAvatarFile, onHeroFile }) {
   const { t } = useLang();
   const [editingName, setEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(user?.full_name || localStorage.getItem("veritas_display_name") || "");
+  const savedName = user?.display_name || user?.full_name || localStorage.getItem("veritas_display_name") || "";
+  const savedTitle = user ? (user.profile_title || "") : (localStorage.getItem("veritas_profile_title") || "");
+  const [nameInput, setNameInput] = useState(savedName);
+  const [titleInput, setTitleInput] = useState(savedTitle);
   const [editor, setEditor] = useState(null); // { kind: "avatar" | "hero", src }
   const avatarInputRef = useRef(null);
   const heroInputRef = useRef(null);
 
-  const displayName = user?.full_name || localStorage.getItem("veritas_display_name") || t.s5Believer;
+  const displayName = savedName || t.s5Believer;
+
+  const startEdit = () => {
+    setNameInput(savedName);
+    setTitleInput(savedTitle);
+    setEditingName(true);
+  };
 
   const handleSaveName = async () => {
-    await onSaveName(nameInput);
+    await onSaveName(nameInput, titleInput);
     setEditingName(false);
   };
 
@@ -67,7 +76,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
             <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
           ) : (
             <span className="w-full h-full flex items-center justify-center font-cinzel text-5xl font-bold" style={{ background: "#1c1c1c", color: GOLD }}>
-              {user?.full_name?.[0]?.toUpperCase() || "V"}
+              {savedName?.[0]?.toUpperCase() || "V"}
             </span>
           )}
         </button>
@@ -81,19 +90,29 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
       <div className="relative z-10 mt-3 w-full max-w-xs text-center">
         {editingName ? (
           <div className="flex items-center justify-center gap-2">
-            <input value={nameInput} onChange={(e) => setNameInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
-              className="bg-transparent border-b text-center font-cinzel text-xl font-bold focus:outline-none flex-1 min-w-0"
-              style={{ color: "#fff", borderColor: "rgba(255,255,255,0.5)", fontSize: 20 }} autoFocus />
+            <div className="flex-1 min-w-0 space-y-2">
+              <input value={nameInput} onChange={(e) => setNameInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+                placeholder="Name" aria-label="Name"
+                className="w-full bg-transparent border-b text-center font-cinzel text-xl font-bold focus:outline-none"
+                style={{ color: "#fff", borderColor: "rgba(255,255,255,0.5)", fontSize: 20 }} autoFocus />
+              <input value={titleInput} onChange={(e) => setTitleInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+                placeholder="Title (e.g. Pastor, Student)" aria-label="Title" maxLength={60}
+                className="w-full bg-transparent border-b text-center font-inter focus:outline-none"
+                style={{ color: "#fff", borderColor: "rgba(255,255,255,0.35)", fontSize: 16 }} />
+            </div>
             <button onClick={handleSaveName} aria-label={t.s5Save} style={{ color: "#fff" }}><Check className="w-5 h-5" /></button>
-            <button onClick={() => { setNameInput(user?.full_name || ""); setEditingName(false); }} aria-label={t.s5Cancel} style={{ color: "rgba(255,255,255,0.7)" }}><X className="w-5 h-5" /></button>
+            <button onClick={() => setEditingName(false)} aria-label={t.s5Cancel} style={{ color: "rgba(255,255,255,0.7)" }}><X className="w-5 h-5" /></button>
           </div>
         ) : (
           <div className="flex items-center justify-center gap-2">
             <h1 className="font-cinzel text-2xl font-bold truncate" style={{ color: "#fff" }}>{displayName}</h1>
-            <button onClick={() => setEditingName(true)} aria-label="Edit name" className="p-1 flex-shrink-0">
+            <button onClick={startEdit} aria-label="Edit name and title" className="p-1 flex-shrink-0">
               <Edit3 className="w-4 h-4" style={{ color: GOLD }} />
             </button>
           </div>
+        )}
+        {!editingName && savedTitle && (
+          <p className="text-sm font-inter truncate mt-0.5" style={{ color: GOLD }}>{savedTitle}</p>
         )}
         <p className="text-xs font-inter truncate mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>{user?.email}</p>
       </div>

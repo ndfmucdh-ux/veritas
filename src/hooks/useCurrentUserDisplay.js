@@ -13,7 +13,8 @@ export default function useCurrentUserDisplay() {
     base44.auth.me().catch(() => null).then((u) => {
       setUser(u);
       if (!u) return;
-      const name = u.full_name || "";
+      const name = u.display_name || u.full_name || "";
+      localStorage.setItem("veritas_profile_title", u.profile_title || "");
       const avatar = u.avatar_url || null;
       setDisplayName(name);
       setDisplayAvatar(avatar);

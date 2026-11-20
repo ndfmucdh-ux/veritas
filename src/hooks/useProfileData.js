@@ -24,17 +24,21 @@ export default function useProfileData() {
       setHighlights(lib?.highlights || []);
       setNotes(lib?.notes || []);
       setPlans(rp || []);
-      if (u?.full_name) localStorage.setItem("veritas_display_name", u.full_name);
+      if (u?.display_name || u?.full_name) localStorage.setItem("veritas_display_name", u.display_name || u.full_name);
+      if (u) localStorage.setItem("veritas_profile_title", u.profile_title || "");
       if (u?.avatar_url) localStorage.setItem("veritas_avatar_url", u.avatar_url);
     }).finally(() => setLoading(false));
   }, []);
 
-  const saveName = async (name) => {
+  // full_name is built-in and cannot be overridden, so the editable name and title live in their own saved fields.
+  const saveName = async (name, title = "") => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    await base44.auth.updateMe({ full_name: trimmed });
-    setUser(u => ({ ...u, full_name: trimmed }));
+    const cleanTitle = title.trim();
+    await base44.auth.updateMe({ display_name: trimmed, profile_title: cleanTitle });
+    setUser(u => ({ ...u, display_name: trimmed, profile_title: cleanTitle }));
     localStorage.setItem("veritas_display_name", trimmed);
+    localStorage.setItem("veritas_profile_title", cleanTitle);
     window.dispatchEvent(new Event("veritas:profile"));
   };
 

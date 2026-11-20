@@ -58,7 +58,7 @@ export default function AccountSettings({ user }) {
   const [openSection, setOpenSection] = useState(null);
 
   // Name
-  const [newName, setNewName] = useState(user?.full_name || "");
+  const [newName, setNewName] = useState(user?.display_name || user?.full_name || "");
   const [nameSaving, setNameSaving] = useState(false);
   const [nameSaved, setNameSaved] = useState(false);
 
@@ -98,7 +98,7 @@ export default function AccountSettings({ user }) {
   const saveName = async () => {
     if (!newName.trim()) return;
     setNameSaving(true);
-    await base44.auth.updateMe({ full_name: newName.trim() });
+    await base44.auth.updateMe({ display_name: newName.trim() });
     localStorage.setItem("veritas_display_name", newName.trim());
     window.dispatchEvent(new Event("veritas:profile"));
     setNameSaving(false);
@@ -194,7 +194,7 @@ export default function AccountSettings({ user }) {
                           <div className="space-y-3 pt-3">
                             <div className="px-3 py-2 rounded-xl" style={{ background: "rgba(0,245,255,0.05)", border: "1px solid rgba(0,245,255,0.1)" }}>
                               <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.4)" }}>
-                                {tr("set_currentName")} <span style={{ color: "#00f5ff" }}>{user?.full_name || "—"}</span>
+                                {tr("set_currentName")} <span style={{ color: "#00f5ff" }}>{user?.display_name || user?.full_name || "—"}</span>
                               </p>
                             </div>
                             <input value={newName} onChange={e => setNewName(e.target.value)}
