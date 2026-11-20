@@ -31,8 +31,13 @@ export default function usePlansData() {
 
   const completeDay = async (planTitle, day) => {
     if (isDayComplete(planTitle, day)) return;
-    await completePresetDay(planTitle, day);
     setProgress(prev => [...prev, { plan_id: planTitle, chapter: day }]);
+    try {
+      await completePresetDay(planTitle, day);
+    } catch (e) {
+      setProgress(prev => prev.filter(p => !(p.plan_id === planTitle && p.chapter === day)));
+      throw e;
+    }
   };
 
   const toggleCustomChapter = async (plan, bookName, chapter) => {
@@ -42,16 +47,26 @@ export default function usePlansData() {
     else completed.add(key);
 
     const completedChapters = [...completed];
-    await updateCustomPlanChapters(plan.id, completedChapters);
-
     const updatedPlan = { ...plan, completed_chapters: completedChapters, completed_count: completedChapters.length };
     setCustomPlans(prev => prev.map(p => p.id === plan.id ? updatedPlan : p));
+    try {
+      await updateCustomPlanChapters(plan.id, completedChapters);
+    } catch (e) {
+      setCustomPlans(prev => prev.map(p => p.id === plan.id ? plan : p));
+      throw e;
+    }
     return updatedPlan;
   };
 
   const deleteCustomPlan = async (id) => {
-    await deleteCustomPlanSvc(id);
-    setCustomPlans(prev => prev.filter(p => p.id !== id));
+    let removed;
+    setCustomPlans(prev => { removed = prev; return prev.filter(p => p.id !== id); });
+    try {
+      await deleteCustomPlanSvc(id);
+    } catch (e) {
+      setCustomPlans(removed);
+      throw e;
+    }
   };
 
   return {

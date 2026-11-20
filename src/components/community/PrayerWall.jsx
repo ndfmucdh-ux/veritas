@@ -49,15 +49,21 @@ export default function PrayerWall() {
   const submitRequest = async () => {
     if (!newRequest.trim()) return;
     setSubmitting(true);
-    await base44.entities.PrayerWallPost.create({
-      request: newRequest.trim(),
-      category: newCategory,
-      prayer_count: 0,
-    });
+    const draft = { request: newRequest.trim(), category: newCategory, prayer_count: 0 };
+    const tempId = `tmp-${Date.now()}`;
+    setPosts(prev => [{ ...draft, id: tempId, amen_count: 0, created_date: new Date().toISOString() }, ...prev]);
     setNewRequest("");
     setNewCategory("other");
     setShowForm(false);
-    await loadPosts();
+    try {
+      await base44.entities.PrayerWallPost.create(draft);
+      const data = await base44.entities.PrayerWallPost.list("-created_date", 50);
+      setPosts(data || []);
+    } catch (e) {
+      setPosts(prev => prev.filter(p => p.id !== tempId));
+      setNewRequest(draft.request);
+      setShowForm(true);
+    }
     setSubmitting(false);
   };
 
