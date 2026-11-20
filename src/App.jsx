@@ -12,6 +12,7 @@ import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
 import ViewTransitionLinks from '@/components/layout/ViewTransitionLinks';
+import PageColorSync from '@/components/layout/PageColorSync';
 import EmojiSanitizer from '@/components/layout/EmojiSanitizer';
 import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
@@ -69,6 +70,7 @@ const AuthenticatedApp = () => {
   return (
     <PageErrorBoundary resetKey={location.pathname}>
     <ViewTransitionLinks />
+    <PageColorSync />
     <Routes>
       <Route element={<AppLayout />}>
         {/* Public routes — no login required */}
