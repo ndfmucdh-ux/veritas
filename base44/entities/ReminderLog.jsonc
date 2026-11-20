@@ -1,0 +1,59 @@
+{
+  "name": "ReminderLog",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "streak",
+        "scripture",
+        "prayer",
+        "followup"
+      ],
+      "enumColors": [
+        "red",
+        "blue",
+        "purple",
+        "yellow"
+      ]
+    },
+    "local_date": {
+      "type": "string",
+      "description": "The user's local date (YYYY-MM-DD) the reminder was handled, so it is sent at most once a day"
+    },
+    "channels": {
+      "type": "string",
+      "description": "What was sent, e.g. push+email"
+    }
+  },
+  "required": [
+    "user_email",
+    "kind",
+    "local_date"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

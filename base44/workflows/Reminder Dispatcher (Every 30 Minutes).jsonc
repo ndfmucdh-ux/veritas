@@ -1,13 +1,13 @@
 {
-  "name": "Daily Reading Reminder",
-  "description": "Sends a personalized reminder to users who haven't logged their daily reading by 3 PM EDT, with a deep link to continue where they left off",
+  "name": "Reminder Dispatcher (Every 30 Minutes)",
+  "description": "Sends each person's streak, scripture, prayer and follow-up reminders at the time they chose, in their own time zone (streak defaults to 8:00 AM local)",
   "trigger": {
     "condition": null,
     "config": {
       "trigger_type": "scheduled",
       "events": [],
       "schedule_mode": "recurring",
-      "cron_expression": "0 15 * * *",
+      "cron_expression": "*/30 * * * *",
       "one_time_date": null,
       "timezone": "UTC",
       "interval_value": null,
@@ -21,24 +21,21 @@
   "definition": {
     "document": {
       "dsl": "1.0.0",
-      "name": "daily_reading_reminder",
+      "name": "reminder_dispatcher",
       "version": "1.0",
       "namespace": "base44"
     },
     "do": [
       {
-        "run_function": {
+        "run_dispatcher": {
           "call": "invoke_backend_function",
           "with": {
-            "function_name": "sendReadingReminder",
+            "function_name": "sendScheduledReminders",
             "args": {}
           },
           "then": "end"
         }
       }
     ]
-  },
-  "x-base44-migrated-from-automation": {
-    "legacy_payload_function": "sendReadingReminder"
   }
 }
