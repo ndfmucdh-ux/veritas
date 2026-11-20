@@ -1,0 +1,42 @@
+{
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "app_user_auth",
+      "events": [
+        "signup"
+      ]
+    }
+  },
+  "description": "Sends the branded Welcome email, with suggestions of the app's features, the first time someone signs in to Veritas",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "welcome_email_on_signup",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_welcome": {
+          "call": "send_email",
+          "with": {
+            "template_name": "Welcome",
+            "to": "${ .trigger.email }",
+            "description": "Greets a new member and suggests where to begin in Veritas",
+            "variables": {
+              "first_name": "${ (.trigger.full_name // \"friend\") | split(\" \") | .[0] }"
+            },
+            "category": "marketing"
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send welcome email",
+            "description": "Features tour"
+          }
+        }
+      }
+    ]
+  },
+  "name": "Welcome Email on Signup"
+}
