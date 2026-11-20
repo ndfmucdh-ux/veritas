@@ -131,7 +131,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
     <>
       {/* Nav bar */}
       <div className="flex items-center gap-2">
-        <button onClick={prevChapter} disabled={atStart}
+        <button aria-label="Previous chapter" onClick={prevChapter} disabled={atStart}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)", color: atStart ? "rgb(var(--ink) / 0.18)" : "rgb(var(--ink) / 0.55)" }}>
           <ChevronLeft className="w-4 h-4" />
@@ -150,7 +150,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
           {translation}
         </button>
 
-        <button onClick={nextChapter} disabled={atEnd}
+        <button aria-label="Next chapter" onClick={nextChapter} disabled={atEnd}
           className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
           style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)", color: atEnd ? "rgb(var(--ink) / 0.18)" : "rgb(var(--ink) / 0.55)" }}>
           <ChevronRight className="w-4 h-4" />
@@ -221,7 +221,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                         {modal === "translation" ? "Bible Version" : selectedCategory ? selectedCategory.label : "Select Book"}
                       </h2>
                     </div>
-                    <button onClick={close}
+                    <button aria-label="Close" onClick={close}
                       style={{
                         fontFamily: "'Cinzel', serif", fontSize: 12, fontWeight: 600,
                         color: "rgb(var(--ink) / 0.55)", background: "var(--fill-3)",
@@ -421,7 +421,7 @@ export default function ChapterNavigator({ book, chapter, translation, onNavigat
                         {getTranslatedBookName(selectedBook.name, lang)}
                       </h3>
                     </div>
-                    <button onClick={close}
+                    <button aria-label="Close" onClick={close}
                       style={{
                         width: 28, height: 28, borderRadius: 10, background: "var(--fill-3)",
                         border: "1px solid rgb(var(--ink) / 0.12)", cursor: "pointer",

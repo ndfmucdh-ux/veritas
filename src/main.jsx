@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
 import '@/styles/layout-nav.css'
+import { applyTheme, getThemeMode } from '@/lib/theme'
 
 // bfcache: never use unload/beforeunload. pagehide/pageshow keep the page eligible.
 window.addEventListener('pageshow', (event) => {
   if (event.persisted) {
-    // Restored from back/forward cache: let components re-sync if they need to.
+    // Restored from back/forward cache: re-apply the page color, then let components re-sync.
+    applyTheme(getThemeMode());
     window.dispatchEvent(new CustomEvent('bfcache-restore'));
   }
 });

@@ -299,7 +299,7 @@ function TranslationRow({ translation, status, message, meta, onDownload, onRemo
       ) : isDone ? (
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <Check className="w-3.5 h-3.5" style={{ color: "#34d399" }} />
-          <button onClick={onRemove} className="p-1 rounded-lg hover:bg-red-500/10 transition-colors">
+          <button aria-label="Remove download" onClick={onRemove} className="p-1 rounded-lg hover:bg-red-500/10 transition-colors">
             <Trash2 className="w-3.5 h-3.5" style={{ color: "rgba(248,113,113,0.6)" }} />
           </button>
         </div>

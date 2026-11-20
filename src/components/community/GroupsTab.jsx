@@ -6,13 +6,20 @@ import { community } from "@/lib/communityApi";
 import GroupCard, { GROUP_CATEGORIES } from "@/components/community/GroupCard";
 import GroupCreateSheet from "@/components/community/GroupCreateSheet";
 import GroupDetail from "@/components/community/GroupDetail";
+import { useParams } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
+import useGoBack from "@/hooks/useGoBack";
 
 const chip = (on) => `flex-shrink-0 px-3.5 min-h-9 rounded-full text-xs whitespace-nowrap border ${on ? "bg-primary text-primary-foreground border-primary" : "bg-card text-foreground/80 border-border"}`;
 
 // My groups, invitations and a place to discover public groups.
 export default function GroupsTab({ data, reload }) {
   const { t } = useLang();
-  const [openId, setOpenId] = useState(null);
+  // The open group lives in the URL (/community/groups/:groupId) so back pops it.
+  const { groupId: openId } = useParams();
+  const navigate = useSmoothNavigate();
+  const goBack = useGoBack("/community");
+  const setOpenId = (id) => navigate(`/community/groups/${id}`);
   const [creating, setCreating] = useState(false);
   const [found, setFound] = useState(null);
   const [q, setQ] = useState("");
@@ -41,7 +48,7 @@ export default function GroupsTab({ data, reload }) {
   });
 
   if (openId) {
-    return <GroupDetail groupId={openId} onBack={() => { setOpenId(null); reload(); }} />;
+    return <GroupDetail groupId={openId} onBack={() => { goBack(); reload(); }} />;
   }
 
   return (

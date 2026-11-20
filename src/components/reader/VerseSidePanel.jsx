@@ -90,7 +90,7 @@ export default function VerseSidePanel({ verse, book, chapter, translation, onCl
                 </p>
                 <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.3)" }}>{translation}</p>
               </div>
-              <motion.button whileTap={{ scale: 0.88 }} onClick={onClose}
+              <motion.button aria-label="Close" whileTap={{ scale: 0.88 }} onClick={onClose}
                 className="w-7 h-7 rounded-xl flex items-center justify-center"
                 style={{ background: "var(--fill-3)" }}>
                 <X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.45)" }} />

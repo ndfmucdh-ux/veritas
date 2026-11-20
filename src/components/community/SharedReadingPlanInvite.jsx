@@ -97,7 +97,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    onClick={handleCopyLink}
+                    aria-label="Copy invite link" onClick={handleCopyLink}
                     className="px-4 py-2.5 rounded-lg font-cinzel text-sm transition-all min-h-10"
                     style={{ background: "rgba(0,245,255,0.15)", color: copied ? "#34d399" : "#00f5ff", border: "1px solid rgba(0,245,255,0.25)" }}
                   >
@@ -123,7 +123,7 @@ export default function SharedReadingPlanInvite({ planId, planName }) {
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    onClick={handleSendEmail}
+                    aria-label="Send invite" onClick={handleSendEmail}
                     disabled={sending || !inviteEmail.trim()}
                     className="px-4 py-2.5 rounded-lg font-cinzel text-sm transition-all min-h-10 disabled:opacity-50"
                     style={{ background: inviteSent ? "rgba(52,211,153,0.15)" : "rgba(0,245,255,0.15)", color: inviteSent ? "#34d399" : "#00f5ff", border: `1px solid ${inviteSent ? "rgba(52,211,153,0.25)" : "rgba(0,245,255,0.25)"}` }}

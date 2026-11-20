@@ -13,6 +13,11 @@ import PlanInvitePanel from "@/components/plans/PlanInvitePanel";
 import PlanDownloadButton from "@/components/plans/PlanDownloadButton";
 import usePlansData from "@/hooks/usePlansData";
 import { useAccentTint } from "@/lib/accent";
+import { useParams } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
+import useGoBack from "@/hooks/useGoBack";
+import { usePullToRefresh } from "@/lib/pullRefresh";
+import { LoadingState } from "@/components/ui/states";
 
 // Real-life Unsplash photo headers per plan
 const PRESET_PLANS = [
@@ -156,7 +161,11 @@ export default function Plans() {
   const urlParams = new URLSearchParams(window.location.search);
   const urlCat = urlParams.get("cat") || "all";
 
-  const [activePlan, setActivePlan] = useState(null);
+  // The open plan lives in the URL (/plans/preset/:title, /plans/custom/:id) so back pops it.
+  const { kind, planId } = useParams();
+  const navigate = useSmoothNavigate();
+  const goBack = useGoBack("/plans");
+  const activePlan = kind === "preset" ? PRESET_PLANS.find((p) => p.title === planId) : null;
   const [selectedDay, setSelectedDay] = useState(null);
   const [langFilter, setLangFilter] = useState("all");
   const [catFilter, setCatFilter] = useState(urlCat);
@@ -164,10 +173,10 @@ export default function Plans() {
   const [genDevo, setGenDevo] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showBuilder, setShowBuilder] = useState(false);
-  const [activeCustomPlan, setActiveCustomPlan] = useState(null);
   const {
     progress,
     customPlans,
+    loaded,
     loadPlansData,
     getCompletedDays,
     isDayComplete,
@@ -175,6 +184,8 @@ export default function Plans() {
     toggleCustomChapter,
     deleteCustomPlan,
   } = usePlansData();
+  const activeCustomPlan = kind === "custom" ? customPlans.find((p) => p.id === planId) : null;
+  usePullToRefresh(loadPlansData);
 
 
   const generateAIDevo = async (day) => {
@@ -197,14 +208,14 @@ export default function Plans() {
   );
 
   const handleToggleCustomChapter = async (plan, bookName, ch) => {
-    const updated = await toggleCustomChapter(plan, bookName, ch);
-    setActiveCustomPlan(updated);
+    await toggleCustomChapter(plan, bookName, ch);
   };
 
   // ── Custom Plan Detail View ────────────────────────────────────
   if (activeCustomPlan) {
-    return <CustomPlanDetail plan={activeCustomPlan} onBack={() => setActiveCustomPlan(null)} onToggleChapter={handleToggleCustomChapter} />;
+    return <CustomPlanDetail plan={activeCustomPlan} onBack={goBack} onToggleChapter={handleToggleCustomChapter} />;
   }
+  if (kind === "custom" && !loaded) return <LoadingState size="lg" />;
 
   // ── Plan Detail View ───────────────────────────────────────────
   if (activePlan) {
@@ -215,7 +226,7 @@ export default function Plans() {
         completed={getCompletedDays(activePlan.title)}
         isDayComplete={isDayComplete}
         completeDay={completeDay}
-        onBack={() => setActivePlan(null)}
+        onBack={goBack}
       />
     );
   }
@@ -227,8 +238,8 @@ export default function Plans() {
         presets={PRESET_PLANS}
         customPlans={customPlans}
         getCompletedDays={getCompletedDays}
-        onOpenPreset={setActivePlan}
-        onOpenCustom={setActiveCustomPlan}
+        onOpenPreset={(p) => navigate(`/plans/preset/${encodeURIComponent(p.title)}`)}
+        onOpenCustom={(p) => navigate(`/plans/custom/${p.id}`)}
         onDeleteCustom={deleteCustomPlan}
         onBuild={() => setShowBuilder(true)}
       />

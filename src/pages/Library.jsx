@@ -15,6 +15,9 @@ import LibraryHeaderActions from "@/components/library/LibraryHeaderActions.jsx"
 import LibraryTabs from "@/components/library/LibraryTabs.jsx";
 import TagFilterBar from "@/components/library/TagFilterBar.jsx";
 import useLibraryData from "@/hooks/useLibraryData";
+import { useParams } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
+import { usePullToRefresh } from "@/lib/pullRefresh";
 import { LoadingState, EmptyState } from "@/components/ui/states";
 import { useLang } from "@/lib/LanguageContext";
 
@@ -25,7 +28,11 @@ const HIGHLIGHT_COLOR_HEX = {
 
 export default function Library() {
   const { t } = useLang();
-  const [activeTab, setActiveTab] = useState("bookmarks");
+  // The open tab lives in the URL (/library/notes) so back pops it.
+  const { tab } = useParams();
+  const navigate = useSmoothNavigate();
+  const activeTab = tab || "bookmarks";
+  const setActiveTab = (id) => navigate(id === "bookmarks" ? "/library" : `/library/${id}`);
   const {
     bookmarks,
     highlights,
@@ -39,6 +46,7 @@ export default function Library() {
     updateNote,
     reload,
   } = useLibraryData();
+  usePullToRefresh(reload);
   const [hlDevotional, setHlDevotional] = useState(null);
   const [hlDevLoading, setHlDevLoading] = useState(false);
   const [exporting, setExporting] = useState(false);

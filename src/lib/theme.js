@@ -1,7 +1,7 @@
 // Theme manager: "light" | "dark" | "system". Mirrors the early script in index.html.
 export const THEME_KEY = "theme";
 const MODES = ["light", "dark", "system"];
-const META_COLORS = { light: "#f7f3ee", dark: "#141413" };
+const META_COLORS = { light: "#f7f3ee", dark: "#161513" };
 
 const systemQuery = () => window.matchMedia("(prefers-color-scheme: dark)");
 

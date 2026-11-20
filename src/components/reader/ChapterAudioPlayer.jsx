@@ -186,26 +186,26 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
               {/* Main controls */}
               <div className="flex items-center gap-2">
-                <button onClick={skipBack} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                <button aria-label="Previous verse" onClick={skipBack} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
                   style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   <SkipBack className="w-3.5 h-3.5" />
                 </button>
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  onClick={handlePlay}
+                  aria-label="Play or pause" onClick={handlePlay}
                   className="w-11 h-11 rounded-2xl flex items-center justify-center"
                   style={{ background: playing ? "rgba(0,245,255,0.18)" : "linear-gradient(135deg, rgba(0,245,255,0.3), rgba(167,139,250,0.3))", border: "1px solid rgba(0,245,255,0.3)", boxShadow: playing ? "0 0 20px rgba(0,245,255,0.25)" : "none" }}
                 >
                   {playing ? <Pause className="w-5 h-5 text-cyan" /> : <Play className="w-5 h-5 text-white ml-0.5" />}
                 </motion.button>
-                <button onClick={skipForward} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                <button aria-label="Next verse" onClick={skipForward} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
                   style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   <SkipForward className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* Mute */}
-              <button onClick={toggleMute} className="w-8 h-8 rounded-xl flex items-center justify-center"
+              <button aria-label="Mute or unmute" onClick={toggleMute} className="w-8 h-8 rounded-xl flex items-center justify-center"
                 style={{ color: muted ? "#f87171" : "rgb(var(--ink) / 0.4)" }}>
                 {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </button>

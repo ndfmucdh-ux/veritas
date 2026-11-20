@@ -39,7 +39,7 @@ export default function NoteCard({ note, index, onTag, onShare, onDelete, onEdit
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
             <div className="px-4 pb-3 pt-2 border-t border-border">
-              <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">{note.note_text}</p>
+              <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap select-text">{note.note_text}</p>
               {note.tags?.length > 1 && (
                 <div className="flex flex-wrap gap-1.5 mt-2">{note.tags.slice(1).map((tag) => <span key={tag} className="text-[11px] px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">{tag}</span>)}</div>
               )}

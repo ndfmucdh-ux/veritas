@@ -162,7 +162,7 @@ export default function SocialShareModal({ verseRef, verseText, type = "highligh
             <p className="font-cinzel text-sm font-semibold text-white">{t.s1ShareVerse}</p>
             <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{verseRef}</p>
           </div>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={onClose}
+          <motion.button aria-label="Close" whileTap={{ scale: 0.9 }} onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
             style={{ background: "var(--fill-3)" }}>
             <X className="w-4 h-4" style={{ color: "rgba(255,255,255,0.5)" }} />

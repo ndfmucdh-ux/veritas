@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import useSmoothNavigate from "@/hooks/useSmoothNavigate";
+import { usePullToRefresh } from "@/lib/pullRefresh";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Maximize2, Minimize2, ChevronUp, Copy, Check, Columns, CheckSquare } from "lucide-react";
 import FolderSaveModal from "@/components/reader/FolderSaveModal";
@@ -226,6 +227,8 @@ export default function Read() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  usePullToRefresh(() => Promise.all([loadChapter(), loadAnnotations()]));
+
   const toggleImmersive = () => {
     const next = !immersive;
     setImmersive(next);
@@ -253,7 +256,8 @@ export default function Read() {
       <div
         className="sticky z-30 px-4 py-3 space-y-3"
         style={{
-          top: immersive ? 0 : "57px",
+          top: immersive ? 0 : "calc(57px + env(safe-area-inset-top))",
+          paddingTop: immersive ? "calc(0.75rem + env(safe-area-inset-top))" : undefined,
           background: oledMode ? "rgba(0,0,0,0.97)" : "var(--chrome-surface)",
           backdropFilter: "blur(20px)",
           borderBottom: "1px solid rgb(var(--ink) / 0.06)",

@@ -44,7 +44,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
             <Tag className="w-4 h-4 text-cyan" />
             <p className="font-cinzel text-sm font-semibold text-white">Manage Tags</p>
           </div>
-          <button onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ color: "rgb(var(--ink) / 0.3)" }}>
+          <button aria-label="Close" onClick={onClose} className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ color: "rgb(var(--ink) / 0.3)" }}>
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -84,7 +84,7 @@ export default function TagManager({ currentTags = [], onSave, onClose }) {
               style={{ fontSize: "16px", background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.85)" }}
             />
             <button
-              onClick={addCustom}
+              aria-label="Add tag" onClick={addCustom}
               disabled={!customInput.trim()}
               className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
               style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.2)", opacity: customInput.trim() ? 1 : 0.4 }}

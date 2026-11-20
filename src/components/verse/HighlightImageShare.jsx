@@ -209,7 +209,7 @@ export default function HighlightImageShare({ highlight, onClose }) {
           <p className="font-cinzel text-sm font-bold text-white">Verse Art</p>
           <p className="font-inter text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>{verse}</p>
         </div>
-        <button onClick={onClose} className="w-9 h-9 rounded-xl flex items-center justify-center"
+        <button aria-label="Close" onClick={onClose} className="w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}>
           <X className="w-4 h-4 text-white/60" />
         </button>

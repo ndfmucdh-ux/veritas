@@ -164,7 +164,7 @@ export default function AudioDashboard() {
               <Timer className="w-4 h-4" style={{ color: "#a78bfa" }} />
               <span className="font-cinzel text-sm" style={{ color: "#a78bfa" }}>Sleep timer: {formatCountdown(sleepCountdown)}</span>
             </div>
-            <button onClick={cancelSleepTimer} className="w-6 h-6 rounded-lg flex items-center justify-center"
+            <button aria-label="Cancel sleep timer" onClick={cancelSleepTimer} className="w-6 h-6 rounded-lg flex items-center justify-center"
               style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>
               <X className="w-3.5 h-3.5" />
             </button>

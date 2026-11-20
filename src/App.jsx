@@ -77,16 +77,16 @@ const AuthenticatedApp = () => {
         <Route path="/search" element={<Search />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/study" element={<Study />} />
-        <Route path="/plans" element={<Plans />} />
+        <Route path="/plans/:kind?/:planId?" element={<Plans />} />
 
         {/* Protected routes — require login */}
         <Route element={<ProtectedRoute unauthenticatedElement={<AuthGate />} />}>
-          <Route path="/library" element={<Library />} />
+          <Route path="/library/:tab?" element={<Library />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/verse-art" element={<VerseImageGenerator />} />
-          <Route path="/study-center" element={<StudyCenter />} />
+          <Route path="/study-center/:tab?" element={<StudyCenter />} />
           <Route path="/prayer-journal" element={<PrayerJournal />} />
-          <Route path="/community" element={<CommunityHub />} />
+          <Route path="/community/:tab?/:groupId?" element={<CommunityHub />} />
           <Route path="/notification-studio" element={<NotificationStudio />} />
           <Route path="/audio-dashboard" element={<AudioDashboard />} />
           <Route path="/for-you/:category" element={<ForYouSection />} />

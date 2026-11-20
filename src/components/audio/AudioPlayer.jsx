@@ -59,7 +59,7 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
             <p className="text-[9px] text-cyan/70 italic truncate mt-1">{DUMMY_VERSES[currentVerseIndex].text}</p>
           )}
         </div>
-        <button onClick={onClose} className="text-white/40 hover:text-white ml-2 flex-shrink-0">
+        <button aria-label="Close" onClick={onClose} className="text-white/40 hover:text-white ml-2 flex-shrink-0">
           <X className="w-5 h-5" />
         </button>
       </div>
@@ -82,7 +82,7 @@ export default function AudioPlayer({ book, chapter, translation, onClose }) {
       <div className="flex items-center justify-between gap-2">
         <motion.button
           whileTap={{ scale: 0.88 }}
-          onClick={handlePlayPause}
+          aria-label="Play or pause" onClick={handlePlayPause}
           className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
           style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff" }}
         >
