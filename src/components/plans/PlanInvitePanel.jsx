@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { useLang } from "@/lib/LanguageContext";
+import { toast } from "@/components/ui/use-toast";
 import { UserPlus, Mail, Check, Loader2, Users, MessageSquare, Send, Minus, Plus } from "lucide-react";
 
 const field = "w-full px-3 min-h-11 rounded-xl text-sm focus:outline-none bg-secondary border border-border text-foreground";
@@ -45,9 +46,12 @@ export default function PlanInvitePanel({ planTitle, planCategory }) {
         plan_title: planTitle, plan_category: planCategory, invitee_email: email.trim(),
         inviter_name: user?.full_name || "A friend", message: message.trim() || `Join me in the "${planTitle}" reading plan!`, status: "pending",
       });
-      await base44.functions.invoke("sendPlanInvite", {
+      const res = await base44.functions.invoke("sendPlanInvite", {
         email: email.trim(), planTitle, message: message.trim(),
-      }).catch(() => {});
+      }).catch(() => null);
+      if (!res?.data?.sent) {
+        toast({ variant: "destructive", title: "Invitation saved, but the email could not be delivered", description: "The app can only email people who already have an account. Share the app link with them directly." });
+      }
       setSent(true); setEmail(""); setMessage(""); setShowForm(false);
       loadInvites();
       setTimeout(() => setSent(false), 3000);

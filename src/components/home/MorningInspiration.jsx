@@ -5,6 +5,8 @@ import { PhotoBackdrop, PHOTO_VARS } from "@/components/ui/PhotoCard";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { useLang } from "@/lib/LanguageContext";
+import useDefaultTranslation from "@/hooks/useDefaultTranslation";
+import { getTranslationLang, translateVerseRef } from "@/lib/bibleData";
 
 // Each theme gets its own black-and-white photo and golden watermark icon.
 const THEMES = {
@@ -20,6 +22,7 @@ const getThemeStyle = (theme) => ({ color: "#d9b77e", ...(THEMES[theme?.toLowerC
 
 export default function MorningInspiration() {
   const { lang, t } = useLang();
+  const translation = useDefaultTranslation(lang);
   const [inspiration, setInspiration] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,15 +33,16 @@ export default function MorningInspiration() {
     else setLoading(true);
     try {
       // Cache for 2 hours per language
-      const cacheKey = `morning_inspiration_${lang}_${new Date().toISOString().slice(0, 13)}`;
+      const cacheKey = `morning_inspiration_${lang}_${translation}_${new Date().toISOString().slice(0, 13)}`;
       const cached = sessionStorage.getItem(cacheKey);
       if (cached && !isRefresh) {
         setInspiration(JSON.parse(cached));
         setLoading(false);
         return;
       }
-      const res = await base44.functions.invoke("getMorningInspiration", { language: lang });
-      const data = res.data?.inspiration;
+      const res = await base44.functions.invoke("getMorningInspiration", { language: lang, translation });
+      const raw = res.data?.inspiration;
+      const data = raw?.verse_ref ? { ...raw, verse_ref: translateVerseRef(raw.verse_ref, getTranslationLang(translation)) } : null;
       if (data?.verse_ref) {
         setInspiration(data);
         sessionStorage.setItem(cacheKey, JSON.stringify(data));
@@ -51,7 +55,7 @@ export default function MorningInspiration() {
     }
   };
 
-  useEffect(() => { load(); }, [lang]);
+  useEffect(() => { load(); }, [lang, translation]);
 
   if (loading) {
     return (
@@ -142,7 +146,7 @@ export default function MorningInspiration() {
               </button>
               <div className="flex-1" />
               {inspiration.book && inspiration.chapter && (
-                <Link to={`/read?book=${encodeURIComponent(inspiration.book)}&chapter=${inspiration.chapter}`}>
+                <Link to={`/read?book=${encodeURIComponent(inspiration.book)}&chapter=${inspiration.chapter}&translation=${translation}`}>
                   <motion.div whileTap={{ scale: 0.95 }}
                     className="flex items-center gap-1 text-[11px] font-cinzel px-3 py-1.5 rounded-lg"
                     style={{ background: `${theme.color}15`, color: theme.color, border: `1px solid ${theme.color}30` }}>

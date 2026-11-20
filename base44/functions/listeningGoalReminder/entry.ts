@@ -1,61 +1,63 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { denyUnlessAdmin } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
+import { localNow, readerLang, readerTranslation } from '../../shared/bibleLocale.ts';
+import { pick } from '../../shared/people.ts';
+import { verseByRef } from '../../shared/scripture.ts';
 
-Deno.serve(async (req) => {
+// Evening workflow: reminds people who set a daily listening goal and haven't reached it today (in their own time zone).
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
     const denied = await denyUnlessAdmin(base44);
     if (denied) return denied;
 
-    // Get today's date range
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
-    const todayStr = todayStart.toISOString().slice(0, 10);
+    const db = base44.asServiceRole.entities;
+    const [audio, prefs, users] = await Promise.all([
+      db.BibleAudioProgress.list('-updated_date', 2000),
+      db.UserPreferences.list('-updated_date', 1000),
+      db.User.list('-created_date', 1000),
+    ]);
+    const nameBy = new Map<string, any>((users || []).map((u: any) => [String(u.email).toLowerCase(), u]));
 
-    // Get all audio completions today
-    const allAudio = await base44.asServiceRole.entities.BibleAudioProgress.list('-updated_date', 2000);
-    
-    const userTodayCount = {};
-    for (const a of allAudio) {
-      const date = (a.updated_date || a.created_date)?.slice(0, 10);
-      if (date !== todayStr) continue;
-      const email = a.created_by;
-      if (!email) continue;
-      if (!userTodayCount[email]) userTodayCount[email] = 0;
-      if (a.completed) userTodayCount[email]++;
-    }
-
-    // Get all users with preferences for their daily goal
-    const allPrefs = await base44.asServiceRole.entities.UserPreferences.list('-updated_date', 500);
-    
+    const seen = new Set<string>();
+    const memo = new Map();
     let sent = 0;
-    for (const pref of allPrefs) {
-      const email = pref.created_by;
-      if (!email) continue;
-      
-      const dailyGoal = pref.daily_audio_goal || 1;
-      const todayCount = userTodayCount[email] || 0;
-      
-      if (todayCount < dailyGoal) {
-        const remaining = dailyGoal - todayCount;
-        await base44.asServiceRole.integrations.Core.SendEmail({
-          to: email,
-          subject: "🎧 Don't forget your daily listening goal!",
-          body: `<div style="font-family: Georgia, serif; max-width: 600px; margin: auto; background: #0a0f1e; color: #e8e8e8; padding: 32px; border-radius: 16px;">
-            <h2 style="color: #00f5ff;">Your Daily Audio Goal Awaits</h2>
-            <p style="color: rgba(255,255,255,0.75); line-height: 1.7;">Beloved, you still have <strong style="color: #fbbf24;">${remaining} chapter${remaining !== 1 ? 's' : ''}</strong> to go to reach your daily listening goal of <strong>${dailyGoal}</strong>.</p>
-            <p style="color: rgba(255,255,255,0.5); font-style: italic;">"Faith comes from hearing, and hearing through the word of Christ." — Romans 10:17</p>
-            <a href="https://app.veritas.com/read" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #00f5ff; color: #0a0f1e; border-radius: 8px; text-decoration: none; font-weight: bold;">Start Listening →</a>
-          </div>`
-        });
-        sent++;
-      }
-    }
+    for (const pref of prefs || []) {
+      const email = String(pref.created_by || '').toLowerCase();
+      if (!email || seen.has(email)) continue;
+      seen.add(email);
+      const goal = Number(pref.daily_audio_goal || 0);
+      if (!goal || pref.reminders?.channels?.email === false) continue;
 
+      const today = localNow(pref.timezone || 'America/New_York').date;
+      const done = (audio || []).filter((a: any) =>
+        String(a.created_by || '').toLowerCase() === email && a.completed &&
+        localNow(pref.timezone || 'America/New_York', new Date(a.updated_date || a.created_date)).date === today).length;
+      if (done >= goal) continue;
+
+      const remaining = goal - done;
+      const lang = readerLang(pref);
+      const v = await verseByRef(base44, 'Romans 10:17', readerTranslation(pref), memo);
+      const u = nameBy.get(email);
+      const first = firstNameOf(u?.display_name || u?.full_name, pick(lang, { en: 'Beloved', es: 'Amado' }));
+      const ok = await sendBrandedEmail(base44, {
+        to: email,
+        subject: pick(lang, { en: "Don't forget your daily listening goal", es: 'No olvides tu meta diaria de escucha' }),
+        html: renderEmail({
+          lang, chip: pick(lang, { en: '🎧 DAILY LISTENING GOAL', es: '🎧 META DIARIA DE ESCUCHA' }), hero: heroFor('peace'),
+          title: pick(lang, { en: `${first}, your audio goal awaits`, es: `${first}, tu meta de audio te espera` }),
+          quote: v?.text, quoteRef: v?.ref,
+          stats: [{ label: pick(lang, { en: 'chapters to go', es: 'capítulos por escuchar' }), value: remaining }],
+          cta: { label: pick(lang, { en: 'Start listening', es: 'Empezar a escuchar' }), url: appLink('/audio-dashboard') },
+          footerTag: pick(lang, { en: 'Listening Goal', es: 'Meta de Escucha' }),
+        }),
+        category: 'transactional',
+      });
+      if (ok) sent++;
+    }
     return Response.json({ success: true, reminders_sent: sent });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}

@@ -1,13 +1,11 @@
 {
-  "name": "Daily Verse Generator",
-  "description": "Generates a new Verse of the Day at 6am every morning",
   "trigger": {
     "condition": null,
     "config": {
       "trigger_type": "scheduled",
       "events": [],
       "schedule_mode": "recurring",
-      "cron_expression": "0 6 * * *",
+      "cron_expression": "0 11 * * *",
       "one_time_date": null,
       "timezone": "UTC",
       "interval_value": null,
@@ -38,6 +36,8 @@
       }
     ]
   },
+  "description": "Generates the Verse of the Day and emails it each morning (11:00 UTC, about 6-7 AM US Eastern)",
+  "name": "Daily Verse Generator",
   "x-base44-migrated-from-automation": {
     "legacy_payload_function": "dailyVerseScheduled"
   }

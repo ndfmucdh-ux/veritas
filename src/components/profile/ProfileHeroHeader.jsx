@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Camera, Check, Edit3, Loader2, X } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
 import PhotoEditorModal from "@/components/profile/PhotoEditorModal";
@@ -18,6 +18,22 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
   const [editor, setEditor] = useState(null); // { kind: "avatar" | "hero", src }
   const avatarInputRef = useRef(null);
   const heroInputRef = useRef(null);
+
+  // Edit buttons stay out of sight. Tapping the cover or the photo reveals just that button;
+  // it fades away on its own after a few seconds or when the user taps anywhere else.
+  const rootRef = useRef(null);
+  const hideTimer = useRef(null);
+  const [revealed, setRevealed] = useState(null); // "avatar" | "hero" | null
+  const reveal = (kind) => {
+    setRevealed(kind);
+    clearTimeout(hideTimer.current);
+    hideTimer.current = setTimeout(() => setRevealed(null), 4000);
+  };
+  useEffect(() => {
+    const away = (e) => { if (!rootRef.current?.contains(e.target)) setRevealed(null); };
+    document.addEventListener("pointerdown", away);
+    return () => { document.removeEventListener("pointerdown", away); clearTimeout(hideTimer.current); };
+  }, []);
 
   const displayName = savedName || t.s5Believer;
 
@@ -56,21 +72,27 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
   };
 
   return (
-    <div className="relative min-h-[19rem] overflow-hidden flex flex-col items-center justify-end pb-6 px-5">
+    <div ref={rootRef} onClick={() => reveal("hero")}
+      className="relative min-h-[19rem] overflow-hidden flex flex-col items-center justify-end pb-6 px-5">
       <img src={heroUrl || DEFAULT_HERO} alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(10,10,10,0.35) 0%, rgba(10,10,10,0.55) 45%, rgba(10,10,10,0.9) 100%)" }} />
 
-      <button onClick={() => adjustCurrent("hero", heroUrl, heroInputRef)}
-        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 min-h-9 rounded-full text-xs font-inter"
-        style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>
-        <Camera className="w-3.5 h-3.5" /> {t.s5Cover}
-      </button>
+      <AnimatePresence>
+        {revealed === "hero" && (
+          <motion.button key="cover-edit" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}
+            onClick={(e) => { e.stopPropagation(); setRevealed(null); adjustCurrent("hero", heroUrl, heroInputRef); }}
+            className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 min-h-9 rounded-full text-xs font-inter"
+            style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff" }}>
+            <Camera className="w-3.5 h-3.5" /> {t.s5Cover}
+          </motion.button>
+        )}
+      </AnimatePresence>
       <input ref={heroInputRef} type="file" accept="image/*" className="hidden" onChange={pick("hero")} />
       <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={pick("avatar")} />
 
       <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 22 }} className="relative z-10">
-        <button type="button" onClick={() => adjustCurrent("avatar", avatarUrl, avatarInputRef)} aria-label={t.s5EditPhoto}
+        <button type="button" onClick={(e) => { e.stopPropagation(); reveal("avatar"); }} aria-label={t.s5EditPhoto}
           className="block w-32 h-32 rounded-full overflow-hidden"
           style={{ border: `3px solid ${GOLD}`, boxShadow: "0 8px 30px rgba(0,0,0,0.55)" }}>
           {avatarUrl ? (
@@ -81,14 +103,19 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
             </span>
           )}
         </button>
-        <button type="button" onClick={() => avatarInputRef.current?.click()} aria-label={t.s5EditPhoto}
-          className="absolute bottom-0 right-0 w-10 h-10 rounded-full flex items-center justify-center"
-          style={{ background: GOLD, color: "#1a1408", boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
-          <Camera className="w-4 h-4" />
-        </button>
+        <AnimatePresence>
+          {revealed === "avatar" && (
+            <motion.button key="avatar-edit" type="button" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }} transition={{ duration: 0.18 }}
+              onClick={(e) => { e.stopPropagation(); setRevealed(null); adjustCurrent("avatar", avatarUrl, avatarInputRef); }} aria-label={t.s5EditPhoto}
+              className="absolute bottom-0 right-0 w-11 h-11 rounded-full flex items-center justify-center"
+              style={{ background: GOLD, color: "#1a1408", boxShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
+              <Camera className="w-4 h-4" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </motion.div>
 
-      <div className="relative z-10 mt-3 w-full max-w-xs text-center">
+      <div className="relative z-10 mt-3 w-full max-w-xs text-center" onClick={(e) => e.stopPropagation()}>
         {editingName ? (
           <div className="flex items-center justify-center gap-2">
             <div className="flex-1 min-w-0 space-y-2">
@@ -119,6 +146,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
       </div>
 
       {editor && (
+        <div onClick={(e) => e.stopPropagation()}>
         <PhotoEditorModal
           src={editor.src}
           aspect={editor.kind === "avatar" ? 1 : 4 / 3}
@@ -128,6 +156,7 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
           onCancel={() => setEditor(null)}
           onSave={saveEdited}
         />
+        </div>
       )}
     </div>
   );

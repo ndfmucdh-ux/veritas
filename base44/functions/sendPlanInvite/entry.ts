@@ -1,7 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
-import { escapeHtml } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
 
-const APP_URL = 'https://veritas-hub.base44.app';
 const MAX_PER_DAY = 20;
 
 // Sends a fixed-template reading-plan invitation. Callers can only supply the
@@ -29,20 +28,21 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: 'Daily invite limit reached' }, { status: 429 });
     }
 
-    const inviter = escapeHtml(user.full_name || 'A friend');
-    const html = `<div style="font-family:Georgia,serif;max-width:480px;margin:0 auto;padding:24px;">
-<h2 style="margin:0 0 12px;">You've been invited to a reading plan</h2>
-<p>${inviter} invited you to join the "${escapeHtml(planTitle)}" reading plan on Veritas.</p>
-${note ? `<p style="font-style:italic;">"${escapeHtml(note)}"</p>` : ''}
-<p><a href="${APP_URL}">Open Veritas</a> to get started.</p>
-</div>`;
-
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      from_name: 'Veritas · The Word',
+    const inviter = firstNameOf(user.display_name || user.full_name, 'A friend');
+    // Plain text only: renderEmail escapes every value, so names and notes can never inject markup.
+    const ok = await sendBrandedEmail(base44, {
       to: email,
-      subject: `You've been invited to join "${planTitle.replace(/[\r\n]/g, ' ')}"`,
-      body: html,
+      subject: `${inviter.replace(/[\r\n]/g, ' ')} invited you to "${planTitle.replace(/[\r\n]/g, ' ')}"`,
+      html: renderEmail({
+        chip: '📖 READING PLAN INVITATION', hero: heroFor('hope'),
+        title: `${inviter} invited you to read together`,
+        quote: note || undefined, paragraphs: [`"${planTitle}"`],
+        cta: { label: 'Open Veritas', url: appLink('/plans') },
+        footerTag: 'Reading Plans',
+      }),
+      category: 'transactional',
     });
+    if (!ok) return Response.json({ sent: false, error: 'That address could not receive the invitation.' }, { status: 422 });
     return Response.json({ sent: true });
   } catch (error) {
     return Response.json({ error: (error as Error).message }, { status: 500 });

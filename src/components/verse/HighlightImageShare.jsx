@@ -4,7 +4,7 @@ import { X, Download, Share2, QrCode, Image, Loader2, Check } from "lucide-react
 import { base44 } from "@/api/base44Client";
 
 const LOGO_URL = "https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/6a1ac5ac1_IMG_1831.jpeg";
-const APP_URL = "https://veritas.base44.app";
+const APP_URL = "https://luxveritas.app";
 
 const STYLES = [
   { id: "gold",   label: "Gold",   bg: ["#1a1205", "#2a1e08"], accent: "#c9a84c", text: "#f5ead8" },
@@ -117,7 +117,7 @@ export default function HighlightImageShare({ highlight, onClose }) {
     ctx.fillStyle = `${style.accent}66`;
     ctx.font = "22px Arial";
     ctx.letterSpacing = "2px";
-    ctx.fillText("veritas.base44.app", W / 2, H - 64);
+    ctx.fillText("luxveritas.app", W / 2, H - 64);
 
     // Logo circle
     const logo = new window.Image();

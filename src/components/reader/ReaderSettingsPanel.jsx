@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Toggle from "@/components/ui/Toggle";
+import { savePrefs } from "@/lib/preferencesSync";
 
 export default function ReaderSettingsPanel({
   open,
@@ -60,6 +61,7 @@ export default function ReaderSettingsPanel({
                 const next = !oledMode;
                 setOledMode(next);
                 localStorage.setItem("veritas_oled_mode", String(next));
+                savePrefs({ oled_mode: next });
               }} />
             </SettingRow>
           </div>

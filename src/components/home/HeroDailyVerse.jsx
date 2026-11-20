@@ -4,13 +4,15 @@ import { motion } from "framer-motion";
 import { Share2, ChevronRight, Sun, Leaf } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
 import useLocalizedVotd from "@/hooks/useLocalizedVotd";
+import useDefaultTranslation from "@/hooks/useDefaultTranslation";
 import { pickVersePhoto } from "@/lib/verseImagery";
 
 const GOLD = "#d9b77e";
 
 export default function HeroDailyVerse() {
   const { t, lang } = useLang();
-  const { verse, loading, base } = useLocalizedVotd(lang);
+  const translation = useDefaultTranslation(lang);
+  const { verse, loading, base } = useLocalizedVotd(lang, translation);
   const [showReflection, setShowReflection] = useState(false);
 
   const photo = useMemo(() => pickVersePhoto(`${verse?.text || ""} ${verse?.reflection || ""}`), [verse]);
@@ -22,7 +24,7 @@ export default function HeroDailyVerse() {
     else navigator.clipboard?.writeText(text);
   };
 
-  const readHref = base?.book ? `/read?book=${encodeURIComponent(base.book)}&chapter=${base.chapter}` : "/read";
+  const readHref = base?.book ? `/read?book=${encodeURIComponent(base.book)}&chapter=${base.chapter}&translation=${translation}` : "/read";
 
   return (
     <motion.section

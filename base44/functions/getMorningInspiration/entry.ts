@@ -1,26 +1,30 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { LANG_NAME, parseRef, translationLang } from '../../shared/bibleLocale.ts';
+import { fetchVerseText } from '../../shared/scripture.ts';
 
-Deno.serve(async (req) => {
+// Morning Inspiration for the signed-in user: a verse chosen from their recent reading, shown in
+// THEIR default Bible, with the reflection written in their app language.
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
+    const user = await base44.auth.me().catch(() => null);
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Get recent reading progress and plans
+    const { language = 'en', translation = 'KJV' } = await req.json().catch(() => ({}));
+    const reflectionLang = LANG_NAME[language] || 'English';
+
     const [progress, xpData] = await Promise.all([
-      base44.entities.ReadingProgress.list('-created_date', 10),
-      base44.entities.UserXP.list('-updated_date', 1),
+      base44.entities.ReadingProgress.filter({ created_by: user.email }, '-created_date', 10),
+      base44.entities.UserXP.filter({ created_by: user.email }, '-updated_date', 1),
     ]);
 
-    const recentBooks = [...new Set((progress || []).map(p => p.book).filter(Boolean))].slice(0, 3);
-    const planProgress = (progress || []).filter(p => p.plan_id).map(p => p.plan_id);
-    const activePlan = planProgress.length > 0 ? [...new Set(planProgress)][0] : null;
+    const recentBooks = [...new Set((progress || []).map((p: any) => p.book).filter(Boolean))].slice(0, 3);
+    const activePlan = (progress || []).find((p: any) => p.plan_id)?.plan_id || null;
     const level = xpData?.[0]?.level || 'Seeker';
 
     const contextInfo = recentBooks.length > 0
       ? `The user has recently been reading: ${recentBooks.join(', ')}.`
       : 'The user is just beginning their Bible reading journey.';
-
     const planInfo = activePlan
       ? `They are currently following the "${activePlan}" devotional plan.`
       : 'They have not started a devotional plan yet.';
@@ -31,29 +35,32 @@ Deno.serve(async (req) => {
 ${contextInfo} ${planInfo} Their current level is: ${level}.
 
 Respond with a JSON object containing:
-- verse_ref: a specific Bible verse reference (e.g. "Romans 8:28")  
-- verse_text: the exact KJV text of that verse
-- book: just the book name (e.g. "Romans")
+- verse_ref: ENGLISH reference of one specific verse (e.g. "Romans 8:28")
+- book: the ENGLISH book name (e.g. "Romans")
 - chapter: the chapter number
-- reflection: a warm, 2-3 sentence personalized reflection that connects to their recent reading context
-- theme: one word theme (e.g. "hope", "strength", "grace", "peace")
+- verse: the verse number
+- verse_text: the verse text in ${LANG_NAME[translationLang(translation)] || 'English'}
+- reflection: a warm, 2-3 sentence personalized reflection connected to their recent reading, written in ${reflectionLang}
+- theme: one English word theme (hope, strength, grace, peace, love or faith)
 
-Choose a verse that feels like a gentle nudge forward, not random — one that connects thematically to where they've been reading.`,
+Choose a verse that feels like a gentle nudge forward, not random.`,
       response_json_schema: {
-        type: "object",
+        type: 'object',
         properties: {
-          verse_ref: { type: "string" },
-          verse_text: { type: "string" },
-          book: { type: "string" },
-          chapter: { type: "number" },
-          reflection: { type: "string" },
-          theme: { type: "string" },
-        }
-      }
+          verse_ref: { type: 'string' }, book: { type: 'string' }, chapter: { type: 'number' }, verse: { type: 'number' },
+          verse_text: { type: 'string' }, reflection: { type: 'string' }, theme: { type: 'string' },
+        },
+      },
     });
 
-    return Response.json({ inspiration: result });
+    // The verse itself comes from the user's chosen Bible, not from the AI's memory of it.
+    const { chapter, from, to } = parseRef(result?.verse_ref, result || {});
+    const text = await fetchVerseText(base44, {
+      translation, book: result.book, chapter, from, to, baseText: result.verse_text, baseTranslation: '__ai__',
+    }, new Map());
+
+    return Response.json({ inspiration: { ...result, chapter, verse: from, verse_text: text || result.verse_text, translation } });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}

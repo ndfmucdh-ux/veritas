@@ -3,6 +3,7 @@ import { Sun, Moon, Monitor, Check } from "lucide-react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useLang } from "@/lib/LanguageContext";
 import { getThemeMode, setThemeMode } from "@/lib/theme";
+import { savePrefs } from "@/lib/preferencesSync";
 
 const LABELS = {
   en: { light: "Light", dark: "Dark", system: "System", title: "Theme" },
@@ -38,7 +39,7 @@ export default function ThemeToggle() {
         {Object.keys(ICONS).map((id) => {
           const ItemIcon = ICONS[id];
           return (
-            <DropdownMenuItem key={id} onSelect={() => { setMode(id); setThemeMode(id); }} className="gap-2 min-h-10">
+            <DropdownMenuItem key={id} onSelect={() => { setMode(id); setThemeMode(id); savePrefs({ theme_mode: id }); }} className="gap-2 min-h-10">
               <ItemIcon className="w-4 h-4" />
               <span className="flex-1">{labels[id]}</span>
               {mode === id && <Check className="w-4 h-4 text-cyan" />}

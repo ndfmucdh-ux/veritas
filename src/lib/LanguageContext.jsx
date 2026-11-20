@@ -13,7 +13,7 @@ import { STAGE6 } from "@/lib/i18nStage6";
 import { STAGE7 } from "@/lib/i18nStage7";
 import { STAGE8 } from "@/lib/i18nStage8";
 import { STAGE9 } from "@/lib/i18nStage9";
-import { hydratePrefs } from "@/lib/preferencesSync";
+import { hydratePrefs, savePrefs } from "@/lib/preferencesSync";
 import { getTranslationLang, DEFAULT_TRANSLATION_BY_LANG } from "@/lib/bibleData";
 
 // Locale dictionaries (en/es/fr/pt/de) plus extra UI strings; missing keys fall back to English.
@@ -28,22 +28,17 @@ export function LanguageProvider({ children }) {
   const setLang = useCallback((code) => {
     if (!isSupported(code)) return;
     localStorage.setItem("veritas_lang", code);
-    // Bible text follows the app language: switch translation if the saved one is in another language.
+    // Bible text follows the app language until the user picks their own default Bible; that choice always wins.
     const stored = localStorage.getItem("veritas_translation") || "KJV";
-    if (getTranslationLang(stored) !== code) {
+    const chosen = localStorage.getItem("veritas_translation_chosen") === "1";
+    if (!chosen && getTranslationLang(stored) !== code) {
       const next = DEFAULT_TRANSLATION_BY_LANG[code] || "KJV";
       localStorage.setItem("veritas_translation", next);
       window.dispatchEvent(new CustomEvent("veritas:translation", { detail: next }));
     }
     setLangState(code);
     // Best-effort sync to saved preferences (signed-out visitors simply skip).
-    base44.auth.isAuthenticated().then(async (ok) => {
-      if (!ok) return;
-      const prefs = await base44.entities.UserPreferences.list("-updated_date", 1);
-      const data = { language: code, default_translation: localStorage.getItem("veritas_translation") || "KJV" };
-      if (prefs?.[0]) await base44.entities.UserPreferences.update(prefs[0].id, data);
-      else await base44.entities.UserPreferences.create(data);
-    }).catch(() => {});
+    savePrefs({ language: code, default_translation: localStorage.getItem("veritas_translation") || "KJV" });
   }, []);
 
   // Restore saved language + Bible version + reading settings for signed-in users.

@@ -4,13 +4,11 @@
   "properties": {
     "default_translation": {
       "type": "string",
-      "default": "KJV",
-      "description": "The user's default Bible (any language). Drives the reader, Verse of the Day and Morning Inspiration."
+      "description": "The user's default Bible (any language). Drives the reader, Verse of the Day, Morning Inspiration and emails."
     },
     "translation_chosen": {
       "type": "boolean",
-      "default": false,
-      "description": "True once the user explicitly picked a default Bible; app language changes then never override it"
+      "description": "True once the user explicitly picked a default Bible; changing the app language then never overrides it"
     },
     "font_size": {
       "type": "number",
@@ -37,9 +35,17 @@
       "type": "boolean",
       "default": true
     },
+    "oled_mode": {
+      "type": "boolean",
+      "description": "Pure black reader background"
+    },
     "audio_autoplay": {
       "type": "boolean",
       "default": false
+    },
+    "daily_audio_goal": {
+      "type": "number",
+      "description": "Chapters the user wants to listen to each day (empty: no goal, no goal reminder)"
     },
     "notifications_enabled": {
       "type": "boolean",
@@ -51,7 +57,7 @@
     },
     "language": {
       "type": "string",
-      "default": "en"
+      "description": "App language: en, es, fr, pt or de"
     },
     "theme": {
       "type": "string",
@@ -142,9 +148,9 @@
         }
       }
     },
-    "reminder_last_sent": {
+    "app_settings": {
       "type": "object",
-      "description": "Server-only: last local date (YYYY-MM-DD) each reminder was sent, so nobody gets two in a day"
+      "description": "Other per-device settings mirrored to the account (quiet mode, reading goals, audio speed, folders...), keyed by their local storage name"
     }
   },
   "required": [],

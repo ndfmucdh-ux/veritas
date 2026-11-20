@@ -1,84 +1,75 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { denyUnlessAdmin } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
+import { readerLang, readerTranslation } from '../../shared/bibleLocale.ts';
+import { loadPrefsMap, pick } from '../../shared/people.ts';
+import { verseByRef } from '../../shared/scripture.ts';
 
-Deno.serve(async (req) => {
+// Monthly workflow: sends each active reader a summary of last month.
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
     const denied = await denyUnlessAdmin(base44);
     if (denied) return denied;
 
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
-    const monthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString();
-    const monthName = new Date(now.getFullYear(), now.getMonth() - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+    const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 1);
+    const db = base44.asServiceRole.entities;
+    const [progress, xpRows, users, prefs] = await Promise.all([
+      db.ReadingProgress.list('-completed_at', 2000),
+      db.UserXP.list('-updated_date', 1000),
+      db.User.list('-created_date', 1000),
+      loadPrefsMap(base44),
+    ]);
 
-    // Get all reading progress for last month
-    const allProgress = await base44.asServiceRole.entities.ReadingProgress.list('-completed_at', 2000);
-    const allXP = await base44.asServiceRole.entities.UserXP.list('-updated_date', 500);
-
-    // Group by user
-    const byUser = {};
-    for (const p of allProgress) {
-      const email = p.created_by;
-      if (!email) continue;
-      const date = new Date(p.completed_at || p.created_date);
-      if (date < new Date(monthStart) || date > new Date(monthEnd)) continue;
-      if (!byUser[email]) byUser[email] = { progress: [], xp: null };
-      byUser[email].progress.push(p);
+    const byUser = new Map<string, any[]>();
+    for (const p of progress || []) {
+      const email = String(p.created_by || '').toLowerCase();
+      const at = new Date(p.completed_at || p.created_date);
+      if (!email || at < start || at >= end) continue;
+      byUser.set(email, [...(byUser.get(email) || []), p]);
     }
+    const xpBy = new Map<string, any>();
+    for (const x of xpRows || []) { const k = String(x.created_by || '').toLowerCase(); if (k && !xpBy.has(k)) xpBy.set(k, x); }
+    const nameBy = new Map<string, any>((users || []).map((u: any) => [String(u.email).toLowerCase(), u]));
 
-    for (const xpRec of allXP) {
-      const email = xpRec.created_by;
-      if (email && byUser[email]) byUser[email].xp = xpRec;
-    }
-
+    const memo = new Map();
     let sent = 0;
-    for (const [email, data] of Object.entries(byUser)) {
-      const { progress, xp } = data;
-      if (progress.length === 0) continue;
-
-      const booksRead = [...new Set(progress.map(p => p.book))];
-      const chaptersRead = progress.length;
-      const totalXP = xp?.total_xp || 0;
-      const streak = xp?.streak_days || 0;
-      const level = xp?.level || 'Seeker';
-
-      await base44.asServiceRole.integrations.Core.SendEmail({
+    for (const [email, rows] of byUser) {
+      const pref = prefs.get(email);
+      if (pref?.reminders?.channels?.email === false) continue;
+      const lang = readerLang(pref);
+      const locale = lang === 'es' ? 'es-US' : lang === 'fr' ? 'fr-FR' : lang === 'pt' ? 'pt-BR' : lang === 'de' ? 'de-DE' : 'en-US';
+      const month = start.toLocaleString(locale, { month: 'long', year: 'numeric' });
+      const books = [...new Set(rows.map((p) => p.book))];
+      const xp = xpBy.get(email);
+      const v = await verseByRef(base44, '2 Peter 3:18', readerTranslation(pref), memo);
+      const u = nameBy.get(email);
+      const first = firstNameOf(u?.display_name || u?.full_name, pick(lang, { en: 'Beloved', es: 'Amado' }));
+      const ok = await sendBrandedEmail(base44, {
         to: email,
-        subject: `📊 Your Veritas Monthly Summary — ${monthName}`,
-        body: `<div style="font-family: Georgia, serif; max-width: 600px; margin: auto; background: #0a0f1e; color: #e8e8e8; padding: 32px; border-radius: 16px;">
-          <h2 style="color: #00f5ff; font-family: Georgia, serif;">Your ${monthName} Summary</h2>
-          <p style="color: rgba(255,255,255,0.6); line-height: 1.7;">Here's a reflection on your spiritual journey last month:</p>
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
-            <div style="background: rgba(0,245,255,0.08); border: 1px solid rgba(0,245,255,0.2); border-radius: 12px; padding: 16px; text-align: center;">
-              <div style="font-size: 28px; font-weight: bold; color: #00f5ff;">${chaptersRead}</div>
-              <div style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px;">Chapters Read</div>
-            </div>
-            <div style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); border-radius: 12px; padding: 16px; text-align: center;">
-              <div style="font-size: 28px; font-weight: bold; color: #fbbf24;">${totalXP}</div>
-              <div style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px;">Total XP Earned</div>
-            </div>
-            <div style="background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); border-radius: 12px; padding: 16px; text-align: center;">
-              <div style="font-size: 28px; font-weight: bold; color: #a78bfa;">${streak}🔥</div>
-              <div style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px;">Day Streak</div>
-            </div>
-            <div style="background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); border-radius: 12px; padding: 16px; text-align: center;">
-              <div style="font-size: 28px; font-weight: bold; color: #34d399;">${level}</div>
-              <div style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px;">Current Level</div>
-            </div>
-          </div>
-
-          <p style="color: rgba(255,255,255,0.6);">Books you explored: <strong style="color: #fbbf24;">${booksRead.join(', ') || 'None recorded'}</strong></p>
-          <p style="color: rgba(255,255,255,0.5); font-style: italic; border-left: 3px solid #fbbf24; padding-left: 12px; margin: 20px 0;">"But grow in the grace and knowledge of our Lord and Savior Jesus Christ." — 2 Peter 3:18</p>
-          <a href="https://app.veritas.com/profile" style="display: inline-block; margin-top: 8px; padding: 12px 24px; background: #00f5ff; color: #0a0f1e; border-radius: 8px; text-decoration: none; font-weight: bold;">View Full Profile →</a>
-        </div>`
+        subject: pick(lang, { en: `Your ${month} in the Word`, es: `Tu ${month} en la Palabra` }),
+        html: renderEmail({
+          lang, chip: pick(lang, { en: '📅 MONTHLY SUMMARY', es: '📅 RESUMEN MENSUAL' }), hero: heroFor('grace'),
+          title: pick(lang, { en: `${first}, here is ${month}`, es: `${first}, así fue ${month}` }),
+          quote: v?.text, quoteRef: v?.ref,
+          paragraphs: [`${pick(lang, { en: 'Books you explored', es: 'Libros que exploraste' })}: ${books.join(', ')}`],
+          stats: [
+            { label: pick(lang, { en: 'chapters', es: 'capítulos' }), value: rows.length },
+            { label: 'XP', value: (xp?.total_xp || 0).toLocaleString() },
+            { label: pick(lang, { en: 'day streak', es: 'días de racha' }), value: xp?.streak_days || 0 },
+          ],
+          cta: { label: pick(lang, { en: 'View my profile', es: 'Ver mi perfil' }), url: appLink('/profile') },
+          footerTag: pick(lang, { en: 'Monthly Summary', es: 'Resumen Mensual' }),
+          sentLine: pick(lang, { en: 'Sent automatically each month', es: 'Enviado automáticamente cada mes' }),
+        }),
+        category: 'transactional',
       });
-      sent++;
+      if (ok) sent++;
     }
-
-    return Response.json({ success: true, summaries_sent: sent, month: monthName });
+    return Response.json({ success: true, summaries_sent: sent });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}

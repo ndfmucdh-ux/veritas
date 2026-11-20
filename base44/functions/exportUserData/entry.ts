@@ -171,7 +171,7 @@ body{background:#06080f;font-family:Inter,sans-serif;color:rgba(255,255,255,0.85
 
     if (format === "send_email" && send_to_email) {
       await base44.integrations.Core.SendEmail({
-        from_name: "Veritas · Your Spiritual Journey",
+        from_name: "Veritas",
         to: send_to_email,
         subject: `✨ ${name}'s Spiritual Journey — Veritas Export`,
         body: html,

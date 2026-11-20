@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Toggle from "@/components/ui/Toggle";
-import DailyVerseEmailToggle from "@/components/profile/DailyVerseEmailToggle";
+import DefaultBibleSelector from "@/components/profile/DefaultBibleSelector";
+import ReminderSettings from "@/components/notifications/ReminderSettings";
 import { savePrefs } from "@/lib/preferencesSync";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -46,13 +47,6 @@ const THEMES = [
   { id: "midnight", label: "Midnight", icon: Zap, color: "#00f5ff" },
   { id: "light", label: "Light", icon: Sun, color: "#fbbf24" },
 ];
-const TRANSLATIONS = [
-  // English
-  "KJV", "NIV", "ESV", "NKJV", "NLT", "AMP", "MSG", "BTX3",
-  // Spanish
-  "RVR60", "NVI", "LBLA", "TLA", "DHH",
-];
-
 export default function AccountSettings({ user }) {
   const { lang: currentLang, setLang, tr } = useLang();
   const [openSection, setOpenSection] = useState(null);
@@ -79,19 +73,12 @@ export default function AccountSettings({ user }) {
   // Reading prefs (persisted to localStorage)
   const [fontSize, setFontSize] = useState(() => localStorage.getItem("veritas_font_size") || "Medium");
   const [theme, setTheme] = useState(() => localStorage.getItem("veritas_theme") || "dark");
-  const [defaultTranslation, setDefaultTranslation] = useState(() => localStorage.getItem("veritas_translation") || "KJV");
   const [redLetterOn, setRedLetterOn] = useState(() => localStorage.getItem("veritas_red_letter") !== "false");
   const [verseNumbers, setVerseNumbers] = useState(() => localStorage.getItem("veritas_verse_numbers") !== "false");
   const [audioAutoplay, setAudioAutoplay] = useState(() => localStorage.getItem("veritas_audio_autoplay") === "true");
 
-  // Notification times
-  const [morningTime, setMorningTime] = useState(() => localStorage.getItem("veritas_notif_morning") || "07:00");
-  const [eveningTime, setEveningTime] = useState(() => localStorage.getItem("veritas_notif_evening") || "20:00");
-  const [devotionalTime, setDevotionalTime] = useState(() => localStorage.getItem("veritas_notif_devotional_reminder_time") || "19:00");
-
-  // Save feedback states
+  // Save feedback state
   const [readingSaved, setReadingSaved] = useState(false);
-  const [notifSaved, setNotifSaved] = useState(false);
 
   const toggle = (id) => setOpenSection(s => s === id ? null : id);
 
@@ -135,24 +122,29 @@ export default function AccountSettings({ user }) {
     setPwdSaving(false);
   };
 
-  const saveReadingPrefs = () => {
-    localStorage.setItem("veritas_font_size", fontSize);
-    localStorage.setItem("veritas_theme", theme);
-    localStorage.setItem("veritas_translation", defaultTranslation);
-    localStorage.setItem("veritas_red_letter", String(redLetterOn));
-    localStorage.setItem("veritas_verse_numbers", String(verseNumbers));
-    localStorage.setItem("veritas_audio_autoplay", String(audioAutoplay));
-    savePrefs({ default_translation: defaultTranslation, show_red_letter: redLetterOn, show_verse_numbers: verseNumbers });
-    setReadingSaved(true);
-    setTimeout(() => setReadingSaved(false), 2500);
+  // Reading settings save to the account the moment they change (and again on the Save button),
+  // so they are never lost when leaving the page or closing the app.
+  const persistReading = (next = {}) => {
+    const v = { fontSize, redLetterOn, verseNumbers, audioAutoplay, ...next };
+    localStorage.setItem("veritas_font_size", v.fontSize);
+    localStorage.setItem("veritas_red_letter", String(v.redLetterOn));
+    localStorage.setItem("veritas_verse_numbers", String(v.verseNumbers));
+    localStorage.setItem("veritas_audio_autoplay", String(v.audioAutoplay));
+    return savePrefs({ font_size_label: v.fontSize, show_red_letter: v.redLetterOn, show_verse_numbers: v.verseNumbers, audio_autoplay: v.audioAutoplay });
   };
 
-  const saveNotifications = () => {
-    localStorage.setItem("veritas_notif_morning", morningTime);
-    localStorage.setItem("veritas_notif_evening", eveningTime);
-    localStorage.setItem("veritas_notif_devotional_reminder_time", devotionalTime);
-    setNotifSaved(true);
-    setTimeout(() => setNotifSaved(false), 2500);
+  const pickFontSize = (s) => { setFontSize(s); persistReading({ fontSize: s }); };
+  const flipSetting = (key) => {
+    const current = { redLetterOn, verseNumbers, audioAutoplay };
+    const setters = { redLetterOn: setRedLetterOn, verseNumbers: setVerseNumbers, audioAutoplay: setAudioAutoplay };
+    setters[key](!current[key]);
+    persistReading({ [key]: !current[key] });
+  };
+
+  const saveReadingPrefs = async () => {
+    await persistReading();
+    setReadingSaved(true);
+    setTimeout(() => setReadingSaved(false), 2500);
   };
 
   const pwdStrength = newPassword.length === 0 ? 0 : newPassword.length < 6 ? 1 : newPassword.length < 10 ? 2 : /[A-Z]/.test(newPassword) && /[0-9]/.test(newPassword) ? 4 : 3;
@@ -282,24 +274,14 @@ export default function AccountSettings({ user }) {
                             {/* Default Translation */}
                             <div>
                               <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>{tr("set_defaultTranslation")}</p>
-                              <div className="flex flex-wrap gap-2">
-                                {TRANSLATIONS.map(t => (
-                                  <button key={t} onClick={() => setDefaultTranslation(t)}
-                                    className="px-3 py-1.5 rounded-xl text-xs font-cinzel transition-all"
-                                    style={{
-                                      background: defaultTranslation === t ? "rgba(52,211,153,0.15)" : "rgb(var(--ink) / 0.05)",
-                                      color: defaultTranslation === t ? "#34d399" : "rgb(var(--ink) / 0.45)",
-                                      border: defaultTranslation === t ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgb(var(--ink) / 0.08)"
-                                    }}>{t}</button>
-                                ))}
-                              </div>
+                              <DefaultBibleSelector />
                             </div>
                             {/* Font Size */}
                             <div>
                               <p className="text-[10px] font-cinzel uppercase tracking-wider mb-2" style={{ color: "rgb(var(--ink) / 0.35)" }}>{tr("set_fontSize")}</p>
                               <div className="flex gap-2">
                                 {FONT_SIZES.map(s => (
-                                  <button key={s} onClick={() => setFontSize(s)}
+                                  <button key={s} onClick={() => pickFontSize(s)}
                                     className="flex-1 py-2 rounded-xl text-xs font-cinzel transition-all"
                                     style={{
                                       background: fontSize === s ? "rgba(0,245,255,0.12)" : "rgb(var(--ink) / 0.04)",
@@ -312,13 +294,13 @@ export default function AccountSettings({ user }) {
                             {/* Toggles */}
                             <div className="space-y-2">
                               {[
-                                { label: "set_redLetter", key: "redLetterOn", value: redLetterOn, setter: setRedLetterOn, color: "#f87171" },
-                                { label: "set_verseNumbers", key: "verseNumbers", value: verseNumbers, setter: setVerseNumbers, color: "#00f5ff" },
-                                { label: "set_audioAutoplay", key: "audioAutoplay", value: audioAutoplay, setter: setAudioAutoplay, color: "#a78bfa" },
-                              ].map(({ label, value, setter, color }) => (
+                                { label: "set_redLetter", key: "redLetterOn", value: redLetterOn },
+                                { label: "set_verseNumbers", key: "verseNumbers", value: verseNumbers },
+                                { label: "set_audioAutoplay", key: "audioAutoplay", value: audioAutoplay },
+                              ].map(({ label, key, value }) => (
                                 <div key={label} className="flex items-center justify-between py-2 border-b" style={{ borderColor: "rgb(var(--ink) / 0.06)" }}>
                                   <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.65)" }}>{tr(label)}</p>
-                                  <Toggle value={value} onChange={() => setter(v => !v)} label={tr(label)} />
+                                  <Toggle value={value} onChange={() => flipSetting(key)} label={tr(label)} />
                                 </div>
                               ))}
                             </div>
@@ -357,29 +339,8 @@ export default function AccountSettings({ user }) {
 
                         {/* ── NOTIFICATIONS ── */}
                         {id === "notifications" && (
-                          <div className="space-y-4 pt-3">
-                            <DailyVerseEmailToggle />
-                            {[
-                              { label: tr("set_morning"), key: "morning", value: morningTime, setter: setMorningTime, sub: tr("set_morningSub") },
-                              { label: tr("set_evening"), key: "evening", value: eveningTime, setter: setEveningTime, sub: tr("set_eveningSub") },
-                              { label: tr("set_devotional"), key: "devotional", value: devotionalTime, setter: setDevotionalTime, sub: tr("set_devotionalSub") },
-                            ].map(({ label, key, value, setter, sub }) => (
-                              <div key={key} className="flex items-center justify-between py-2.5 px-3 rounded-xl"
-                                style={{ background: "var(--fill-1)", border: "1px solid rgb(var(--ink) / 0.07)" }}>
-                                <div>
-                                  <p className="text-sm font-inter" style={{ color: "rgb(var(--ink) / 0.75)" }}>{label}</p>
-                                  <p className="text-[10px] font-inter mt-0.5" style={{ color: "rgb(var(--ink) / 0.3)" }}>{sub}</p>
-                                </div>
-                                <input type="time" value={value} onChange={e => setter(e.target.value)}
-                                  className="text-xs font-cinzel px-3 py-1.5 rounded-xl focus:outline-none"
-                                  style={{ background: "rgba(0,245,255,0.07)", border: "1px solid rgba(0,245,255,0.2)", color: "#00f5ff" }} />
-                              </div>
-                            ))}
-                            <button onClick={saveNotifications}
-                              className="w-full py-2.5 rounded-xl font-cinzel text-sm flex items-center justify-center gap-2 transition-all"
-                              style={{ background: notifSaved ? "rgba(52,211,153,0.2)" : "rgba(0,245,255,0.1)", color: notifSaved ? "#34d399" : "#00f5ff", border: notifSaved ? "1px solid rgba(52,211,153,0.3)" : "1px solid rgba(0,245,255,0.25)" }}>
-                              <Check className="w-4 h-4" /> {notifSaved ? tr("set_saved") : tr("set_saveSchedule")}
-                            </button>
+                          <div className="pt-3">
+                            <ReminderSettings />
                           </div>
                         )}
 

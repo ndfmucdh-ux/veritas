@@ -1,55 +1,71 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { denyUnlessAdmin } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
+import { readerLang } from '../../shared/bibleLocale.ts';
+import { loadPrefsMap, pick } from '../../shared/people.ts';
 
-Deno.serve(async (req) => {
+const toBase64 = (text: string) => {
+  const bytes = new TextEncoder().encode(text);
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+};
+
+// Sunday workflow: emails each person a CSV backup of their own notes, attached as a file.
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
     const denied = await denyUnlessAdmin(base44);
     if (denied) return denied;
 
-    // Scheduled job — runs every Sunday at midnight
-    // Export all user notes grouped by user
-    const allNotes = await base44.asServiceRole.entities.UserNote.list('-created_date', 1000);
-    
-    // Group by user
-    const byUser = {};
-    for (const note of allNotes) {
-      const email = note.created_by;
-      if (!email) continue;
-      if (!byUser[email]) byUser[email] = [];
-      byUser[email].push(note);
+    const db = base44.asServiceRole.entities;
+    const [allNotes, users, prefs] = await Promise.all([
+      db.UserNote.list('-created_date', 1000),
+      db.User.list('-created_date', 1000),
+      loadPrefsMap(base44),
+    ]);
+    const byUser = new Map<string, any[]>();
+    for (const n of allNotes || []) {
+      const k = String(n.created_by || '').toLowerCase();
+      if (k) byUser.set(k, [...(byUser.get(k) || []), n]);
     }
+    const nameBy = new Map<string, any>((users || []).map((u: any) => [String(u.email).toLowerCase(), u]));
 
+    const date = new Date().toISOString().slice(0, 10);
     let exported = 0;
-    for (const [email, notes] of Object.entries(byUser)) {
-      if (notes.length === 0) continue;
-
-      const date = new Date().toISOString().slice(0, 10);
-      const csvRows = ['Verse Reference,Book,Chapter,Verse,Translation,Note,Date Created'];
-      
+    for (const [email, notes] of byUser) {
+      const pref = prefs.get(email);
+      if (pref?.reminders?.channels?.email === false) continue;
+      const lang = readerLang(pref);
+      const rows = ['Verse Reference,Book,Chapter,Verse,Translation,Note,Date Created'];
       for (const n of notes) {
-        const safeNote = (n.note_text || '').replace(/"/g, '""').replace(/\n/g, ' ');
-        csvRows.push(`"${n.verse_ref || ''}","${n.book || ''}","${n.chapter || ''}","${n.verse || ''}","${n.translation || ''}","${safeNote}","${n.created_date?.slice(0, 10) || ''}"`);
+        const note = String(n.note_text || '').replace(/"/g, '""').replace(/\n/g, ' ');
+        rows.push(`"${n.verse_ref || ''}","${n.book || ''}","${n.chapter || ''}","${n.verse || ''}","${n.translation || ''}","${note}","${String(n.created_date || '').slice(0, 10)}"`);
       }
-
-      const csvContent = csvRows.join('\n');
-
-      await base44.asServiceRole.integrations.Core.SendEmail({
+      const u = nameBy.get(email);
+      const first = firstNameOf(u?.display_name || u?.full_name, pick(lang, { en: 'Beloved', es: 'Amado' }));
+      const res = await base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
-        subject: `📝 Your Veritas Notes Backup — ${date}`,
-        body: `<div style="font-family: Georgia, serif; max-width: 600px; margin: auto; background: #0a0f1e; color: #e8e8e8; padding: 32px; border-radius: 16px;">
-          <h2 style="color: #a78bfa;">Your Weekly Notes Backup</h2>
-          <p style="color: rgba(255,255,255,0.75); line-height: 1.7;">Beloved, here is your weekly backup of all ${notes.length} notes you've written in Veritas. Your reflections are precious — keep them safe.</p>
-          <p style="color: rgba(255,255,255,0.5); font-style: italic;">"Write the vision; make it plain on tablets." — Habakkuk 2:2</p>
-          <pre style="background: rgba(255,255,255,0.06); padding: 16px; border-radius: 8px; font-size: 11px; color: rgba(255,255,255,0.6); overflow-x: auto; max-height: 400px;">${csvContent}</pre>
-          <p style="color: rgba(255,255,255,0.35); font-size: 12px; margin-top: 16px;">This backup was generated automatically every Sunday at midnight.</p>
-        </div>`
+        from_name: 'Veritas',
+        subject: pick(lang, { en: `Your Veritas notes backup (${date})`, es: `Tu respaldo de notas de Veritas (${date})` }),
+        html: renderEmail({
+          lang, chip: pick(lang, { en: '📝 NOTES BACKUP', es: '📝 RESPALDO DE NOTAS' }), hero: heroFor('wisdom'),
+          title: pick(lang, { en: `${first}, your notes are safe`, es: `${first}, tus notas están a salvo` }),
+          paragraphs: [pick(lang, {
+            en: `Your weekly backup of ${notes.length} notes is attached as a spreadsheet (CSV).`,
+            es: `Tu respaldo semanal de ${notes.length} notas va adjunto como hoja de cálculo (CSV).`,
+          })],
+          cta: { label: pick(lang, { en: 'Open my notes', es: 'Abrir mis notas' }), url: appLink('/library') },
+          footerTag: pick(lang, { en: 'Notes Backup', es: 'Respaldo de Notas' }),
+          sentLine: pick(lang, { en: 'Sent automatically each Sunday', es: 'Enviado automáticamente cada domingo' }),
+        }),
+        category: 'transactional',
+        attachments: [{ filename: `veritas-notes-${date}.csv`, content: toBase64(rows.join('\n')) }],
       });
-      exported++;
+      if (res?.success !== false) exported++;
     }
-
     return Response.json({ success: true, users_exported: exported });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}

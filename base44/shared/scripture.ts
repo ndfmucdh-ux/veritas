@@ -22,7 +22,7 @@ export async function fetchVerseText(base44: any, o: {
     const picked = rows
       .filter((r: any) => Number(r.verse) >= o.from && Number(r.verse) <= (o.to || o.from))
       .sort((a: any, b: any) => a.verse - b.verse);
-    const joined = picked.map((r: any) => String(r.text || "").trim()).join(" ").trim();
+    const joined = picked.map((r: any) => String(r.text || "").replace(/[°†‡*]/g, "").trim()).join(" ").replace(/\s{2,}/g, " ").trim();
     if (joined) return joined;
     const lang = translationLang(o.translation);
     const out = await base44.asServiceRole.integrations.Core.InvokeLLM({
@@ -45,6 +45,20 @@ export async function bookNameIn(base44: any, book: string, lang: string, transl
     return out?.name || book;
   });
   return name || book;
+}
+
+// A verse given as an English reference ("Psalm 119:105"), returned in the reader's Bible with a localized reference.
+export async function verseByRef(base44: any, ref: string, translation: string, memo: Memo) {
+  const m = String(ref).trim().match(/^(.+?)\s+(\d+):(\d+)(?:\s*[-–]\s*(\d+))?$/);
+  if (!m) return null;
+  let book = m[1].toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()).replace(/\bOf\b/, "of");
+  if (book === "Psalm") book = "Psalms";
+  const chapter = Number(m[2]), from = Number(m[3]), to = m[4] ? Number(m[4]) : undefined;
+  const [text, name] = await Promise.all([
+    fetchVerseText(base44, { translation, book, chapter, from, to }, memo),
+    bookNameIn(base44, book, translationLang(translation), translation, memo),
+  ]);
+  return { text, ref: `${name} ${chapter}:${from}${to ? `-${to}` : ""} (${translation})`, book, chapter, from };
 }
 
 export async function textIn(base44: any, text: string, lang: string, memo: Memo): Promise<string> {

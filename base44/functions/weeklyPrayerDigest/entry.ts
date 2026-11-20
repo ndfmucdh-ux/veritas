@@ -1,73 +1,63 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { denyUnlessAdmin } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
+import { readerLang, readerTranslation } from '../../shared/bibleLocale.ts';
+import { loadPrefsMap, pick } from '../../shared/people.ts';
+import { verseByRef } from '../../shared/scripture.ts';
 
-// Scheduled weekly: sends each user a digest of their PrayerJournal entries from the past 7 days.
-Deno.serve(async (req) => {
+// Weekly workflow: each person receives a digest of their own prayer journal entries from the past 7 days.
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
     const denied = await denyUnlessAdmin(base44);
     if (denied) return denied;
 
-    // Get all users
-    const users = await base44.asServiceRole.entities.User.list();
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-
-    let sent = 0;
-    for (const user of users) {
-      if (!user.email) continue;
-
-      // Get this user's prayer journal entries from the past 7 days
-      const entries = await base44.asServiceRole.entities.PrayerJournal.filter({
-        created_by: user.email,
-      });
-
-      const weekEntries = entries.filter(e => e.created_date >= sevenDaysAgo);
-      if (weekEntries.length === 0) continue;
-
-      // Build HTML digest
-      const moodEmojis = { grateful: "🙏", confessing: "💙", interceding: "✨", celebrating: "🎉" };
-
-      const entriesHtml = weekEntries.map(entry => `
-        <div style="margin-bottom: 24px; padding: 20px; background: rgba(255,255,255,0.03); border-left: 3px solid #a78bfa; border-radius: 8px;">
-          <div style="font-size: 12px; color: #64748b; margin-bottom: 8px;">
-            ${moodEmojis[entry.mood] || "🙏"} ${entry.mood || "prayer"} · ${new Date(entry.created_date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-          </div>
-          ${entry.verse_ref ? `<div style="font-size: 13px; color: #fbbf24; margin-bottom: 8px;">📖 ${entry.verse_ref}</div>` : ''}
-          <p style="font-size: 15px; color: #e2e8f0; line-height: 1.7; margin: 0;">${entry.prayer_text}</p>
-          ${entry.answered ? `<div style="margin-top: 8px; font-size: 12px; color: #34d399;">✅ Prayer answered: ${entry.answered_note || ''}</div>` : ''}
-        </div>
-      `).join('');
-
-      const subject = `📖 Your Weekly Prayer Digest — ${weekEntries.length} entry${weekEntries.length > 1 ? 'ies' : 'y'} this week`;
-      const body = `
-        <div style="font-family: Georgia, serif; background: #0a0f1e; color: #fff; padding: 40px; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #a78bfa; font-size: 24px; margin-bottom: 4px;">Your Weekly Prayer Journal</h1>
-          <p style="color: #64748b; font-size: 14px; margin-bottom: 32px;">
-            ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
-          <p style="color: #cbd5e1; font-size: 16px; line-height: 1.8; margin-bottom: 24px;">
-            Dear ${user.full_name || 'Beloved'},<br/>
-            Here is a reflection of your prayer journey this week. ${weekEntries.length} conversation${weekEntries.length > 1 ? 's' : ''} with God — each one treasured.
-          </p>
-          ${entriesHtml}
-          <blockquote style="border-left: 3px solid #fbbf24; padding-left: 16px; color: #a78bfa; font-style: italic; margin: 32px 0;">
-            "The prayer of a righteous person is powerful and effective." — James 5:16
-          </blockquote>
-          <p style="color: #475569; font-size: 13px;">Keep praying. Keep seeking. He hears every word. 🙏</p>
-        </div>
-      `;
-
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        to: user.email,
-        subject,
-        body,
-        from_name: "Veritas · Prayer Journal",
-      });
-      sent++;
+    const db = base44.asServiceRole.entities;
+    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const [entries, users, prefs] = await Promise.all([
+      db.PrayerJournal.filter({ created_date: { $gte: since } }, '-created_date', 1000),
+      db.User.list('-created_date', 1000),
+      loadPrefsMap(base44),
+    ]);
+    const byUser = new Map<string, any[]>();
+    for (const e of entries || []) {
+      const k = String(e.created_by || '').toLowerCase();
+      if (k) byUser.set(k, [...(byUser.get(k) || []), e]);
     }
+    const nameBy = new Map<string, any>((users || []).map((u: any) => [String(u.email).toLowerCase(), u]));
 
+    const memo = new Map();
+    let sent = 0;
+    for (const [email, week] of byUser) {
+      const pref = prefs.get(email);
+      if (pref?.reminders?.channels?.email === false) continue;
+      const lang = readerLang(pref);
+      const v = await verseByRef(base44, 'James 5:16', readerTranslation(pref), memo);
+      const u = nameBy.get(email);
+      const first = firstNameOf(u?.display_name || u?.full_name, pick(lang, { en: 'Beloved', es: 'Amado' }));
+      const answered = week.filter((e) => e.answered).length;
+      const ok = await sendBrandedEmail(base44, {
+        to: email,
+        subject: pick(lang, { en: `Your weekly prayer digest (${week.length})`, es: `Tu resumen semanal de oración (${week.length})` }),
+        html: renderEmail({
+          lang, chip: pick(lang, { en: '🙏 WEEKLY PRAYER DIGEST', es: '🙏 RESUMEN SEMANAL DE ORACIÓN' }), hero: heroFor('prayer'),
+          title: pick(lang, { en: `${first}, your week in prayer`, es: `${first}, tu semana en oración` }),
+          quote: v?.text, quoteRef: v?.ref,
+          stats: [
+            { label: pick(lang, { en: 'prayers', es: 'oraciones' }), value: week.length },
+            { label: pick(lang, { en: 'answered', es: 'respondidas' }), value: answered },
+          ],
+          paragraphs: week.slice(0, 5).map((e) => String(e.prayer_text || '').slice(0, 160)),
+          cta: { label: pick(lang, { en: 'Open Prayer Journal', es: 'Abrir Diario de Oración' }), url: appLink('/prayer-journal') },
+          footerTag: pick(lang, { en: 'Prayer Journal', es: 'Diario de Oración' }),
+          sentLine: pick(lang, { en: 'Sent automatically each week', es: 'Enviado automáticamente cada semana' }),
+        }),
+        category: 'transactional',
+      });
+      if (ok) sent++;
+    }
     return Response.json({ success: true, digestsSent: sent });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}

@@ -6,16 +6,18 @@ import {
   Loader2, Check, Sparkles, Calendar, BarChart3, Zap, BellOff
 } from "lucide-react";
 import QuietModeSettings from "@/components/notifications/QuietModeSettings";
+import ReminderSettings from "@/components/notifications/ReminderSettings";
 import { LoadingState } from "@/components/ui/states";
 
+// Everyone sees their own reminders and quiet mode. Templates, previews, test sends and
+// technical specs are for admins only.
 const TABS = [
-  { id: "push", label: "Push Notifications", icon: Smartphone },
-  { id: "email_daily", label: "Daily Email", icon: Mail },
-  { id: "email_weekly", label: "Weekly Digest", icon: Calendar },
-  { id: "devotional_time", label: "Devotional Time", icon: Bell },
-  { id: "prayer_reminders", label: "Prayer Reminders", icon: Bell },
+  { id: "reminders", label: "My Reminders", icon: Bell },
   { id: "quiet_mode", label: "Quiet Mode", icon: BellOff },
-  { id: "specs", label: "Design Specs", icon: Sparkles },
+  { id: "push", label: "Push Notifications", icon: Smartphone, adminOnly: true },
+  { id: "email_daily", label: "Daily Email", icon: Mail, adminOnly: true },
+  { id: "email_weekly", label: "Weekly Digest", icon: Calendar, adminOnly: true },
+  { id: "specs", label: "Design Specs", icon: Sparkles, adminOnly: true },
 ];
 
 const PUSH_TEMPLATES_STATIC = [
@@ -110,7 +112,8 @@ const AUTOMATION_RULES = [
 ];
 
 export default function NotificationStudio() {
-  const [activeTab, setActiveTab] = useState("push");
+  const [activeTab, setActiveTab] = useState("reminders");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [previewHtml, setPreviewHtml] = useState(null);
   const [pushPreviews, setPushPreviews] = useState(null);
@@ -119,11 +122,13 @@ export default function NotificationStudio() {
   const [sendName, setSendName] = useState("");
   const [sendStatus, setSendStatus] = useState(null);
   const [dailyVerse, setDailyVerse] = useState(null);
-  const [devotionalTime, setDevotionalTime] = useState(localStorage.getItem("veritas_devotional_time") || "06:00");
-  const [prayerReminderTime, setPrayerReminderTime] = useState(localStorage.getItem("veritas_prayer_reminder_time") || "20:00");
 
   useEffect(() => {
-    base44.entities.DailyVerse.list("-date", 1).then(v => setDailyVerse(v?.[0] || null)).catch(() => {});
+    base44.auth.me().then((u) => {
+      if (u?.role !== "admin") return;
+      setIsAdmin(true);
+      base44.entities.DailyVerse.list("-date", 1).then(v => setDailyVerse(v?.[0] || null)).catch(() => {});
+    }).catch(() => {});
   }, []);
 
   const loadPushPreviews = async () => {
@@ -176,18 +181,6 @@ export default function NotificationStudio() {
      }
    };
 
-   const saveDevotionalTime = () => {
-     localStorage.setItem("veritas_devotional_time", devotionalTime);
-     setSendStatus("success");
-     setTimeout(() => setSendStatus(null), 2000);
-   };
-
-   const savePrayerReminderTime = () => {
-     localStorage.setItem("veritas_prayer_reminder_time", prayerReminderTime);
-     setSendStatus("success");
-     setTimeout(() => setSendStatus(null), 2000);
-   };
-
   return (
     <div className="md:ml-16 min-h-screen pb-28">
       {/* Page Header */}
@@ -198,13 +191,15 @@ export default function NotificationStudio() {
             <Bell className="w-5 h-5" style={{ color: "#fbbf24" }} />
           </div>
           <div>
-            <h1 className="font-cinzel text-xl font-bold text-white">Notification Studio</h1>
-            <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>VOTD Push & Email Templates · Veritas Brand System</p>
+            <h1 className="font-cinzel text-xl font-bold text-white">{isAdmin ? "Notification Studio" : "Notifications"}</h1>
+            <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
+              {isAdmin ? "VOTD Push & Email Templates · Veritas Brand System" : "Reminders, emails and quiet hours"}
+            </p>
           </div>
         </div>
 
         {/* Daily verse chip */}
-        {dailyVerse && (
+        {isAdmin && dailyVerse && (
           <div className="mt-4 rounded-2xl px-4 py-3 flex items-center gap-3"
             style={{ background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.15)" }}>
             <Zap className="w-4 h-4 flex-shrink-0" style={{ color: "#00f5ff" }} />
@@ -218,7 +213,7 @@ export default function NotificationStudio() {
 
       {/* Tab Bar */}
       <div className="flex gap-1.5 px-5 mb-5 overflow-x-auto scrollbar-hide">
-        {TABS.map(tab => {
+        {TABS.filter(tab => isAdmin || !tab.adminOnly).map(tab => {
           const Icon = tab.icon;
           return (
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setPreviewHtml(null); setPushPreviews(null); }}
@@ -238,8 +233,13 @@ export default function NotificationStudio() {
       <AnimatePresence mode="wait">
         <motion.div key={activeTab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
 
-          {/* ── PUSH NOTIFICATIONS TAB ── */}
-          {activeTab === "push" && (
+          {/* ── MY REMINDERS TAB (everyone) ── */}
+          {activeTab === "reminders" && (
+            <div className="px-5 pb-4"><ReminderSettings /></div>
+          )}
+
+          {/* ── PUSH NOTIFICATIONS TAB (admin) ── */}
+          {isAdmin && activeTab === "push" && (
             <div className="px-5 space-y-4">
               <SectionHeader icon={Smartphone} label="8 Premium Push Notification Templates" color="#00f5ff" />
 
@@ -333,7 +333,7 @@ export default function NotificationStudio() {
           )}
 
           {/* ── DAILY EMAIL TAB ── */}
-          {activeTab === "email_daily" && (
+          {isAdmin && activeTab === "email_daily" && (
             <div className="px-5 space-y-4">
               <SectionHeader icon={Mail} label="Daily Verse of the Day Email" color="#fbbf24" />
 
@@ -388,7 +388,7 @@ export default function NotificationStudio() {
           )}
 
           {/* ── WEEKLY EMAIL TAB ── */}
-          {activeTab === "email_weekly" && (
+          {isAdmin && activeTab === "email_weekly" && (
             <div className="px-5 space-y-4">
               <SectionHeader icon={Calendar} label="Weekly Spiritual Summary Email" color="#a78bfa" />
 
@@ -435,74 +435,6 @@ export default function NotificationStudio() {
             </div>
           )}
 
-          {/* ── DEVOTIONAL TIME TAB ── */}
-          {activeTab === "devotional_time" && (
-            <div className="px-5 space-y-4 pb-4">
-              <SectionHeader icon={Bell} label="Daily Devotional Reminder" color="#00f5ff" />
-              <div className="rounded-2xl p-5 space-y-4" style={{ background: "rgba(0,245,255,0.03)", border: "1px solid rgba(0,245,255,0.15)" }}>
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.6)" }}>
-                  Choose what time each day you'd like to be reminded to check your personalized AI devotional.
-                </p>
-                <div>
-                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgb(var(--ink) / 0.35)" }}>Preferred Time (Your Timezone)</label>
-                  <input
-                    type="time"
-                    value={devotionalTime}
-                    onChange={e => setDevotionalTime(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-sm font-cinzel focus:outline-none"
-                    style={{ background: "rgba(0,245,255,0.08)", border: "1px solid rgba(0,245,255,0.25)", color: "#00f5ff" }}
-                  />
-                </div>
-                <button onClick={saveDevotionalTime}
-                  className="w-full px-4 py-3 rounded-xl font-cinzel text-sm transition-all"
-                  style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff", border: "1px solid rgba(0,245,255,0.3)" }}>
-                  {sendStatus === "success" ? <Check className="w-4 h-4 inline mr-2" /> : null}
-                  {sendStatus === "success" ? "Saved!" : "Save Time"}
-                </button>
-                <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: "rgba(0,245,255,0.04)" }}>
-                  <Zap className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#00f5ff" }} />
-                  <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
-                    You'll receive a personalized notification at <strong>{devotionalTime}</strong> reminding you to read your daily devotional based on your recent highlights and prayer journal.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ── PRAYER REMINDERS TAB ── */}
-          {activeTab === "prayer_reminders" && (
-            <div className="px-5 space-y-4 pb-4">
-              <SectionHeader icon={Bell} label="Prayer Reminder" color="#a78bfa" />
-              <div className="rounded-2xl p-5 space-y-4" style={{ background: "rgba(167,139,250,0.03)", border: "1px solid rgba(167,139,250,0.15)" }}>
-                <p className="text-sm font-inter leading-relaxed" style={{ color: "rgb(var(--ink) / 0.6)" }}>
-                  Set a time to be reminded about prayer journal entries with pending follow-up reminders.
-                </p>
-                <div>
-                  <label className="text-[10px] font-cinzel uppercase tracking-widest mb-2 block" style={{ color: "rgb(var(--ink) / 0.35)" }}>Prayer Reminder Time (Your Timezone)</label>
-                  <input
-                    type="time"
-                    value={prayerReminderTime}
-                    onChange={e => setPrayerReminderTime(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-sm font-cinzel focus:outline-none"
-                    style={{ background: "rgba(167,139,250,0.08)", border: "1px solid rgba(167,139,250,0.25)", color: "#a78bfa" }}
-                  />
-                </div>
-                <button onClick={savePrayerReminderTime}
-                  className="w-full px-4 py-3 rounded-xl font-cinzel text-sm transition-all"
-                  style={{ background: "rgba(167,139,250,0.15)", color: "#a78bfa", border: "1px solid rgba(167,139,250,0.3)" }}>
-                  {sendStatus === "success" ? <Check className="w-4 h-4 inline mr-2" /> : null}
-                  {sendStatus === "success" ? "Saved!" : "Save Time"}
-                </button>
-                <div className="rounded-xl p-3 flex items-start gap-2" style={{ background: "rgba(167,139,250,0.04)" }}>
-                  <Sparkles className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#a78bfa" }} />
-                  <p className="text-xs font-inter" style={{ color: "rgb(var(--ink) / 0.5)" }}>
-                    At <strong>{prayerReminderTime}</strong>, you'll be notified about pending prayer follow-ups and encouraged to update their status.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* ── QUIET MODE TAB ── */}
           {activeTab === "quiet_mode" && (
             <div className="px-5 pb-4">
@@ -511,7 +443,7 @@ export default function NotificationStudio() {
           )}
 
           {/* ── DESIGN SPECS TAB ── */}
-          {activeTab === "specs" && (
+          {isAdmin && activeTab === "specs" && (
             <div className="px-5 space-y-4">
               <SectionHeader icon={Sparkles} label="Design & Brand Specifications" color="#a78bfa" />
 

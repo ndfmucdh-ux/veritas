@@ -1,49 +1,59 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { denyUnlessAdmin } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
+import { readerLang, readerTranslation } from '../../shared/bibleLocale.ts';
+import { loadPrefsMap, pick } from '../../shared/people.ts';
+import { verseByRef } from '../../shared/scripture.ts';
 
-Deno.serve(async (req) => {
+// Daily workflow: nudges people whose last reading was 3 days ago. Each person is nudged once (day 3), not every day after.
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
     const denied = await denyUnlessAdmin(base44);
     if (denied) return denied;
 
-    // This runs as a scheduled job — use service role
-    const thresholdDate = new Date();
-    thresholdDate.setDate(thresholdDate.getDate() - 3);
-
-    // Get all reading progress records older than 3 days
-    const allProgress = await base44.asServiceRole.entities.ReadingProgress.list('-completed_at', 500);
-    
-    // Group by user email (created_by)
-    const userLastRead = {};
-    for (const p of allProgress) {
-      const email = p.created_by;
-      if (!email) continue;
-      const date = new Date(p.completed_at || p.created_date);
-      if (!userLastRead[email] || date > userLastRead[email]) {
-        userLastRead[email] = date;
-      }
+    const DAY = 24 * 60 * 60 * 1000;
+    const [progress, users, prefs] = await Promise.all([
+      base44.asServiceRole.entities.ReadingProgress.list('-completed_at', 1000),
+      base44.asServiceRole.entities.User.list('-created_date', 1000),
+      loadPrefsMap(base44),
+    ]);
+    const lastRead = new Map<string, number>();
+    for (const p of progress || []) {
+      const email = String(p.created_by || '').toLowerCase();
+      const at = new Date(p.completed_at || p.created_date).getTime();
+      if (email && at > (lastRead.get(email) || 0)) lastRead.set(email, at);
     }
+    const nameBy = new Map<string, any>((users || []).map((u: any) => [String(u.email).toLowerCase(), u]));
 
-    let remindersSent = 0;
-    for (const [email, lastDate] of Object.entries(userLastRead)) {
-      if (lastDate < thresholdDate) {
-        await base44.asServiceRole.integrations.Core.SendEmail({
-          to: email,
-          subject: "Your Devotional Plan Needs You 📖",
-          body: `<div style="font-family: Georgia, serif; max-width: 600px; margin: auto; background: #0a0f1e; color: #e8e8e8; padding: 32px; border-radius: 16px;">
-            <h2 style="color: #fbbf24; font-family: 'Georgia', serif;">Come Back to the Word</h2>
-            <p style="color: rgba(255,255,255,0.75); line-height: 1.7;">Beloved, it's been a few days since you last read in your devotional plan. Your reading journey awaits — even just one chapter today can reignite your momentum.</p>
-            <p style="color: rgba(255,255,255,0.5); font-style: italic;">"Your word is a lamp to my feet and a light to my path." — Psalm 119:105</p>
-            <a href="https://app.veritas.com/plans" style="display: inline-block; margin-top: 16px; padding: 12px 24px; background: #fbbf24; color: #0a0f1e; border-radius: 8px; text-decoration: none; font-weight: bold;">Continue Reading →</a>
-          </div>`
-        });
-        remindersSent++;
-      }
+    const memo = new Map();
+    let sent = 0;
+    for (const [email, at] of lastRead) {
+      const days = (Date.now() - at) / DAY;
+      if (days < 3 || days >= 4) continue;
+      const pref = prefs.get(email);
+      if (pref?.reminders?.channels?.email === false) continue;
+      const lang = readerLang(pref);
+      const v = await verseByRef(base44, 'Psalm 119:105', readerTranslation(pref), memo);
+      const u = nameBy.get(email);
+      const first = firstNameOf(u?.display_name || u?.full_name, pick(lang, { en: 'Beloved', es: 'Amado' }));
+      const ok = await sendBrandedEmail(base44, {
+        to: email,
+        subject: pick(lang, { en: 'Your reading plan needs you', es: 'Tu plan de lectura te necesita' }),
+        html: renderEmail({
+          lang, chip: pick(lang, { en: '📖 COME BACK TO THE WORD', es: '📖 VUELVE A LA PALABRA' }), hero: heroFor('hope'),
+          title: pick(lang, { en: `${first}, your reading awaits`, es: `${first}, tu lectura te espera` }),
+          quote: v?.text, quoteRef: v?.ref,
+          paragraphs: [pick(lang, { en: "It's been a few days. Even one chapter today can restart your momentum.", es: 'Han pasado unos días. Un solo capítulo hoy puede reiniciar tu impulso.' })],
+          cta: { label: pick(lang, { en: 'Continue reading', es: 'Continuar leyendo' }), url: appLink('/plans') },
+          footerTag: pick(lang, { en: 'Reading Plan', es: 'Plan de Lectura' }),
+        }),
+        category: 'transactional',
+      });
+      if (ok) sent++;
     }
-
-    return Response.json({ success: true, reminders_sent: remindersSent });
+    return Response.json({ success: true, reminders_sent: sent });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}

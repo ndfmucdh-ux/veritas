@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import Toggle from "@/components/ui/Toggle";
 import { useLang } from "@/lib/LanguageContext";
-import { savePrefs } from "@/lib/preferencesSync";
+import { savePrefs, getMyPrefs } from "@/lib/preferencesSync";
 
 // Opt in or out of the Verse of the Day email. Saved to the account at once.
 export default function DailyVerseEmailToggle() {
@@ -10,8 +10,8 @@ export default function DailyVerseEmailToggle() {
   const [on, setOn] = useState(true);
 
   useEffect(() => {
-    base44.entities.UserPreferences.list("-updated_date", 1)
-      .then((p) => setOn(p?.[0]?.votd_email_enabled !== false))
+    getMyPrefs()
+      .then((p) => setOn(p?.votd_email_enabled !== false))
       .catch(() => {});
   }, []);
 

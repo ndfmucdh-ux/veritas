@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { getMyPrefs, savePrefs } from "@/lib/preferencesSync";
 
 // Local-date key (YYYY-MM-DD) — avoids the UTC drift that breaks streaks for
 // users in negative-UTC timezones listening near midnight.
@@ -46,14 +47,14 @@ export default function useAudioDashboard() {
         const [audio, , prefs] = await Promise.all([
           base44.entities.BibleAudioProgress.list("-updated_date", 500),
           base44.entities.UserXP.list("-updated_date", 1),
-          base44.entities.UserPreferences.list("-updated_date", 1),
+          getMyPrefs(),
         ]);
         setAudioHistory(audio || []);
-        if (prefs?.[0]) {
+        if (prefs) {
           setNotifPrefs({
-            enabled: prefs[0].notifications_enabled ?? true,
-            time: prefs[0].daily_verse_time || "20:00",
-            goal: prefs[0].daily_audio_goal || 1,
+            enabled: prefs.notifications_enabled ?? true,
+            time: prefs.daily_verse_time || "20:00",
+            goal: prefs.daily_audio_goal || 1,
           });
         }
         setStreak(calcStreak(audio));
@@ -63,14 +64,11 @@ export default function useAudioDashboard() {
   }, []);
 
   const saveNotifPrefs = async () => {
-    const existing = await base44.entities.UserPreferences.list("-updated_date", 1);
-    const data = {
+    await savePrefs({
       notifications_enabled: notifPrefs.enabled,
       daily_verse_time: notifPrefs.time,
       daily_audio_goal: notifPrefs.goal,
-    };
-    if (existing?.[0]) await base44.entities.UserPreferences.update(existing[0].id, data);
-    else await base44.entities.UserPreferences.create(data);
+    });
   };
 
   return { audioHistory, loading, streak, notifPrefs, setNotifPrefs, saveNotifPrefs };

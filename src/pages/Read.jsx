@@ -20,6 +20,7 @@ import VerseSidePanel from "@/components/reader/VerseSidePanel.jsx";
 import DevotionalPanel from "@/components/reader/DevotionalPanel.jsx";
 import ChapterAudioPlayer from "@/components/reader/ChapterAudioPlayer";
 import { savePrefs } from "@/lib/preferencesSync";
+import { chooseTranslation } from "@/lib/defaultBible";
 import GuidedReflection from "@/components/prayer/GuidedReflection";
 import MultiSelectActionBar from "@/components/reader/MultiSelectActionBar.jsx";
 import ReaderSettingsPanel from "@/components/reader/ReaderSettingsPanel.jsx";
@@ -266,7 +267,7 @@ export default function Read() {
               chapter={chapter}
               translation={translation}
               onNavigate={handleNavigate}
-              onTranslationChange={(t) => { setTranslation(t); localStorage.setItem("veritas_translation", t); }}
+              onTranslationChange={(code) => { setTranslation(code); chooseTranslation(code); }}
             />
           </div>
         </div>

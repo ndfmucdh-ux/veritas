@@ -1,64 +1,55 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { denyUnlessAdmin } from '../../shared/guard.ts';
+import { renderEmail, sendBrandedEmail, appLink, heroFor, firstNameOf } from '../../shared/emailBrand.ts';
+import { readerLang, readerTranslation } from '../../shared/bibleLocale.ts';
+import { getPrefs, pick } from '../../shared/people.ts';
+import { verseByRef } from '../../shared/scripture.ts';
 
-// Called by entity automation when UserXP is updated.
-// Sends a celebratory message from verse_companion when crossing a 500-pt threshold.
-Deno.serve(async (req) => {
+// Called by the entity automation when someone's XP record changes: celebrates each 500 XP they cross.
+export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
     const denied = await denyUnlessAdmin(base44);
     if (denied) return denied;
-    const body = await req.json();
 
-    const { data, old_data } = body;
+    const { data, old_data } = await req.json().catch(() => ({}));
     if (!data) return Response.json({ skipped: true });
 
     const currentXP = data.total_xp || 0;
-    const previousXP = old_data?.total_xp || 0;
+    const band = Math.floor(currentXP / 500);
+    if (band <= Math.floor((old_data?.total_xp || 0) / 500)) return Response.json({ skipped: 'no threshold crossed' });
 
-    // Check if we crossed a 500-pt threshold
-    const currentBand = Math.floor(currentXP / 500);
-    const previousBand = Math.floor(previousXP / 500);
-    if (currentBand <= previousBand) {
-      return Response.json({ skipped: "no threshold crossed" });
-    }
-
-    const milestone = currentBand * 500;
-
-    // Get the user email from the entity's created_by
     const userEmail = data.created_by;
-    if (!userEmail) return Response.json({ skipped: "no user email" });
+    if (!userEmail) return Response.json({ skipped: 'no user email' });
+    const milestone = band * 500;
 
-    // Build a celebratory message and send via email
-    const levelNames = { 0: "Seeker", 500: "Disciple", 2000: "Scholar", 5000: "Elder" };
-    const levelName = Object.entries(levelNames).reverse().find(([minXP]) => currentXP >= parseInt(minXP))?.[1] || "Seeker";
+    const [pref, person] = await Promise.all([
+      getPrefs(base44, userEmail),
+      base44.asServiceRole.entities.User.filter({ email: userEmail }, '-created_date', 1),
+    ]);
+    const lang = readerLang(pref);
+    const v = await verseByRef(base44, 'Psalm 119:105', readerTranslation(pref), new Map());
+    const first = firstNameOf(person?.[0]?.display_name || person?.[0]?.full_name, pick(lang, { en: 'Beloved', es: 'Amado' }));
 
-    const subject = `🎉 You've reached ${milestone} XP in Veritas!`;
-    const body_html = `
-      <div style="font-family: Georgia, serif; background: #0a0f1e; color: #fff; padding: 40px; border-radius: 12px;">
-        <h1 style="color: #fbbf24; font-size: 28px;">Congratulations, ${levelName}! 🌟</h1>
-        <p style="font-size: 18px; line-height: 1.7; color: #e2e8f0;">
-          You've just crossed <strong style="color: #00f5ff;">${milestone} XP</strong> — a true milestone in your spiritual journey!
-        </p>
-        <p style="font-size: 16px; line-height: 1.8; color: #cbd5e1;">
-          Every verse you read, every note you write, every prayer you journal — it all counts. 
-          The Word of God is alive and active in you.
-        </p>
-        <blockquote style="border-left: 3px solid #fbbf24; padding-left: 16px; color: #a78bfa; font-style: italic; margin: 20px 0;">
-          "Your word is a lamp to my feet and a light to my path." — Psalm 119:105
-        </blockquote>
-        <p style="color: #94a3b8;">Keep going. Your ${Math.floor(currentXP).toLocaleString()} XP is just the beginning. 🔥</p>
-      </div>
-    `;
-
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    const ok = await sendBrandedEmail(base44, {
       to: userEmail,
-      subject,
-      body: body_html,
+      subject: pick(lang, { en: `You've reached ${milestone} XP in Veritas`, es: `Alcanzaste ${milestone} XP en Veritas` }),
+      html: renderEmail({
+        lang, chip: pick(lang, { en: '🎉 XP MILESTONE', es: '🎉 META DE XP' }), hero: heroFor('joy'),
+        title: pick(lang, { en: `Congratulations, ${first}!`, es: `¡Felicidades, ${first}!` }),
+        quote: v?.text, quoteRef: v?.ref,
+        paragraphs: [pick(lang, {
+          en: 'Every verse you read, every note you write, every prayer you journal counts.',
+          es: 'Cada versículo que lees, cada nota que escribes y cada oración que registras cuenta.',
+        })],
+        stats: [{ label: 'XP', value: milestone.toLocaleString() }],
+        cta: { label: pick(lang, { en: 'View my journey', es: 'Ver mi camino' }), url: appLink('/profile') },
+        footerTag: pick(lang, { en: 'Achievements', es: 'Logros' }),
+      }),
+      category: 'transactional',
     });
-
-    return Response.json({ success: true, milestone, userEmail });
+    return Response.json({ success: ok, milestone, userEmail });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: (error as Error).message }, { status: 500 });
   }
-});
+}
