@@ -26,7 +26,7 @@ export default function NotesView({ notes, loading, tagBar, allTags = [], onCrea
           onEdit={() => setEditing(note)} onTag={() => onTag(note)} onShare={() => onShare(note)} onDelete={() => onDelete(note.id)} />
       ))}
 
-      <div className="fixed inset-x-4 bottom-[4.75rem] md:bottom-6 md:left-64 z-30 pointer-events-none">
+      <div className="fixed inset-x-4 md:left-64 z-30 pointer-events-none" style={{ bottom: "calc(5.25rem + env(safe-area-inset-bottom))" }}>
         <button type="button" onClick={() => setEditing("new")}
           className="pointer-events-auto mx-auto flex w-full max-w-md items-center gap-3 rounded-full bg-primary text-primary-foreground pl-2 pr-6 min-h-14 shadow-lg">
           <span className="w-10 h-10 rounded-full bg-card text-primary flex items-center justify-center flex-shrink-0"><Plus className="w-5 h-5" /></span>
