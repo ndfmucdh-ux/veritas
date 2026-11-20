@@ -14,6 +14,7 @@ import SplashScreen from '@/components/ui/SplashScreen';
 import ViewTransitionLinks from '@/components/layout/ViewTransitionLinks';
 import PageColorSync from '@/components/layout/PageColorSync';
 import EmojiSanitizer from '@/components/layout/EmojiSanitizer';
+import IconButtonLabeler from '@/components/layout/IconButtonLabeler';
 import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { warmOfflineCache } from '@/lib/offlineBible';
@@ -128,6 +129,7 @@ function App() {
         </Router>
         <Toaster />
         <EmojiSanitizer />
+        <IconButtonLabeler />
       </QueryClientProvider>
       </LanguageProvider>
     </AuthProvider>

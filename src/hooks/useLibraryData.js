@@ -29,48 +29,36 @@ export default function useLibraryData() {
     }
   };
 
+  // Optimistic: the list changes instantly; if the save fails the previous list is restored.
+  const optimistic = async (setter, change, save) => {
+    let prev;
+    setter(cur => { prev = cur; return change(cur); });
+    try { await save(); } catch (e) { setter(prev); throw e; }
+  };
+
   // Consolidated rows carry _interaction:true. Bookmarks/highlights/notes that
   // come from a single interaction row are cleared field-wise, not row-deleted,
   // so other interactions on the same verse survive.
-  const deleteBookmark = async (id) => {
-    if (source === "consolidated") await base44.entities.UserVerseInteraction.update(id, { is_bookmarked: false, tags: [] });
-    else await base44.entities.Bookmark.delete(id);
-    setBookmarks(prev => prev.filter(b => b.id !== id));
-  };
+  const deleteBookmark = (id) => optimistic(setBookmarks, l => l.filter(b => b.id !== id), () =>
+    source === "consolidated" ? base44.entities.UserVerseInteraction.update(id, { is_bookmarked: false, tags: [] }) : base44.entities.Bookmark.delete(id));
 
-  const deleteHighlight = async (id) => {
-    if (source === "consolidated") await base44.entities.UserVerseInteraction.update(id, { highlight_color: "none" });
-    else await base44.entities.UserHighlight.delete(id);
-    setHighlights(prev => prev.filter(h => h.id !== id));
-  };
+  const deleteHighlight = (id) => optimistic(setHighlights, l => l.filter(h => h.id !== id), () =>
+    source === "consolidated" ? base44.entities.UserVerseInteraction.update(id, { highlight_color: "none" }) : base44.entities.UserHighlight.delete(id));
 
-  const deleteNote = async (id) => {
-    if (source === "consolidated") await base44.entities.UserVerseInteraction.update(id, { note_text: "", has_note: false });
-    else await base44.entities.UserNote.delete(id);
-    setNotes(prev => prev.filter(n => n.id !== id));
-  };
+  const deleteNote = (id) => optimistic(setNotes, l => l.filter(n => n.id !== id), () =>
+    source === "consolidated" ? base44.entities.UserVerseInteraction.update(id, { note_text: "", has_note: false }) : base44.entities.UserNote.delete(id));
 
-  const updateBookmarkTags = async (id, tags) => {
-    if (source === "consolidated") await base44.entities.UserVerseInteraction.update(id, { tags });
-    else await base44.entities.Bookmark.update(id, { tags });
-    setBookmarks(prev => prev.map(b => b.id === id ? { ...b, tags } : b));
-  };
+  const updateBookmarkTags = (id, tags) => optimistic(setBookmarks, l => l.map(b => b.id === id ? { ...b, tags } : b), () =>
+    source === "consolidated" ? base44.entities.UserVerseInteraction.update(id, { tags }) : base44.entities.Bookmark.update(id, { tags }));
 
-  const updateNoteTags = async (id, tags) => {
-    if (source === "consolidated") await base44.entities.UserVerseInteraction.update(id, { tags });
-    else await base44.entities.UserNote.update(id, { tags });
-    setNotes(prev => prev.map(n => n.id === id ? { ...n, tags } : n));
-  };
+  const updateNoteTags = (id, tags) => optimistic(setNotes, l => l.map(n => n.id === id ? { ...n, tags } : n), () =>
+    source === "consolidated" ? base44.entities.UserVerseInteraction.update(id, { tags }) : base44.entities.UserNote.update(id, { tags }));
 
   // Edit a note's title, text and topics in place (works for new and older notes).
-  const updateNote = async (id, { title, text, tags }) => {
-    if (source === "consolidated") {
-      await base44.entities.UserVerseInteraction.update(id, { note_text: text, note_title: title || "", tags, has_note: true, last_interacted_at: new Date().toISOString() });
-    } else {
-      await base44.entities.UserNote.update(id, { note_text: text, tags });
-    }
-    setNotes(prev => prev.map(n => n.id === id ? { ...n, note_text: text, note_title: title, tags } : n));
-  };
+  const updateNote = (id, { title, text, tags }) => optimistic(setNotes, l => l.map(n => n.id === id ? { ...n, note_text: text, note_title: title, tags } : n), () =>
+    source === "consolidated"
+      ? base44.entities.UserVerseInteraction.update(id, { note_text: text, note_title: title || "", tags, has_note: true, last_interacted_at: new Date().toISOString() })
+      : base44.entities.UserNote.update(id, { note_text: text, tags }));
 
   return {
     updateNote,
