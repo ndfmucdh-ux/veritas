@@ -1,0 +1,58 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{headline}}</mj-title>
+    <mj-preview>{{preheader}}</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif" />
+      <mj-section background-color="#f7f3ee" padding="0 36px" />
+      <mj-column padding="0" />
+      <mj-text color="#000000" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#d9b77e" color="#000000" border-radius="0px" font-size="15px" font-weight="700" inner-padding="14px 28px" padding="0" align="left" />
+      <mj-image padding="0" />
+      <mj-class name="h" font-weight="700" />
+    </mj-attributes>
+    <mj-style>
+      @media (max-width:480px) { .hero-h div { font-size:32px !important; line-height:1.12 !important; } }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#141414" width="600px">
+    <mj-wrapper padding="28px 12px" background-color="#141414">
+      <mj-section background-color="#d9b77e" padding="22px 36px">
+        <mj-column>
+          <mj-image src="https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/fd35789be_IMG_1831.jpeg" alt="Veritas" width="36px" align="center" padding="0 0 10px" />
+          <mj-text align="center" font-size="12px" letter-spacing="4px" font-weight="700" text-transform="uppercase" color="#000000">Veritas</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#d9b77e" padding="52px 36px 48px">
+        <mj-column>
+          <mj-text font-size="11px" letter-spacing="3px" text-transform="uppercase" font-weight="700" color="#000000" padding="0 0 14px">New in Veritas</mj-text>
+          <mj-text mj-class="h" css-class="hero-h" align="left" font-size="42px" line-height="1.04" color="#000000" padding="0 0 26px">{{headline}}</mj-text>
+          <mj-button href="{{cta_url}}" align="left" background-color="#000000" color="#d9b77e" inner-padding="15px 32px">See what's new</mj-button>
+        </mj-column>
+      </mj-section>
+      <mj-section padding="44px 36px 12px">
+        <mj-column>
+          <mj-text font-size="17px" line-height="1.65">{{body}}</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section padding="16px 28px 36px">
+        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
+          <mj-text mj-class="h" font-size="28px" line-height="1" color="#d9b77e" padding="22px 20px 14px">01</mj-text>
+          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="0 20px 6px">{{point_one_title}}</mj-text>
+          <mj-text font-size="14px" padding="0 20px 22px">{{point_one_body}}</mj-text>
+        </mj-column>
+        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
+          <mj-text mj-class="h" font-size="28px" line-height="1" color="#d9b77e" padding="22px 20px 14px">02</mj-text>
+          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="0 20px 6px">{{point_two_title}}</mj-text>
+          <mj-text font-size="14px" padding="0 20px 22px">{{point_two_body}}</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#d9b77e" padding="30px 36px 34px">
+        <mj-column>
+          <mj-text mj-class="h" align="center" font-size="18px" color="#000000" padding="0 0 8px">Veritas</mj-text>
+          <mj-text align="center" font-size="12px" color="#000000"><a href="{{unsubscribe_url}}" style="color:#000000;text-decoration:underline;">Unsubscribe</a></mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>

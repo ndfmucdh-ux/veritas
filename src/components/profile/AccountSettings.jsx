@@ -2,6 +2,7 @@ import { useState } from "react";
 import Toggle from "@/components/ui/Toggle";
 import DefaultBibleSelector from "@/components/profile/DefaultBibleSelector";
 import ReminderSettings from "@/components/notifications/ReminderSettings";
+import AccountClosePanel from "@/components/profile/AccountClosePanel";
 import { savePrefs } from "@/lib/preferencesSync";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -416,19 +417,7 @@ export default function AccountSettings({ user }) {
                                 </div>
                               </button>
                             ))}
-                            <div className="rounded-xl px-4 py-3 mt-2" style={{ background: "rgba(248,113,113,0.05)", border: "1px solid rgba(248,113,113,0.15)" }}>
-                              <div className="flex items-center gap-2 mb-1.5">
-                                <AlertTriangle className="w-3.5 h-3.5" style={{ color: "#f87171" }} />
-                                <p className="text-xs font-cinzel" style={{ color: "#f87171" }}>{tr("set_danger")}</p>
-                              </div>
-                              <p className="text-[10px] font-inter leading-relaxed mb-2.5" style={{ color: "rgb(var(--ink) / 0.35)" }}>
-                                {tr("set_dangerText")}
-                              </p>
-                              <button className="w-full py-2 rounded-xl font-cinzel text-xs flex items-center justify-center gap-2"
-                                style={{ background: "rgba(248,113,113,0.1)", color: "#f87171", border: "1px solid rgba(248,113,113,0.25)" }}>
-                                <Trash2 className="w-3.5 h-3.5" /> {tr("set_requestDeletion")}
-                              </button>
-                            </div>
+                            <AccountClosePanel />
                           </div>
                         )}
 

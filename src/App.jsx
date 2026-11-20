@@ -37,6 +37,7 @@ const CommunityHub = lazy(routeLoaders["/community"]);
 const NotificationStudio = lazy(routeLoaders["/notification-studio"]);
 const AudioDashboard = lazy(routeLoaders["/audio-dashboard"]);
 const ForYouSection = lazy(routeLoaders["/for-you"]);
+const Unsubscribe = lazy(() => import("@/pages/Unsubscribe"));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -91,6 +92,7 @@ const AuthenticatedApp = () => {
           <Route path="/for-you/:category" element={<ForYouSection />} />
         </Route>
       </Route>
+      <Route path="/unsubscribe" element={<Suspense fallback={null}><Unsubscribe /></Suspense>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </PageErrorBoundary>
