@@ -2,9 +2,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import VirtualAssistant from "./VirtualAssistant";
 import VeritasLogo from "@/components/ui/VeritasLogo";
+import useDraggable from "@/hooks/useDraggable";
 
 export default function AssistantButton() {
   const [open, setOpen] = useState(false);
+  const drag = useDraggable("veritas_pos_assistant");
 
   return (
     <>
@@ -33,12 +35,17 @@ export default function AssistantButton() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            onClick={() => setOpen(true)}
+            {...drag.rootProps}
+            {...drag.handleProps}
+            onClick={drag.onTap(() => setOpen(true))}
+            aria-label="Open Veritas assistant"
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
             className="assistant-fab fixed right-4 w-12 h-12 rounded-2xl flex items-center justify-center z-50"
             style={{
+              ...drag.rootProps.style,
+              ...drag.handleProps.style,
               background: "linear-gradient(135deg, rgba(251,191,36,0.2), rgba(167,139,250,0.1))",
               border: "1.5px solid rgba(251,191,36,0.35)",
               boxShadow: "0 8px 32px rgba(251,191,36,0.25), 0 0 0 1px rgba(251,191,36,0.1)",

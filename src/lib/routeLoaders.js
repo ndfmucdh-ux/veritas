@@ -21,7 +21,7 @@ const warmed = new Set();
 
 /** Starts loading a page's code for a pathname. Safe to call repeatedly. */
 export function prefetchRoute(pathname) {
-  const key = pathname.startsWith("/for-you/") ? "/for-you" : pathname;
+  const key = `/${pathname.split("/")[1] || ""}`;
   const loader = routeLoaders[key];
   if (!loader || warmed.has(key)) return;
   warmed.add(key);

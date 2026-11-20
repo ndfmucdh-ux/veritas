@@ -5,6 +5,7 @@ import { Plus, Play, Trash2, ChevronRight, X, Check, Loader2, BookOpen, Music2 }
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS } from "@/lib/bibleData";
 import { LoadingState, EmptyState } from "@/components/ui/states";
+import SelectField from "@/components/ui/SelectField";
 
 const PLAYLIST_COLORS = ["#00f5ff", "#fbbf24", "#a78bfa", "#34d399", "#f97316", "#f472b6", "#60a5fa"];
 const PLAYLIST_ICONS = ["🌅", "🌙", "📖", "🎵", "🙏", "✝️", "🕊️", "⭐", "🔥", "💎"];
@@ -254,23 +255,17 @@ export default function AudioPlaylists() {
                             style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.08)" }}>
                             <p className="text-[9px] font-cinzel uppercase tracking-widest" style={{ color: "rgb(var(--ink) / 0.3)" }}>{t.s1AddChapter}</p>
                             <div className="grid grid-cols-3 gap-2">
-                              <select value={addBook} onChange={e => setAddBook(e.target.value)}
-                                className="col-span-1 rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"
-                                style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}>
-                                {BIBLE_BOOKS.map(b => <option key={b.name} value={b.name}>{b.name}</option>)}
-                              </select>
-                              <select value={addChapter} onChange={e => setAddChapter(Number(e.target.value))}
-                                className="rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"
-                                style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}>
-                                {Array.from({ length: totalChapters }, (_, i) => i + 1).map(ch => (
-                                  <option key={ch} value={ch}>{ch}</option>
-                                ))}
-                              </select>
-                              <select value={addTranslation} onChange={e => setAddTranslation(e.target.value)}
-                                className="rounded-lg px-2 py-1.5 text-xs font-cinzel focus:outline-none"
-                                style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}>
-                                {["KJV","NIV","ESV","NKJV","NLT","RVR60","NVI"].map(t => <option key={t} value={t}>{t}</option>)}
-                              </select>
+                              <SelectField value={addBook} onChange={setAddBook} ariaLabel="Book" options={BIBLE_BOOKS.map(b => b.name)}
+                                className="col-span-1 rounded-lg px-2 py-1.5 text-xs font-cinzel"
+                                style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }} />
+                              <SelectField value={addChapter} onChange={v => setAddChapter(Number(v))} ariaLabel="Chapter"
+                                options={Array.from({ length: totalChapters }, (_, i) => i + 1)}
+                                className="rounded-lg px-2 py-1.5 text-xs font-cinzel"
+                                style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }} />
+                              <SelectField value={addTranslation} onChange={setAddTranslation} ariaLabel="Translation"
+                                options={["KJV","NIV","ESV","NKJV","NLT","RVR60","NVI"]}
+                                className="rounded-lg px-2 py-1.5 text-xs font-cinzel"
+                                style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }} />
                             </div>
                             <div className="flex gap-2">
                               <button onClick={() => setShowAddItem(null)}

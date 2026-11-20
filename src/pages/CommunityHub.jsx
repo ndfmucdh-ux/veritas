@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useParams } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
+import { usePullToRefresh } from "@/lib/pullRefresh";
 import PrayerWall from "@/components/community/PrayerWall";
 import GroupsTab from "@/components/community/GroupsTab";
 import FriendsTab from "@/components/community/FriendsTab";
@@ -8,8 +10,13 @@ import { useLang } from "@/lib/LanguageContext";
 
 export default function CommunityHub() {
   const { t } = useLang();
-  const [activeTab, setActiveTab] = useState("groups");
+  // The open tab lives in the URL (/community/friends, /community/groups/:groupId) so back pops it.
+  const { tab } = useParams();
+  const navigate = useSmoothNavigate();
+  const activeTab = ["friends", "prayer_wall"].includes(tab) ? tab : "groups";
+  const setActiveTab = (id) => navigate(id === "groups" ? "/community" : `/community/${id}`);
   const { friends, groups, loading, error, reloadFriends, reloadGroups } = useCommunityData();
+  usePullToRefresh(() => Promise.all([reloadFriends(), reloadGroups()]));
   const tabs = [["groups", t.cmGroups], ["friends", t.cmFriendsTab], ["prayer_wall", t.cmWall]];
   const pending = friends.incoming.length + groups.invites.length;
 

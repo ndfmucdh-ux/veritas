@@ -58,7 +58,7 @@ export default function VerseImageEditor({ verse_ref, onClose }) {
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-cinzel text-lg font-bold text-white">Share Verse</h2>
-          <button onClick={onClose} className="text-white/40 hover:text-white">
+          <button aria-label="Close" onClick={onClose} className="text-white/40 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>

@@ -7,7 +7,8 @@ import StudyNoteTemplates from "@/components/study/StudyNoteTemplates";
 import CrossReferencePanel from "@/components/study/CrossReferencePanel";
 import MemorizeMode from "@/components/study/MemorizeMode";
 import FlashcardStudy from "@/components/study/FlashcardStudy";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import useSmoothNavigate from "@/hooks/useSmoothNavigate";
 import { base44 } from "@/api/base44Client";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
@@ -37,7 +38,11 @@ export default function StudyCenter() {
   const [depth, setDepth] = useState(urlParams.get("depth") || "overview");
   const [expandedCategory, setExpandedCategory] = useState("Gospels");
   const [splitView, setSplitView] = useState(false);
-  const [activeTab, setActiveTab] = useState("analysis"); // "analysis" | "sidebyside" | "templates"
+  // The open tab lives in the URL (/study-center/flashcards) so back pops it.
+  const { tab } = useParams();
+  const navigate = useSmoothNavigate();
+  const activeTab = tab || "analysis";
+  const setActiveTab = (id) => navigate({ pathname: id === "analysis" ? "/study-center" : `/study-center/${id}`, search: window.location.search });
   const [showCrossRef, setShowCrossRef] = useState(false);
   const [activeVerses, setActiveVerses] = useState([]);
   const [explainVerse, setExplainVerse] = useState("");

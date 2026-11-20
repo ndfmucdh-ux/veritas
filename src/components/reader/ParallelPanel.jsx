@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Columns, Plus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import SelectField from "@/components/ui/SelectField";
 
 const ALL_TRANSLATIONS = [
   // English
@@ -108,17 +109,15 @@ export default function ParallelPanel({ book, chapter, primaryTranslation, prima
              <button onClick={() => setFontSize(f => Math.min(26, f + 1))} className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold"
                style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>+</button>
            </div>
-           <select
+           <SelectField
              value={secondTranslation}
-             onChange={e => setSecondTranslation(e.target.value)}
-             className="text-xs font-cinzel px-4 py-2 rounded-xl focus:outline-none"
+             onChange={setSecondTranslation}
+             ariaLabel="Second translation"
+             options={ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => ({ value: t.code, label: t.label }))}
+             className="w-auto gap-2 text-xs font-cinzel px-4 py-2 rounded-xl"
              style={{ background: "var(--fill-3)", border: "1px solid rgb(var(--ink) / 0.1)", color: "rgb(var(--ink) / 0.8)" }}
-           >
-             {ALL_TRANSLATIONS.filter(t => t.code !== primaryTranslation).map(t => (
-               <option key={t.code} value={t.code}>{t.label}</option>
-             ))}
-           </select>
-          <button onClick={onClose}
+           />
+          <button aria-label="Close" onClick={onClose}
             className="w-8 h-8 rounded-xl flex items-center justify-center"
             style={{ background: "var(--fill-3)" }}>
             <X className="w-4 h-4 text-white/50" />

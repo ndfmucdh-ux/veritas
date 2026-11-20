@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, StickyNote, BookOpen, X, ChevronRight } from "lucide-react";
 import { listNotesArchive } from "@/lib/services/libraryService";
 import { LoadingState, EmptyState } from "@/components/ui/states";
+import SelectField from "@/components/ui/SelectField";
 
 export default function NotesArchive() {
   const [notes, setNotes] = useState([]);
@@ -49,15 +50,14 @@ export default function NotesArchive() {
             <button onClick={() => setSearch("")}><X className="w-3.5 h-3.5" style={{ color: "rgb(var(--ink) / 0.3)" }} /></button>
           )}
         </div>
-        <select
+        <SelectField
           value={bookFilter}
-          onChange={e => setBookFilter(e.target.value)}
-          className="px-3 py-2.5 rounded-xl text-sm font-cinzel focus:outline-none"
+          onChange={setBookFilter}
+          ariaLabel="Filter by book"
+          options={[{ value: "", label: "All Books" }, ...allBooks]}
+          className="w-auto gap-2 px-3 py-2.5 rounded-xl text-sm font-cinzel"
           style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: bookFilter ? "#00f5ff" : "rgb(var(--ink) / 0.4)" }}
-        >
-          <option value="">All Books</option>
-          {allBooks.map(b => <option key={b} value={b}>{b}</option>)}
-        </select>
+        />
       </div>
 
       {/* Count */}

@@ -291,7 +291,7 @@ export default function VirtualAssistant({ onClose }) {
           title="Conversation history">
           <History className="w-4 h-4" />
         </button>
-        <button onClick={onClose}
+        <button aria-label="Close" onClick={onClose}
           className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-white/10"
           style={{ color: "rgb(var(--ink) / 0.35)" }}>
           <X className="w-4 h-4" />

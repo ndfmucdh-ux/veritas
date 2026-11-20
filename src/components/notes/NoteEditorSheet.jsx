@@ -1,24 +1,22 @@
 import { useState, useEffect } from "react";
 import { getVerseCount } from "@/lib/chapterVerses";
 import { createPortal } from "react-dom";
-import { Loader2, X, ChevronDown, Plus, Check } from "lucide-react";
+import { Loader2, X, Plus, Check } from "lucide-react";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
+import SelectField from "@/components/ui/SelectField";
 
 const field = "w-full px-3 min-h-11 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring";
 const lbl = "block text-[11px] uppercase tracking-[0.14em] text-muted-foreground mb-1";
 const range = (n) => Array.from({ length: n }, (_, i) => i + 1);
 
-// Compact native dropdown with a chevron.
-function Select({ label, value, onChange, children, className = "" }) {
+// Compact labelled dropdown.
+function Select({ label, value, onChange, options, className = "" }) {
   return (
-    <label className={`block min-w-0 ${className}`}>
+    <div className={`block min-w-0 ${className}`}>
       <span className={lbl}>{label}</span>
-      <span className="relative block">
-        <select value={value} onChange={onChange} className={`${field} appearance-none pr-8 truncate`} style={{ fontSize: 16 }}>{children}</select>
-        <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-      </span>
-    </label>
+      <SelectField value={value} onChange={onChange} options={options} ariaLabel={label} className={field} style={{ fontSize: 16 }} />
+    </div>
   );
 }
 
@@ -83,16 +81,12 @@ export default function NoteEditorSheet({ onClose, onSave, existingTags = [], no
 
         {note && <p className="font-cinzel text-sm font-semibold text-primary">{note.verse_ref}</p>}
         <div className={`grid grid-cols-[minmax(0,1fr)_4.5rem_4.5rem] gap-2 ${note ? "hidden" : ""}`}>
-          <Select label={t.s6Book} value={book} onChange={(e) => { setBook(e.target.value); setChapter(1); }}>
-            {BIBLE_BOOKS.map((b) => <option key={b.name} value={b.name}>{getTranslatedBookName(b.name, lang)}</option>)}
-          </Select>
-          <Select label={t.s6Chapter} value={chapter} onChange={(e) => setChapter(e.target.value)}>
-            {range(max).map((n) => <option key={n} value={n}>{n}</option>)}
-          </Select>
+          <Select label={t.s6Book} value={book} onChange={(v) => { setBook(v); setChapter(1); }}
+            options={BIBLE_BOOKS.map((b) => ({ value: b.name, label: getTranslatedBookName(b.name, lang) }))} />
+          <Select label={t.s6Chapter} value={chapter} onChange={setChapter} options={range(max)} />
           {verseMax > 0 || counting ? (
-            <Select label={t.s6Verse} value={verse} onChange={(e) => setVerse(e.target.value)}>
-              {counting ? <option value={verse}>…</option> : range(verseMax).map((n) => <option key={n} value={n}>{n}</option>)}
-            </Select>
+            <Select label={t.s6Verse} value={verse} onChange={setVerse}
+              options={counting ? [{ value: verse, label: "…" }] : range(verseMax)} />
           ) : (
             <label className="block min-w-0"><span className={lbl}>{t.s6Verse}</span>
               <input type="number" min={1} value={verse} onChange={(e) => setVerse(e.target.value)} className={field} style={{ fontSize: 16 }} /></label>

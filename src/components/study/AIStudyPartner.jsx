@@ -133,7 +133,7 @@ Return JSON with structure as specified.`,
           className="w-full pl-4 pr-14 py-3.5 rounded-xl text-sm font-inter focus:outline-none"
           style={{ background: "var(--fill-2)", border: "1px solid rgba(0,245,255,0.2)", color: "rgb(var(--ink) / 0.85)", fontSize: "16px" }}
         />
-        <motion.button whileTap={{ scale: 0.9 }} onClick={analyze} disabled={loading || !query.trim()}
+        <motion.button whileTap={{ scale: 0.9 }} aria-label="Ask" onClick={analyze} disabled={loading || !query.trim()}
           className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg flex items-center justify-center"
           style={{ background: "rgba(0,245,255,0.15)", color: "#00f5ff", opacity: !query.trim() ? 0.4 : 1 }}>
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
@@ -285,7 +285,7 @@ Return JSON with structure as specified.`,
                   placeholder={lang === "es" ? "Pregunta algo más sobre este pasaje…" : "Ask something more about this passage…"}
                   className="w-full pl-3 pr-12 py-2.5 rounded-xl text-sm font-inter focus:outline-none"
                   style={{ background: "var(--fill-2)", border: "1px solid rgb(var(--ink) / 0.09)", color: "rgb(var(--ink) / 0.8)", fontSize: "16px" }} />
-                <button onClick={askFollowUp} disabled={followUpLoading || !followUp.trim()}
+                <button aria-label="Send follow-up question" onClick={askFollowUp} disabled={followUpLoading || !followUp.trim()}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg flex items-center justify-center"
                   style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", opacity: !followUp.trim() ? 0.4 : 1 }}>
                   {followUpLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}

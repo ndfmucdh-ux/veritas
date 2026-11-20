@@ -10,6 +10,7 @@ import {
 export default function usePlansData() {
   const [progress, setProgress] = useState([]);
   const [customPlans, setCustomPlans] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   const loadPlansData = async () => {
     const [p, cp] = await Promise.all([
@@ -18,6 +19,7 @@ export default function usePlansData() {
     ]);
     setProgress(p || []);
     setCustomPlans(cp || []);
+    setLoaded(true);
   };
 
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function usePlansData() {
   return {
     progress,
     customPlans,
+    loaded,
     loadPlansData,
     getCompletedDays,
     isDayComplete,

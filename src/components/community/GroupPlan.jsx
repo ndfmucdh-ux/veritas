@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Loader2, Pencil, Check, Square, CheckSquare, BookOpen } from "lucide-react";
 import { useLang } from "@/lib/LanguageContext";
 import { community } from "@/lib/communityApi";
+import SelectField from "@/components/ui/SelectField";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 
 const field = "w-full px-3 min-h-11 rounded-xl bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
@@ -59,11 +60,12 @@ export default function GroupPlan({ data, reload }) {
       <div className="rounded-2xl p-4 bg-card border border-border space-y-3">
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t.cmPlanName} maxLength={60} className={field} style={{ fontSize: 16 }} />
         <div className="grid grid-cols-3 gap-2">
-          <select value={book} onChange={(e) => { setBook(e.target.value); setFrom(1); setTo(1); }} aria-label={t.cmBook} className={`${field} col-span-3`} style={{ fontSize: 16 }}>
-            {BIBLE_BOOKS.map((b) => <option key={b.name} value={b.name}>{nameOf(b.name)}</option>)}
-          </select>
-          <select value={from} onChange={(e) => setFrom(Number(e.target.value))} aria-label={t.cmFromCh} className={field} style={{ fontSize: 16 }}>{chapterList.map((c) => <option key={c} value={c}>{t.cmFromCh} {c}</option>)}</select>
-          <select value={to} onChange={(e) => setTo(Number(e.target.value))} aria-label={t.cmToCh} className={field} style={{ fontSize: 16 }}>{chapterList.map((c) => <option key={c} value={c}>{t.cmToCh} {c}</option>)}</select>
+          <SelectField value={book} onChange={(v) => { setBook(v); setFrom(1); setTo(1); }} ariaLabel={t.cmBook} className={`${field} col-span-3`} style={{ fontSize: 16 }}
+            options={BIBLE_BOOKS.map((b) => ({ value: b.name, label: nameOf(b.name) }))} />
+          <SelectField value={from} onChange={(v) => setFrom(Number(v))} ariaLabel={t.cmFromCh} className={field} style={{ fontSize: 16 }}
+            options={chapterList.map((c) => ({ value: c, label: `${t.cmFromCh} ${c}` }))} />
+          <SelectField value={to} onChange={(v) => setTo(Number(v))} ariaLabel={t.cmToCh} className={field} style={{ fontSize: 16 }}
+            options={chapterList.map((c) => ({ value: c, label: `${t.cmToCh} ${c}` }))} />
           <button type="button" onClick={addRange} className="min-h-11 rounded-xl bg-secondary border border-primary text-primary text-xs font-cinzel font-semibold">{t.cmAddRange}</button>
         </div>
         <div className="flex flex-wrap gap-1.5">

@@ -12,6 +12,7 @@ import AuthGate from '@/components/auth/AuthGate';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import SplashScreen from '@/components/ui/SplashScreen';
 import ViewTransitionLinks from '@/components/layout/ViewTransitionLinks';
+import PageColorSync from '@/components/layout/PageColorSync';
 import EmojiSanitizer from '@/components/layout/EmojiSanitizer';
 import PageErrorBoundary from '@/components/ui/PageErrorBoundary';
 import { useState, useEffect, lazy, Suspense } from 'react';
@@ -69,6 +70,7 @@ const AuthenticatedApp = () => {
   return (
     <PageErrorBoundary resetKey={location.pathname}>
     <ViewTransitionLinks />
+    <PageColorSync />
     <Routes>
       <Route element={<AppLayout />}>
         {/* Public routes — no login required */}
@@ -77,16 +79,16 @@ const AuthenticatedApp = () => {
         <Route path="/search" element={<Search />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/study" element={<Study />} />
-        <Route path="/plans" element={<Plans />} />
+        <Route path="/plans/:kind?/:planId?" element={<Plans />} />
 
         {/* Protected routes — require login */}
         <Route element={<ProtectedRoute unauthenticatedElement={<AuthGate />} />}>
-          <Route path="/library" element={<Library />} />
+          <Route path="/library/:tab?" element={<Library />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/verse-art" element={<VerseImageGenerator />} />
-          <Route path="/study-center" element={<StudyCenter />} />
+          <Route path="/study-center/:tab?" element={<StudyCenter />} />
           <Route path="/prayer-journal" element={<PrayerJournal />} />
-          <Route path="/community" element={<CommunityHub />} />
+          <Route path="/community/:tab?/:groupId?" element={<CommunityHub />} />
           <Route path="/notification-studio" element={<NotificationStudio />} />
           <Route path="/audio-dashboard" element={<AudioDashboard />} />
           <Route path="/for-you/:category" element={<ForYouSection />} />

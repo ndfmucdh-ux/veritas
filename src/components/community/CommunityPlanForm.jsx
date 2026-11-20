@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { BIBLE_BOOKS, getTranslatedBookName } from "@/lib/bibleData";
 import { useLang } from "@/lib/LanguageContext";
+import SelectField from "@/components/ui/SelectField";
 
 const field = "w-full px-3 min-h-11 rounded-xl text-sm font-inter focus:outline-none";
 const fieldStyle = { fontSize: 16, background: "var(--fill-2)", border: "1px solid var(--hairline)", color: "hsl(var(--foreground))" };
@@ -56,9 +57,8 @@ export default function CommunityPlanForm({ onCreate }) {
 
       <div>
         <span className={label} style={{ color: "rgb(var(--ink) / 0.7)" }}>{t.s5Book}</span>
-        <select value={book} onChange={(e) => changeBook(e.target.value)} className={field} style={fieldStyle}>
-          {BIBLE_BOOKS.map((b) => <option key={b.name} value={b.name}>{getTranslatedBookName(b.name, lang)}</option>)}
-        </select>
+        <SelectField value={book} onChange={changeBook} ariaLabel={t.s5Book} className={field} style={fieldStyle}
+          options={BIBLE_BOOKS.map((b) => ({ value: b.name, label: getTranslatedBookName(b.name, lang) }))} />
       </div>
 
       <div className="grid grid-cols-3 gap-2">

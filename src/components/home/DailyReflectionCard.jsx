@@ -108,7 +108,7 @@ export default function DailyReflectionCard() {
             </p>
             {/* Refresh + Dismiss side by side */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button onClick={generateReflection} disabled={loading}
+              <button aria-label="Refresh reflection" onClick={generateReflection} disabled={loading}
                 className="w-6 h-6 rounded-lg flex items-center justify-center"
                 style={{ background: "var(--fill-2)", color: "rgb(var(--ink) / 0.35)" }}>
                 <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />

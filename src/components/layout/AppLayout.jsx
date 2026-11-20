@@ -1,11 +1,11 @@
 import { Suspense } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import RouteFallback from "@/components/layout/RouteFallback";
-import { motion } from "framer-motion";
+import HeaderBrand from "@/components/layout/HeaderBrand.jsx";
+import PullToRefresh from "@/components/layout/PullToRefresh.jsx";
 import BottomNav from "./BottomNav.jsx";
 import SideNav from "./SideNav.jsx";
 import FloatingActionButton from "./FloatingActionButton.jsx";
-import VeritasLogo from "@/components/ui/VeritasLogo";
 import AssistantButton from "@/components/assistant/AssistantButton";
 import HeaderProfileLink from "@/components/layout/HeaderProfileLink.jsx";
 import useCurrentUserDisplay from "@/hooks/useCurrentUserDisplay";
@@ -25,22 +25,14 @@ export default function AppLayout() {
         <header
           className="sticky top-0 z-50 px-4 py-3 flex items-center justify-between md:px-6"
           style={{
+            paddingTop: "calc(0.75rem + env(safe-area-inset-top))",
             background: "var(--chrome-surface)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             borderBottom: "1px solid var(--hairline)",
           }}
         >
-          <Link to="/" className="flex items-center gap-2.5">
-            <motion.div whileHover={{ scale: 1.05 }} className="rounded-xl">
-              <VeritasLogo size={34} />
-            </motion.div>
-            <span className="font-cinzel font-bold text-xl tracking-[0.1em] text-foreground">
-              VERITAS
-            </span>
-            <span className="font-cursive text-lg italic text-foreground/70 ml-1.5">by</span>
-            <img src="https://base44.app/api/apps/69f67135f4b5e8717434ca7b/files/mp/public/69f67135f4b5e8717434ca7b/2d2084bf6_awaken-logo-transparent.png" alt="Awaken Apostolic Network" className="h-8 w-auto object-contain" />
-          </Link>
+          <HeaderBrand />
 
           <div className="flex items-center gap-1">
             <HeaderProfileLink avatarUrl={displayAvatar} displayName={displayName} />
@@ -54,6 +46,7 @@ export default function AppLayout() {
         </Suspense>
       </main>
 
+      <PullToRefresh />
       {!isImmersive && <BottomNav />}
       {location.pathname === "/read" && <FloatingActionButton />}
       {!isImmersive && <AssistantButton />}

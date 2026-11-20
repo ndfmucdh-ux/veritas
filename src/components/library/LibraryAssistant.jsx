@@ -84,7 +84,7 @@ export default function LibraryAssistant({ open, onClose }) {
             <p className="text-[10px] font-inter" style={{ color: "rgb(var(--ink) / 0.35)" }}>Organize your verses</p>
           </div>
         </div>
-        <button onClick={onClose} className="w-7 h-7 rounded-xl flex items-center justify-center"
+        <button aria-label="Close" onClick={onClose} className="w-7 h-7 rounded-xl flex items-center justify-center"
           style={{ background: "var(--fill-3)", color: "rgb(var(--ink) / 0.4)" }}>
           <X className="w-4 h-4" />
         </button>

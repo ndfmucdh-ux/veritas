@@ -162,7 +162,7 @@ export default function AudioReflectionRecorder({ verseRef, book, chapter, verse
           <div className="flex items-center gap-2">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={playAudio}
+              aria-label="Play recording" onClick={playAudio}
               className="w-10 h-10 rounded-lg flex items-center justify-center"
               style={{ background: "rgba(0,229,255,0.2)", color: "#00f5ff" }}
             >

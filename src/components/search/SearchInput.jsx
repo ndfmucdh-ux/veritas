@@ -14,7 +14,7 @@ export default function SearchInput({ inputRef, query, onQueryChange, onClear, o
         className="w-full glass rounded-xl pl-12 pr-12 py-4 text-sm font-inter placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-cyan/50 transition-all"
       />
       {query && (
-        <button type="button" onClick={onClear} className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+        <button type="button" aria-label="Clear search" onClick={onClear} className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
           <X className="w-4 h-4" />
         </button>
       )}

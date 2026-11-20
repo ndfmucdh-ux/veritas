@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX, ChevronDown, Headphones, SkipBack, SkipForward } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import useDraggable from "@/hooks/useDraggable";
 import { useLang } from "@/lib/LanguageContext";
 import { getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
 
@@ -10,6 +11,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const isEs = lang === "es";
   // Book name follows the CONTENT translation language (BTX3 → "Juan", KJV → "John")
   const displayBook = getTranslatedBookName(book, getTranslationLang(translation));
+  const drag = useDraggable("veritas_pos_audio");
   const [open, setOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -120,7 +122,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
 
   return (
-    <div className={`fixed bottom-40 min-[1101px]:bottom-28 right-4 min-[1101px]:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
+    <motion.div {...drag.rootProps} className={`fixed bottom-40 min-[1101px]:bottom-28 right-4 min-[1101px]:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -186,26 +188,26 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
               {/* Main controls */}
               <div className="flex items-center gap-2">
-                <button onClick={skipBack} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                <button aria-label="Previous verse" onClick={skipBack} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
                   style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   <SkipBack className="w-3.5 h-3.5" />
                 </button>
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  onClick={handlePlay}
+                  aria-label="Play or pause" onClick={handlePlay}
                   className="w-11 h-11 rounded-2xl flex items-center justify-center"
                   style={{ background: playing ? "rgba(0,245,255,0.18)" : "linear-gradient(135deg, rgba(0,245,255,0.3), rgba(167,139,250,0.3))", border: "1px solid rgba(0,245,255,0.3)", boxShadow: playing ? "0 0 20px rgba(0,245,255,0.25)" : "none" }}
                 >
                   {playing ? <Pause className="w-5 h-5 text-cyan" /> : <Play className="w-5 h-5 text-white ml-0.5" />}
                 </motion.button>
-                <button onClick={skipForward} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                <button aria-label="Next verse" onClick={skipForward} className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
                   style={{ color: "rgb(var(--ink) / 0.4)" }}>
                   <SkipForward className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               {/* Mute */}
-              <button onClick={toggleMute} className="w-8 h-8 rounded-xl flex items-center justify-center"
+              <button aria-label="Mute or unmute" onClick={toggleMute} className="w-8 h-8 rounded-xl flex items-center justify-center"
                 style={{ color: muted ? "#f87171" : "rgb(var(--ink) / 0.4)" }}>
                 {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </button>
@@ -217,10 +219,12 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
       {/* Pill toggle button */}
       <motion.button
         whileTap={{ scale: 0.95 }}
-        onClick={() => { setOpen(v => !v); if (open && playing) stopAll(); }}
+        {...drag.handleProps}
+        onClick={drag.onTap(() => { setOpen(v => !v); if (open && playing) stopAll(); })}
         aria-label={isEs ? "Escuchar Capítulo" : "Listen to Chapter"}
         className={`flex items-center gap-2 h-12 rounded-full justify-center ${open ? "w-full px-4 rounded-2xl" : playing ? "px-4" : "w-12"}`}
         style={{
+          ...drag.handleProps.style,
           background: open ? "var(--popover-surface)" : "hsl(var(--surface-4) / 0.9)",
           border: `1px solid ${playing ? "rgba(0,245,255,0.35)" : "rgb(var(--ink) / 0.1)"}`,
           backdropFilter: "blur(16px)",
@@ -248,6 +252,6 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
       {/* Hidden audio element for YouVersion audio playback */}
       <audio ref={audioRef} crossOrigin="anonymous" />
-    </div>
+    </motion.div>
   );
 }

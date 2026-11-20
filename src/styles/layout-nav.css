@@ -8,6 +8,9 @@
 
 :root { --book-left: 0px; }
 
+/* Side panels start below the header, which grows by the notch / status bar inset */
+.nav-side, .book-side { top: calc(57px + env(safe-area-inset-top)) !important; }
+
 /* Portrait tablet, reader: no side menu, only the book list (above the bottom tab bar) */
 @media (min-width: 768px) and (max-width: 1100px) and (orientation: portrait) {
   .book-side { display: flex; bottom: 4.5rem !important; }

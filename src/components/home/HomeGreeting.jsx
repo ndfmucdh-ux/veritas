@@ -6,7 +6,8 @@ import { useLang } from "@/lib/LanguageContext";
 
 export default function HomeGreeting() {
   const { t } = useLang();
-  const { firstName } = useCurrentUserDisplay();
+  const { displayName } = useCurrentUserDisplay();
+  const firstName = displayName.trim().split(/\s+/).slice(0, 2).join(" ");
   const hour = new Date().getHours();
   const greetingKey = hour < 12 ? "goodMorning" : hour < 17 ? "goodAfternoon" : "goodEvening";
 

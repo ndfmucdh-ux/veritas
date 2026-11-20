@@ -4,6 +4,7 @@ import { Heart, Plus, CheckCircle2, Clock, History, Leaf } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { LoadingState, EmptyState } from "@/components/ui/states";
 import { useLang } from "@/lib/LanguageContext";
+import { usePullToRefresh } from "@/lib/pullRefresh";
 import PrayerModal from "@/components/prayer/PrayerModal";
 import PrayerFocusTimer from "@/components/prayer/PrayerFocusTimer";
 import PrayerOverview from "@/components/prayer/PrayerOverview";
@@ -43,6 +44,8 @@ export default function PrayerJournal() {
       setLoading(false);
     }
   }, []);
+
+  usePullToRefresh(loadPrayers);
 
   useEffect(() => {
     loadPrayers();
