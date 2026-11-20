@@ -11,7 +11,8 @@ export default function ProfileHeroHeader({ user, avatarUrl, heroUrl, onSaveName
   const { t } = useLang();
   const [editingName, setEditingName] = useState(false);
   const savedName = user?.display_name || user?.full_name || localStorage.getItem("veritas_display_name") || "";
-  const savedTitle = user ? (user.profile_title || "") : (localStorage.getItem("veritas_profile_title") || "");
+  const isBuilder = user?.email?.toLowerCase() === "pastords@me.com";
+  const savedTitle = user ? (user.profile_title || (isBuilder ? "The Builder" : "")) : (localStorage.getItem("veritas_profile_title") || "");
   const [nameInput, setNameInput] = useState(savedName);
   const [titleInput, setTitleInput] = useState(savedTitle);
   const [editor, setEditor] = useState(null); // { kind: "avatar" | "hero", src }
