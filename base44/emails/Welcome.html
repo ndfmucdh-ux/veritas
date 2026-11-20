@@ -3,87 +3,59 @@
     <mj-title>Welcome to Veritas, {{first_name}}</mj-title>
     <mj-preview>Your daily place for Scripture, prayer and study.</mj-preview>
     <mj-attributes>
-      <mj-all font-family="'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif" />
-      <mj-section background-color="#f7f3ee" padding="0 36px" />
-      <mj-column padding="0" />
-      <mj-text color="#000000" font-size="15px" line-height="1.6" padding="0" />
-      <mj-button background-color="#d9b77e" color="#000000" border-radius="0px" font-size="15px" font-weight="700" inner-padding="14px 28px" padding="0" align="left" />
-      <mj-image padding="0" />
-      <mj-class name="h" font-weight="700" />
-      <mj-class name="label" font-size="11px" letter-spacing="2px" text-transform="uppercase" font-weight="700" color="#d9b77e" />
+      <mj-all font-family="Georgia, 'Times New Roman', serif" />
+      <mj-text color="#d8cdb8" font-size="15px" line-height="1.7" padding="0" />
+      <mj-class name="chip" font-family="Helvetica, Arial, sans-serif" font-size="12px" font-weight="700" letter-spacing="4px" text-transform="uppercase" color="#d9b77e" align="center" />
+      <mj-class name="feat" font-size="14px" color="#d8cdb8" />
     </mj-attributes>
-    <mj-style>
-      @media (max-width:480px) { .hero-h div { font-size:32px !important; line-height:1.12 !important; } }
-    </mj-style>
   </mj-head>
-  <mj-body background-color="#141414" width="600px">
-    <mj-wrapper padding="28px 12px" background-color="#141414">
-      <mj-section background-color="#d9b77e" padding="22px 36px">
+  <mj-body background-color="#0b0907" width="480px">
+    <mj-wrapper padding="24px 0" background-color="#0b0907">
+      <mj-section background-color="#14110c" padding="0" border="1px solid #4a3b22" border-radius="28px">
+        <mj-column padding="0">
+          <mj-image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80" alt="" padding="0" height="210px" border-radius="28px 28px 0 0" />
+          <mj-image src="https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/fd35789be_IMG_1831.jpeg" alt="Veritas" width="84px" padding="16px 0 0" border-radius="50%" border="3px solid #d9b77e" />
+          <mj-text mj-class="chip" padding="16px 24px 18px">Welcome</mj-text>
+          <mj-text align="center" font-size="22px" line-height="1.35" color="#f3ead8" padding="0 28px 14px">Welcome, {{first_name}}. Your daily place for Scripture, prayer and study.</mj-text>
+          <mj-text align="center" padding="0 28px 22px">Pick your Bible, read a chapter, keep notes and let the daily verse meet you each morning.</mj-text>
+          <mj-button href="https://luxveritas.app" background-color="#d9b77e" color="#1a1408" border-radius="40px" font-family="Helvetica, Arial, sans-serif" font-size="16px" font-weight="700" inner-padding="16px 40px" padding="0 0 26px">Start reading &#8594;</mj-button>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#14110c" padding="0 22px 8px">
+        <mj-column background-color="#1c1710" border="1px solid #3a2f1d" border-radius="16px" padding="16px 18px" width="46%">
+          <mj-text color="#d9b77e" font-weight="700" font-size="16px" padding="0 0 4px">Read</mj-text>
+          <mj-text mj-class="feat">Any chapter, in the Bible you love, in your language.</mj-text>
+        </mj-column>
+        <mj-column background-color="#1c1710" border="1px solid #3a2f1d" border-radius="16px" padding="16px 18px" width="46%">
+          <mj-text color="#d9b77e" font-weight="700" font-size="16px" padding="0 0 4px">Reflect</mj-text>
+          <mj-text mj-class="feat">Highlights, notes and a prayer journal.</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#14110c" padding="8px 22px">
+        <mj-column background-color="#1c1710" border="1px solid #3a2f1d" border-radius="16px" padding="16px 18px" width="46%">
+          <mj-text color="#d9b77e" font-weight="700" font-size="16px" padding="0 0 4px">Audio Bible</mj-text>
+          <mj-text mj-class="feat">Listen to any chapter on the go.</mj-text>
+        </mj-column>
+        <mj-column background-color="#1c1710" border="1px solid #3a2f1d" border-radius="16px" padding="16px 18px" width="46%">
+          <mj-text color="#d9b77e" font-weight="700" font-size="16px" padding="0 0 4px">Study tools</mj-text>
+          <mj-text mj-class="feat">Compare translations, memorize and use flashcards.</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#14110c" padding="8px 22px 24px">
+        <mj-column background-color="#1c1710" border="1px solid #3a2f1d" border-radius="16px" padding="16px 18px" width="46%">
+          <mj-text color="#d9b77e" font-weight="700" font-size="16px" padding="0 0 4px">Plans</mj-text>
+          <mj-text mj-class="feat">Follow reading plans and build a streak.</mj-text>
+        </mj-column>
+        <mj-column background-color="#1c1710" border="1px solid #3a2f1d" border-radius="16px" padding="16px 18px" width="46%">
+          <mj-text color="#d9b77e" font-weight="700" font-size="16px" padding="0 0 4px">Community</mj-text>
+          <mj-text mj-class="feat">Study groups and shared prayer requests.</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#14110c" padding="22px 24px 28px" border-top="1px solid #2a2216" border-radius="0 0 28px 28px">
         <mj-column>
-          <mj-image src="https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/fd35789be_IMG_1831.jpeg" alt="Veritas" width="36px" align="center" padding="0 0 10px" />
-          <mj-text align="center" font-size="12px" letter-spacing="4px" font-weight="700" text-transform="uppercase" color="#000000">Veritas</mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section background-color="#d9b77e" padding="52px 36px 48px">
-        <mj-column>
-          <mj-text mj-class="h" css-class="hero-h" align="left" font-size="46px" line-height="1.04" color="#000000" padding="0 0 14px">Welcome, {{first_name}}.</mj-text>
-          <mj-text font-size="18px" line-height="1.5" color="#000000" padding="0 0 26px">Your daily place for Scripture, prayer and study.</mj-text>
-          <mj-button href="https://luxveritas.app" align="left" background-color="#000000" color="#d9b77e" inner-padding="15px 32px">Start reading</mj-button>
-        </mj-column>
-      </mj-section>
-      <mj-section padding="44px 36px 12px">
-        <mj-column>
-          <mj-text font-size="17px" line-height="1.65">Veritas is built to help you stay in the Word. Pick your Bible, read a chapter, keep notes and let the daily verse meet you each morning.</mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section padding="24px 36px 16px"><mj-column><mj-text mj-class="label" align="left">Begin here</mj-text></mj-column></mj-section>
-      <mj-section padding="0 28px 20px">
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="28px" line-height="1" color="#d9b77e" padding="22px 20px 14px">01</mj-text>
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="0 20px 6px">Read</mj-text>
-          <mj-text font-size="14px" padding="0 20px 22px">Open any chapter in the Bible you love, in your language.</mj-text>
-        </mj-column>
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="28px" line-height="1" color="#d9b77e" padding="22px 20px 14px">02</mj-text>
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="0 20px 6px">Reflect</mj-text>
-          <mj-text font-size="14px" padding="0 20px 22px">Highlight verses, write notes and keep a prayer journal.</mj-text>
-        </mj-column>
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="28px" line-height="1" color="#d9b77e" padding="22px 20px 14px">03</mj-text>
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="0 20px 6px">Grow</mj-text>
-          <mj-text font-size="14px" padding="0 20px 22px">Follow reading plans and build a streak, one day at a time.</mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section padding="8px 36px 16px"><mj-column><mj-text mj-class="label" align="left">More to explore</mj-text></mj-column></mj-section>
-      <mj-section padding="0 28px 8px">
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="20px 20px 6px">Audio Bible</mj-text>
-          <mj-text font-size="14px" padding="0 20px 20px">Listen to any chapter while you walk or drive.</mj-text>
-        </mj-column>
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="20px 20px 6px">Study tools</mj-text>
-          <mj-text font-size="14px" padding="0 20px 20px">Compare translations, memorize verses and use flashcards.</mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section padding="0 28px 20px">
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="20px 20px 6px">Community</mj-text>
-          <mj-text font-size="14px" padding="0 20px 20px">Join study groups and lift up prayer requests together.</mj-text>
-        </mj-column>
-        <mj-column padding="0 8px 16px" inner-background-color="#f5eee5">
-          <mj-text mj-class="h" font-size="16px" line-height="1.35" padding="20px 20px 6px">Verse art and reminders</mj-text>
-          <mj-text font-size="14px" padding="0 20px 20px">Turn verses into images and set gentle daily reminders.</mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section background-color="#d9b77e" padding="44px 40px">
-        <mj-column>
-          <mj-text mj-class="h" font-size="22px" line-height="1.4" color="#000000">Grace and peace to you. We are glad you are here.</mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section background-color="#d9b77e" padding="30px 36px 34px">
-        <mj-column>
-          <mj-text mj-class="h" align="center" font-size="18px" color="#000000" padding="0 0 8px">Veritas</mj-text>
-          <mj-text align="center" font-size="12px" color="#000000"><a href="{{unsubscribe_url}}" style="color:#000000;text-decoration:underline;">Unsubscribe</a></mj-text>
+          <mj-text align="center" font-family="Helvetica, Arial, sans-serif" font-size="14px" color="#a39880"><b>Veritas</b> &mdash; Welcome</mj-text>
+          <mj-text align="center" font-family="Helvetica, Arial, sans-serif" font-size="14px" padding="6px 0 0"><a href="https://luxveritas.app" style="color:#d9b77e;text-decoration:none;">luxveritas.app</a></mj-text>
+          <mj-text align="center" font-family="Helvetica, Arial, sans-serif" font-size="12px" color="#8d836f" padding="10px 0 0"><a href="{{unsubscribe_url}}" style="color:#8d836f;text-decoration:underline;">Unsubscribe</a></mj-text>
         </mj-column>
       </mj-section>
     </mj-wrapper>
