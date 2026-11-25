@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX, ChevronDown, Headphones, SkipBack, SkipForward } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -163,7 +164,8 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
 
-  return (
+  // Rendered on document.body so no animated/transformed ancestor can move or hide the fixed icon
+  return createPortal(
     <motion.div {...drag.rootProps} className={`fixed bottom-40 min-[1101px]:bottom-28 right-4 min-[1101px]:right-6 z-40 flex flex-col items-end ${open ? "left-4 md:left-auto md:w-80" : ""}`}>
       <AnimatePresence>
         {open && (
@@ -297,6 +299,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
       {/* Hidden audio element for YouVersion audio playback */}
       <audio ref={audioRef} crossOrigin="anonymous" />
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 }
