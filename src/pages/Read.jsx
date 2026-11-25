@@ -473,7 +473,7 @@ export default function Read() {
 
       {/* Chapter Audio Player */}
       {!loading && verses.length > 0 && (
-        <ChapterAudioPlayer book={book} chapter={chapter} translation={translation} verses={verses} />
+        <ChapterAudioPlayer book={book} chapter={chapter} translation={translation} verses={verses} onNavigate={handleNavigate} />
       )}
 
       {/* Scroll to top */}

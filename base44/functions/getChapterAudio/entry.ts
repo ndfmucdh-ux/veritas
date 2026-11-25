@@ -1,10 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.63';
 import OpenAI from 'npm:openai';
 
-const VOICE = 'onyx';
+const VOICE = 'cedar';
 const INSTRUCTIONS =
-  'Speak as a warm, deep, reverent human narrator reading Holy Scripture aloud. Slow, unhurried, ' +
-  'gentle gravity, natural pauses between sentences, soft emphasis on key words. Never robotic or rushed.';
+  'Speak as a warm, deep, reverent human narrator reading Holy Scripture aloud, like a seasoned audiobook ' +
+  'narrator. Crystal-clear diction, studio-quality clarity, slow unhurried pace, gentle gravity, natural ' +
+  'pauses between sentences, soft emphasis on key words. Never robotic, flat or rushed.';
 
 async function sha256(s: string) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));

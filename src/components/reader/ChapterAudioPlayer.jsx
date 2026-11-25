@@ -5,11 +5,19 @@ import { Play, Pause, Volume2, VolumeX, ChevronDown, Headphones, SkipBack, SkipF
 import { base44 } from "@/api/base44Client";
 import useDraggable from "@/hooks/useDraggable";
 import { useLang } from "@/lib/LanguageContext";
-import { getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
+import { BIBLE_BOOKS, getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
 
 const SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
 
-export default function ChapterAudioPlayer({ book, chapter, translation, verses }) {
+// One audio element for the whole app session: once a tap has unlocked it, it keeps playing across
+// chapters and in the background / on the lock screen (a new element per chapter would be blocked).
+const sharedAudio = typeof Audio !== "undefined" ? new Audio() : null;
+if (sharedAudio) sharedAudio.preload = "auto";
+const CONTINUE_KEY = "veritas_audio_continue";
+const ARTWORK = "https://media.base44.com/images/public/69f67135f4b5e8717434ca7b/fd35789be_IMG_1831.jpeg";
+let advancing = false; // true while moving on to the next chapter automatically
+
+export default function ChapterAudioPlayer({ book, chapter, translation, verses, onNavigate }) {
   const { lang } = useLang();
   const isEs = lang === "es";
   // Book name follows the CONTENT translation language (BTX3 → "Juan", KJV → "John")
@@ -24,7 +32,8 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const prefetchRef = useRef(null);
-  const audioRef = useRef(null);
+  const audioRef = useRef(sharedAudio);
+  const handlersRef = useRef({});
   const stoppedRef = useRef(false);
 
   // Reset when chapter changes
@@ -41,7 +50,12 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   useEffect(() => {
     return () => {
       stoppedRef.current = true;
-      if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ""; }
+      const a = audioRef.current;
+      if (a) { a.onended = null; a.ontimeupdate = null; }
+      if (advancing) return; // moving to the next chapter: keep the audio alive
+      sessionStorage.removeItem(CONTINUE_KEY);
+      if (a) { a.pause(); a.removeAttribute("src"); a.load(); }
+      if ("mediaSession" in navigator) navigator.mediaSession.playbackState = "none";
     };
   }, []);
 
@@ -71,6 +85,9 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
     });
     return res.data;
   }, [verses, book, chapter, translation]);
+
+  // The listener asked to stop: end continuous play
+  const userStop = () => { sessionStorage.removeItem(CONTINUE_KEY); stopAll(); };
 
   const playFromVerse = useCallback(async (startIdx) => {
     if (!verses?.length) return;
@@ -103,9 +120,21 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
         setCurrentVerse(chunk.start + idx);
       };
       audio.onended = () => {
-        if (!stoppedRef.current && chunk.end < verses.length) {
+        if (stoppedRef.current) return;
+        if (chunk.end < verses.length) {
           playFromVerse(chunk.end);
+          return;
+        }
+        // Chapter finished: continue with the next chapter (and the next book) until the user stops
+        const bi = BIBLE_BOOKS.findIndex(b => b.name === book);
+        const next = chapter < BIBLE_BOOKS[bi]?.chapters ? [book, chapter + 1]
+          : bi >= 0 && bi < BIBLE_BOOKS.length - 1 ? [BIBLE_BOOKS[bi + 1].name, 1] : null;
+        if (next && onNavigate) {
+          advancing = true;
+          setTimeout(() => { advancing = false; }, 15000);
+          onNavigate(...next);
         } else {
+          sessionStorage.removeItem(CONTINUE_KEY);
           setPlaying(false);
           setCurrentVerse(0);
         }
@@ -113,7 +142,16 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
 
       await audio.play();
       setPlaying(true);
+      advancing = false;
+      sessionStorage.setItem(CONTINUE_KEY, "1");
       setVoiceName(data.narrator || "Human narrator");
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: `${displayBook} ${chapter}`, artist: "Veritas", album: translation,
+          artwork: [{ src: ARTWORK, sizes: "512x512", type: "image/jpeg" }],
+        });
+        navigator.mediaSession.playbackState = "playing";
+      }
 
       // Warm up the next passage so playback continues without a gap
       if (chunk.end < verses.length) {
@@ -128,11 +166,11 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
     } finally {
       setLoading(false);
     }
-  }, [verses, speed, muted, chunkFrom, fetchClip, isEs]);
+  }, [verses, speed, muted, chunkFrom, fetchClip, isEs, book, chapter, onNavigate, displayBook, translation]);
 
   const handlePlay = () => {
     if (playing) {
-      stopAll();
+      userStop();
     } else {
       // Unlock the audio element inside the tap so mobile browsers allow playback after the network wait
       const a = audioRef.current;
@@ -161,6 +199,26 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
       return !m;
     });
   };
+
+  handlersRef.current = { skipBack, skipForward };
+
+  // Resume automatically when the previous chapter finished while continuous play is on
+  useEffect(() => {
+    if (verses?.length && sessionStorage.getItem(CONTINUE_KEY) === "1") playFromVerse(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [book, chapter, verses?.length > 0]);
+
+  // Lock screen / notification controls
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) return;
+    const ms = navigator.mediaSession;
+    const a = audioRef.current;
+    ms.setActionHandler("play", () => { stoppedRef.current = false; a.play(); setPlaying(true); ms.playbackState = "playing"; });
+    ms.setActionHandler("pause", () => { a.pause(); setPlaying(false); ms.playbackState = "paused"; });
+    ms.setActionHandler("nexttrack", () => handlersRef.current.skipForward());
+    ms.setActionHandler("previoustrack", () => handlersRef.current.skipBack());
+    return () => ["play", "pause", "nexttrack", "previoustrack"].forEach(n => ms.setActionHandler(n, null));
+  }, []);
 
   const progress = verses?.length ? (currentVerse / verses.length) * 100 : 0;
 
@@ -267,7 +325,7 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
       <motion.button
         whileTap={{ scale: 0.95 }}
         {...drag.handleProps}
-        onClick={drag.onTap(() => { setOpen(v => !v); if (open && playing) stopAll(); })}
+        onClick={drag.onTap(() => { setOpen(v => !v); if (open && playing) userStop(); })}
         aria-label={isEs ? "Escuchar Capítulo" : "Listen to Chapter"}
         className={`flex items-center gap-2 h-12 rounded-full justify-center ${open ? "w-full px-4 rounded-2xl" : playing ? "px-4" : "w-12"}`}
         style={{
@@ -297,8 +355,6 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
         {open && <ChevronDown className="w-4 h-4 ml-auto" style={{ color: "rgb(var(--ink) / 0.6)", transform: "rotate(180deg)" }} />}
       </motion.button>
 
-      {/* Hidden audio element for YouVersion audio playback */}
-      <audio ref={audioRef} crossOrigin="anonymous" />
     </motion.div>,
     document.body
   );
