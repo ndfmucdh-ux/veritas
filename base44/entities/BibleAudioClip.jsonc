@@ -1,0 +1,48 @@
+{
+  "name": "BibleAudioClip",
+  "type": "object",
+  "properties": {
+    "clip_key": {
+      "type": "string",
+      "description": "Hash of translation, voice and text"
+    },
+    "audio_url": {
+      "type": "string"
+    },
+    "translation": {
+      "type": "string"
+    },
+    "book": {
+      "type": "string"
+    },
+    "chapter": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "clip_key",
+    "audio_url"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

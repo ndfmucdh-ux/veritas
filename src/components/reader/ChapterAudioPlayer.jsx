@@ -6,6 +6,8 @@ import useDraggable from "@/hooks/useDraggable";
 import { useLang } from "@/lib/LanguageContext";
 import { getTranslatedBookName, getTranslationLang } from "@/lib/bibleData";
 
+const SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+
 export default function ChapterAudioPlayer({ book, chapter, translation, verses }) {
   const { lang } = useLang();
   const isEs = lang === "es";
@@ -17,8 +19,10 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
   const [muted, setMuted] = useState(false);
   const [currentVerse, setCurrentVerse] = useState(0);
   const [speed, setSpeed] = useState(1.0);
-  const [voiceName, setVoiceName] = useState("YouVersion Audio");
+  const [voiceName, setVoiceName] = useState("Human narrator");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const prefetchRef = useRef(null);
   const audioRef = useRef(null);
   const stoppedRef = useRef(false);
 
@@ -27,6 +31,8 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
     stopAll();
     setCurrentVerse(0);
     setPlaying(false);
+    setError("");
+    prefetchRef.current = null;
   }, [book, chapter]);
 
   // Stop playback if the Reader unmounts (e.g. navigating away) so audio doesn't
@@ -47,53 +53,89 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
     setPlaying(false);
   };
 
+  // Group consecutive verses into passages of ~900 characters (one narrated clip each)
+  const chunkFrom = useCallback((startIdx) => {
+    let end = startIdx, len = 0;
+    while (end < verses.length && (end === startIdx || len + (verses[end].text?.length || 0) <= 900)) {
+      len += verses[end].text?.length || 0;
+      end++;
+    }
+    return { start: startIdx, end }; // end is exclusive
+  }, [verses]);
+
+  const fetchClip = useCallback(async ({ start, end }) => {
+    const text = verses.slice(start, end).map(v => v.text).join(" ");
+    const res = await base44.functions.invoke("getChapterAudio", {
+      book, chapter, translation, text, language: getTranslationLang(translation),
+    });
+    return res.data;
+  }, [verses, book, chapter, translation]);
+
   const playFromVerse = useCallback(async (startIdx) => {
     if (!verses?.length) return;
     stoppedRef.current = false;
     setCurrentVerse(startIdx);
     setLoading(true);
+    setError("");
 
     try {
-      const res = await base44.functions.invoke("getChapterAudio", {
-        book,
-        chapter,
-        translation,
-        verse: verses[startIdx]?.verse,
-      });
+      const chunk = chunkFrom(startIdx);
+      const data = prefetchRef.current?.start === startIdx ? await prefetchRef.current.promise : await fetchClip(chunk);
 
       // Guard: if user stopped while awaiting, abort silently
       if (stoppedRef.current) return;
+      if (!data?.audio_url || !audioRef.current) throw new Error("No audio returned");
 
-      if (res.data?.audio_url && audioRef.current) {
-        audioRef.current.src = res.data.audio_url;
-        audioRef.current.playbackRate = speed;
-        audioRef.current.volume = muted ? 0 : 1;
+      const audio = audioRef.current;
+      audio.src = data.audio_url;
+      audio.playbackRate = speed;
+      audio.volume = muted ? 0 : 1;
 
-        audioRef.current.onended = () => {
-          if (!stoppedRef.current && startIdx + 1 < verses.length) {
-            playFromVerse(startIdx + 1);
-          } else {
-            setPlaying(false);
-            setCurrentVerse(0);
-          }
-        };
+      // Advance the highlighted verse in proportion to characters spoken
+      const lens = verses.slice(chunk.start, chunk.end).map(v => v.text?.length || 1);
+      const total = lens.reduce((a, b) => a + b, 0);
+      audio.ontimeupdate = () => {
+        if (!audio.duration) return;
+        const target = (audio.currentTime / audio.duration) * total;
+        let acc = 0, idx = 0;
+        for (let i = 0; i < lens.length; i++) { acc += lens[i]; if (target <= acc) { idx = i; break; } idx = i; }
+        setCurrentVerse(chunk.start + idx);
+      };
+      audio.onended = () => {
+        if (!stoppedRef.current && chunk.end < verses.length) {
+          playFromVerse(chunk.end);
+        } else {
+          setPlaying(false);
+          setCurrentVerse(0);
+        }
+      };
 
-        await audioRef.current.play();
-        setPlaying(true);
-        setVoiceName(res.data.narrator || "YouVersion Audio");
+      await audio.play();
+      setPlaying(true);
+      setVoiceName(data.narrator || "Human narrator");
+
+      // Warm up the next passage so playback continues without a gap
+      if (chunk.end < verses.length) {
+        const next = chunkFrom(chunk.end);
+        prefetchRef.current = { start: next.start, promise: fetchClip(next).catch(() => null) };
       }
-    } catch (error) {
-      if (!stoppedRef.current) console.error("Failed to load audio:", error);
+    } catch (err) {
+      if (!stoppedRef.current) {
+        setError(err?.response?.status === 401 ? (isEs ? "Inicia sesión para escuchar" : "Sign in to listen") : (isEs ? "No se pudo cargar el audio. Inténtalo de nuevo." : "Couldn't load the audio. Please try again."));
+      }
       setPlaying(false);
     } finally {
       setLoading(false);
     }
-  }, [verses, book, chapter, translation, speed, muted]);
+  }, [verses, speed, muted, chunkFrom, fetchClip, isEs]);
 
   const handlePlay = () => {
     if (playing) {
       stopAll();
     } else {
+      // Unlock the audio element inside the tap so mobile browsers allow playback after the network wait
+      const a = audioRef.current;
+      if (a && !a.src) { a.src = SILENT; a.play().catch(() => {}); }
       playFromVerse(currentVerse);
     }
   };
@@ -168,6 +210,9 @@ export default function ChapterAudioPlayer({ book, chapter, translation, verses 
                 "{verses[currentVerse].text?.substring(0, 100)}…"
               </p>
             )}
+
+            {loading && <p className="text-[11px] font-inter text-cyan">{isEs ? "Preparando la voz…" : "Preparing the narrator…"}</p>}
+            {error && <p role="alert" className="text-[11px] font-inter text-destructive">{error}</p>}
 
             {/* Controls */}
             <div className="flex items-center justify-between">
